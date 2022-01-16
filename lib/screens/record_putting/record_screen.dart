@@ -5,6 +5,9 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/services/session_service.dart';
+
+import 'package:myputt/locator.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -16,8 +19,7 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  final PuttingSession _session =
-      PuttingSession(dateStarted: 'today', uid: 'myuid');
+  final PuttingSession? _session = locator.get<SessionService>().currentSession;
 
   int _focusedIndex = 0;
   int _setLength = 10;
@@ -67,7 +69,7 @@ class _RecordScreenState extends State<RecordScreen> {
                     onPressed: () {
                       print(_focusedIndex);
                       setState(() {
-                        _session.sets.add(PuttingSet(
+                        _session?.sets.add(PuttingSet(
                             puttsMade: _focusedIndex + 1,
                             puttsAttempted: _setLength,
                             distance: _distance ?? 10));
@@ -230,7 +232,8 @@ class _RecordScreenState extends State<RecordScreen> {
   Widget _previousSetsList(BuildContext context) {
     return Container(
       child: Column(
-        children: _session.sets.map((set) => PuttingSetRow(set: set)).toList(),
+        children:
+            _session?.sets.map((set) => PuttingSetRow(set: set)).toList() ?? [],
       ),
     );
   }

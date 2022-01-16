@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
-import 'screens/home/home_screen.dart';
+import 'package:myputt/locator.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setUpLocator();
   runApp(const MyApp());
 }
 
