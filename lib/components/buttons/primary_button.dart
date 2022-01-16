@@ -8,9 +8,9 @@ class PrimaryButton extends StatelessWidget {
     this.backgroundColor = Colors.blue,
     this.labelColor = Colors.white,
     this.iconColor = Colors.white,
-    this.height = 48,
-    this.width = double.infinity,
-    this.fontSize = 16,
+    this.height,
+    this.width,
+    this.fontSize,
     this.fontWeight = FontWeight.w600,
     this.icon,
     this.gradientBackground,
@@ -23,10 +23,10 @@ class PrimaryButton extends StatelessWidget {
   final Color labelColor;
   final Color iconColor;
   final String label;
-  final double fontSize;
+  final double? fontSize;
   final FontWeight fontWeight;
-  final double height;
-  final double width;
+  final double? height;
+  final double? width;
   final IconData? icon;
   final Function onPressed;
 
@@ -37,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
           ? Colors.transparent
           : backgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(48)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       enableFeedback: true,
       shadowColor: Colors.transparent,
       elevation: 0,

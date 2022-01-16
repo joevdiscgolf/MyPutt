@@ -1,7 +1,7 @@
 import 'package:myputt/data/types/conditions/conditions.dart';
 
-class PuttingSetData {
-  PuttingSetData(
+class PuttingSet {
+  PuttingSet(
       {required this.puttsMade,
       required this.puttsAttempted,
       required this.distance});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/putting_set_data.dart';
+import 'package:myputt/data/types/putting_set.dart';
 
 class PuttingSetRow extends StatelessWidget {
   const PuttingSetRow({Key? key, required this.set}) : super(key: key);
-  final PuttingSetData set;
+  final PuttingSet set;
 
   @override
   Widget build(BuildContext context) {
