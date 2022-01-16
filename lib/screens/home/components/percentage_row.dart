@@ -29,7 +29,7 @@ class _PercentageRowState extends State<PercentageRow> {
                 height: 80,
                 child: TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.0, end: widget.percentage),
-                  duration: const Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 300),
                   builder: (context, value, _) => CircularProgressIndicator(
                     color: widget.percentage < 0.5 ? Colors.red : Colors.green,
                     backgroundColor: Colors.grey[200],
@@ -40,7 +40,7 @@ class _PercentageRowState extends State<PercentageRow> {
             Center(
                 child: TweenAnimationBuilder<double>(
                     tween: Tween<double>(begin: 0.0, end: widget.percentage),
-                    duration: const Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 300),
                     builder: (context, value, _) =>
                         (Text((value * 100).round().toString()))))
           ]),

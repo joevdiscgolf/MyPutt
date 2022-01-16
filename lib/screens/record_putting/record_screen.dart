@@ -36,7 +36,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
             _puttsMadePicker(context),
             PrimaryButton(
-                label: 'Next',
+                label: 'Finish set',
                 icon: FlutterRemix.arrow_right_line,
                 onPressed: () {
                   setState(() {
@@ -109,7 +109,7 @@ class _RecordScreenState extends State<RecordScreen> {
       child: ScrollSnapList(
         itemSize: 80,
         itemCount: _setLength + 2,
-        duration: 100,
+        duration: 80,
         focusOnItemTap: true,
         onItemFocus: _onItemFocus,
         itemBuilder: _buildListItem,
@@ -117,7 +117,7 @@ class _RecordScreenState extends State<RecordScreen> {
         allowAnotherDirection: true,
         dynamicSizeEquation: (displacement) {
           const threshold = 0;
-          const maxDisplacement = 400;
+          const maxDisplacement = 700;
           if (displacement >= threshold) {
             const slope = 1 / (-maxDisplacement);
             return slope * displacement + (1 - slope * threshold);
