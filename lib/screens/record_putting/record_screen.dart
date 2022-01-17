@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
@@ -59,7 +60,7 @@ class _RecordScreenState extends State<RecordScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 _conditionsPanel(context),
                 const SizedBox(height: 20),
@@ -212,8 +213,8 @@ class _RecordScreenState extends State<RecordScreen> {
       margin: const EdgeInsets.all(20),
       child: ScrollSnapList(
         itemSize: 80,
-        itemCount: _setLength + 2,
-        duration: 80,
+        itemCount: _setLength + 3,
+        duration: 125,
         focusOnItemTap: true,
         onItemFocus: _onItemFocus,
         itemBuilder: _buildListItem,
@@ -221,7 +222,7 @@ class _RecordScreenState extends State<RecordScreen> {
         allowAnotherDirection: true,
         dynamicSizeEquation: (displacement) {
           const threshold = 0;
-          const maxDisplacement = 600;
+          const maxDisplacement = 800;
           if (displacement >= threshold) {
             const slope = 1 / (-maxDisplacement);
             return slope * displacement + (1 - slope * threshold);
@@ -239,26 +240,41 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _focusedIndex = index;
     });
+    HapticFeedback.mediumImpact();
   }
 
   Widget _buildListItem(BuildContext context, int index) {
-    if (index >= _setLength) {
+    if (index >= _setLength + 1) {
       return Container();
+    }
+    Color? iconColor;
+    Color backgroundColor;
+    if (index == 0) {
+      iconColor = _focusedIndex == index ? Colors.red : Colors.grey[400]!;
+      backgroundColor = Colors.transparent;
+    } else {
+      backgroundColor =
+          index <= _focusedIndex ? const Color(0xff00d162) : Colors.grey[200]!;
     }
     return Container(
       decoration: BoxDecoration(
-          color: index == _focusedIndex
-              ? Colors.lightBlueAccent
-              : Colors.grey[200],
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(color: Colors.grey[600]!)),
       width: 80,
       child: Center(
-          child: Text((index + 1).toString(),
-              style: TextStyle(
-                  color: index == _focusedIndex ? Colors.white : Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold))),
+          child: index == 0
+              ? Icon(
+                  FlutterRemix.close_circle_line,
+                  color: iconColor ?? Colors.white,
+                  size: 40,
+                )
+              : Text((index).toString(),
+                  style: TextStyle(
+                      color:
+                          index <= _focusedIndex ? Colors.white : Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold))),
     );
   }
 
