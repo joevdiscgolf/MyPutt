@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
 
 class SessionListRow extends StatelessWidget {
-  const SessionListRow({Key? key, required this.session}) : super(key: key);
+  const SessionListRow({Key? key, required this.session, this.index})
+      : super(key: key);
   final PuttingSession session;
+  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -11,12 +13,15 @@ class SessionListRow extends StatelessWidget {
         const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return Card(
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+        ),
         padding: const EdgeInsets.all(10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(session.dateStarted, style: textStyle),
+            Text('${index ?? '0'}: ${session.dateStarted}', style: textStyle),
           ],
         ),
       ),

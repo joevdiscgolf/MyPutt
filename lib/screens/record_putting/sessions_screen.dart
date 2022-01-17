@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/session_list_row.dart';
@@ -16,7 +17,7 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsScreenState extends State<SessionsScreen> {
-  final SessionService _sessionService = locator.get<SessionService>();
+  //final SessionService _sessionService = locator.get<SessionService>();
   List<PuttingSession> sessions = locator.get<SessionService>().allSessions;
 
   @override
@@ -36,24 +37,27 @@ class _SessionsScreenState extends State<SessionsScreen> {
                 child: Column(
                   children: <Widget>[
                     Column(
-                        children: sessions
-                            .map((session) => SessionListRow(session: session))
-                            .toList()),
+                        children: List.from(sessions
+                            .asMap()
+                            .entries
+                            .map((entry) => SessionListRow(
+                                session: entry.value, index: entry.key + 1))
+                            .toList()
+                            .reversed)),
                     PrimaryButton(
-                      label: 'New session',
+                      label: locator.get<SessionService>().ongoingSession
+                          ? 'Continue session'
+                          : 'New session',
                       width: double.infinity,
                       onPressed: () {
                         if (!locator.get<SessionService>().ongoingSession) {
                           PuttingSession _newSession = PuttingSession(
-                              dateStarted: DateTime.now().toString(),
+                              dateStarted:
+                                  '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
                               uid: 'myuid');
                           locator.get<SessionService>().currentSession =
                               _newSession;
                           locator.get<SessionService>().ongoingSession = true;
-                          locator
-                              .get<SessionService>()
-                              .allSessions
-                              .add(_newSession);
                           setState(() {
                             sessions =
                                 locator.get<SessionService>().allSessions;

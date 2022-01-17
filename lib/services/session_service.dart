@@ -5,4 +5,12 @@ class SessionService {
       PuttingSession(dateStarted: 'default', uid: 'myuid');
   List<PuttingSession> allSessions = [];
   bool ongoingSession = false;
+
+  PuttingSession getCurrentSession() {
+    return currentSession;
+  }
+
+  void addCompletedSession(PuttingSession session) {
+    allSessions.add(session);
+  }
 }
