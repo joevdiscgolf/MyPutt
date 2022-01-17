@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
@@ -112,30 +111,36 @@ class _RecordScreenState extends State<RecordScreen> {
                   ],
                 ),
                 _puttsMadePicker(context),
-                PrimaryButton(
-                    label: 'Finish set',
-                    width: double.infinity,
-                    height: 50,
-                    icon: FlutterRemix.arrow_right_line,
-                    onPressed: () {
-                      setState(() {
-                        _session?.sets.add(PuttingSet(
-                            puttsMade: _focusedIndex + 1,
-                            puttsAttempted: _setLength,
-                            distance: _distance ?? 10));
-                      });
-                    }),
-                _previousSetsList(context),
-                const SizedBox(height: 20),
-                PrimaryButton(
-                    label: 'Finish Session',
-                    width: double.infinity,
-                    height: 50,
-                    onPressed: (() {
-                      showDialog(
-                          context: context,
-                          builder: (context) => _finishSessionDialog(context));
-                    }))
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    PrimaryButton(
+                        label: 'Finish set',
+                        width: double.infinity,
+                        height: 50,
+                        icon: FlutterRemix.arrow_right_line,
+                        onPressed: () {
+                          setState(() {
+                            _session?.sets.add(PuttingSet(
+                                puttsMade: _focusedIndex,
+                                puttsAttempted: _setLength,
+                                distance: _distance ?? 10));
+                          });
+                        }),
+                    _previousSetsList(context),
+                    const SizedBox(height: 20),
+                    PrimaryButton(
+                        label: 'Finish Session',
+                        width: double.infinity,
+                        height: 50,
+                        onPressed: (() {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  _finishSessionDialog(context));
+                        }))
+                  ],
+                ),
               ],
             ),
           ),
