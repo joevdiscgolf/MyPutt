@@ -4,6 +4,10 @@ part of 'sessions_screen_cubit.dart';
 abstract class SessionsScreenState {
   const SessionsScreenState({required this.sessions});
   final List<PuttingSession> sessions;
+
+  void addSession(session) {
+    sessions.add(session);
+  }
 }
 
 class SessionsScreenInitial extends SessionsScreenState {

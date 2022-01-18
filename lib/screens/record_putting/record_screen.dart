@@ -9,7 +9,7 @@ import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
 import 'package:myputt/screens/record_putting/components/dialogs/finish_session_dialog.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/services/session_service.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -22,8 +22,9 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  final SessionService _sessionService = locator.get<SessionService>();
-  final PuttingSession? _session = locator.get<SessionService>().currentSession;
+  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final PuttingSession? _session =
+      locator.get<SessionRepository>().currentSession;
 
   int _focusedIndex = 0;
   int _setLength = 10;
@@ -134,8 +135,10 @@ class _RecordScreenState extends State<RecordScreen> {
                       onPressed: () {
                         showDialog(
                                 context: context,
-                                builder: (context) =>
-                                    const FinishSessionDialog())
+                                builder: (dialogContext) => BlocProvider.value(
+                                    value: BlocProvider.of<SessionsScreenCubit>(
+                                        context),
+                                    child: const FinishSessionDialog()))
                             .then((value) => dialogCallBack());
                       },
                     )
@@ -291,10 +294,10 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   void dialogCallBack() {
-    _sessionService.ongoingSession = false;
+    _sessionRepository.ongoingSession = false;
     if (_session != null) {
-      locator.get<SessionService>().addCompletedSession(_session!);
-      BlocProvider.of<SessionsScreenCubit>(context).sessionComplete();
+      locator.get<SessionRepository>().addCompletedSession(_session!);
+      BlocProvider.of<SessionsScreenCubit>(context).completeSession();
       Navigator.pop(context);
     }
   }

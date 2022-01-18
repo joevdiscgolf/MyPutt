@@ -2,13 +2,14 @@ import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/services/session_service.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 
 part 'sessions_screen_state.dart';
 
 class SessionsScreenCubit extends Cubit<SessionsScreenState> {
-  final SessionService _sessionService = locator.get<SessionService>();
+  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+
   SessionsScreenCubit()
       : super(SessionsScreenInitial(sessions: [
           PuttingSession(
@@ -17,13 +18,13 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
               uid: 'myuid')
         ]));
 
-  void sessionInProgress(PuttingSession currentSession) {
-    print('session in progress');
+  void continueSession(PuttingSession currentSession) {
     emit(SessionInProgressState(
-        sessions: _sessionService.allSessions, currentSession: currentSession));
+        sessions: _sessionRepository.allSessions,
+        currentSession: currentSession));
   }
 
-  void sessionComplete() {
-    emit(NoActiveSessionState(sessions: _sessionService.allSessions));
+  void completeSession() {
+    emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
   }
 }

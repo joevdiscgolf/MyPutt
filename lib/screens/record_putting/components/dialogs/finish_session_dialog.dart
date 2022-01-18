@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/screens/record_putting/record_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/services/session_service.dart';
 import 'package:myputt/locator.dart';
 
 class FinishSessionDialog extends StatefulWidget {
@@ -15,7 +15,6 @@ class FinishSessionDialog extends StatefulWidget {
 
 class _FinishSessionDialogState extends State<FinishSessionDialog> {
   String? _dialogErrorText;
-  final SessionService? _sessionService = locator.get<SessionService>();
 
   @override
   Widget build(BuildContext context) {
@@ -59,27 +58,46 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                           });
                           Navigator.pop(context);
                         }),
-                    PrimaryButton(
-                      label: 'Finish',
-                      fontSize: 18,
-                      width: 100,
-                      height: 50,
-                      backgroundColor: Colors.green,
-                      onPressed: () {
-                        final List<PuttingSet>? sets =
-                            locator.get<SessionService>().currentSession?.sets;
-                        if (sets == null || sets.isEmpty) {
-                          setState(() {
-                            _dialogErrorText = 'Empty session!';
-                          });
+                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                      builder: (context, state) {
+                        if (state is SessionInProgressState) {
+                          return PrimaryButton(
+                            label: 'Finish',
+                            fontSize: 18,
+                            width: 100,
+                            height: 50,
+                            backgroundColor: Colors.green,
+                            onPressed: () {
+                              final List<PuttingSet>? sets =
+                                  state.currentSession.sets;
+                              if (sets == null || sets.isEmpty) {
+                                setState(() {
+                                  _dialogErrorText = 'Empty session!';
+                                });
+                              } else {
+                                final PuttingSession? currentSession =
+                                    state.currentSession;
+                                if (currentSession != null) {
+                                  state.addSession(currentSession);
+                                }
+                                BlocProvider.of<SessionsScreenCubit>(context)
+                                    .completeSession();
+                                Navigator.pop(context);
+                              }
+                            },
+                          );
                         } else {
-                          final PuttingSession? currentSession =
-                              _sessionService?.currentSession;
-                          if (currentSession != null) {
-                            _sessionService?.allSessions.add(currentSession);
-                          }
-                          _sessionService?.ongoingSession = false;
-                          Navigator.pop(context);
+                          return PrimaryButton(
+                              label: 'Finish',
+                              fontSize: 18,
+                              width: 100,
+                              height: 50,
+                              backgroundColor: Colors.green,
+                              onPressed: () {
+                                setState(() {
+                                  _dialogErrorText = "No ongoing session";
+                                });
+                              });
                         }
                       },
                     ),
