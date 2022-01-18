@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
+import 'package:myputt/screens/record_putting/components/dialogs/finish_session_dialog.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/services/session_service.dart';
 import 'package:myputt/locator.dart';
-
-import 'package:myputt/screens/record_putting/record_putting_cubit.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -21,9 +22,8 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  final SessionService _sessionService = locator.get<SessionService>();
   final PuttingSession? _session = locator.get<SessionService>().currentSession;
-
-  bool _sessionInProgress = true;
 
   int _focusedIndex = 0;
   int _setLength = 10;
@@ -31,8 +31,6 @@ class _RecordScreenState extends State<RecordScreen> {
 
   int _weatherIndex = 0;
   int _windIndex = 0;
-
-  String? _dialogErrorText;
 
   final List<String> _windConditionWords = [
     'Calm',
@@ -130,15 +128,17 @@ class _RecordScreenState extends State<RecordScreen> {
                     _previousSetsList(context),
                     const SizedBox(height: 20),
                     PrimaryButton(
-                        label: 'Finish Session',
-                        width: double.infinity,
-                        height: 50,
-                        onPressed: (() {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  _finishSessionDialog(context));
-                        }))
+                      label: 'Finish Session',
+                      width: double.infinity,
+                      height: 50,
+                      onPressed: () {
+                        showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    const FinishSessionDialog())
+                            .then((value) => dialogCallBack());
+                      },
+                    )
                   ],
                 ),
               ],
@@ -245,7 +245,7 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _focusedIndex = index;
     });
-    HapticFeedback.mediumImpact();
+    HapticFeedback.heavyImpact();
   }
 
   Widget _buildListItem(BuildContext context, int index) {
@@ -284,85 +284,18 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Widget _previousSetsList(BuildContext context) {
-    return Container(
-      child: Column(
-        children:
-            _session?.sets.map((set) => PuttingSetRow(set: set)).toList() ?? [],
-      ),
+    return Column(
+      children:
+          _session?.sets.map((set) => PuttingSetRow(set: set)).toList() ?? [],
     );
   }
 
-  Widget _finishSessionDialog(BuildContext dialogContext) {
-    return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Finish Putting Session',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              Text(_dialogErrorText ?? ''),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    PrimaryButton(
-                        width: 100,
-                        height: 50,
-                        label: 'Cancel',
-                        fontSize: 18,
-                        labelColor: Colors.grey[600]!,
-                        backgroundColor: Colors.grey[200]!,
-                        onPressed: () {
-                          setState(() {
-                            _dialogErrorText = '';
-                          });
-                          Navigator.pop(dialogContext);
-                        }),
-                    PrimaryButton(
-                      label: 'Finish',
-                      fontSize: 18,
-                      width: 100,
-                      height: 50,
-                      backgroundColor: Colors.green,
-                      onPressed: () {
-                        if (locator
-                            .get<SessionService>()
-                            .currentSession
-                            .sets
-                            .isNotEmpty) {
-                          locator.get<SessionService>().ongoingSession = false;
-                          locator
-                              .get<SessionService>()
-                              .addCompletedSession(_session!);
-                          Navigator.pop(dialogContext);
-                          Navigator.pop(context);
-                        } else {
-                          setState(() {
-                            _dialogErrorText = 'Empty session!';
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+  void dialogCallBack() {
+    _sessionService.ongoingSession = false;
+    if (_session != null) {
+      locator.get<SessionService>().addCompletedSession(_session!);
+      BlocProvider.of<SessionsScreenCubit>(context).sessionComplete();
+      Navigator.pop(context);
+    }
   }
 }
