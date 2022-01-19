@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/screens/home/home_screen.dart';
-import 'package:myputt/screens/record_putting/sessions_screen.dart';
+import 'package:myputt/screens/record_putting/view/sessions_screen.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);

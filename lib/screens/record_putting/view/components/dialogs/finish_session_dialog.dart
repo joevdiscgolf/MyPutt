@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/services/session_manager.dart';
 import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/locator.dart';
 
 class FinishSessionDialog extends StatefulWidget {
   const FinishSessionDialog({Key? key}) : super(key: key);
@@ -60,6 +58,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                           BlocProvider.of<SessionsScreenCubit>(context)
                               .continueSession();
                           Navigator.pop(context);
+                          return 'Cancel';
                         }),
                     BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
                       builder: (context, state) {
@@ -78,15 +77,11 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                   _dialogErrorText = 'Empty session!';
                                 });
                               } else {
-                                final PuttingSession? currentSession =
-                                    state.currentSession;
-                                if (currentSession != null) {
-                                  state.addSession(currentSession);
-                                }
                                 BlocProvider.of<SessionsScreenCubit>(context)
                                     .completeSession();
                                 Navigator.pop(context);
                               }
+                              return 'Finish';
                             },
                           );
                         } else {
@@ -100,6 +95,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                 setState(() {
                                   _dialogErrorText = "No ongoing session";
                                 });
+                                return 'Finish';
                               });
                         }
                       },

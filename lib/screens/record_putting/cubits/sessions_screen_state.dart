@@ -2,18 +2,12 @@ part of 'sessions_screen_cubit.dart';
 
 @immutable
 abstract class SessionsScreenState {
-  const SessionsScreenState({required this.sessions, this.currentSession});
-  final List<PuttingSession> sessions;
-
-  final PuttingSession? currentSession;
+  const SessionsScreenState({required this.sessions});
+  final List sessions;
 
   void addSession(session) {
     sessions.add(session);
   }
-}
-
-class SessionsScreenInitial extends SessionsScreenState {
-  const SessionsScreenInitial({required sessions}) : super(sessions: sessions);
 }
 
 class SessionInProgressState extends SessionsScreenState {

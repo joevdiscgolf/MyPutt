@@ -5,11 +5,10 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
-import 'package:myputt/screens/record_putting/components/dialogs/finish_session_dialog.dart';
+import 'package:myputt/screens/record_putting/view/components/putting_set_row.dart';
+import 'package:myputt/screens/record_putting/view/components/dialogs/finish_session_dialog.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/services/session_manager.dart';
 import 'package:myputt/locator.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -22,9 +21,6 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  final SessionManager _sessionManager = locator.get<SessionManager>();
-  final PuttingSession? _session = locator.get<SessionManager>().currentSession;
-
   int _focusedIndex = 0;
   int _setLength = 10;
   int? _distance;
@@ -118,27 +114,30 @@ class _RecordScreenState extends State<RecordScreen> {
                         height: 50,
                         icon: FlutterRemix.arrow_right_line,
                         onPressed: () {
-                          setState(() {
-                            _session?.sets.add(PuttingSet(
-                                puttsMade: _focusedIndex,
-                                puttsAttempted: _setLength,
-                                distance: _distance ?? 10));
-                          });
+                          BlocProvider.of<SessionsScreenCubit>(context).addSet(
+                              PuttingSet(
+                                  puttsMade: _focusedIndex,
+                                  puttsAttempted: _setLength,
+                                  distance: _distance ?? 10));
                         }),
                     _previousSetsList(context),
                     const SizedBox(height: 20),
-                    PrimaryButton(
-                      label: 'Finish Session',
-                      width: double.infinity,
-                      height: 50,
-                      onPressed: () {
-                        showDialog(
+                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                      builder: (context, state) {
+                        return PrimaryButton(
+                          label: 'Finish Session',
+                          width: double.infinity,
+                          height: 50,
+                          onPressed: () {
+                            showDialog(
                                 context: context,
                                 builder: (dialogContext) => BlocProvider.value(
                                     value: BlocProvider.of<SessionsScreenCubit>(
                                         context),
-                                    child: const FinishSessionDialog()))
-                            .then((value) => dialogCallBack());
+                                    child: const FinishSessionDialog())).then(
+                                (value) => dialogCallBack(value));
+                          },
+                        );
                       },
                     )
                   ],
@@ -286,17 +285,24 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Widget _previousSetsList(BuildContext context) {
-    return Column(
-      children:
-          _session?.sets.map((set) => PuttingSetRow(set: set)).toList() ?? [],
+    return BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+      builder: (context, state) {
+        if (state is SessionInProgressState) {
+          return Column(
+            children: state.currentSession.sets
+                .map((set) => PuttingSetRow(set: set))
+                .toList(),
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 
-  void dialogCallBack() {
-    _sessionManager.ongoingSession = false;
-    if (_session != null) {
-      locator.get<SessionManager>().addCompletedSession(_session!);
-      BlocProvider.of<SessionsScreenCubit>(context).completeSession();
+  void dialogCallBack(String value) {
+    print(value);
+    if (value == 'Finish') {
       Navigator.pop(context);
     }
   }

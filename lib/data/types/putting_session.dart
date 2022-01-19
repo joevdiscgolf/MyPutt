@@ -5,4 +5,8 @@ class PuttingSession {
   final String uid;
   final String dateStarted;
   List<PuttingSet> sets = [];
+
+  void addSet(PuttingSet set) {
+    sets.add(set);
+  }
 }
