@@ -9,7 +9,7 @@ import 'package:myputt/screens/record_putting/components/putting_set_row.dart';
 import 'package:myputt/screens/record_putting/components/dialogs/finish_session_dialog.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/repositories/session_repository.dart';
+import 'package:myputt/services/session_manager.dart';
 import 'package:myputt/locator.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -22,9 +22,8 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
-  final PuttingSession? _session =
-      locator.get<SessionRepository>().currentSession;
+  final SessionManager _sessionManager = locator.get<SessionManager>();
+  final PuttingSession? _session = locator.get<SessionManager>().currentSession;
 
   int _focusedIndex = 0;
   int _setLength = 10;
@@ -294,9 +293,9 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   void dialogCallBack() {
-    _sessionRepository.ongoingSession = false;
+    _sessionManager.ongoingSession = false;
     if (_session != null) {
-      locator.get<SessionRepository>().addCompletedSession(_session!);
+      locator.get<SessionManager>().addCompletedSession(_session!);
       BlocProvider.of<SessionsScreenCubit>(context).completeSession();
       Navigator.pop(context);
     }

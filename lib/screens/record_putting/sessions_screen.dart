@@ -6,7 +6,7 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/components/session_list_row.dart';
 import 'package:myputt/screens/record_putting/record_screen.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/repositories/session_repository.dart';
+import 'package:myputt/services/session_manager.dart';
 import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 
 class SessionsScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsScreenState extends State<SessionsScreen> {
-  List<PuttingSession> sessions = locator.get<SessionRepository>().allSessions;
+  List<PuttingSession> sessions = locator.get<SessionManager>().allSessions;
 
   @override
   Widget build(BuildContext context) {
@@ -66,21 +66,17 @@ class _SessionsScreenState extends State<SessionsScreen> {
                                       dateStarted:
                                           '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
                                       uid: 'myuid');
-                                  locator
-                                      .get<SessionRepository>()
-                                      .currentSession = _newSession;
-                                  locator
-                                      .get<SessionRepository>()
-                                      .ongoingSession = true;
+                                  locator.get<SessionManager>().currentSession =
+                                      _newSession;
+                                  locator.get<SessionManager>().ongoingSession =
+                                      true;
                                   setState(() {
                                     sessions = locator
-                                        .get<SessionRepository>()
+                                        .get<SessionManager>()
                                         .allSessions;
                                   });
                                   BlocProvider.of<SessionsScreenCubit>(context)
-                                      .continueSession(locator
-                                          .get<SessionRepository>()
-                                          .currentSession!);
+                                      .continueSession();
                                 }
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (BuildContext context) =>

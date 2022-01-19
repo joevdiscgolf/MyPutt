@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/services/session_manager.dart';
 import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/data/types/putting_set.dart';
@@ -56,6 +57,8 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                           setState(() {
                             _dialogErrorText = '';
                           });
+                          BlocProvider.of<SessionsScreenCubit>(context)
+                              .continueSession();
                           Navigator.pop(context);
                         }),
                     BlocBuilder<SessionsScreenCubit, SessionsScreenState>(

@@ -1,6 +1,6 @@
 import 'package:myputt/data/types/putting_session.dart';
 
-class SessionRepository {
+class SessionManager {
   PuttingSession? currentSession;
   List<PuttingSession> allSessions = [];
   bool ongoingSession = false;
