@@ -75,7 +75,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                       TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
                                 setState(() {
-                                  _setLength -= 1;
+                                  if (_setLength > 1) _setLength -= 1;
                                 });
                               },
                               style: ElevatedButton.styleFrom(
@@ -220,7 +220,7 @@ class _RecordScreenState extends State<RecordScreen> {
       margin: const EdgeInsets.all(20),
       child: ScrollSnapList(
         itemSize: 80,
-        itemCount: _setLength + 3,
+        itemCount: _setLength + 1,
         duration: 125,
         focusOnItemTap: true,
         onItemFocus: _onItemFocus,
@@ -247,13 +247,10 @@ class _RecordScreenState extends State<RecordScreen> {
     setState(() {
       _focusedIndex = index;
     });
-    HapticFeedback.heavyImpact();
+    HapticFeedback.mediumImpact();
   }
 
   Widget _buildListItem(BuildContext context, int index) {
-    if (index >= _setLength + 1) {
-      return Container();
-    }
     Color? iconColor;
     Color backgroundColor;
     if (index == 0) {
@@ -302,7 +299,6 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   void dialogCallBack() {
-    print(sessionInProgress);
     if (!sessionInProgress) {
       Navigator.pop(context);
     }

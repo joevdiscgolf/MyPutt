@@ -40,13 +40,11 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
   }
 
   void completeSession() {
-    print('session completed, ${_sessionRepository.allSessions}');
     _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
     emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
   }
 
   void addSet(PuttingSet set) {
-    print(_sessionRepository.allSessions);
     _sessionRepository.currentSession?.addSet(set);
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
@@ -60,7 +58,6 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
   void deleteSet(PuttingSet set) {}
 
   void deleteSession(PuttingSession session) {
-    print('deleting session');
     _sessionRepository.deleteSession(session);
     if (state is SessionInProgressState) {
       if (_sessionRepository.currentSession != null) {

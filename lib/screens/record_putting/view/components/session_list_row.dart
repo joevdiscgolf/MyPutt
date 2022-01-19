@@ -60,53 +60,60 @@ class _ConfirmDeleteDialogState extends State<ConfirmDeleteDialog> {
           borderRadius: BorderRadius.circular(24),
         ),
         child: Container(
-          padding: const EdgeInsets.all(24),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Finish Putting Session',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              Text(_dialogErrorText ?? ''),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    PrimaryButton(
-                        width: 100,
-                        height: 50,
-                        label: 'Cancel',
-                        fontSize: 18,
-                        labelColor: Colors.grey[600]!,
-                        backgroundColor: Colors.grey[200]!,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                    PrimaryButton(
-                      label: 'Delete',
-                      fontSize: 18,
-                      width: 100,
-                      height: 50,
-                      backgroundColor: Colors.green,
-                      onPressed: () {
-                        widget.delete();
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ],
+            padding: const EdgeInsets.all(24),
+            width: double.infinity,
+            child: _mainBody(context)));
+  }
+
+  Widget _mainBody(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Delete Putting Session',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-        ));
+          const SizedBox(
+            height: 16,
+          ),
+          Text(_dialogErrorText ?? ''),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                PrimaryButton(
+                    width: 100,
+                    height: 50,
+                    label: 'Cancel',
+                    fontSize: 18,
+                    labelColor: Colors.grey[600]!,
+                    backgroundColor: Colors.grey[200]!,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                PrimaryButton(
+                  label: 'Delete',
+                  fontSize: 18,
+                  width: 100,
+                  height: 50,
+                  backgroundColor: Colors.green,
+                  onPressed: () {
+                    widget.delete();
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

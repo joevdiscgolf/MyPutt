@@ -36,7 +36,6 @@ class _SessionsScreenState extends State<SessionsScreen> {
                   children: <Widget>[
                     BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
                       builder: (context, state) {
-                        print('rebuilding list');
                         return Column(
                             children: List.from(state.sessions
                                 .asMap()
