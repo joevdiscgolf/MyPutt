@@ -286,10 +286,13 @@ class _RecordScreenState extends State<RecordScreen> {
     return BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
       builder: (context, state) {
         if (state is SessionInProgressState) {
-          return Column(
-            children: state.currentSession.sets
-                .map((set) => PuttingSetRow(set: set))
-                .toList(),
+          return Container(
+            height: 100,
+            child: ListView(
+              children: state.currentSession.sets
+                  .map((set) => PuttingSetRow(set: set))
+                  .toList(),
+            ),
           );
         } else {
           return Container();
