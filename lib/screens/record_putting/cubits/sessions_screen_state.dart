@@ -21,3 +21,7 @@ class SessionInProgressState extends SessionsScreenState {
 class NoActiveSessionState extends SessionsScreenState {
   const NoActiveSessionState({required sessions}) : super(sessions: sessions);
 }
+
+class SessionErrorState extends SessionsScreenState {
+  const SessionErrorState({required sessions}) : super(sessions: sessions);
+}

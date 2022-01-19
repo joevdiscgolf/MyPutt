@@ -36,12 +36,19 @@ class _SessionsScreenState extends State<SessionsScreen> {
                   children: <Widget>[
                     BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
                       builder: (context, state) {
+                        print('rebuilding list');
                         return Column(
                             children: List.from(state.sessions
                                 .asMap()
                                 .entries
                                 .map((entry) => SessionListRow(
-                                    session: entry.value, index: entry.key + 1))
+                                    session: entry.value,
+                                    index: entry.key + 1,
+                                    delete: () {
+                                      BlocProvider.of<SessionsScreenCubit>(
+                                              context)
+                                          .deleteSession(entry.value);
+                                    }))
                                 .toList()
                                 .reversed));
                       },

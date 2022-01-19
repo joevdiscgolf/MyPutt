@@ -14,20 +14,11 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
   SessionsScreenCubit() : super(NoActiveSessionState(sessions: const []));
 
   void startSession() {
+    print('start session');
     _sessionRepository.currentSession = PuttingSession(
         dateStarted:
             '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
         uid: 'myuid');
-    SessionInProgressState(
-        sessions: _sessionRepository.allSessions,
-        currentSession: _sessionRepository.currentSession ??
-            PuttingSession(
-                dateStarted:
-                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-                uid: 'myuid'));
-  }
-
-  void continueSession() {
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession ??
@@ -35,6 +26,23 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
                 dateStarted:
                     '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
                 uid: 'myuid')));
+  }
+
+  void continueSession() {
+    print('continue session');
+    emit(SessionInProgressState(
+        sessions: _sessionRepository.allSessions,
+        currentSession: _sessionRepository.currentSession ??
+            PuttingSession(
+                dateStarted:
+                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
+                uid: 'myuid')));
+  }
+
+  void completeSession() {
+    print('session completed, ${_sessionRepository.allSessions}');
+    _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
+    emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
   }
 
   void addSet(PuttingSet set) {
@@ -49,9 +57,25 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
                 uid: 'myuid')));
   }
 
-  void completeSession() {
-    print('session completed, ${_sessionRepository.allSessions}');
-    _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
-    emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
+  void deleteSet(PuttingSet set) {}
+
+  void deleteSession(PuttingSession session) {
+    print('deleting session');
+    _sessionRepository.deleteSession(session);
+    if (state is SessionInProgressState) {
+      if (_sessionRepository.currentSession != null) {
+        emit(SessionInProgressState(
+            sessions: _sessionRepository.allSessions,
+            currentSession: _sessionRepository.currentSession!));
+      } else {
+        emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+      }
+    } else {
+      if (_sessionRepository.currentSession != null) {
+        emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
+      } else {
+        emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+      }
+    }
   }
 }

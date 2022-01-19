@@ -6,10 +6,8 @@ import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart'
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record_putting/view/components/putting_set_row.dart';
-import 'package:myputt/screens/record_putting/view/components/dialogs/finish_session_dialog.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/locator.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -21,6 +19,8 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  bool sessionInProgress = true;
+
   int _focusedIndex = 0;
   int _setLength = 10;
   int? _distance;
@@ -134,8 +134,9 @@ class _RecordScreenState extends State<RecordScreen> {
                                 builder: (dialogContext) => BlocProvider.value(
                                     value: BlocProvider.of<SessionsScreenCubit>(
                                         context),
-                                    child: const FinishSessionDialog())).then(
-                                (value) => dialogCallBack(value));
+                                    child: FinishSessionDialog(
+                                        recordScreenState: this))).then(
+                                (value) => dialogCallBack());
                           },
                         );
                       },
@@ -300,10 +301,116 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  void dialogCallBack(String value) {
-    print(value);
-    if (value == 'Finish') {
+  void dialogCallBack() {
+    print(sessionInProgress);
+    if (!sessionInProgress) {
       Navigator.pop(context);
     }
+  }
+}
+
+class FinishSessionDialog extends StatefulWidget {
+  const FinishSessionDialog({Key? key, required this.recordScreenState})
+      : super(key: key);
+
+  final _RecordScreenState recordScreenState;
+  @override
+  _FinishSessionDialogState createState() => _FinishSessionDialogState();
+}
+
+class _FinishSessionDialogState extends State<FinishSessionDialog> {
+  String? _dialogErrorText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Finish Putting Session',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              Text(_dialogErrorText ?? ''),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PrimaryButton(
+                        width: 100,
+                        height: 50,
+                        label: 'Cancel',
+                        fontSize: 18,
+                        labelColor: Colors.grey[600]!,
+                        backgroundColor: Colors.grey[200]!,
+                        onPressed: () {
+                          setState(() {
+                            _dialogErrorText = '';
+                          });
+                          BlocProvider.of<SessionsScreenCubit>(context)
+                              .continueSession();
+                          Navigator.pop(context);
+                        }),
+                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                      builder: (context, state) {
+                        if (state is SessionInProgressState) {
+                          return PrimaryButton(
+                            label: 'Finish',
+                            fontSize: 18,
+                            width: 100,
+                            height: 50,
+                            backgroundColor: Colors.green,
+                            onPressed: () {
+                              final List<PuttingSet>? sets =
+                                  state.currentSession.sets;
+                              if (sets == null || sets.isEmpty) {
+                                setState(() {
+                                  _dialogErrorText = 'Empty session!';
+                                });
+                              } else {
+                                BlocProvider.of<SessionsScreenCubit>(context)
+                                    .completeSession();
+                                widget.recordScreenState.sessionInProgress =
+                                    false;
+                                Navigator.pop(context);
+                              }
+                            },
+                          );
+                        } else {
+                          return PrimaryButton(
+                              label: 'Finish',
+                              fontSize: 18,
+                              width: 100,
+                              height: 50,
+                              backgroundColor: Colors.green,
+                              onPressed: () {
+                                setState(() {
+                                  _dialogErrorText = "No ongoing session";
+                                });
+                                return 'Finish';
+                              });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }

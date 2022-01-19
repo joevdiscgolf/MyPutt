@@ -8,6 +8,10 @@ class SessionRepository {
     allSessions.add(session);
   }
 
+  void deleteSession(PuttingSession session) {
+    allSessions.remove(session);
+  }
+
   List<PuttingSession> get sessions {
     return allSessions;
   }
