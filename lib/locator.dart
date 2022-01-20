@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'package:myputt/services/session_service.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
 
-final locator = GetIt.instance; // GetIt.I is also valid
+final locator = GetIt.instance;
 Future<void> setUpLocator() async {
-  locator.registerSingleton<SessionService>(SessionService());
+  locator.registerSingleton<SessionRepository>(SessionRepository());
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:myputt/screens/home/home_screen.dart';
-import 'package:myputt/screens/record_putting/record_screen.dart';
-import 'package:myputt/screens/record_putting/sessions_screen.dart';
+import 'package:myputt/screens/record_putting/view/record_screen.dart';
+import 'package:myputt/screens/record_putting/view/sessions_screen.dart';
 
 // All our routes will be available here
 final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
