@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import './percentage_row.dart';
 
-class PercentageColumnView extends StatelessWidget {
-  const PercentageColumnView({Key? key, required this.percentages})
+class PercentagesCard extends StatelessWidget {
+  const PercentagesCard({Key? key, required this.percentages})
       : super(key: key);
   final Map<int, double> percentages;
 

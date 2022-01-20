@@ -19,7 +19,7 @@ class _PercentageRowState extends State<PercentageRow> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child:
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-        Text(widget.distance.toString(),
+        Text(widget.distance.toString() + ' ft',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(width: 20),
         SizedBox(
@@ -42,7 +42,7 @@ class _PercentageRowState extends State<PercentageRow> {
                     tween: Tween<double>(begin: 0.0, end: widget.percentage),
                     duration: const Duration(milliseconds: 300),
                     builder: (context, value, _) =>
-                        (Text((value * 100).round().toString()))))
+                        (Text((value * 100).round().toString() + ' %'))))
           ]),
           width: 80,
           height: 80,

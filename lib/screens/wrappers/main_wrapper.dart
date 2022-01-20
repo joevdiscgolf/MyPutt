@@ -27,6 +27,7 @@ class _MainWrapperState extends State<MainWrapper> {
         child: screens[_currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.grey[100]!,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,

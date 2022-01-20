@@ -27,6 +27,7 @@ class _RecordScreenState extends State<RecordScreen> {
 
   int _weatherIndex = 0;
   int _windIndex = 0;
+  int _distancesIndex = 0;
 
   final List<String> _windConditionWords = [
     'Calm',
@@ -39,112 +40,110 @@ class _RecordScreenState extends State<RecordScreen> {
     'Rainy',
     'Snowy',
   ];
+  final List<int> _distances = [10, 15, 20, 25, 30, 40, 50, 60];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300]!,
       appBar: AppBar(
         title: const Text('Record'),
       ),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                _conditionsPanel(context),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    const Text('Putts made',
-                        style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 40),
-                    Column(
-                      children: [
-                        const Text('Putters',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              child: const Text('-',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              onPressed: () {
-                                setState(() {
-                                  if (_setLength > 1) _setLength -= 1;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                              ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              _conditionsPanel(context),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Text('Putts made',
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                  const SizedBox(width: 40),
+                  Column(
+                    children: [
+                      const Text('Putters',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            child: const Text('-',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            onPressed: () {
+                              setState(() {
+                                if (_setLength > 1) _setLength -= 1;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
                             ),
-                            const SizedBox(width: 5),
-                            Text(_setLength.toString()),
-                            const SizedBox(width: 5),
-                            ElevatedButton(
-                              child: const Text('+',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              onPressed: () {
-                                setState(() {
-                                  _setLength += 1;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                              ),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(_setLength.toString()),
+                          const SizedBox(width: 5),
+                          ElevatedButton(
+                            child: const Text('+',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            onPressed: () {
+                              setState(() {
+                                _setLength += 1;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                _puttsMadePicker(context),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    PrimaryButton(
-                        label: 'Finish set',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              _puttsMadePicker(context),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  PrimaryButton(
+                      label: 'Finish set',
+                      width: double.infinity,
+                      height: 50,
+                      icon: FlutterRemix.arrow_right_line,
+                      onPressed: () {
+                        BlocProvider.of<SessionsScreenCubit>(context).addSet(
+                            PuttingSet(
+                                puttsMade: _focusedIndex,
+                                puttsAttempted: _setLength,
+                                distance: _distance ?? 10));
+                      }),
+                  _previousSetsList(context),
+                  const SizedBox(height: 20),
+                  BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                    builder: (context, state) {
+                      return PrimaryButton(
+                        label: 'Finish Session',
                         width: double.infinity,
                         height: 50,
-                        icon: FlutterRemix.arrow_right_line,
                         onPressed: () {
-                          BlocProvider.of<SessionsScreenCubit>(context).addSet(
-                              PuttingSet(
-                                  puttsMade: _focusedIndex,
-                                  puttsAttempted: _setLength,
-                                  distance: _distance ?? 10));
-                        }),
-                    _previousSetsList(context),
-                    const SizedBox(height: 20),
-                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
-                      builder: (context, state) {
-                        return PrimaryButton(
-                          label: 'Finish Session',
-                          width: double.infinity,
-                          height: 50,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (dialogContext) => BlocProvider.value(
-                                    value: BlocProvider.of<SessionsScreenCubit>(
-                                        context),
-                                    child: FinishSessionDialog(
-                                        recordScreenState: this))).then(
-                                (value) => dialogCallBack());
-                          },
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ],
-            ),
+                          showDialog(
+                              context: context,
+                              builder: (dialogContext) => BlocProvider.value(
+                                  value: BlocProvider.of<SessionsScreenCubit>(
+                                      context),
+                                  child: FinishSessionDialog(
+                                      recordScreenState: this))).then(
+                              (value) => dialogCallBack());
+                        },
+                      );
+                    },
+                  )
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -153,13 +152,20 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Widget _conditionsPanel(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: const [
+              Text('Details',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            ],
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -201,6 +207,28 @@ class _RecordScreenState extends State<RecordScreen> {
                           _weatherIndex = 0;
                         } else {
                           _weatherIndex += 1;
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  const Text('Distance',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  PrimaryButton(
+                    height: 40,
+                    width: 80,
+                    label: _distances[_distancesIndex].toString() + ' ft',
+                    fontSize: 12,
+                    onPressed: () {
+                      setState(() {
+                        if (_distancesIndex == 7) {
+                          _distancesIndex = 0;
+                        } else {
+                          _distancesIndex += 1;
                         }
                       });
                     },
@@ -287,7 +315,7 @@ class _RecordScreenState extends State<RecordScreen> {
       builder: (context, state) {
         if (state is SessionInProgressState) {
           return Container(
-            height: 100,
+            height: 200,
             child: ListView(
               children: state.currentSession.sets
                   .map((set) => PuttingSetRow(set: set))

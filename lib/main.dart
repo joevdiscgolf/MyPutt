@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/locator.dart';
@@ -7,7 +8,10 @@ import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart'
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setUpLocator();
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
