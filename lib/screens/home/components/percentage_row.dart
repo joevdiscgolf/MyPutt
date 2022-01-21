@@ -36,7 +36,9 @@ class _PercentageRowState extends State<PercentageRow> {
                   tween: Tween<double>(begin: 0.0, end: widget.percentage),
                   duration: const Duration(milliseconds: 300),
                   builder: (context, value, _) => CircularProgressIndicator(
-                    color: widget.percentage < 0.5 ? Colors.red : Colors.green,
+                    color: widget.percentage < widget.allTimePercentage
+                        ? Colors.red
+                        : Colors.green,
                     backgroundColor: Colors.grey[200],
                     value: value,
                     strokeWidth: 5,
@@ -57,11 +59,17 @@ class _PercentageRowState extends State<PercentageRow> {
         ),
         Row(children: <Widget>[
           widget.percentage < widget.allTimePercentage
-              ? const Icon(FlutterRemix.arrow_down_line)
-              : const Icon(FlutterRemix.arrow_up_line),
-          Text((100 * (widget.percentage - widget.allTimePercentage))
-              .round()
-              .toString())
+              ? const Icon(FlutterRemix.arrow_down_line, color: Colors.red)
+              : const Icon(FlutterRemix.arrow_up_line, color: Colors.green),
+          Text(
+              (100 * (widget.percentage - widget.allTimePercentage))
+                  .round()
+                  .toString(),
+              style: TextStyle(
+                color: widget.percentage < widget.allTimePercentage
+                    ? Colors.red
+                    : Colors.green,
+              ))
         ]),
       ]),
     );
