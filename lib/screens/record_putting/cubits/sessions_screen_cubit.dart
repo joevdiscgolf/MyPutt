@@ -14,22 +14,16 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
   SessionsScreenCubit() : super(NoActiveSessionState(sessions: const []));
 
   void startSession() {
-    print('start session');
     _sessionRepository.currentSession = PuttingSession(
         dateStarted:
             '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
         uid: 'myuid');
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
-        currentSession: _sessionRepository.currentSession ??
-            PuttingSession(
-                dateStarted:
-                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-                uid: 'myuid')));
+        currentSession: _sessionRepository.currentSession!));
   }
 
   void continueSession() {
-    print('continue session');
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession ??
@@ -55,7 +49,18 @@ class SessionsScreenCubit extends Cubit<SessionsScreenState> {
                 uid: 'myuid')));
   }
 
-  void deleteSet(PuttingSet set) {}
+  void deleteSet(PuttingSet set) {
+    _sessionRepository.deleteSet(set);
+    if (state is SessionInProgressState) {
+      if (_sessionRepository.currentSession != null) {
+        emit(SessionInProgressState(
+            sessions: _sessionRepository.allSessions,
+            currentSession: _sessionRepository.currentSession!));
+      } else {
+        emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+      }
+    }
+  }
 
   void deleteSession(PuttingSession session) {
     _sessionRepository.deleteSession(session);

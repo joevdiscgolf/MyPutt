@@ -24,7 +24,7 @@ class _PercentageRowState extends State<PercentageRow> {
         const SizedBox(width: 20),
         SizedBox(
           child: Stack(children: <Widget>[
-            Container(
+            SizedBox(
                 width: 80,
                 height: 80,
                 child: TweenAnimationBuilder<double>(

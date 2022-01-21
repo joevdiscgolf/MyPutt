@@ -1,4 +1,5 @@
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/putting_set.dart';
 
 class SessionRepository {
   PuttingSession? currentSession;
@@ -10,6 +11,12 @@ class SessionRepository {
 
   void deleteSession(PuttingSession session) {
     allSessions.remove(session);
+  }
+
+  void deleteSet(PuttingSet set) {
+    if (currentSession != null && currentSession?.sets != null) {
+      currentSession?.sets.remove(set);
+    }
   }
 
   List<PuttingSession> get sessions {
