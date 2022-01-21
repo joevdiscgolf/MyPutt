@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/screens/record_putting/view/components/dialogs/confirm_delete_dialog.dart';
+import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
 
 class SessionListRow extends StatelessWidget {

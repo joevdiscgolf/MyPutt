@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/screens/record_putting/view/components/session_list_row.dart';
-import 'package:myputt/screens/record_putting/view/record_screen.dart';
-import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
+import 'package:myputt/screens/sessions/components/session_list_row.dart';
+import 'package:myputt/screens/record/record_screen.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -11,10 +11,10 @@ class SessionsScreen extends StatefulWidget {
   static String routeName = '/sessions_screen';
 
   @override
-  _SessionsScreenState createState() => _SessionsScreenState();
+  _SessionsState createState() => _SessionsState();
 }
 
-class _SessionsScreenState extends State<SessionsScreen> {
+class _SessionsState extends State<SessionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -32,7 +32,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                    BlocBuilder<SessionsCubit, SessionsState>(
                       builder: (context, state) {
                         if (state is! SessionInProgressState) {
                           return Container();
@@ -88,14 +88,15 @@ class _SessionsScreenState extends State<SessionsScreen> {
                                       ),
                                     ),
                                     onTap: () {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              BlocProvider.value(
-                                                  value: BlocProvider.of<
-                                                          SessionsScreenCubit>(
-                                                      context),
-                                                  child:
-                                                      const RecordScreen())));
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  BlocProvider.value(
+                                                      value: BlocProvider.of<
+                                                              SessionsCubit>(
+                                                          context),
+                                                      child:
+                                                          const RecordScreen())));
                                     },
                                   ),
                                 ),
@@ -105,7 +106,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
                         }
                       },
                     ),
-                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                    BlocBuilder<SessionsCubit, SessionsState>(
                       builder: (context, state) {
                         return Flexible(
                           fit: FlexFit.loose,
@@ -117,8 +118,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
                                       session: entry.value,
                                       index: entry.key + 1,
                                       delete: () {
-                                        BlocProvider.of<SessionsScreenCubit>(
-                                                context)
+                                        BlocProvider.of<SessionsCubit>(context)
                                             .deleteSession(entry.value);
                                       }))
                                   .toList()
@@ -126,7 +126,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
                         );
                       },
                     ),
-                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                    BlocBuilder<SessionsCubit, SessionsState>(
                       builder: (context, state) {
                         if (state is SessionInProgressState) {
                           return Container();
@@ -142,13 +142,13 @@ class _SessionsScreenState extends State<SessionsScreen> {
                               child: const Icon(FlutterRemix.add_line),
                               onPressed: () {
                                 if (state is! SessionInProgressState) {
-                                  BlocProvider.of<SessionsScreenCubit>(context)
+                                  BlocProvider.of<SessionsCubit>(context)
                                       .startSession();
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           BlocProvider.value(
                                               value: BlocProvider.of<
-                                                  SessionsScreenCubit>(context),
+                                                  SessionsCubit>(context),
                                               child: const RecordScreen())));
                                 }
                               }),

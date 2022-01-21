@@ -6,12 +6,12 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/locator.dart';
 
-part 'sessions_screen_state.dart';
+part 'sessions_state.dart';
 
-class SessionsScreenCubit extends Cubit<SessionsScreenState> {
+class SessionsCubit extends Cubit<SessionsState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
-  SessionsScreenCubit() : super(NoActiveSessionState(sessions: const []));
+  SessionsCubit() : super(NoActiveSessionState(sessions: const []));
 
   void startSession() {
     _sessionRepository.currentSession = PuttingSession(

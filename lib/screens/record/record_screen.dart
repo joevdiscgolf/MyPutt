@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/screens/record_putting/cubits/sessions_screen_cubit.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/screens/record_putting/view/components/putting_set_row.dart';
+import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -43,7 +43,7 @@ class _RecordScreenState extends State<RecordScreen> {
   /* showDialog(
                       context: context,
                       builder: (dialogContext) => BlocProvider.value(
-                          value: BlocProvider.of<SessionsScreenCubit>(context),
+                          value: BlocProvider.of<SessionsCubit>(context),
                           child: FinishSessionDialog(recordScreenState: this)))
                   .then((value) => dialogCallBack());*/
   @override
@@ -52,18 +52,17 @@ class _RecordScreenState extends State<RecordScreen> {
       backgroundColor: Colors.grey[100]!,
       appBar: AppBar(
         actions: [
-          BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+          BlocBuilder<SessionsCubit, SessionsState>(
             builder: (context, state) {
               return ElevatedButton(
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        builder: (dialogContext) => BlocProvider.value(
-                            value:
-                                BlocProvider.of<SessionsScreenCubit>(context),
-                            child: FinishSessionDialog(
-                                recordScreenState:
-                                    this))).then((value) => dialogCallBack());
+                            context: context,
+                            builder: (dialogContext) => BlocProvider.value(
+                                value: BlocProvider.of<SessionsCubit>(context),
+                                child: FinishSessionDialog(
+                                    recordScreenState: this)))
+                        .then((value) => dialogCallBack());
                   },
                   child: const Text('Finish'));
             },
@@ -157,7 +156,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       height: 50,
                       icon: FlutterRemix.arrow_right_line,
                       onPressed: () {
-                        BlocProvider.of<SessionsScreenCubit>(context).addSet(
+                        BlocProvider.of<SessionsCubit>(context).addSet(
                             PuttingSet(
                                 puttsMade: _focusedIndex,
                                 puttsAttempted: _setLength,
@@ -338,8 +337,7 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Widget _previousSetsList(BuildContext context) {
-    return BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
-        builder: (context, state) {
+    return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
       if (state is SessionInProgressState) {
         return Flexible(
           fit: FlexFit.loose,
@@ -353,7 +351,7 @@ class _RecordScreenState extends State<RecordScreen> {
                           set: entry.value,
                           index: entry.key,
                           delete: () {
-                            BlocProvider.of<SessionsScreenCubit>(context)
+                            BlocProvider.of<SessionsCubit>(context)
                                 .deleteSet(entry.value);
                           }))
                       .toList()
@@ -425,11 +423,11 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                           setState(() {
                             _dialogErrorText = '';
                           });
-                          BlocProvider.of<SessionsScreenCubit>(context)
+                          BlocProvider.of<SessionsCubit>(context)
                               .continueSession();
                           Navigator.pop(context);
                         }),
-                    BlocBuilder<SessionsScreenCubit, SessionsScreenState>(
+                    BlocBuilder<SessionsCubit, SessionsState>(
                       builder: (context, state) {
                         if (state is SessionInProgressState) {
                           return PrimaryButton(
@@ -446,7 +444,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                   _dialogErrorText = 'Empty session!';
                                 });
                               } else {
-                                BlocProvider.of<SessionsScreenCubit>(context)
+                                BlocProvider.of<SessionsCubit>(context)
                                     .completeSession();
                                 widget.recordScreenState.sessionInProgress =
                                     false;
