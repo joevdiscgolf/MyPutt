@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 
 class PercentageRow extends StatefulWidget {
   const PercentageRow(
-      {Key? key, required this.distance, required this.percentage})
+      {Key? key,
+      required this.distance,
+      required this.percentage,
+      required this.allTimePercentage})
       : super(key: key);
 
   final double percentage;
+  final double allTimePercentage;
   final int distance;
 
   @override
@@ -46,7 +51,18 @@ class _PercentageRowState extends State<PercentageRow> {
           ]),
           width: 80,
           height: 80,
-        )
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Row(children: <Widget>[
+          widget.percentage < widget.allTimePercentage
+              ? const Icon(FlutterRemix.arrow_down_line)
+              : const Icon(FlutterRemix.arrow_up_line),
+          Text((100 * (widget.percentage - widget.allTimePercentage))
+              .round()
+              .toString())
+        ]),
       ]),
     );
   }
