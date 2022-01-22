@@ -5,8 +5,8 @@ class PuttingSet {
       {required this.puttsMade,
       required this.puttsAttempted,
       required this.distance});
-  final int puttsMade;
-  final int puttsAttempted;
+  final num puttsMade;
+  final num puttsAttempted;
   final int distance;
   Conditions? conditions;
 }

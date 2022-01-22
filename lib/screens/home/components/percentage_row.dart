@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 
 class PercentageRow extends StatefulWidget {
   const PercentageRow(
-      {Key? key, required this.distance, required this.percentage})
+      {Key? key,
+      required this.distance,
+      required this.percentage,
+      required this.allTimePercentage})
       : super(key: key);
 
   final double percentage;
+  final double allTimePercentage;
   final int distance;
 
   @override
@@ -24,14 +29,16 @@ class _PercentageRowState extends State<PercentageRow> {
         const SizedBox(width: 20),
         SizedBox(
           child: Stack(children: <Widget>[
-            Container(
+            SizedBox(
                 width: 80,
                 height: 80,
                 child: TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.0, end: widget.percentage),
                   duration: const Duration(milliseconds: 300),
                   builder: (context, value, _) => CircularProgressIndicator(
-                    color: widget.percentage < 0.5 ? Colors.red : Colors.green,
+                    color: widget.percentage < widget.allTimePercentage
+                        ? Colors.red
+                        : Colors.green,
                     backgroundColor: Colors.grey[200],
                     value: value,
                     strokeWidth: 5,
@@ -46,7 +53,24 @@ class _PercentageRowState extends State<PercentageRow> {
           ]),
           width: 80,
           height: 80,
-        )
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Row(children: <Widget>[
+          widget.percentage < widget.allTimePercentage
+              ? const Icon(FlutterRemix.arrow_down_line, color: Colors.red)
+              : const Icon(FlutterRemix.arrow_up_line, color: Colors.green),
+          Text(
+              (100 * (widget.percentage - widget.allTimePercentage))
+                  .round()
+                  .toString(),
+              style: TextStyle(
+                color: widget.percentage < widget.allTimePercentage
+                    ? Colors.red
+                    : Colors.green,
+              ))
+        ]),
       ]),
     );
   }
