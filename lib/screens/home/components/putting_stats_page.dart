@@ -43,19 +43,13 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    PercentagesCard(
-                      percentages: widget.circle == Circles.circle1
-                          ? circleOnePercentages
-                          : cirlceTwoPercentages,
-                      allTimePercentages: widget.circle == Circles.circle1
-                          ? circleOneAllTimePercentages
-                          : circleTwoAllTimePercentages,
-                    ),
-                  ],
+                child: PercentagesCard(
+                  percentages: widget.circle == Circles.circle1
+                      ? circleOnePercentages
+                      : cirlceTwoPercentages,
+                  allTimePercentages: widget.circle == Circles.circle1
+                      ? circleOneAllTimePercentages
+                      : circleTwoAllTimePercentages,
                 )),
           ),
         ],

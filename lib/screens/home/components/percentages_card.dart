@@ -17,12 +17,19 @@ class PercentagesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: percentages.entries
-            .map((entry) => PercentageRow(
-                distance: entry.key,
-                percentage: entry.value,
-                allTimePercentage: allTimePercentages[entry.key] ?? 0.5))
-            .toList());
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          fit: FlexFit.loose,
+          child: ListView(
+              children: percentages.entries
+                  .map((entry) => PercentageRow(
+                      distance: entry.key,
+                      percentage: entry.value,
+                      allTimePercentage: allTimePercentages[entry.key] ?? 0.5))
+                  .toList()),
+        ),
+      ],
+    );
   }
 }
