@@ -8,9 +8,9 @@ class SessionRepository {
   List<PuttingSession> allSessions = [];
   final DatabaseService _databaseService = DatabaseService();
 
-  void addCompletedSession(PuttingSession sessionToAdd) async {
+  Future<void> addCompletedSession(PuttingSession sessionToAdd) async {
     allSessions.add(sessionToAdd);
-    _databaseService.addCompletedSession(sessionToAdd);
+    await _databaseService.addCompletedSession(sessionToAdd);
   }
 
   void deleteSession(PuttingSession sessionToDelete) {

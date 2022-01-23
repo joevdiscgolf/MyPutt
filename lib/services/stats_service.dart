@@ -61,11 +61,7 @@ class StatsService {
       sessionIndex += 1;
     });
 
-    print(sessionRangePuttsAttempted);
-
     sessionRangePuttsAttempted.entries.forEach((entry) {
-      print(entry.key);
-      print(entry.value);
       if (sessionRangePuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneSessionRangeFractions[entry.key] =

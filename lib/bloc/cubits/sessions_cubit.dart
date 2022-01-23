@@ -38,10 +38,12 @@ class SessionsCubit extends Cubit<SessionsState> {
                     '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}')));
   }
 
-  void completeSession() {
-    _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
+  Future<void> completeSession() async {
+    await _sessionRepository
+        .addCompletedSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
     emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
+    print('completed session');
   }
 
   void addSet(PuttingSet set) {

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
@@ -14,8 +15,14 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   HomeScreenCubit() : super(HomeScreenLoading()) {
     final stats =
         _statsService.getStatsForSessions(2, _sessionRepository.allSessions);
-    print(stats.circleOnePercentages);
-    print(stats.circleOneAverages);
+    emit(HomeScreenLoaded(stats: stats));
+  }
+
+  void reloadStats() {
+    print('reloading stats');
+
+    final stats =
+        _statsService.getStatsForSessions(2, _sessionRepository.allSessions);
     emit(HomeScreenLoaded(stats: stats));
   }
 }

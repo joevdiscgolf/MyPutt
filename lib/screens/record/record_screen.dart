@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
@@ -425,7 +426,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                             width: 100,
                             height: 50,
                             backgroundColor: Colors.green,
-                            onPressed: () {
+                            onPressed: () async {
                               final List<PuttingSet>? sets =
                                   state.currentSession.sets;
                               if (sets == null || sets.isEmpty) {
@@ -433,8 +434,10 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                   _dialogErrorText = 'Empty session!';
                                 });
                               } else {
-                                BlocProvider.of<SessionsCubit>(context)
+                                await BlocProvider.of<SessionsCubit>(context)
                                     .completeSession();
+                                BlocProvider.of<HomeScreenCubit>(context)
+                                    .reloadStats();
                                 widget.recordScreenState.sessionInProgress =
                                     false;
                                 Navigator.pop(context);
