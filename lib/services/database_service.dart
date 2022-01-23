@@ -69,7 +69,11 @@ class DatabaseService {
   }
 
   Future<PuttingSession?> getCurrentSession() async {
-    return _dataLoader.getCurrentSession(uid);
+    final sessionsDocument = await _dataLoader.getUserSessionsDocument(uid);
+    if (sessionsDocument == null) {
+      return null;
+    }
+    return sessionsDocument.currentSession;
   }
 
   Future<List<PuttingSession?>> getCompletedSessions() async {

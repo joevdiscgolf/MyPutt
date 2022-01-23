@@ -11,14 +11,9 @@ SessionsDocument _$SessionsDocumentFromJson(Map json) => SessionsDocument(
           ? null
           : PuttingSession.fromJson(
               Map<String, dynamic>.from(json['currentSession'] as Map)),
-      sessions: (json['sessions'] as List<dynamic>?)
-          ?.map((e) =>
-              PuttingSession.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
     );
 
 Map<String, dynamic> _$SessionsDocumentToJson(SessionsDocument instance) =>
     <String, dynamic>{
       'currentSession': instance.currentSession?.toJson(),
-      'sessions': instance.sessions?.map((e) => e.toJson()).toList(),
     };

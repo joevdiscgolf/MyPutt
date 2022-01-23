@@ -5,9 +5,8 @@ part 'sessions_document.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class SessionsDocument {
-  SessionsDocument({this.currentSession, this.sessions});
+  SessionsDocument({this.currentSession});
   final PuttingSession? currentSession;
-  final List<PuttingSession>? sessions;
 
   factory SessionsDocument.fromJson(Map<String, dynamic> json) =>
       _$SessionsDocumentFromJson(json);

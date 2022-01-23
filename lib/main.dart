@@ -18,9 +18,9 @@ void main() async {
   await Future.delayed(const Duration(milliseconds: 100), () async {
     await locator.get<DatabaseService>().updateCurrentSession();
   });
-  await Future.delayed(const Duration(milliseconds: 100), () async {
+  /*await Future.delayed(const Duration(milliseconds: 100), () async {
     await locator.get<DatabaseService>().deleteCurrentSession();
-  });
+  });*/
   print(await locator.get<DatabaseService>().getCompletedSessions().then(
       (sessions) => sessions.map((session) => session!.dateStarted).toList()));
   print(await locator.get<DatabaseService>().getCurrentSession());

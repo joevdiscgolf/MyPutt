@@ -1,22 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/utils/constants.dart';
 import 'dart:convert';
+import 'package:myputt/data/types/sessions_document.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBDataLoader {
-  Future<PuttingSession?> getCurrentSession(String uid) async {
+  Future<SessionsDocument?> getUserSessionsDocument(String uid) async {
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
-    final userDocument = await currentSessionReference
-        .get()
-        .then<PuttingSession>((snapshot) => snapshot.data as PuttingSession)
-        .catchError((error) {
-      print(error.message);
-    });
-
-    return userDocument;
+    final snapshot = await currentSessionReference.get();
+    if (snapshot.exists) {
+      final Map<String, dynamic>? data = snapshot.data();
+      return SessionsDocument.fromJson(data!);
+    } else {
+      return null;
+    }
   }
 
   Future<List<PuttingSession?>> getCompletedSessions(String uid) async {
