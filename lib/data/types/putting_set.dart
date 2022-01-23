@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/conditions/conditions.dart';
 
+part 'putting_set.g.dart';
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSet {
   PuttingSet(
       {required this.puttsMade,
@@ -9,4 +13,9 @@ class PuttingSet {
   final num puttsAttempted;
   final int distance;
   Conditions? conditions;
+
+  factory PuttingSet.fromJson(Map<String, dynamic> json) =>
+      _$PuttingSetFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PuttingSetToJson(this);
 }

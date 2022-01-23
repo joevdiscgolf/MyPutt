@@ -58,7 +58,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                     recordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
-                  child: const Text('Finish'));
+                  child: const Text('Save'));
             },
           ),
         ],
@@ -91,45 +91,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Column(
-                          children: [
-                            const Text('Putters',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            Row(
-                              children: [
-                                ElevatedButton(
-                                  child: const Text('-',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (_setLength > 1) _setLength -= 1;
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(_setLength.toString()),
-                                const SizedBox(width: 5),
-                                ElevatedButton(
-                                  child: const Text('+',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  onPressed: () {
-                                    setState(() {
-                                      _setLength += 1;
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        child: _putterCountPicker(context),
                       ),
                     ],
                   ),
@@ -139,27 +101,21 @@ class _RecordScreenState extends State<RecordScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  child: PrimaryButton(
-                      label: 'Finish set',
-                      width: double.infinity,
-                      height: 50,
-                      icon: FlutterRemix.arrow_right_line,
-                      onPressed: () {
-                        BlocProvider.of<SessionsCubit>(context).addSet(
-                            PuttingSet(
-                                puttsMade: _focusedIndex,
-                                puttsAttempted: _setLength,
-                                distance: _distances[_distancesIndex]));
-                      }),
-                ),
-                const SizedBox(height: 10),
-              ],
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: PrimaryButton(
+                  label: 'Add set',
+                  width: double.infinity,
+                  height: 50,
+                  icon: FlutterRemix.arrow_right_line,
+                  onPressed: () {
+                    BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
+                        puttsMade: _focusedIndex,
+                        puttsAttempted: _setLength,
+                        distance: _distances[_distancesIndex]));
+                  }),
             ),
+            const SizedBox(height: 10),
             _previousSetsList(context),
           ],
         ),
@@ -256,6 +212,45 @@ class _RecordScreenState extends State<RecordScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _putterCountPicker(BuildContext context) {
+    return Column(
+      children: [
+        const Text('Putters', style: TextStyle(fontWeight: FontWeight.bold)),
+        Row(
+          children: [
+            ElevatedButton(
+              child: const Text('-',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                setState(() {
+                  if (_setLength > 1) _setLength -= 1;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(_setLength.toString()),
+            const SizedBox(width: 5),
+            ElevatedButton(
+              child: const Text('+',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                setState(() {
+                  _setLength += 1;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

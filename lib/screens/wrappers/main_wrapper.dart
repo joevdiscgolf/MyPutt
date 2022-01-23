@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
 
@@ -22,6 +24,7 @@ class _MainWrapperState extends State<MainWrapper> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<SessionsCubit>(context).onAppLaunch();
     return Scaffold(
       body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

@@ -1,16 +1,41 @@
+import 'package:intl/intl.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/services/database_service.dart';
 
 class SessionRepository {
   PuttingSession? currentSession;
   List<PuttingSession> allSessions = [];
+  final DatabaseService _databaseService = DatabaseService();
 
-  void addCompletedSession(PuttingSession session) {
-    allSessions.add(session);
+  void addCompletedSession(PuttingSession sessionToAdd) async {
+    allSessions.add(sessionToAdd);
+    _databaseService.addCompletedSession(sessionToAdd);
   }
 
-  void deleteSession(PuttingSession session) {
-    allSessions.remove(session);
+  void deleteSession(PuttingSession sessionToDelete) {
+    allSessions.remove(sessionToDelete);
+    _databaseService.deleteCompletedSession(sessionToDelete);
+  }
+
+  void startCurrentSession() {
+    currentSession = PuttingSession(
+      dateStarted:
+          '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
+    );
+    _databaseService.startCurrentSession(currentSession!);
+  }
+
+  void deleteCurrentSession() {
+    currentSession = null;
+    _databaseService.deleteCurrentSession();
+  }
+
+  void addSet(PuttingSet set) {
+    if (currentSession != null) {
+      currentSession!.addSet(set);
+      _databaseService.updateCurrentSession(currentSession!);
+    }
   }
 
   void deleteSet(PuttingSet set) {
@@ -21,5 +46,27 @@ class SessionRepository {
 
   List<PuttingSession> get sessions {
     return allSessions;
+  }
+
+  Future<bool> fetchCurrentSession() async {
+    final PuttingSession? newCurrentSession =
+        await _databaseService.getCurrentSession();
+    if (newCurrentSession != null) {
+      currentSession = newCurrentSession;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> fetchCompletedSessions() async {
+    final List<PuttingSession>? newCompletedSessionsList =
+        await _databaseService.getCompletedSessions();
+    if (newCompletedSessionsList != null) {
+      allSessions = newCompletedSessionsList;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
