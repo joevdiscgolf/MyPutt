@@ -11,9 +11,8 @@ part 'sessions_state.dart';
 class SessionsCubit extends Cubit<SessionsState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
-  SessionsCubit() : super(NoActiveSessionState(sessions: const []));
-
-  void onAppLaunch() {
+  //SessionsCubit() : super(const NoActiveSessionState(sessions: []));
+  SessionsCubit() : super(const SessionLoadingState(sessions: [])) {
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
           sessions: _sessionRepository.allSessions,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/percentages_card.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 
@@ -43,13 +45,21 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                child: PercentagesCard(
-                  percentages: widget.circle == Circles.circle1
-                      ? circleOnePercentages
-                      : cirlceTwoPercentages,
-                  allTimePercentages: widget.circle == Circles.circle1
-                      ? circleOneAllTimePercentages
-                      : circleTwoAllTimePercentages,
+                child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
+                  builder: (context, state) {
+                    if (state is HomeScreenLoaded) {
+                      return PercentagesCard(
+                        percentages: widget.circle == Circles.circle1
+                            ? state.stats.circleOnePercentages ?? {}
+                            : state.stats.circleTwoPercentages ?? {},
+                        allTimePercentages: widget.circle == Circles.circle1
+                            ? state.stats.circleOneAverages ?? {}
+                            : state.stats.circleTwoAverages ?? {},
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
                 )),
           ),
         ],
