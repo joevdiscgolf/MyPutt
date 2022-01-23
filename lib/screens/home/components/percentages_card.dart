@@ -11,8 +11,8 @@ class PercentagesCard extends StatelessWidget {
       : super(key: key);
 
   final Circles? circle;
-  final Map<int, double> percentages;
-  final Map<int, double> allTimePercentages;
+  final Map<int, num?> percentages;
+  final Map<int, num?> allTimePercentages;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +23,13 @@ class PercentagesCard extends StatelessWidget {
           fit: FlexFit.loose,
           child: ListView(
               children: percentages.entries
-                  .map((entry) => PercentageRow(
-                      distance: entry.key,
-                      percentage: entry.value,
-                      allTimePercentage: allTimePercentages[entry.key] ?? 0.5))
+                  .map((entry) => Builder(builder: (context) {
+                        return PercentageRow(
+                            distance: entry.key,
+                            percentage: entry.value,
+                            allTimePercentage:
+                                allTimePercentages[entry.key] ?? 0.5);
+                      }))
                   .toList()),
         ),
       ],

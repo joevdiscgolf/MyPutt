@@ -12,11 +12,11 @@ class Stats {
       this.circleTwoPercentages,
       this.generalStats});
 
-  final Map<int, double>? circleOnePercentages;
-  final Map<int, double>? circleOneAverages;
+  final Map<int, num?>? circleOnePercentages;
+  final Map<int, num?>? circleOneAverages;
 
-  final Map<int, double>? circleTwoPercentages;
-  final Map<int, double>? circleTwoAverages;
+  final Map<int, num?>? circleTwoPercentages;
+  final Map<int, num?>? circleTwoAverages;
 
   final GeneralStats? generalStats;
 

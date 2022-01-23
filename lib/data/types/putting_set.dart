@@ -9,9 +9,9 @@ class PuttingSet {
       {required this.puttsMade,
       required this.puttsAttempted,
       required this.distance});
-  final int puttsMade;
-  final int puttsAttempted;
-  final int distance;
+  final num puttsMade;
+  final num puttsAttempted;
+  final num distance;
   Conditions? conditions;
 
   factory PuttingSet.fromJson(Map<String, dynamic> json) =>

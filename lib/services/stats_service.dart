@@ -3,26 +3,100 @@ import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
 
 class StatsService {
-  // sessionLimit is an int and it's the number of sessions to look back for stats.
-  /*Stats getStats(int sessionLimit, List<PuttingSession> sessions) {
-    Map<int, int> sessionRangePuttsAttempted = {};
-    Map<int, int> sessionRangePuttsMade = {};
-    Map<int, int> overallPuttsAttempted = {};
-    Map<int, int> overallPuttsMade = {};
+  // sessionLimit is an num and it's the number of sessions to look back for stats.
+  Stats getStatsForSessions(num sessionLimit, List<PuttingSession> sessions) {
+    Map<int, num> sessionRangePuttsAttempted = {};
+    Map<int, num> sessionRangePuttsMade = {};
+    Map<int, num> sessionRangeFractions = {};
+    Map<int, num> overallPuttsAttempted = {};
+    Map<int, num> overallPuttsMade = {};
+    Map<int, num> overallFractions = {};
 
-    int sessionIndex = 0;
+    Map<int, num?> circleOneSessionRangeFractions = {
+      10: null,
+      15: null,
+      20: null,
+      25: null,
+      30: null
+    };
+    Map<int, num?> circleTwoSessionRangeFractions = {};
+
+    Map<int, num> circleOneOverallFractions = {};
+    Map<int, num> circleTwoOverallFractions = {};
+
+    int totalAttempts = 0;
+    int totalMade = 0;
+
+    num sessionIndex = 0;
 
     final sessionsInOrder = List.from(sessions).reversed;
     sessionsInOrder.forEach((session) {
       final sets = session.sets;
-        sets.forEach((set) {
-          final distance = set.distance;
-          /*overallPuttsAttempted[distance] += set.puttsAttempted;
-          overallPuttsMade[distance] += set.puttsMade;*/
-          if (sessionIndex < sessionLimit) {
+      sets.forEach((set) {
+        final distance = set.distance;
 
-          }
-        });
+        totalAttempts += set.puttsAttempted as int;
+        totalMade += set.puttsMade as int;
+
+        overallPuttsAttempted[distance] =
+            overallPuttsAttempted[distance] == null
+                ? set.puttsAttempted
+                : overallPuttsAttempted[distance]! + set.puttsAttempted;
+        overallPuttsMade[distance] = overallPuttsMade[distance] == null
+            ? set.puttsMade
+            : overallPuttsMade[distance]! + set.puttsMade;
+
+        if (sessionIndex < sessionLimit) {
+          sessionRangePuttsAttempted[distance] =
+              sessionRangePuttsAttempted[distance] == null
+                  ? set.puttsAttempted
+                  : sessionRangePuttsAttempted[distance]! + set.puttsAttempted;
+
+          sessionRangePuttsMade[distance] =
+              sessionRangePuttsMade[distance] == null
+                  ? set.puttsMade
+                  : sessionRangePuttsMade[distance]! + set.puttsMade;
+        }
+      });
+      sessionIndex += 1;
     });
-  }*/
+
+    print(sessionRangePuttsAttempted);
+
+    sessionRangePuttsAttempted.entries.forEach((entry) {
+      print(entry.key);
+      print(entry.value);
+      if (sessionRangePuttsMade[entry.key] != null) {
+        if (entry.key < 40) {
+          circleOneSessionRangeFractions[entry.key] =
+              sessionRangePuttsMade[entry.key]! / entry.value;
+        } else {
+          circleTwoSessionRangeFractions[entry.key] =
+              sessionRangePuttsMade[entry.key]! / entry.value;
+        }
+      }
+    });
+
+    overallPuttsAttempted.entries.forEach((entry) {
+      if (overallPuttsMade[entry.key] != null) {
+        if (entry.key < 40) {
+          circleOneOverallFractions[entry.key] =
+              overallPuttsMade[entry.key]! / entry.value;
+        } else {
+          circleTwoOverallFractions[entry.key] =
+              overallPuttsMade[entry.key]! / entry.value;
+        }
+      }
+    });
+
+    return Stats(
+        circleOnePercentages: circleOneSessionRangeFractions,
+        circleTwoPercentages: circleTwoSessionRangeFractions,
+        circleOneAverages: circleOneOverallFractions,
+        circleTwoAverages: circleTwoOverallFractions,
+        generalStats: GeneralStats(
+          totalAttempts: totalAttempts,
+          totalMade: totalMade,
+        ));
+  }
 }
