@@ -1,0 +1,24 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'putting_set.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PuttingSet _$PuttingSetFromJson(Map json) => PuttingSet(
+      puttsMade: json['puttsMade'] as num,
+      puttsAttempted: json['puttsAttempted'] as num,
+      distance: json['distance'] as int,
+    )..conditions = json['conditions'] == null
+        ? null
+        : Conditions.fromJson(
+            Map<String, dynamic>.from(json['conditions'] as Map));
+
+Map<String, dynamic> _$PuttingSetToJson(PuttingSet instance) =>
+    <String, dynamic>{
+      'puttsMade': instance.puttsMade,
+      'puttsAttempted': instance.puttsAttempted,
+      'distance': instance.distance,
+      'conditions': instance.conditions?.toJson(),
+    };

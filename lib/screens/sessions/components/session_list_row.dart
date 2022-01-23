@@ -29,7 +29,14 @@ class SessionListRow extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(
-                  child: const Icon(FlutterRemix.delete_bin_fill),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                  child: const Icon(
+                    FlutterRemix.close_line,
+                    color: Colors.red,
+                  ),
                   onPressed: () {
                     showDialog(
                         context: context,

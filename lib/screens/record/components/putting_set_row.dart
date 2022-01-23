@@ -75,8 +75,8 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               child: const Icon(
-                FlutterRemix.delete_bin_fill,
-                color: Colors.black,
+                FlutterRemix.close_line,
+                color: Colors.red,
               ),
               style: ElevatedButton.styleFrom(
                 primary: Colors.transparent,

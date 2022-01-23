@@ -15,9 +15,9 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   void startSession() {
     _sessionRepository.currentSession = PuttingSession(
-        dateStarted:
-            '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-        uid: 'myuid');
+      dateStarted:
+          '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
+    );
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession!));
@@ -29,8 +29,7 @@ class SessionsCubit extends Cubit<SessionsState> {
         currentSession: _sessionRepository.currentSession ??
             PuttingSession(
                 dateStarted:
-                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-                uid: 'myuid')));
+                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}')));
   }
 
   void completeSession() {
@@ -45,8 +44,7 @@ class SessionsCubit extends Cubit<SessionsState> {
         currentSession: _sessionRepository.currentSession ??
             PuttingSession(
                 dateStarted:
-                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-                uid: 'myuid')));
+                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}')));
   }
 
   void deleteSet(PuttingSet set) {

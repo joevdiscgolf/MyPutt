@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "727184721057",
+    "project_id": "myputt-14d54",
+    "storage_bucket": "myputt-14d54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727184721057:android:454607466f0b1f7c9d9ce0",
+        "android_client_info": {
+          "package_name": "com.joevanderveen.myputt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "727184721057-fla9s9oa2eib2efn0ngva7io2nv9dk97.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUavZJgKetlob8fVgtahpWbRa6EXmPcVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727184721057-fla9s9oa2eib2efn0ngva7io2nv9dk97.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
