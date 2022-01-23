@@ -18,7 +18,7 @@ class FBDataLoader {
     }
   }
 
-  Future<List<PuttingSession?>> getCompletedSessions(String uid) async {
+  Future<List<PuttingSession>?> getCompletedSessions(String uid) async {
     final completedSessionsReference = firestore
         .collection('$sessionsCollection/$uid/$completedSessionsCollection');
 

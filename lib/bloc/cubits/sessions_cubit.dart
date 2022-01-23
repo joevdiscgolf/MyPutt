@@ -13,11 +13,18 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   SessionsCubit() : super(NoActiveSessionState(sessions: const []));
 
+  void onAppLaunch() {
+    if (_sessionRepository.currentSession != null) {
+      emit(SessionInProgressState(
+          sessions: _sessionRepository.allSessions,
+          currentSession: _sessionRepository.currentSession!));
+    } else {
+      emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
+    }
+  }
+
   void startSession() {
-    _sessionRepository.currentSession = PuttingSession(
-      dateStarted:
-          '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-    );
+    _sessionRepository.startCurrentSession();
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession!));
@@ -34,11 +41,12 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   void completeSession() {
     _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
+    _sessionRepository.deleteCurrentSession();
     emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
   }
 
   void addSet(PuttingSet set) {
-    _sessionRepository.currentSession?.addSet(set);
+    _sessionRepository.addSet(set);
     emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession ??

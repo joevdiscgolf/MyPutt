@@ -63,8 +63,9 @@ class _PercentageRowState extends State<PercentageRow> {
               : const Icon(FlutterRemix.arrow_up_line, color: Colors.green),
           Text(
               (100 * (widget.percentage - widget.allTimePercentage))
-                  .round()
-                  .toString(),
+                      .round()
+                      .toString() +
+                  ' %',
               style: TextStyle(
                 color: widget.percentage < widget.allTimePercentage
                     ? Colors.red

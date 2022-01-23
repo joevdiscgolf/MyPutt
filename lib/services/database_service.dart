@@ -9,8 +9,7 @@ class DatabaseService {
   final _dataWriter = FBDataWriter();
   final String uid = 'BnisFzLsy0PnJuXv26BQ86HTVJk2';
 
-  Future<bool> startCurrentSession(
-      /*PuttingSession session, String uid*/) async {
+  Future<bool> startCurrentSession(PuttingSession currentSession) async {
     final session = PuttingSession(dateStarted: DateTime.now().toString());
 
     /*final PuttingSession? currentSession =
@@ -20,11 +19,10 @@ class DatabaseService {
       return false;
     }*/
 
-    return _dataWriter.setCurrentSession(session, uid);
+    return _dataWriter.setCurrentSession(currentSession, uid);
   }
 
-  Future<bool> updateCurrentSession(
-      /*PuttingSession session, String uid*/) async {
+  Future<bool> updateCurrentSession(PuttingSession currentSession) async {
     final session = PuttingSession(dateStarted: DateTime.now().toString());
     session.addSet(PuttingSet(puttsAttempted: 5, puttsMade: 3, distance: 10));
 
@@ -35,7 +33,7 @@ class DatabaseService {
       return false;
     }*/
 
-    return _dataWriter.updateCurrentSession(session, uid);
+    return _dataWriter.updateCurrentSession(currentSession, uid);
   }
 
   Future<bool> deleteCurrentSession(
@@ -53,8 +51,7 @@ class DatabaseService {
     return _dataWriter.deleteCurrentSession(session, uid);
   }
 
-  Future<bool> addCompletedSession(
-      /*PuttingSession session, String uid*/) async {
+  Future<bool> addCompletedSession(PuttingSession sessionToAdd) async {
     final session = PuttingSession(dateStarted: DateTime.now().toString());
     session.addSet(PuttingSet(puttsAttempted: 5, puttsMade: 3, distance: 10));
 
@@ -65,7 +62,21 @@ class DatabaseService {
       return false;
     }*/
 
-    return _dataWriter.addCompletedSession(session, uid);
+    return _dataWriter.addCompletedSession(sessionToAdd, uid);
+  }
+
+  Future<bool> deleteCompletedSession(PuttingSession sessionToDelete) async {
+    final session = PuttingSession(dateStarted: DateTime.now().toString());
+    session.addSet(PuttingSet(puttsAttempted: 5, puttsMade: 3, distance: 10));
+
+    /*final PuttingSession? currentSession =
+        await _dataLoader.getCurrentSession(uid);
+
+    if (currentSession != null) {
+      return false;
+    }*/
+
+    return _dataWriter.deleteCompletedSession(sessionToDelete, uid);
   }
 
   Future<PuttingSession?> getCurrentSession() async {
@@ -76,8 +87,8 @@ class DatabaseService {
     return sessionsDocument.currentSession;
   }
 
-  Future<List<PuttingSession?>> getCompletedSessions() async {
+  Future<List<PuttingSession>?> getCompletedSessions() async {
     final completedSessions = await _dataLoader.getCompletedSessions(uid);
-    return completedSessions.where((session) => session != null).toList();
+    return completedSessions?.where((session) => session != null).toList();
   }
 }

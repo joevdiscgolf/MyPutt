@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,8 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await setUpLocator();
-  await locator.get<DatabaseService>().startCurrentSession();
-  await Future.delayed(const Duration(milliseconds: 100), () async {
+  /*await Future.delayed(const Duration(milliseconds: 100), () async {
     await locator.get<DatabaseService>().addCompletedSession();
   });
   await Future.delayed(const Duration(milliseconds: 100), () async {
@@ -23,7 +24,11 @@ void main() async {
   });*/
   print(await locator.get<DatabaseService>().getCompletedSessions().then(
       (sessions) => sessions.map((session) => session!.dateStarted).toList()));
-  print(await locator.get<DatabaseService>().getCurrentSession());
+  print(await locator.get<DatabaseService>().getCurrentSession());*/
+
+  await locator.get<SessionRepository>().fetchCurrentSession();
+  await locator.get<SessionRepository>().fetchCompletedSessions();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
