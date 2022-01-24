@@ -7,8 +7,8 @@ part of 'putting_set.dart';
 // **************************************************************************
 
 PuttingSet _$PuttingSetFromJson(Map json) => PuttingSet(
-      puttsMade: json['puttsMade'] as num,
-      puttsAttempted: json['puttsAttempted'] as num,
+      puttsMade: json['puttsMade'] as int,
+      puttsAttempted: json['puttsAttempted'] as int,
       distance: json['distance'] as int,
     )..conditions = json['conditions'] == null
         ? null

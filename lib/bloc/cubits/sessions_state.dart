@@ -25,3 +25,7 @@ class NoActiveSessionState extends SessionsState {
 class SessionErrorState extends SessionsState {
   const SessionErrorState({required sessions}) : super(sessions: sessions);
 }
+
+class SessionLoadingState extends SessionsState {
+  const SessionLoadingState({required sessions}) : super(sessions: sessions);
+}

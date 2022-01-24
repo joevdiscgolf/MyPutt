@@ -2,6 +2,7 @@ enum TimeRange {
   lastFive,
   lastTen,
   lastTwenty,
+  lastFifty,
   allTime,
 }
 

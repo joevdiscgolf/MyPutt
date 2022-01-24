@@ -4,27 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
-import 'package:myputt/repositories/sessions_repository.dart';
-import 'package:myputt/services/database_service.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   await setUpLocator();
-  /*await Future.delayed(const Duration(milliseconds: 100), () async {
-    await locator.get<DatabaseService>().addCompletedSession();
-  });
-  await Future.delayed(const Duration(milliseconds: 100), () async {
-    await locator.get<DatabaseService>().updateCurrentSession();
-  });
-  /*await Future.delayed(const Duration(milliseconds: 100), () async {
-    await locator.get<DatabaseService>().deleteCurrentSession();
-  });*/
-  print(await locator.get<DatabaseService>().getCompletedSessions().then(
-      (sessions) => sessions.map((session) => session!.dateStarted).toList()));
-  print(await locator.get<DatabaseService>().getCurrentSession());*/
+  await Firebase.initializeApp();
 
   await locator.get<SessionRepository>().fetchCurrentSession();
   await locator.get<SessionRepository>().fetchCompletedSessions();
@@ -43,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => SessionsCubit()),
+        BlocProvider(create: (_) => HomeScreenCubit()),
       ],
       child: const MaterialApp(
         title: 'MyPutt',

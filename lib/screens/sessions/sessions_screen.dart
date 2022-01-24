@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
@@ -23,6 +24,7 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
+              floatingActionButton: _addButton(context),
               appBar: AppBar(
                 title: const Text('Sessions'),
                 centerTitle: true,
@@ -32,9 +34,26 @@ class _SessionsState extends State<SessionsScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
+                    BlocBuilder<SessionsCubit, SessionsState>(
+                      builder: (context, state) {
+                        if (state is SessionErrorState) {
+                          return Container();
+                        } else {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Text('${state.sessions.length} Sessions',
+                                  style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                     _continueSessionPanel(context),
                     _sessionsListView(context),
-                    _addButton(context),
                   ],
                 ),
               ),
@@ -124,6 +143,7 @@ class _SessionsState extends State<SessionsScreen> {
                       delete: () {
                         BlocProvider.of<SessionsCubit>(context)
                             .deleteSession(entry.value);
+                        BlocProvider.of<HomeScreenCubit>(context).reloadStats();
                       }))
                   .toList()
                   .reversed)),
@@ -139,12 +159,12 @@ class _SessionsState extends State<SessionsScreen> {
           return Container();
         }
         return Align(
-          alignment: Alignment.centerRight,
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20), // <-- Splash color
-              ),
+          alignment: Alignment.bottomRight,
+          child: FloatingActionButton(
+              /*style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20), // <-- Splash color
+                        ),*/
               child: const Icon(FlutterRemix.add_line),
               onPressed: () {
                 if (state is! SessionInProgressState) {

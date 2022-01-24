@@ -11,9 +11,8 @@ part 'sessions_state.dart';
 class SessionsCubit extends Cubit<SessionsState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
-  SessionsCubit() : super(NoActiveSessionState(sessions: const []));
-
-  void onAppLaunch() {
+  //SessionsCubit() : super(const NoActiveSessionState(sessions: []));
+  SessionsCubit() : super(const SessionLoadingState(sessions: [])) {
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
           sessions: _sessionRepository.allSessions,
@@ -39,8 +38,9 @@ class SessionsCubit extends Cubit<SessionsState> {
                     '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}')));
   }
 
-  void completeSession() {
-    _sessionRepository.addCompletedSession(_sessionRepository.currentSession!);
+  Future<void> completeSession() async {
+    await _sessionRepository
+        .addCompletedSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
     emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
   }
