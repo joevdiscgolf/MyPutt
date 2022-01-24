@@ -24,16 +24,20 @@ class _PercentageRowState extends State<PercentageRow> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child:
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-        Text(widget.distance.toString() + ' ft',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        SizedBox(
+          width: 60,
+          child: Text(widget.distance.toString() + ' ft',
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        ),
         const SizedBox(width: 20),
         Builder(builder: (context) {
           if (widget.allTimePercentage != null && widget.percentage != null) {
             return SizedBox(
               child: Stack(children: <Widget>[
                 SizedBox(
-                    width: 80,
-                    height: 80,
+                    width: 60,
+                    height: 60,
                     child: TweenAnimationBuilder<double>(
                       tween: Tween<double>(
                           begin: 0.0, end: widget.percentage! as double),
@@ -55,15 +59,15 @@ class _PercentageRowState extends State<PercentageRow> {
                         builder: (context, value, _) =>
                             (Text((value * 100).round().toString() + ' %'))))
               ]),
-              width: 80,
-              height: 80,
+              width: 60,
+              height: 60,
             );
           } else {
             return SizedBox(
               child: Stack(children: <Widget>[
                 SizedBox(
-                  width: 80,
-                  height: 80,
+                  width: 60,
+                  height: 60,
                   child: CircularProgressIndicator(
                     color: Colors.grey[400],
                     backgroundColor: Colors.grey[200],
@@ -73,8 +77,8 @@ class _PercentageRowState extends State<PercentageRow> {
                 ),
                 const Center(child: Text('- %')),
               ]),
-              width: 80,
-              height: 80,
+              width: 60,
+              height: 60,
             );
           }
         }),
@@ -84,7 +88,7 @@ class _PercentageRowState extends State<PercentageRow> {
         Builder(builder: (context) {
           if (widget.allTimePercentage != null && widget.percentage != null) {
             return SizedBox(
-              width: 70,
+              width: 60,
               child: Row(children: <Widget>[
                 widget.percentage! < widget.allTimePercentage!
                     ? const Icon(FlutterRemix.arrow_down_line,
@@ -104,7 +108,7 @@ class _PercentageRowState extends State<PercentageRow> {
               ]),
             );
           } else {
-            return const SizedBox(width: 70, child: Text('- %'));
+            return const SizedBox(width: 60, child: Text('- %'));
           }
         }),
       ]),

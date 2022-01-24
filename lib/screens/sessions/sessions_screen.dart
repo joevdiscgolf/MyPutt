@@ -34,6 +34,24 @@ class _SessionsState extends State<SessionsScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
+                    BlocBuilder<SessionsCubit, SessionsState>(
+                      builder: (context, state) {
+                        if (state is SessionErrorState) {
+                          return Container();
+                        } else {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Text('${state.sessions.length} Sessions',
+                                  style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                     _continueSessionPanel(context),
                     _sessionsListView(context),
                   ],

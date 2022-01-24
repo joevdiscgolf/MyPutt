@@ -8,6 +8,7 @@ class HomeScreenInitial extends HomeScreenState {}
 class HomeScreenLoading extends HomeScreenState {}
 
 class HomeScreenLoaded extends HomeScreenState {
-  HomeScreenLoaded({required this.stats});
+  HomeScreenLoaded({required this.stats, required this.sessionRange});
   final Stats stats;
+  final int sessionRange;
 }

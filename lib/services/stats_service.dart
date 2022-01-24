@@ -19,7 +19,11 @@ class StatsService {
       25: null,
       30: null
     };
-    Map<int, num?> circleTwoSessionRangeFractions = {};
+    Map<int, num?> circleTwoSessionRangeFractions = {
+      40: null,
+      50: null,
+      60: null,
+    };
 
     Map<int, num> circleOneOverallFractions = {};
     Map<int, num> circleTwoOverallFractions = {};
@@ -46,7 +50,7 @@ class StatsService {
             ? set.puttsMade
             : overallPuttsMade[distance]! + set.puttsMade;
 
-        if (sessionIndex < sessionLimit) {
+        if (sessionIndex < sessionLimit || sessionLimit == 0) {
           sessionRangePuttsAttempted[distance] =
               sessionRangePuttsAttempted[distance] == null
                   ? set.puttsAttempted
