@@ -6,11 +6,16 @@ import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class PuttingSetRow extends StatefulWidget {
   const PuttingSetRow(
-      {Key? key, required this.set, required this.index, required this.delete})
+      {Key? key,
+      required this.set,
+      required this.index,
+      required this.delete,
+      required this.deletable})
       : super(key: key);
   final PuttingSet set;
   final int index;
   final Function delete;
+  final bool deletable;
 
   @override
   State<PuttingSetRow> createState() => _PuttingSetRowState();
@@ -71,25 +76,27 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             ),
           ),
           Text('${widget.set.distance} ft', style: textStyle),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              child: const Icon(
-                FlutterRemix.close_line,
-                color: Colors.red,
-              ),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.transparent,
-                shadowColor: Colors.transparent,
-              ),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => ConfirmDeleteDialog(
-                        delete: widget.delete, title: 'Delete set'));
-              },
-            ),
-          )
+          widget.deletable
+              ? Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    child: const Icon(
+                      FlutterRemix.close_line,
+                      color: Colors.red,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => ConfirmDeleteDialog(
+                              delete: widget.delete, title: 'Delete set'));
+                    },
+                  ),
+                )
+              : Container()
         ],
       ),
     );

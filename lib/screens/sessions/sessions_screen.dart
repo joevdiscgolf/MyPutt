@@ -6,6 +6,8 @@ import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 
+import 'completed_session_screen.dart';
+
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
 
@@ -137,14 +139,23 @@ class _SessionsState extends State<SessionsScreen> {
               children: List.from(state.sessions
                   .asMap()
                   .entries
-                  .map((entry) => SessionListRow(
-                      session: entry.value,
-                      index: entry.key + 1,
-                      delete: () {
-                        BlocProvider.of<SessionsCubit>(context)
-                            .deleteSession(entry.value);
-                        BlocProvider.of<HomeScreenCubit>(context).reloadStats();
-                      }))
+                  .map((entry) => InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  CompletedSessionScreen(
+                                      session: entry.value)));
+                        },
+                        child: SessionListRow(
+                            session: entry.value,
+                            index: entry.key + 1,
+                            delete: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .deleteSession(entry.value);
+                              BlocProvider.of<HomeScreenCubit>(context)
+                                  .reloadStats();
+                            }),
+                      ))
                   .toList()
                   .reversed)),
         );

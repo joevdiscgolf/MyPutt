@@ -340,6 +340,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       .map((entry) => PuttingSetRow(
                           set: entry.value,
                           index: entry.key,
+                          deletable: true,
                           delete: () {
                             BlocProvider.of<SessionsCubit>(context)
                                 .deleteSet(entry.value);
