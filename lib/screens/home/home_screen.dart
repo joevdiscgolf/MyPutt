@@ -29,9 +29,16 @@ class HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
           backgroundColor: Colors.grey[100]!,
           appBar: AppBar(
-              backgroundColor: Colors.blue,
-              title: const Text('MyPutt',
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold))),
+            backgroundColor: Colors.blue,
+            title: const Text('MyPutt',
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+            bottom: const TabBar(
+              tabs: [
+                Tab(icon: Text('Circle 1')),
+                Tab(icon: Text('Circle 2')),
+              ],
+            ),
+          ),
           body: Column(
             children: [
               Container(
@@ -45,7 +52,8 @@ class HomeScreenState extends State<HomeScreen> {
                               if (_sessionRangeIndex == entry.key) {
                                 return ElevatedButton(
                                     child: Text(entry.value,
-                                        style: TextStyle(color: Colors.black)),
+                                        style: const TextStyle(
+                                            color: Colors.black)),
                                     style: ElevatedButton.styleFrom(
                                         side: const BorderSide(
                                             width: 2.0, color: Colors.blue),
@@ -75,17 +83,6 @@ class HomeScreenState extends State<HomeScreen> {
                                   });
                             }))
                         .toList()),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: const TabBar(
-                  tabs: [
-                    Tab(icon: Text('Circle 1')),
-                    Tab(icon: Text('Circle 2')),
-                  ],
-                ),
               ),
               const Expanded(
                 child: TabBarView(children: [
