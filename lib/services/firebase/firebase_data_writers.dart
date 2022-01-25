@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/utils/constants.dart';
 
-FirebaseFirestore firestore = FirebaseFirestore.instance;
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBDataWriter {
   Future<bool> setCurrentSession(PuttingSession currentSession, uid) async {
+    print('data writer starting current session');
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
     return currentSessionReference
@@ -26,7 +27,7 @@ class FBDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> deleteCurrentSession(PuttingSession currentSession, uid) async {
+  Future<bool> deleteCurrentSession(uid) async {
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
     return currentSessionReference

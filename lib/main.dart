@@ -4,15 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
+import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myputt/services/firebase/auth_service.dart';
+import 'package:myputt/locator.dart';
 
 void main() async {
-  await setUpLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await setUpLocator();
 
   await locator.get<SessionRepository>().fetchCurrentSession();
   await locator.get<SessionRepository>().fetchCompletedSessions();
@@ -39,10 +42,8 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.userChanges(),
             builder: (context, snapshot) {
-              if (snapshot.data?.displayName != null) {
+              if (snapshot.hasData /*?.displayName != null*/) {
                 return const MainWrapper();
-              } else if (snapshot.hasData) {
-                return const SelectUsernameScreen();
               } else {
                 return const LandingScreen();
               }
@@ -50,9 +51,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
-
-class Routes {
-  static var home = '/';
-  static var welcome = '/login';
 }

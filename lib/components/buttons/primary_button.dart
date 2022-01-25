@@ -8,12 +8,14 @@ class PrimaryButton extends StatelessWidget {
     this.backgroundColor = Colors.blue,
     this.labelColor = Colors.white,
     this.iconColor = Colors.white,
-    this.height,
-    this.width,
-    this.fontSize,
+    this.height = 48,
+    this.width = double.infinity,
+    this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.icon,
     this.gradientBackground,
+    this.loading = false,
+    this.disabled = false,
     required this.label,
     required this.onPressed,
   }) : super(key: key);
@@ -23,12 +25,14 @@ class PrimaryButton extends StatelessWidget {
   final Color labelColor;
   final Color iconColor;
   final String label;
-  final double? fontSize;
+  final double fontSize;
   final FontWeight fontWeight;
-  final double? height;
-  final double? width;
+  final double height;
+  final double width;
   final IconData? icon;
   final Function onPressed;
+  final bool loading;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +41,16 @@ class PrimaryButton extends StatelessWidget {
           ? Colors.transparent
           : backgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(48)),
       enableFeedback: true,
       shadowColor: Colors.transparent,
       elevation: 0,
-      onPrimary: Colors.grey[50],
+      onPrimary: Colors.grey[100],
     );
     final Widget text = Text(
       label,
       maxLines: 1,
-      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+      style: Theme.of(context).textTheme.headline6!.copyWith(
             color: labelColor,
             fontSize: fontSize,
             fontWeight: fontWeight,
@@ -55,23 +59,33 @@ class PrimaryButton extends StatelessWidget {
     );
 
     Widget button;
-    if (icon != null) {
+    if (icon != null && !loading) {
       button = ElevatedButton.icon(
         icon: Icon(icon, color: iconColor, size: 20),
-        onPressed: () {
-          Vibrate.feedback(FeedbackType.light);
-          onPressed();
-        },
+        onPressed: (loading || disabled)
+            ? null
+            : () {
+                Vibrate.feedback(FeedbackType.light);
+                onPressed();
+              },
         label: text,
         style: buttonStyle,
       );
     } else {
       button = ElevatedButton(
-        onPressed: () {
-          Vibrate.feedback(FeedbackType.light);
-          onPressed();
-        },
-        child: text,
+        onPressed: (loading || disabled)
+            ? null
+            : () {
+                Vibrate.feedback(FeedbackType.light);
+                onPressed();
+              },
+        child: loading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(color: labelColor),
+              )
+            : text,
         style: buttonStyle,
       );
     }
