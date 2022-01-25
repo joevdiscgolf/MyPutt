@@ -50,6 +50,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       alignment: Alignment.bottomCenter,
                       child: _passwordField(context),
                     ),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: _signInButton(context),
@@ -87,7 +88,7 @@ class _LandingScreenState extends State<LandingScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Master your putting',
+            'Master your game',
             style: Theme.of(context)
                 .textTheme
                 .headline6!
@@ -137,7 +138,7 @@ class _LandingScreenState extends State<LandingScreen> {
       width: 260,
       height: 60,
       child: TextFormField(
-        obscureText: false,
+        obscureText: true,
         controller: _passwordController,
         autocorrect: false,
         maxLines: 1,
