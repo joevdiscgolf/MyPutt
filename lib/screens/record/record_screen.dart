@@ -338,6 +338,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       .asMap()
                       .entries
                       .map((entry) => PuttingSetRow(
+                          deletable: true,
                           set: entry.value,
                           index: entry.key,
                           delete: () {
