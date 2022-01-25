@@ -7,10 +7,11 @@ import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await setUpLocator();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   await locator.get<SessionRepository>().fetchCurrentSession();
@@ -32,11 +33,26 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SessionsCubit()),
         BlocProvider(create: (_) => HomeScreenCubit()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         title: 'MyPutt',
         debugShowCheckedModeBanner: false,
-        home: MainWrapper(),
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.userChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.data?.displayName != null) {
+                return const MainWrapper();
+              } else if (snapshot.hasData) {
+                return const SelectUsernameScreen();
+              } else {
+                return const LandingScreen();
+              }
+            }),
       ),
     );
   }
+}
+
+class Routes {
+  static var home = '/';
+  static var welcome = '/login';
 }

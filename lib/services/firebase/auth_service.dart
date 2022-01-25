@@ -1,20 +1,13 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:myputt/data/types/my_putt_user.dart';
 
 class AuthService {
   final DateFormat _formatter = DateFormat.yMMMMd('en_US');
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Stream<User?> get user {
-    return _auth.userChanges();
-  }
-
-  String? getCurrentUserId() {
-    //return _auth.currentUser?.uid;
-    return 'BnisFzLsy0PnJuXv26BQ86HTVJk2'; // Test user uid
-  }
+  AuthService() {}
 
   Future<User?> getUser() async {
     try {
@@ -23,6 +16,15 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  Stream<User?> get user {
+    return _auth.userChanges();
+  }
+
+  String? getCurrentUserId() {
+    //return _auth.currentUser?.uid;
+    return 'BnisFzLsy0PnJuXv26BQ86HTVJk2'; // Test user uid
   }
 
   Future<String?> getAuthToken() async {
