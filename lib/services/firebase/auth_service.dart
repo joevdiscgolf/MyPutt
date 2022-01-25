@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
-import 'package:myputt/services/database_service.dart';
-import 'package:myputt/locator.dart';
 
 class AuthService {
-  final DateFormat _formatter = DateFormat.yMMMMd('en_US');
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String exception = '';
 
   Future<User?> getUser() async {
     try {
@@ -47,8 +45,10 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        exception = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        exception = 'Wrong password provided for that user.';
       }
     } catch (e) {
       print(e);
@@ -63,8 +63,10 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        exception = 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        exception = 'The account already exists for that email.';
       }
     } catch (e) {
       print(e);
@@ -90,6 +92,7 @@ class AuthService {
       print(e);
       return null;
     }*/
+    exception = 'Error signing in';
   }
 
   Future<bool> usernameIsAvailable(String username) async {

@@ -15,8 +15,8 @@ class _LandingScreenState extends State<LandingScreen> {
   final AuthService _authService = locator.get<AuthService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String? _email = '';
-  String? _password = '';
+  String? _email;
+  String? _password;
   bool _error = false;
   String _errorText = '';
   bool _loading = false;
@@ -110,7 +110,7 @@ class _LandingScreenState extends State<LandingScreen> {
             .subtitle1!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
-          hintText: 'Enter your email',
+          hintText: 'Email',
           contentPadding:
               const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
           isDense: true,
@@ -147,7 +147,7 @@ class _LandingScreenState extends State<LandingScreen> {
             .subtitle1!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
-          hintText: 'password',
+          hintText: 'Password',
           contentPadding:
               const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
           isDense: true,
@@ -187,16 +187,17 @@ class _LandingScreenState extends State<LandingScreen> {
               if (_email == null || _password == null) {
                 setState(() {
                   _error = true;
-                  _errorText = 'Invalid username or password';
+                  _errorText = 'Missing username or password';
                 });
                 print('email or pass is null');
-              } else if (_password!.length < 8) {
+              } /*else if (_password!.length < 8) {
                 setState(() {
                   _error = true;
                   _errorText = 'Invalid username or password';
                 });
                 print('password length error');
-              } else {
+              }*/
+              else {
                 setState(() {
                   _loading = true;
                 });
@@ -204,18 +205,16 @@ class _LandingScreenState extends State<LandingScreen> {
                     await _authService.signInWithEmail(_email!, _password!);
                 if (signinSuccess == null) {
                   setState(() {
-                    _errorText = 'Error signing in';
+                    _errorText = _authService.exception;
                     _error = true;
                     _loading = false;
                   });
                 } else if (signinSuccess == false) {
                   setState(() {
-                    _errorText = 'Error signing in';
+                    _errorText = _authService.exception;
                     _error = true;
                     _loading = false;
                   });
-                } else {
-                  print('success');
                 }
               }
             }),
