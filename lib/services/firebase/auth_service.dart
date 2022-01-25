@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
+import 'package:myputt/locator.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -38,9 +40,9 @@ class AuthService {
           .signInWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
       final uid = getCurrentUserId();
-      if (uid == null) {
-        return false;
-      }
+      print(uid);
+      locator.get<SessionRepository>().fetchCurrentSession;
+      locator.get<SessionRepository>().fetchCompletedSessions;
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -59,6 +61,8 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
+      locator.get<SessionRepository>().fetchCurrentSession;
+      locator.get<SessionRepository>().fetchCompletedSessions;
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

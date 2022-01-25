@@ -17,8 +17,10 @@ void main() async {
   await Firebase.initializeApp();
   await setUpLocator();
 
-  await locator.get<SessionRepository>().fetchCurrentSession();
-  await locator.get<SessionRepository>().fetchCompletedSessions();
+  if (locator.get<AuthService>().getCurrentUserId() != null) {
+    await locator.get<SessionRepository>().fetchCurrentSession();
+    await locator.get<SessionRepository>().fetchCompletedSessions();
+  }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
