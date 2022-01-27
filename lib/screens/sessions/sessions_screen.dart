@@ -5,6 +5,7 @@ import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'completed_session_screen.dart';
 
 import 'completed_session_screen.dart';
 
@@ -20,12 +21,14 @@ class SessionsScreen extends StatefulWidget {
 class _SessionsState extends State<SessionsScreen> {
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<SessionsCubit>(context).reload();
     return Navigator(
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
+              backgroundColor: Colors.grey[100]!,
               floatingActionButton: _addButton(context),
               appBar: AppBar(
                 title: const Text('Sessions'),
@@ -80,12 +83,12 @@ class _SessionsState extends State<SessionsScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Material(
-                  color: Colors.greenAccent[500],
+                  color: Colors.blueAccent[100],
                   child: InkWell(
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.greenAccent,
+                        color: Colors.blueAccent[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -173,9 +176,9 @@ class _SessionsState extends State<SessionsScreen> {
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
               /*style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(20), // <-- Splash color
-                        ),*/
+                         shape: const CircleBorder(),
+                         padding: const EdgeInsets.all(20), // <-- Splash color
+                       ),*/
               child: const Icon(FlutterRemix.add_line),
               onPressed: () {
                 if (state is! SessionInProgressState) {

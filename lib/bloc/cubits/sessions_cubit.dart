@@ -13,6 +13,10 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   //SessionsCubit() : super(const NoActiveSessionState(sessions: []));
   SessionsCubit() : super(const SessionLoadingState(sessions: [])) {
+    reload();
+  }
+
+  void reload() {
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
           sessions: _sessionRepository.allSessions,

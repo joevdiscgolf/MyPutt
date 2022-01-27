@@ -1,20 +1,14 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 
 class AuthService {
-  final DateFormat _formatter = DateFormat.yMMMMd('en_US');
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Stream<User?> get user {
-    return _auth.userChanges();
-  }
-
-  String? getCurrentUserId() {
-    //return _auth.currentUser?.uid;
-    return 'BnisFzLsy0PnJuXv26BQ86HTVJk2'; // Test user uid
-  }
+  String exception = '';
 
   Future<User?> getUser() async {
     try {
@@ -23,6 +17,14 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  Stream<User?> get user {
+    return _auth.userChanges();
+  }
+
+  String? getCurrentUserId() {
+    return _auth.currentUser?.uid;
   }
 
   Future<String?> getAuthToken() async {
@@ -34,20 +36,45 @@ class AuthService {
     }
   }
 
-  Future<User?> signInWithPhoneNumber(
-      String verificationId, String smsCode) async {
+  Future<bool?> signInWithEmail(String inputEmail, String inputPassword) async {
     try {
-      final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
-      final User? user = await _auth
-          .signInWithCredential(credential)
-          .then((UserCredential result) => result.user);
-      if (user == null) {
-        return null;
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: inputEmail, password: inputPassword);
+      final uid = getCurrentUserId();
+      print('user signed in correctly, uid: ${uid}');
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+        exception = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+        exception = 'Wrong password provided for that user.';
       }
+    } catch (e) {
+      print(e);
+      return false;
+    }
 
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: inputEmail, password: inputPassword);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        exception = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        exception = 'The account already exists for that email.';
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+/*
       final bool userExists = await FirebaseFirestore.instance
           .collection('Users')
           .doc(user.uid)
@@ -66,7 +93,8 @@ class AuthService {
     } catch (e) {
       print(e);
       return null;
-    }
+    }*/
+    exception = 'Error signing in';
   }
 
   Future<bool> usernameIsAvailable(String username) async {

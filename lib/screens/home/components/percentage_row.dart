@@ -45,7 +45,7 @@ class _PercentageRowState extends State<PercentageRow> {
                       builder: (context, value, _) => CircularProgressIndicator(
                         color: widget.percentage! < widget.allTimePercentage!
                             ? Colors.red
-                            : Colors.green,
+                            : Colors.greenAccent,
                         backgroundColor: Colors.grey[200],
                         value: value,
                         strokeWidth: 5,
@@ -94,7 +94,7 @@ class _PercentageRowState extends State<PercentageRow> {
                     ? const Icon(FlutterRemix.arrow_down_line,
                         color: Colors.red)
                     : const Icon(FlutterRemix.arrow_up_line,
-                        color: Colors.green),
+                        color: Colors.greenAccent),
                 Text(
                     (100 * (widget.percentage! - widget.allTimePercentage!))
                             .round()
@@ -103,7 +103,7 @@ class _PercentageRowState extends State<PercentageRow> {
                     style: TextStyle(
                       color: widget.percentage! < widget.allTimePercentage!
                           ? Colors.red
-                          : Colors.green,
+                          : Colors.greenAccent,
                     ))
               ]),
             );

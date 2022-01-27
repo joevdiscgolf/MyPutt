@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
+import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 
 part 'home_screen_state.dart';
@@ -16,10 +17,10 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   int _currentSessionRange = 0;
 
   HomeScreenCubit() : super(HomeScreenLoading()) {
-    final stats =
-        _statsService.getStatsForSessions(2, _sessionRepository.allSessions);
-    emit(HomeScreenLoaded(stats: stats, sessionRange: _currentSessionRange));
+    reloadStats();
   }
+
+  void newUserLoggedIn() {}
 
   void reloadStats() {
     final stats = _statsService.getStatsForSessions(

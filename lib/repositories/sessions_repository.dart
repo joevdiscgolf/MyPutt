@@ -49,14 +49,12 @@ class SessionRepository {
   }
 
   Future<bool> fetchCurrentSession() async {
+    print('fetching current session');
     final PuttingSession? newCurrentSession =
         await _databaseService.getCurrentSession();
-    if (newCurrentSession != null) {
-      currentSession = newCurrentSession;
-      return true;
-    } else {
-      return false;
-    }
+    currentSession = newCurrentSession;
+    print(currentSession);
+    return true;
   }
 
   Future<bool> fetchCompletedSessions() async {
@@ -64,9 +62,16 @@ class SessionRepository {
         await _databaseService.getCompletedSessions();
     if (newCompletedSessionsList != null) {
       allSessions = newCompletedSessionsList;
-      return true;
     } else {
-      return false;
+      allSessions = [];
     }
+    print(allSessions);
+    return true;
   }
+
+  void clearData() {
+    currentSession = null;
+    allSessions = [];
+  }
+
 }
