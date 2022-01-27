@@ -36,33 +36,31 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
-                  builder: (context, state) {
-                    if (state is HomeScreenLoaded) {
-                      return PercentagesCard(
-                        percentages: widget.circle == Circles.circle1
-                            ? state.stats.circleOnePercentages ?? {}
-                            : state.stats.circleTwoPercentages ?? {},
-                        allTimePercentages: widget.circle == Circles.circle1
-                            ? state.stats.circleOneAverages ?? {}
-                            : state.stats.circleTwoAverages ?? {},
-                      );
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                )),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
+                builder: (context, state) {
+                  if (state is HomeScreenLoaded) {
+                    return PercentagesCard(
+                      percentages: widget.circle == Circles.circle1
+                          ? state.stats.circleOnePercentages ?? {}
+                          : state.stats.circleTwoPercentages ?? {},
+                      allTimePercentages: widget.circle == Circles.circle1
+                          ? state.stats.circleOneAverages ?? {}
+                          : state.stats.circleTwoAverages ?? {},
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              )),
+        ),
+      ],
     );
   }
 }
