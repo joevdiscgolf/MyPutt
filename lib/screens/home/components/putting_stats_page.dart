@@ -37,7 +37,6 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         children: [
           Expanded(

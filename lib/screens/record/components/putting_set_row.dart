@@ -45,9 +45,8 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             ),
           ),
           SizedBox(
-            width: 80,
-            child: Text(
-                '${widget.set.puttsMade}/${widget.set.puttsAttempted} putts',
+            width: 50,
+            child: Text('${widget.set.puttsMade}/${widget.set.puttsAttempted}',
                 style: textStyle),
           ),
           SizedBox(
@@ -57,43 +56,40 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                 style: textStyle),
           ),
           SizedBox(
-            width: 30,
-            height: 30,
+            width: 40,
+            height: 40,
             child: CircularProgressIndicator(
               color: Colors.greenAccent,
-              /*color: Color.fromRGBO(
-                 (200 * (1 - widget.set.puttsMade / widget.set.puttsAttempted))
-                         .round() +
-                     52,
-                 (200 * (widget.set.puttsMade / widget.set.puttsAttempted))
-                         .round() +
-                     52,
-                 0,
-                 1),*/
               backgroundColor: Colors.grey[200],
               value: widget.set.puttsMade / widget.set.puttsAttempted,
               strokeWidth: 5,
             ),
           ),
-          Text('${widget.set.distance} ft', style: textStyle),
+          SizedBox(
+              width: 50,
+              child: Center(
+                  child: Text('${widget.set.distance} ft', style: textStyle))),
           widget.deletable
-              ? Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    child: const Icon(
-                      FlutterRemix.close_line,
-                      color: Colors.red,
+              ? SizedBox(
+                  width: 50,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      child: const Icon(
+                        FlutterRemix.close_line,
+                        color: Colors.red,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => ConfirmDeleteDialog(
+                                delete: widget.delete, title: 'Delete set'));
+                      },
                     ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                    ),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => ConfirmDeleteDialog(
-                              delete: widget.delete, title: 'Delete set'));
-                    },
                   ),
                 )
               : Container()

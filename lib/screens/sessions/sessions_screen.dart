@@ -26,6 +26,7 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
+              backgroundColor: Colors.grey[100]!,
               floatingActionButton: _addButton(context),
               appBar: AppBar(
                 title: const Text('Sessions'),
@@ -80,12 +81,12 @@ class _SessionsState extends State<SessionsScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Material(
-                  color: Colors.greenAccent[500],
+                  color: Colors.blueAccent[100],
                   child: InkWell(
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.greenAccent,
+                        color: Colors.blueAccent[100],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(

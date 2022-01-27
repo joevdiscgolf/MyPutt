@@ -42,16 +42,21 @@ class HomeScreenState extends State<HomeScreen> {
                   shadowColor: Colors.transparent,
                 ),
                 onPressed: () {
-                  locator.get<SessionRepository>().clearData();
-                  _authService.logOut();
                   locator.get<SigninService>().signOut();
                 },
                 child: const Text('Logout'),
               )
             ],
             backgroundColor: Colors.blue,
-            title: const Text('MyPutt',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+            title: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.headline3,
+                children: const [
+                  TextSpan(text: 'My', style: TextStyle(color: Colors.white)),
+                  TextSpan(text: 'Putt', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
             bottom: const TabBar(
               tabs: [
                 Tab(icon: Text('Circle 1')),
@@ -61,49 +66,7 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           body: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: _sessionRangeLabels
-                        .asMap()
-                        .entries
-                        .map((entry) => Builder(builder: (context) {
-                              if (_sessionRangeIndex == entry.key) {
-                                return ElevatedButton(
-                                    child: Text(entry.value,
-                                        style: const TextStyle(
-                                            color: Colors.black)),
-                                    style: ElevatedButton.styleFrom(
-                                        side: const BorderSide(
-                                            width: 2.0, color: Colors.blue),
-                                        primary: Colors.white),
-                                    onPressed: () {
-                                      setState(() {
-                                        _sessionRangeIndex = entry.key;
-                                      });
-
-                                      BlocProvider.of<HomeScreenCubit>(context)
-                                          .updateSessionRange(
-                                              _sessionRangeIndex);
-                                      BlocProvider.of<HomeScreenCubit>(context)
-                                          .reloadStats();
-                                    });
-                              }
-                              return ElevatedButton(
-                                  child: Text(entry.value),
-                                  onPressed: () {
-                                    setState(() {
-                                      _sessionRangeIndex = entry.key;
-                                    });
-                                    BlocProvider.of<HomeScreenCubit>(context)
-                                        .updateSessionRange(_sessionRangeIndex);
-                                    BlocProvider.of<HomeScreenCubit>(context)
-                                        .reloadStats();
-                                  });
-                            }))
-                        .toList()),
-              ),
+              _sessionRangeRow(context),
               const Expanded(
                 child: TabBarView(children: [
                   PuttingStatsPage(
@@ -114,6 +77,53 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ],
           )),
+    );
+  }
+
+  Widget _sessionRangeRow(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: _sessionRangeLabels
+              .asMap()
+              .entries
+              .map((entry) => Builder(builder: (context) {
+                    if (_sessionRangeIndex == entry.key) {
+                      return ElevatedButton(
+                          child: Text(entry.value,
+                              style: const TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                              side: const BorderSide(
+                                  width: 2.0, color: Colors.blue),
+                              primary: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              _sessionRangeIndex = entry.key;
+                            });
+
+                            BlocProvider.of<HomeScreenCubit>(context)
+                                .updateSessionRange(_sessionRangeIndex);
+                            BlocProvider.of<HomeScreenCubit>(context)
+                                .reloadStats();
+                          });
+                    }
+                    return ElevatedButton(
+                        child: Text(entry.value),
+                        onPressed: () {
+                          setState(() {
+                            _sessionRangeIndex = entry.key;
+                          });
+                          BlocProvider.of<HomeScreenCubit>(context)
+                              .updateSessionRange(_sessionRangeIndex);
+                          BlocProvider.of<HomeScreenCubit>(context)
+                              .reloadStats();
+                        });
+                  }))
+              .toList()),
     );
   }
 }

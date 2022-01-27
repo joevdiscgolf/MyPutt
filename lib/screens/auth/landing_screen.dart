@@ -24,6 +24,11 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _errorText = '';
+    _error = false;
+    _password = null;
+    _email = null;
+    _loading = false;
     return Scaffold(
       backgroundColor: Colors.white,
       body: GestureDetector(
@@ -191,16 +196,20 @@ class _LandingScreenState extends State<LandingScreen> {
                   _error = true;
                   _errorText = 'Missing username or password';
                 });
-                print('email or pass is null');
               }
               else {
                 setState(() {
                   _loading = true;
                 });
                 final signInSuccess = await locator.get<SigninService>().attemptSignIn(_email!, _password!);
-                setState(() {
-                  _loading = !signInSuccess;
-                });
+                if (!signInSuccess) {
+                  setState(() {
+                    _loading = signInSuccess;
+                    _error = true;
+                    _errorText = _authService.exception;
+                  });
+                }
+
                 }
               }
     ),

@@ -21,7 +21,7 @@ class _CompletedSessionScreenState extends State<CompletedSessionScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100]!,
       appBar: AppBar(
-        title: Text(widget.session.dateStarted),
+        title: Text('Session summary'),
         centerTitle: true,
       ),
       body: Column(

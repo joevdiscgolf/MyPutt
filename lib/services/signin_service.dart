@@ -23,12 +23,13 @@ class SigninService {
     await locator.get<SessionRepository>().fetchCurrentSession();
     await locator.get<SessionRepository>().fetchCompletedSessions();
       controller.add(true);
-      print('added event');
       return true;
 
   }
 
   void signOut() {
+    locator.get<SessionRepository>().clearData();
+    _authService.logOut();
     controller.add(false);
   }
 

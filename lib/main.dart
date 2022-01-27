@@ -45,7 +45,6 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<bool>(
             stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
-              print('event added: $snapshot');
               if (snapshot.data == true) {
                 return const MainWrapper();
               } else {
