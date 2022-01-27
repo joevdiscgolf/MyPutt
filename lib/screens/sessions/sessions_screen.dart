@@ -7,6 +7,8 @@ import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'completed_session_screen.dart';
 
+import 'completed_session_screen.dart';
+
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
 

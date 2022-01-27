@@ -65,6 +65,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
               strokeWidth: 5,
             ),
           ),
+
           SizedBox(
               width: 50,
               child: Center(
@@ -90,6 +91,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                                 delete: widget.delete, title: 'Delete set'));
                       },
                     ),
+
                   ),
                 )
               : Container()
