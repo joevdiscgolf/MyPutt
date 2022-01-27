@@ -341,7 +341,6 @@ class _RecordScreenState extends State<RecordScreen> {
                           deletable: true,
                           set: entry.value,
                           index: entry.key,
-                          deletable: true,
                           delete: () {
                             BlocProvider.of<SessionsCubit>(context)
                                 .deleteSet(entry.value);
