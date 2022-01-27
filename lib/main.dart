@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => locator.get<SessionsCubit>()),
-        BlocProvider(create: (_) => locator.get<HomeScreenCubit>()),
+        BlocProvider(create: (_) => SessionsCubit()),
+        BlocProvider(create: (_) => HomeScreenCubit()),
       ],
       child: MaterialApp(
         title: 'MyPutt',
@@ -45,7 +45,8 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<bool>(
             stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
-              if (snapshot == true) {
+              print('event added: $snapshot');
+              if (snapshot.hasData) {
                 return const MainWrapper();
               } else {
                 return const LandingScreen();

@@ -43,10 +43,6 @@ class AuthService {
               email: inputEmail, password: inputPassword);
       final uid = getCurrentUserId();
       print('user signed in correctly, uid: ${uid}');
-      await locator.get<SessionRepository>().fetchCurrentSession;
-      await locator.get<SessionRepository>().fetchCompletedSessions;
-      locator.get<HomeScreenCubit>().reloadStats();
-      locator.get<SessionsCubit>().reload();
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -65,10 +61,6 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
-      locator.get<SessionRepository>().fetchCurrentSession;
-      locator.get<SessionRepository>().fetchCompletedSessions;
-      locator.get<HomeScreenCubit>().reloadStats();
-      locator.get<SessionsCubit>().reload();
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

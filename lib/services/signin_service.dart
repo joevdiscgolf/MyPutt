@@ -4,12 +4,15 @@ import 'package:myputt/repositories/sessions_repository.dart';
 import 'package:myputt/locator.dart';
 
 class SigninService {
-  StreamController<bool>? controller;
-  Stream<bool>? siginStream;
+  late StreamController<bool> controller;
+  late Stream<bool> siginStream;
   final _authService = locator.get<AuthService>();
   SigninService() {
-    StreamController<bool> controller = StreamController<bool>();
-    Stream signinStream = controller.stream;
+    controller = StreamController<bool>();
+    siginStream = controller.stream;
+    if (_authService.getCurrentUserId() != null) {
+      controller.add(true);
+    }
   }
 
   Future<bool> attemptSignIn(String email, String password) async {
@@ -17,14 +20,11 @@ class SigninService {
     if (signInSuccess == null || !signInSuccess || _authService.getCurrentUserId() == null) {
       return false;
     }
-    await locator.get<SessionRepository>().fetchCurrentSession;
-    await locator.get<SessionRepository>().fetchCompletedSessions;
-    if (controller != null) {
-      controller?.add(true);
+    await locator.get<SessionRepository>().fetchCurrentSession();
+    await locator.get<SessionRepository>().fetchCompletedSessions();
+      controller.add(true);
+      print('added event');
       return true;
-    } else {
-      return false;
-    }
 
   }
 
