@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/locator.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
-import 'completed_session_screen.dart';
-
-import 'completed_session_screen.dart';
+import 'session_summary_screen.dart';
+import 'package:myputt/services/stats_service.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -19,6 +19,8 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsState extends State<SessionsScreen> {
+  final StatsService _statsService = locator.get<StatsService>();
+
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<SessionsCubit>(context).reload();
@@ -146,8 +148,10 @@ class _SessionsState extends State<SessionsScreen> {
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  CompletedSessionScreen(
-                                      session: entry.value)));
+                                  SessionSummaryScreen(
+                                      session: entry.value,
+                                      stats: _statsService.getStats(
+                                          1, entry.value))));
                         },
                         child: SessionListRow(
                             session: entry.value,

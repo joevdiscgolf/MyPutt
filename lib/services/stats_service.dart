@@ -4,7 +4,7 @@ import 'package:myputt/data/types/putting_session.dart';
 
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
-  Stats getStatsForSessions(num sessionLimit, List<PuttingSession> sessions) {
+  Stats getStats(num sessionLimit, List<PuttingSession> sessions) {
     Map<int, num> sessionRangePuttsAttempted = {};
     Map<int, num> sessionRangePuttsMade = {};
     Map<int, num> sessionRangeFractions = {};

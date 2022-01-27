@@ -1,35 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/stats.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
+import 'package:myputt/screens/home/components/enums.dart';
 
-class CompletedSessionScreen extends StatefulWidget {
-  const CompletedSessionScreen({Key? key, required this.session})
+class SessionSummaryScreen extends StatefulWidget {
+  const SessionSummaryScreen(
+      {Key? key, required this.session, required this.stats})
       : super(key: key);
 
   final PuttingSession session;
+  final Stats stats;
 
   @override
-  _CompletedSessionScreenState createState() => _CompletedSessionScreenState();
+  _SessionSummaryScreenState createState() => _SessionSummaryScreenState();
 }
 
-class _CompletedSessionScreenState extends State<CompletedSessionScreen> {
+class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100]!,
-      appBar: AppBar(
-        title: Text('Session summary'),
-        centerTitle: true,
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _summaryBox(context),
-          _setsList(context),
-        ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Colors.grey[100]!,
+        appBar: AppBar(
+          title: const Text('Session summary'),
+          centerTitle: true,
+          bottom: const TabBar(
+            tabs: [
+              Tab(icon: Text('Sets')),
+              Tab(icon: Text('Stats')),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                _summaryBox(context),
+                _setsList(context),
+              ],
+            ),
+            Row(
+              children: const [
+                PuttingStatsPage(
+                    circle: Circles.circle1, timeRange: TimeRange.allTime),
+                PuttingStatsPage(
+                    circle: Circles.circle2, timeRange: TimeRange.allTime)
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

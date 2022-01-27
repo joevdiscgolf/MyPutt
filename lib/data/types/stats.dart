@@ -24,13 +24,3 @@ class Stats {
 
   Map<String, dynamic> toJson() => _$StatsToJson(this);
 }
-/*
-class CircleOneStats {
-  CircleOneStats({ this.circleOnePercentages});
-  final Map<int, double> circleOnePercentages;
-}
-
-class CircleTwoStats {
-  CircleTwoStats({ this.circleTwoPercentages});
-  final Map<int, double> circleTwoPercentages;
-}*/

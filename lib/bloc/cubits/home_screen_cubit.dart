@@ -23,7 +23,7 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   void newUserLoggedIn() {}
 
   void reloadStats() {
-    final stats = _statsService.getStatsForSessions(
+    final stats = _statsService.getStats(
         sessionRanges[_currentSessionRange]!, _sessionRepository.allSessions);
     emit(HomeScreenLoaded(stats: stats, sessionRange: _currentSessionRange));
   }
