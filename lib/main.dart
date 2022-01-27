@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
               print('event added: $snapshot');
-              if (snapshot.hasData) {
+              if (snapshot.data == true) {
                 return const MainWrapper();
               } else {
                 return const LandingScreen();

@@ -28,4 +28,8 @@ class SigninService {
 
   }
 
+  void signOut() {
+    controller.add(false);
+  }
+
 }

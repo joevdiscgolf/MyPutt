@@ -197,7 +197,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 setState(() {
                   _loading = true;
                 });
-                final signInSuccess = await locator.get<SigninService>().attemptSignIn('jwvv77@gmail.com', 'squirt77');
+                final signInSuccess = await locator.get<SigninService>().attemptSignIn(_email!, _password!);
                 setState(() {
                   _loading = !signInSuccess;
                 });

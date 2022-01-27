@@ -5,6 +5,7 @@ import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/repositories/sessions_repository.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,6 +44,7 @@ class HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   locator.get<SessionRepository>().clearData();
                   _authService.logOut();
+                  locator.get<SigninService>().signOut();
                 },
                 child: const Text('Logout'),
               )
