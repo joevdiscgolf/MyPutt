@@ -10,6 +10,7 @@ import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/locator.dart';
 
 void main() async {
@@ -41,10 +42,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'MyPutt',
         debugShowCheckedModeBanner: false,
-        home: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.userChanges(),
+        home: StreamBuilder<bool>(
+            stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
-              if (snapshot.hasData /*?.displayName != null*/) {
+              if (snapshot == true) {
                 return const MainWrapper();
               } else {
                 return const LandingScreen();

@@ -19,6 +19,7 @@ class SessionsScreen extends StatefulWidget {
 class _SessionsState extends State<SessionsScreen> {
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<SessionsCubit>(context).reload();
     return Navigator(
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(

@@ -3,6 +3,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/signin_service.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -191,34 +192,17 @@ class _LandingScreenState extends State<LandingScreen> {
                   _errorText = 'Missing username or password';
                 });
                 print('email or pass is null');
-              } /*else if (_password!.length < 8) {
-                setState(() {
-                  _error = true;
-                  _errorText = 'Invalid username or password';
-                });
-                print('password length error');
-              }*/
+              }
               else {
                 setState(() {
                   _loading = true;
                 });
-                final bool? signinSuccess =
-                    await _authService.signInWithEmail(_email!, _password!);
-                if (signinSuccess == null) {
-                  setState(() {
-                    _errorText = _authService.exception;
-                    _error = true;
-                    _loading = false;
-                  });
-                } else if (signinSuccess == false) {
-                  setState(() {
-                    _errorText = _authService.exception;
-                    _error = true;
-                    _loading = false;
-                  });
+                setState(() async {
+                  _loading = await locator.get<SigninService>().attemptSignIn(_email!, _password!);
+                });
                 }
               }
-            }),
+    ),
         const SizedBox(height: 36),
       ],
     );

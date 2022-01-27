@@ -29,6 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     return DefaultTabController(
       length: 2,
       child: Scaffold(
