@@ -1,6 +1,6 @@
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/services/firebase/auth_service.dart';
+import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/firebase/firebase_data_loaders.dart';
 import 'package:myputt/services/firebase/firebase_data_writers.dart';
 import 'package:myputt/locator.dart';

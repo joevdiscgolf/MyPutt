@@ -4,7 +4,8 @@ import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/firebase/auth_service.dart';
+import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/repositories/sessions_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -39,6 +40,7 @@ class HomeScreenState extends State<HomeScreen> {
                   shadowColor: Colors.transparent,
                 ),
                 onPressed: () {
+                  locator.get<SessionRepository>().clearData();
                   _authService.logOut();
                 },
                 child: const Text('Logout'),

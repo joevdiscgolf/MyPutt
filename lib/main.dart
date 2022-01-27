@@ -9,7 +9,7 @@ import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myputt/services/firebase/auth_service.dart';
+import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 
 void main() async {
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => SessionsCubit()),
-        BlocProvider(create: (_) => HomeScreenCubit()),
+        BlocProvider(create: (_) => locator.get<SessionsCubit>()),
+        BlocProvider(create: (_) => locator.get<HomeScreenCubit>()),
       ],
       child: MaterialApp(
         title: 'MyPutt',

@@ -68,4 +68,10 @@ class SessionRepository {
     print(allSessions);
     return true;
   }
+
+  void clearData() {
+    currentSession = null;
+    allSessions = [];
+  }
+
 }
