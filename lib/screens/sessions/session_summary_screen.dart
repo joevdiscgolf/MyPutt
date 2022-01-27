@@ -23,7 +23,7 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Colors.grey[100]!,
         appBar: AppBar(
@@ -32,7 +32,8 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
           bottom: const TabBar(
             tabs: [
               Tab(icon: Text('Sets')),
-              Tab(icon: Text('Stats')),
+              Tab(icon: Text('Circle 1')),
+              Tab(icon: Text('Circle 2'))
             ],
           ),
         ),
@@ -45,14 +46,14 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
                 _setsList(context),
               ],
             ),
-            Row(
-              children: const [
-                PuttingStatsPage(
-                    circle: Circles.circle1, timeRange: TimeRange.allTime),
-                PuttingStatsPage(
-                    circle: Circles.circle2, timeRange: TimeRange.allTime)
-              ],
-            )
+            const PuttingStatsPage(
+                circle: Circles.circle1,
+                timeRange: TimeRange.allTime,
+                screenType: 'summary'),
+            const PuttingStatsPage(
+                circle: Circles.circle2,
+                timeRange: TimeRange.allTime,
+                screenType: 'summary')
           ],
         ),
       ),
@@ -70,46 +71,28 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
             ),
             child: Column(children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(widget.session.dateStarted,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold))),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                          '${widget.session.sets.length.toString()} sets',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold))),
-                ],
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(widget.session.dateStarted,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold))),
+                    Align(
+                        alignment: Alignment.centerRight,
+                        child: Column(
+                          children: [
+                            Text(
+                                '${widget.session.totalPuttsMade} / ${widget.session.totalPuttsAttempted}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            const Text('Putts',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        )),
+                  ]),
               const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: const [
-                      Text('Circle 1'),
-                      Text('70 %'),
-                    ],
-                  ),
-                  Column(
-                    children: const [
-                      Text('Circle 2'),
-                      Text('40 %'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text('Putts'),
-                      Text(
-                          '${widget.session.totalPuttsMade} / ${widget.session.totalPuttsAttempted}'),
-                    ],
-                  )
-                ],
-              ),
             ]),
           ),
         ),

@@ -7,10 +7,8 @@ class StatsService {
   Stats getStats(num sessionLimit, List<PuttingSession> sessions) {
     Map<int, num> sessionRangePuttsAttempted = {};
     Map<int, num> sessionRangePuttsMade = {};
-    Map<int, num> sessionRangeFractions = {};
     Map<int, num> overallPuttsAttempted = {};
     Map<int, num> overallPuttsMade = {};
-    Map<int, num> overallFractions = {};
 
     Map<int, num?> circleOneSessionRangeFractions = {
       10: null,

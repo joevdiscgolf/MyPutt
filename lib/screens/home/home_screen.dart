@@ -69,9 +69,15 @@ class HomeScreenState extends State<HomeScreen> {
               const Expanded(
                 child: TabBarView(children: [
                   PuttingStatsPage(
-                      circle: Circles.circle1, timeRange: TimeRange.lastFive),
+                    circle: Circles.circle1,
+                    timeRange: TimeRange.lastFive,
+                    screenType: 'home',
+                  ),
                   PuttingStatsPage(
-                      circle: Circles.circle2, timeRange: TimeRange.lastFive),
+                    circle: Circles.circle2,
+                    timeRange: TimeRange.lastFive,
+                    screenType: 'home',
+                  ),
                 ]),
               ),
             ],
