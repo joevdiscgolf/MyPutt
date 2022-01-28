@@ -6,7 +6,6 @@ import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
-import 'package:myputt/repositories/sessions_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -50,7 +49,7 @@ class HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.blue,
             title: RichText(
               text: TextSpan(
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.headline4,
                 children: const [
                   TextSpan(text: 'My', style: TextStyle(color: Colors.white)),
                   TextSpan(text: 'Putt', style: TextStyle(color: Colors.white)),
@@ -70,9 +69,15 @@ class HomeScreenState extends State<HomeScreen> {
               const Expanded(
                 child: TabBarView(children: [
                   PuttingStatsPage(
-                      circle: Circles.circle1, timeRange: TimeRange.lastFive),
+                    circle: Circles.circle1,
+                    timeRange: TimeRange.lastFive,
+                    screenType: 'home',
+                  ),
                   PuttingStatsPage(
-                      circle: Circles.circle2, timeRange: TimeRange.lastFive),
+                    circle: Circles.circle2,
+                    timeRange: TimeRange.lastFive,
+                    screenType: 'home',
+                  ),
                 ]),
               ),
             ],

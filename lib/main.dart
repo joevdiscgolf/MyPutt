@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/bloc/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,11 +8,10 @@ import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
+import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
-import 'package:myputt/locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => SessionsCubit()),
         BlocProvider(create: (_) => HomeScreenCubit()),
+        BlocProvider(create: (_) => SessionSummaryCubit())
       ],
       child: MaterialApp(
         title: 'MyPutt',

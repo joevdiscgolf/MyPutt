@@ -83,7 +83,7 @@ class SessionsCubit extends Cubit<SessionsState> {
         emit(SessionErrorState(sessions: _sessionRepository.allSessions));
       }
     } else {
-      if (_sessionRepository.currentSession != null) {
+      if (_sessionRepository.currentSession == null) {
         emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
       } else {
         emit(SessionErrorState(sessions: _sessionRepository.allSessions));

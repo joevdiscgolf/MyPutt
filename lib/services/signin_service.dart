@@ -16,15 +16,18 @@ class SigninService {
   }
 
   Future<bool> attemptSignIn(String email, String password) async {
-    final bool? signInSuccess = await _authService.signInWithEmail(email, password);
-    if (signInSuccess == null || !signInSuccess || _authService.getCurrentUserId() == null) {
+    print('attempting signin');
+    final bool? signInSuccess =
+        await _authService.signInWithEmail(email, password);
+    if (signInSuccess == null ||
+        !signInSuccess ||
+        _authService.getCurrentUserId() == null) {
       return false;
     }
     await locator.get<SessionRepository>().fetchCurrentSession();
     await locator.get<SessionRepository>().fetchCompletedSessions();
-      controller.add(true);
-      return true;
-
+    controller.add(true);
+    return true;
   }
 
   void signOut() {
@@ -32,5 +35,4 @@ class SigninService {
     _authService.logOut();
     controller.add(false);
   }
-
 }
