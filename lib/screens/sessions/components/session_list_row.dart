@@ -25,7 +25,7 @@ class SessionListRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text('${index ?? '0'}: ${session.dateStarted}', style: textStyle),
+            Text('${session.dateStarted}', style: textStyle),
             Align(
               alignment: Alignment.centerRight,
               child: ElevatedButton(

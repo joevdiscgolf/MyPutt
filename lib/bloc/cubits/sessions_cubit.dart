@@ -90,4 +90,9 @@ class SessionsCubit extends Cubit<SessionsState> {
       }
     }
   }
+
+  void deleteCurrentSession() {
+    _sessionRepository.deleteCurrentSession();
+    emit(NoActiveSessionState(sessions: _sessionRepository.allSessions));
+  }
 }

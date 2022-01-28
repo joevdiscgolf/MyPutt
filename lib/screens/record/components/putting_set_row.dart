@@ -28,7 +28,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
         const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 5, 10, 5),
-      margin: const EdgeInsets.all(5),
+      margin: const EdgeInsets.fromLTRB(3, 4, 3, 0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -65,7 +65,6 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
               strokeWidth: 5,
             ),
           ),
-
           SizedBox(
               width: 50,
               child: Center(
@@ -91,7 +90,6 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                                 delete: widget.delete, title: 'Delete set'));
                       },
                     ),
-
                   ),
                 )
               : Container()

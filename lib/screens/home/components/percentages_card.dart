@@ -24,11 +24,33 @@ class PercentagesCard extends StatelessWidget {
           child: ListView(
               children: percentages.entries
                   .map((entry) => Builder(builder: (context) {
-                        return PercentageRow(
-                            distance: entry.key,
-                            percentage: entry.value,
-                            allTimePercentage:
-                                allTimePercentages[entry.key] ?? 0.5);
+                        return entry.key == 30 || entry.key == 60
+                            ? Column(
+                                children: [
+                                  Divider(
+                                    thickness: 2,
+                                    color: Colors.grey[100]!,
+                                  ),
+                                  PercentageRow(
+                                      distance: entry.key,
+                                      percentage: entry.value,
+                                      allTimePercentage:
+                                          allTimePercentages[entry.key] ?? 0.5),
+                                  Divider(
+                                      thickness: 2, color: Colors.grey[100]!),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Divider(
+                                      thickness: 2, color: Colors.grey[100]!),
+                                  PercentageRow(
+                                      distance: entry.key,
+                                      percentage: entry.value,
+                                      allTimePercentage:
+                                          allTimePercentages[entry.key] ?? 0.5),
+                                ],
+                              );
                       }))
                   .toList()),
         ),

@@ -9,6 +9,7 @@ import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'session_summary_screen.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -53,14 +54,14 @@ class _SessionsState extends State<SessionsScreen> {
                               padding: const EdgeInsets.all(8),
                               child: Text('${state.sessions.length} Sessions',
                                   style: const TextStyle(
-                                      fontSize: 30,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold)),
                             ),
                           );
                         }
                       },
                     ),
-                    _continueSessionPanel(context),
+                    _continueSessionCard(context),
                     _sessionsListView(context),
                   ],
                 ),
@@ -72,13 +73,64 @@ class _SessionsState extends State<SessionsScreen> {
     );
   }
 
-  Widget _continueSessionPanel(BuildContext context) {
+  Widget _continueSessionCard(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is! SessionInProgressState) {
           return Container();
         } else {
-          return Row(
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => BlocProvider.value(
+                      value: BlocProvider.of<SessionsCubit>(context),
+                      child: const RecordScreen())));
+            },
+            child: Card(
+              color: Colors.blue[100]!,
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(state.currentSession.dateStarted,
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: const Icon(
+                            FlutterRemix.close_line,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => ConfirmDeleteDialog(
+                                    title: 'Delete Session',
+                                    delete: () {
+                                      BlocProvider.of<SessionsCubit>(context)
+                                          .deleteCurrentSession();
+                                      BlocProvider.of<HomeScreenCubit>(context)
+                                          .reloadStats();
+                                    }));
+                          }),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+
+          /*Row(
             children: [
               Expanded(
                   child: Container(
@@ -130,7 +182,7 @@ class _SessionsState extends State<SessionsScreen> {
                 ),
               )),
             ],
-          );
+          );*/
         }
       },
     );
