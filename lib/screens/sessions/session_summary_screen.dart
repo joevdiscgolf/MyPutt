@@ -8,12 +8,10 @@ import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 
 class SessionSummaryScreen extends StatefulWidget {
-  const SessionSummaryScreen(
-      {Key? key, required this.session, required this.stats})
+  const SessionSummaryScreen({Key? key, required this.session})
       : super(key: key);
 
   final PuttingSession session;
-  final Stats stats;
 
   @override
   _SessionSummaryScreenState createState() => _SessionSummaryScreenState();

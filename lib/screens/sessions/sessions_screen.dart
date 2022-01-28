@@ -151,10 +151,7 @@ class _SessionsState extends State<SessionsScreen> {
                               .openSessionSummary(entry.value);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  SessionSummaryScreen(
-                                      session: entry.value,
-                                      stats: _statsService
-                                          .getStats(1, [entry.value]))));
+                                  SessionSummaryScreen(session: entry.value)));
                         },
                         child: SessionListRow(
                             session: entry.value,

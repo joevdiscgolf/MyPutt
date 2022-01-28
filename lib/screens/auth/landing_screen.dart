@@ -26,8 +26,6 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     _errorText = '';
     _error = false;
-    _password = null;
-    _email = null;
     _loading = false;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -191,17 +189,20 @@ class _LandingScreenState extends State<LandingScreen> {
             height: 48,
             width: 260,
             onPressed: () async {
+              print('button pressed');
               if (_email == null || _password == null) {
+                print('email or password is null');
                 setState(() {
                   _error = true;
                   _errorText = 'Missing username or password';
                 });
-              }
-              else {
+              } else {
                 setState(() {
                   _loading = true;
                 });
-                final signInSuccess = await locator.get<SigninService>().attemptSignIn(_email!, _password!);
+                final signInSuccess = await locator
+                    .get<SigninService>()
+                    .attemptSignIn(_email!, _password!);
                 if (!signInSuccess) {
                   setState(() {
                     _loading = signInSuccess;
@@ -209,10 +210,8 @@ class _LandingScreenState extends State<LandingScreen> {
                     _errorText = _authService.exception;
                   });
                 }
-
-                }
               }
-    ),
+            }),
         const SizedBox(height: 36),
       ],
     );
