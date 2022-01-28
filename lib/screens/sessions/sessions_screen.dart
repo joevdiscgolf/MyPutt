@@ -89,41 +89,61 @@ class _SessionsState extends State<SessionsScreen> {
             child: Card(
               color: Colors.blue[100]!,
               child: Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(state.currentSession.dateStarted,
-                        style: const TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          child: const Icon(
-                            FlutterRemix.close_line,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) => ConfirmDeleteDialog(
-                                    title: 'Delete Session',
-                                    delete: () {
-                                      BlocProvider.of<SessionsCubit>(context)
-                                          .deleteCurrentSession();
-                                      BlocProvider.of<HomeScreenCubit>(context)
-                                          .reloadStats();
-                                    }));
-                          }),
-                    )
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white, width: 2),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: const Text('CURRENT',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                )))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(state.currentSession.dateStarted,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                              ),
+                              child: const Icon(
+                                FlutterRemix.close_line,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => ConfirmDeleteDialog(
+                                        title: 'Delete Session',
+                                        delete: () {
+                                          BlocProvider.of<SessionsCubit>(
+                                                  context)
+                                              .deleteCurrentSession();
+                                          BlocProvider.of<HomeScreenCubit>(
+                                                  context)
+                                              .reloadStats();
+                                        }));
+                              }),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
