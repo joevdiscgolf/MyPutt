@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/locator.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
@@ -8,7 +7,6 @@ import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'session_summary_screen.dart';
-import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class SessionsScreen extends StatefulWidget {
@@ -21,8 +19,6 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsState extends State<SessionsScreen> {
-  final StatsService _statsService = locator.get<StatsService>();
-
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<SessionsCubit>(context).reload();
@@ -68,9 +64,10 @@ class _SessionsState extends State<SessionsScreen> {
                             state is NoActiveSessionState) {
                           return _sessionsListView(context);
                         } else if (state is SessionErrorState) {
-                          return Center(child: Text('Something went wrong'));
+                          return const Center(
+                              child: Text('Something went wrong'));
                         } else {
-                          return Center(child: Text('No sessions yet'));
+                          return const Center(child: Text('No sessions yet'));
                         }
                       },
                     ),
@@ -85,6 +82,8 @@ class _SessionsState extends State<SessionsScreen> {
   }
 
   Widget _continueSessionCard(BuildContext context) {
+    TextStyle textStyle =
+        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is! SessionInProgressState) {
@@ -106,6 +105,7 @@ class _SessionsState extends State<SessionsScreen> {
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
                         alignment: Alignment.centerLeft,
@@ -124,9 +124,35 @@ class _SessionsState extends State<SessionsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(state.currentSession.dateStarted,
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(state.currentSession.dateStarted,
+                                style: textStyle),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                      '${state.currentSession.sets.length.toString()} sets'),
+                                ),
+                                state.currentSessionStats.generalStats
+                                                ?.totalMade !=
+                                            null &&
+                                        state.currentSessionStats.generalStats
+                                                ?.totalAttempts !=
+                                            null
+                                    ? SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                            '${state.currentSessionStats.generalStats?.totalMade} / ${state.currentSessionStats.generalStats?.totalAttempts} putts'),
+                                      )
+                                    : Container()
+                              ],
+                            ),
+                          ],
+                        ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
@@ -160,60 +186,6 @@ class _SessionsState extends State<SessionsScreen> {
               ),
             ),
           );
-
-          /*Row(
-            children: [
-              Expanded(
-                  child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Material(
-                  color: Colors.blueAccent[100],
-                  child: InkWell(
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blueAccent[100],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Continue Session',
-                              style: TextStyle(
-                                fontSize: 30,
-                              )),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(state.currentSession.dateStarted),
-                                ),
-                                Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                        '${state.currentSession.totalPuttsMade} / ${state.currentSession.totalPuttsAttempted} putts',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ))),
-                              ]),
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) => BlocProvider.value(
-                              value: BlocProvider.of<SessionsCubit>(context),
-                              child: const RecordScreen())));
-                    },
-                  ),
-                ),
-              )),
-            ],
-          );*/
         }
       },
     );
@@ -248,7 +220,8 @@ class _SessionsState extends State<SessionsScreen> {
                                     .deleteSession(entry.value);
                                 BlocProvider.of<HomeScreenCubit>(context)
                                     .reloadStats();
-                              }),
+                              },
+                              isCurrentSession: false),
                         ))
                     .toList()
                     .reversed)),

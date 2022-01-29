@@ -11,12 +11,14 @@ class SessionListRow extends StatelessWidget {
       required this.session,
       this.index,
       required this.delete,
-      required this.stats})
+      required this.stats,
+      required this.isCurrentSession})
       : super(key: key);
   final Function delete;
   final PuttingSession session;
   final int? index;
   final Stats stats;
+  final bool isCurrentSession;
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +34,23 @@ class SessionListRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                children: [
-                  Text(session.dateStarted, style: textStyle),
-                  Text('${session.sets.length.toString()} sets'),
-                  stats.generalStats?.totalMade != null &&
-                          stats.generalStats?.totalAttempts != null
-                      ? Text(
-                          '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts}')
-                      : Container(),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(session.dateStarted, style: textStyle),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${session.sets.length.toString()} sets'),
+                    const SizedBox(width: 20),
+                    stats.generalStats?.totalMade != null &&
+                            stats.generalStats?.totalAttempts != null
+                        ? Text(
+                            '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
+                        : Container()
+                  ],
+                ),
+              ],
             ),
             Align(
               alignment: Alignment.centerRight,
