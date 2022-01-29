@@ -12,14 +12,21 @@ abstract class SessionsState {
 
 class SessionInProgressState extends SessionsState {
   const SessionInProgressState(
-      {required sessions, required this.currentSession})
+      {required sessions,
+      required this.currentSession,
+      required this.individualStats,
+      required this.currentSessionStats})
       : super(sessions: sessions);
 
   final PuttingSession currentSession;
+  final Map<String, Stats> individualStats;
+  final Stats currentSessionStats;
 }
 
 class NoActiveSessionState extends SessionsState {
-  const NoActiveSessionState({required sessions}) : super(sessions: sessions);
+  const NoActiveSessionState({required sessions, required this.individualStats})
+      : super(sessions: sessions);
+  final Map<String, Stats> individualStats;
 }
 
 class SessionErrorState extends SessionsState {
@@ -27,5 +34,8 @@ class SessionErrorState extends SessionsState {
 }
 
 class SessionLoadingState extends SessionsState {
-  const SessionLoadingState({required sessions}) : super(sessions: sessions);
+  const SessionLoadingState({required sessions})
+      : super(
+          sessions: sessions,
+        );
 }

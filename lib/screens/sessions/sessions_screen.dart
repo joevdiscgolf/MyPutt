@@ -62,7 +62,18 @@ class _SessionsState extends State<SessionsScreen> {
                       },
                     ),
                     _continueSessionCard(context),
-                    _sessionsListView(context),
+                    BlocBuilder<SessionsCubit, SessionsState>(
+                      builder: (context, state) {
+                        if (state is SessionInProgressState ||
+                            state is NoActiveSessionState) {
+                          return _sessionsListView(context);
+                        } else if (state is SessionErrorState) {
+                          return Center(child: Text('Something went wrong'));
+                        } else {
+                          return Center(child: Text('No sessions yet'));
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -211,33 +222,42 @@ class _SessionsState extends State<SessionsScreen> {
   Widget _sessionsListView(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
-        return Flexible(
-          fit: FlexFit.loose,
-          child: ListView(
-              children: List.from(state.sessions
-                  .asMap()
-                  .entries
-                  .map((entry) => InkWell(
-                        onTap: () {
-                          BlocProvider.of<SessionSummaryCubit>(context)
-                              .openSessionSummary(entry.value);
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  SessionSummaryScreen(session: entry.value)));
-                        },
-                        child: SessionListRow(
-                            session: entry.value,
-                            index: entry.key + 1,
-                            delete: () {
-                              BlocProvider.of<SessionsCubit>(context)
-                                  .deleteSession(entry.value);
-                              BlocProvider.of<HomeScreenCubit>(context)
-                                  .reloadStats();
-                            }),
-                      ))
-                  .toList()
-                  .reversed)),
-        );
+        if (state is SessionInProgressState) {
+          return Flexible(
+            fit: FlexFit.loose,
+            child: ListView(
+                children: List.from(state.sessions
+                    .asMap()
+                    .entries
+                    .map((entry) => InkWell(
+                          onTap: () {
+                            BlocProvider.of<SessionSummaryCubit>(context)
+                                .openSessionSummary(entry.value);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    SessionSummaryScreen(
+                                        session: entry.value)));
+                          },
+                          child: SessionListRow(
+                              stats: state
+                                  .individualStats[entry.value.dateStarted]!,
+                              session: entry.value,
+                              index: entry.key + 1,
+                              delete: () {
+                                BlocProvider.of<SessionsCubit>(context)
+                                    .deleteSession(entry.value);
+                                BlocProvider.of<HomeScreenCubit>(context)
+                                    .reloadStats();
+                              }),
+                        ))
+                    .toList()
+                    .reversed)),
+          );
+        } else if (state is SessionErrorState) {
+          return const Center(child: Text('Something went wrong'));
+        } else {
+          return const Center(child: Text('No sessions yet'));
+        }
       },
     );
   }

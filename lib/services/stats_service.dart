@@ -133,9 +133,6 @@ class StatsService {
       sets.forEach((set) {
         final distance = set.distance;
 
-        totalAttempts += set.puttsAttempted as int;
-        totalMade += set.puttsMade as int;
-
         overallPuttsAttempted[distance] =
             overallPuttsAttempted[distance] == null
                 ? set.puttsAttempted
@@ -150,6 +147,8 @@ class StatsService {
     final focusSessionSets = focusSession.sets;
     focusSessionSets.forEach((set) {
       final distance = set.distance as int;
+      totalAttempts += set.puttsAttempted as int;
+      totalMade += set.puttsMade as int;
       focusSessionPuttsAttempted[distance] =
           focusSessionPuttsAttempted[distance] == null
               ? set.puttsAttempted
@@ -193,5 +192,15 @@ class StatsService {
           totalAttempts: totalAttempts,
           totalMade: totalMade,
         ));
+  }
+
+  Map<String, Stats> generateSessionsStatsMap(
+      List<PuttingSession> allSessions) {
+    Map<String, Stats> statsMap = {};
+
+    for (var session in allSessions) {
+      statsMap[session.dateStarted] = getStatsForSession(allSessions, session);
+    }
+    return statsMap;
   }
 }
