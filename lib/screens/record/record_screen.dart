@@ -50,6 +50,8 @@ class _RecordScreenState extends State<RecordScreen> {
           BlocBuilder<SessionsCubit, SessionsState>(
             builder: (context, state) {
               return ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(shadowColor: Colors.transparent),
                   onPressed: () {
                     showDialog(
                             context: context,
@@ -59,7 +61,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                     recordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
-                  child: const Text('Save'));
+                  child: const Text('Finish'));
             },
           ),
         ],
@@ -88,7 +90,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         alignment: Alignment.topLeft,
                         child: Text('Putts made',
                             style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
+                                fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -137,9 +139,10 @@ class _RecordScreenState extends State<RecordScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: const [
               Text('Details',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ],
           ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[

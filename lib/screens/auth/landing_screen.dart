@@ -24,9 +24,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _errorText = '';
-    _error = false;
-    _loading = false;
     return Scaffold(
       backgroundColor: Colors.white,
       body: GestureDetector(
@@ -60,9 +57,12 @@ class _LandingScreenState extends State<LandingScreen> {
                       child: _signInButton(context),
                     ),
                     _error
-                        ? Text(_errorText,
-                            style: const TextStyle(color: Colors.red))
-                        : Container()
+                        ? SizedBox(
+                            height: 50,
+                            child: Text(_errorText,
+                                style: const TextStyle(color: Colors.red)),
+                          )
+                        : Container(height: 50)
                   ],
                 ),
               ],

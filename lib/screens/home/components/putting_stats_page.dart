@@ -22,23 +22,6 @@ class PuttingStatsPage extends StatefulWidget {
 }
 
 class _PuttingStatsPageState extends State<PuttingStatsPage> {
-  final circleOnePercentages = {10: 0.75, 15: 0.6, 20: 0.6, 25: 0.4, 30: 0.3};
-  final circleOneAllTimePercentages = {
-    10: 0.9,
-    15: 0.83,
-    20: 0.45,
-    25: 0.3,
-    30: 0.2
-  };
-  final cirlceTwoPercentages = {40: 0.4, 50: 0.2, 60: 0.15};
-  final circleTwoAllTimePercentages = {
-    10: 0.9,
-    15: 0.83,
-    20: 0.45,
-    25: 0.3,
-    30: 0.2
-  };
-
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -41,7 +41,7 @@ class _ConfirmDeleteDialogState extends State<ConfirmDeleteDialog> {
         children: [
           Text(
             widget.title,
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
           const SizedBox(
             height: 16,
@@ -68,7 +68,7 @@ class _ConfirmDeleteDialogState extends State<ConfirmDeleteDialog> {
                   fontSize: 18,
                   width: 100,
                   height: 50,
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.red,
                   onPressed: () {
                     widget.delete();
                     Navigator.pop(context);
