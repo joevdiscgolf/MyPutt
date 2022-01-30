@@ -9,25 +9,25 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 
-class RecordScreen extends StatefulWidget {
-  const RecordScreen({Key? key}) : super(key: key);
+class ChallengeRecordScreen extends StatefulWidget {
+  const ChallengeRecordScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/record_screen';
+  static String routeName = '/challenge_record_screen';
 
   @override
-  _RecordScreenState createState() => _RecordScreenState();
+  _ChallengeRecordScreenState createState() => _ChallengeRecordScreenState();
 }
 
-class _RecordScreenState extends State<RecordScreen> {
+class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
   int _setLength = 10;
 
-  int _weatherIndex = 0;
-  int _windIndex = 0;
+  /*int _weatherIndex = 0;
+  int _windIndex = 0;*/
   int _distancesIndex = 0;
-
+/*
   final List<String> _windConditionWords = [
     'Calm',
     'Breezy',
@@ -38,11 +38,33 @@ class _RecordScreenState extends State<RecordScreen> {
     'Sunny',
     'Rainy',
     'Snowy',
-  ];
+  ];*/
   final List<int> _distances = [10, 15, 20, 25, 30, 40, 50, 60];
 
   @override
   Widget build(BuildContext context) {
+    final ScrollSnapList _puttPickerSnapList = ScrollSnapList(
+      focusToItem: (index) {},
+      itemSize: 80,
+      itemCount: _setLength + 1,
+      duration: 125,
+      focusOnItemTap: true,
+      onItemFocus: _onItemFocus,
+      itemBuilder: _buildListItem,
+      dynamicItemSize: true,
+      allowAnotherDirection: true,
+      dynamicSizeEquation: (displacement) {
+        const threshold = 0;
+        const maxDisplacement = 800;
+        if (displacement >= threshold) {
+          const slope = 1 / (-maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        } else {
+          const slope = 1 / (maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        }
+      }, // dynamicSizeEquation: customEquation, //optional
+    );
     return Scaffold(
       backgroundColor: Colors.grey[100]!,
       appBar: AppBar(
@@ -58,22 +80,22 @@ class _RecordScreenState extends State<RecordScreen> {
                             builder: (dialogContext) => BlocProvider.value(
                                 value: BlocProvider.of<SessionsCubit>(context),
                                 child: FinishSessionDialog(
-                                    recordScreenState: this)))
+                                    ChallengeRecordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
                   child: const Text('Finish'));
             },
           ),
         ],
-        title: const Text('Record'),
+        title: const Text('Challenges'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            _detailsPanel(context),
+            //_detailsPanel(context),
+            _challengeProgressPanel(context),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(15),
@@ -111,110 +133,12 @@ class _RecordScreenState extends State<RecordScreen> {
                   width: double.infinity,
                   height: 50,
                   icon: FlutterRemix.add_line,
-                  onPressed: () {
-                    BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
-                        puttsMade: _focusedIndex,
-                        puttsAttempted: _setLength,
-                        distance: _distances[_distancesIndex]));
-                  }),
+                  onPressed: () {}),
             ),
             const SizedBox(height: 10),
             _previousSetsList(context),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _detailsPanel(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Text('Details',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Column(
-                children: [
-                  const Text('Wind',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 5),
-                  PrimaryButton(
-                    height: 40,
-                    width: 80,
-                    label: _windConditionWords[_windIndex],
-                    fontSize: 12,
-                    onPressed: () {
-                      setState(() {
-                        if (_windIndex == 3) {
-                          _windIndex = 0;
-                        } else {
-                          _windIndex += 1;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  const Text('Weather',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 5),
-                  PrimaryButton(
-                    height: 40,
-                    width: 80,
-                    label: _weatherConditionWords[_weatherIndex],
-                    fontSize: 12,
-                    onPressed: () {
-                      setState(() {
-                        if (_weatherIndex == 2) {
-                          _weatherIndex = 0;
-                        } else {
-                          _weatherIndex += 1;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  const Text('Distance',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 5),
-                  PrimaryButton(
-                    height: 40,
-                    width: 80,
-                    label: _distances[_distancesIndex].toString() + ' ft',
-                    fontSize: 12,
-                    onPressed: () {
-                      setState(() {
-                        if (_distancesIndex == 7) {
-                          _distancesIndex = 0;
-                        } else {
-                          _distancesIndex += 1;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -260,34 +184,33 @@ class _RecordScreenState extends State<RecordScreen> {
 
   Widget _puttsMadePicker(BuildContext context) {
     return Container(
-      height: 80,
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: ScrollSnapList(
-        itemSize: 80,
-        itemCount: _setLength + 1,
-        duration: 125,
-        focusOnItemTap: true,
-        onItemFocus: _onItemFocus,
-        itemBuilder: _buildListItem,
-        dynamicItemSize: true,
-        allowAnotherDirection: true,
-        dynamicSizeEquation: (displacement) {
-          const threshold = 0;
-          const maxDisplacement = 800;
-          if (displacement >= threshold) {
-            const slope = 1 / (-maxDisplacement);
-            return slope * displacement + (1 - slope * threshold);
-          } else {
-            const slope = 1 / (maxDisplacement);
-            return slope * displacement + (1 - slope * threshold);
-          }
-        },
-        // dynamicSizeEquation: customEquation, //optional
-      ),
-    );
+        height: 80,
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+        child: ScrollSnapList(
+          focusToItem: (index) {},
+          itemSize: 80,
+          itemCount: _setLength + 1,
+          duration: 125,
+          focusOnItemTap: true,
+          onItemFocus: _onItemFocus,
+          itemBuilder: _buildListItem,
+          dynamicItemSize: true,
+          allowAnotherDirection: true,
+          dynamicSizeEquation: (displacement) {
+            const threshold = 0;
+            const maxDisplacement = 800;
+            if (displacement >= threshold) {
+              const slope = 1 / (-maxDisplacement);
+              return slope * displacement + (1 - slope * threshold);
+            } else {
+              const slope = 1 / (maxDisplacement);
+              return slope * displacement + (1 - slope * threshold);
+            }
+          }, // dynamicSizeEquation: customEquation, //optional
+        ));
   }
 
   void _onItemFocus(int index) {
@@ -358,6 +281,34 @@ class _RecordScreenState extends State<RecordScreen> {
     });
   }
 
+  Widget _challengeProgressPanel(BuildContext context) {
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ScrollSnapList(
+          itemBuilder: _buildChallengerListItem,
+          itemCount: 5,
+          itemSize: 50,
+          onItemFocus: (index) {
+            setState(() {
+              _focusedIndex = index;
+            });
+          }),
+    );
+  }
+
+  Widget _buildChallengerListItem(BuildContext context, int index) {
+    return SizedBox(
+      width: 50,
+      height: 50,
+      child: Text('box'),
+    );
+  }
+
   void dialogCallBack() {
     if (!sessionInProgress) {
       Navigator.pop(context);
@@ -366,10 +317,11 @@ class _RecordScreenState extends State<RecordScreen> {
 }
 
 class FinishSessionDialog extends StatefulWidget {
-  const FinishSessionDialog({Key? key, required this.recordScreenState})
+  const FinishSessionDialog(
+      {Key? key, required this.ChallengeRecordScreenState})
       : super(key: key);
 
-  final _RecordScreenState recordScreenState;
+  final _ChallengeRecordScreenState ChallengeRecordScreenState;
   @override
   _FinishSessionDialogState createState() => _FinishSessionDialogState();
 }
@@ -442,8 +394,8 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                     .completeSession();
                                 BlocProvider.of<HomeScreenCubit>(context)
                                     .reloadStats();
-                                widget.recordScreenState.sessionInProgress =
-                                    false;
+                                widget.ChallengeRecordScreenState
+                                    .sessionInProgress = false;
                                 Navigator.pop(context);
                               }
                             },

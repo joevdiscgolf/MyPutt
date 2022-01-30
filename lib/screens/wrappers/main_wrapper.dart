@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
 
@@ -20,6 +19,7 @@ class _MainWrapperState extends State<MainWrapper> {
   final List<Widget> screens = <Widget>[
     const HomeScreen(),
     const SessionsScreen(),
+    const ChallengeRecordScreen(),
   ];
 
   @override
@@ -41,6 +41,10 @@ class _MainWrapperState extends State<MainWrapper> {
           BottomNavigationBarItem(
             icon: Icon(FlutterRemix.record_circle_line),
             label: 'Record',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FlutterRemix.stack_fill),
+            label: 'Challenges',
           ),
         ],
       ),
