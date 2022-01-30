@@ -19,6 +19,7 @@ class SigninService {
     print('attempting signin');
     final bool? signInSuccess =
         await _authService.signInWithEmail(email, password);
+    print(signInSuccess);
     if (signInSuccess == null ||
         !signInSuccess ||
         _authService.getCurrentUserId() == null) {

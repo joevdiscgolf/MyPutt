@@ -90,13 +90,21 @@ class _SessionsState extends State<SessionsScreen> {
           return Container();
         } else {
           return InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => BlocProvider.value(
-                      value: BlocProvider.of<SessionsCubit>(context),
-                      child: const RecordScreen())));
-            },
-            child: Card(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => BlocProvider.value(
+                        value: BlocProvider.of<SessionsCubit>(context),
+                        child: const RecordScreen())));
+              },
+              child: SessionListRow(
+                isCurrentSession: true,
+                delete: () {
+                  BlocProvider.of<SessionsCubit>(context)
+                      .deleteCurrentSession();
+                },
+                session: state.currentSession,
+                stats: state.currentSessionStats,
+              ) /*Card(
               color: Colors.blue[100]!,
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -184,8 +192,8 @@ class _SessionsState extends State<SessionsScreen> {
                   ],
                 ),
               ),
-            ),
-          );
+            ),*/
+              );
         }
       },
     );
@@ -226,10 +234,46 @@ class _SessionsState extends State<SessionsScreen> {
                     .toList()
                     .reversed)),
           );
+        } else if (state is NoActiveSessionState) {
+          return Flexible(
+            fit: FlexFit.loose,
+            child: ListView(
+                children: List.from(state.sessions
+                    .asMap()
+                    .entries
+                    .map((entry) => InkWell(
+                          onTap: () {
+                            BlocProvider.of<SessionSummaryCubit>(context)
+                                .openSessionSummary(entry.value);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    SessionSummaryScreen(
+                                        session: entry.value)));
+                          },
+                          child: SessionListRow(
+                              stats: state
+                                  .individualStats[entry.value.dateStarted]!,
+                              session: entry.value,
+                              index: entry.key + 1,
+                              delete: () {
+                                BlocProvider.of<SessionsCubit>(context)
+                                    .deleteSession(entry.value);
+                                BlocProvider.of<HomeScreenCubit>(context)
+                                    .reloadStats();
+                              },
+                              isCurrentSession: false),
+                        ))
+                    .toList()
+                    .reversed)),
+          );
         } else if (state is SessionErrorState) {
-          return const Center(child: Text('Something went wrong'));
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [Text('Something went wrong')]);
         } else {
-          return const Center(child: Text('No sessions yet'));
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [Text('No sessions yet')]);
         }
       },
     );
