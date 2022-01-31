@@ -98,27 +98,30 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             _challengeProgressPanel(context),
             const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('Putts made',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: _putterCountPicker(context),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: Text('Putts made',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _putterCountPicker(context),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 5),
                   _puttsMadePicker(context),
@@ -185,7 +188,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   Widget _puttsMadePicker(BuildContext context) {
     return Container(
         height: 80,
-        margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         decoration: const BoxDecoration(
           color: Colors.white,
         ),
@@ -290,6 +292,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ScrollSnapList(
+          shrinkWrap: true,
           itemBuilder: _buildChallengerListItem,
           itemCount: 5,
           itemSize: 50,
@@ -302,7 +305,10 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   }
 
   Widget _buildChallengerListItem(BuildContext context, int index) {
-    return SizedBox(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blueAccent[100]!,
+      ),
       width: 50,
       height: 50,
       child: Text('box'),
