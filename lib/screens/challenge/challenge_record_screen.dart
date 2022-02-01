@@ -22,15 +22,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
-  int _focusedChallengeIndex = 0;
   int _setLength = 10;
 
-  int _distancesIndex = 0;
-  final List<int> _distances = [10, 15, 20, 25, 30, 40, 50, 60];
   int _completedSets = 0;
 
   final GlobalKey<ScrollSnapListState> challengerKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
+  final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +47,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                             builder: (dialogContext) => BlocProvider.value(
                                 value: BlocProvider.of<SessionsCubit>(context),
                                 child: FinishSessionDialog(
-                                    ChallengeRecordScreenState: this)))
+                                    challengeRecordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
                   child: const Text('Finish'));
@@ -64,20 +62,29 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 height: 60,
                 child: Row(
                   children: [
-                    SizedBox(width: 100, child: Text('Challenger')),
+                    const SizedBox(width: 100, child: Text('Challenger')),
+                    ChallengeScrollSnapList(sslKey: numberListKey)
+                  ],
+                )),
+            Container(
+                padding: const EdgeInsets.all(8),
+                height: 60,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 100, child: Text('Challenger')),
                     ChallengeScrollSnapList(sslKey: challengerKey)
                   ],
                 )),
             Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 height: 60,
                 child: Row(
                   children: [
-                    SizedBox(width: 100, child: Text('You')),
+                    const SizedBox(width: 100, child: Text('You')),
                     ChallengeScrollSnapList(sslKey: currentUserKey)
                   ],
                 )),
@@ -294,8 +301,6 @@ class ChallengeScrollSnapList extends StatefulWidget {
 }
 
 class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
-  int _focusedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -334,7 +339,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       height: 40,
       child: Center(
         child: Column(
-          children: [
+          children: const [
             Text('10 feet'),
             Text('8/10'),
           ],
@@ -346,10 +351,10 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
 
 class FinishSessionDialog extends StatefulWidget {
   const FinishSessionDialog(
-      {Key? key, required this.ChallengeRecordScreenState})
+      {Key? key, required this.challengeRecordScreenState})
       : super(key: key);
 
-  final _ChallengeRecordScreenState ChallengeRecordScreenState;
+  final _ChallengeRecordScreenState challengeRecordScreenState;
   @override
   _FinishSessionDialogState createState() => _FinishSessionDialogState();
 }
@@ -422,7 +427,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                     .completeSession();
                                 BlocProvider.of<HomeScreenCubit>(context)
                                     .reloadStats();
-                                widget.ChallengeRecordScreenState
+                                widget.challengeRecordScreenState
                                     .sessionInProgress = false;
                                 Navigator.pop(context);
                               }

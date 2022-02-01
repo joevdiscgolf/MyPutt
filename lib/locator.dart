@@ -4,8 +4,6 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 
 final locator = GetIt.instance;
 Future<void> setUpLocator() async {

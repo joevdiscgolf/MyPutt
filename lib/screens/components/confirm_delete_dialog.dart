@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/data/types/putting_session.dart';
 
 class ConfirmDeleteDialog extends StatefulWidget {
   const ConfirmDeleteDialog(

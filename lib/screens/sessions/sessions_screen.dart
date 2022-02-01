@@ -7,7 +7,6 @@ import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'session_summary_screen.dart';
-import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -82,8 +81,6 @@ class _SessionsState extends State<SessionsScreen> {
   }
 
   Widget _continueSessionCard(BuildContext context) {
-    TextStyle textStyle =
-        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is! SessionInProgressState) {

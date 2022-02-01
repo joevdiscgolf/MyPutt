@@ -1,9 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myputt/repositories/sessions_repository.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -42,7 +38,7 @@ class AuthService {
           .signInWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
       final uid = getCurrentUserId();
-      print('user signed in correctly, uid: ${uid}');
+      print('user signed in correctly, uid: $uid');
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
