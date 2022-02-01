@@ -22,49 +22,18 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
+  int _focusedChallengeIndex = 0;
   int _setLength = 10;
 
-  /*int _weatherIndex = 0;
-  int _windIndex = 0;*/
   int _distancesIndex = 0;
-/*
-  final List<String> _windConditionWords = [
-    'Calm',
-    'Breezy',
-    'Strong',
-    'Intense',
-  ];
-  final List<String> _weatherConditionWords = [
-    'Sunny',
-    'Rainy',
-    'Snowy',
-  ];*/
   final List<int> _distances = [10, 15, 20, 25, 30, 40, 50, 60];
+  int _completedSets = 0;
+
+  final GlobalKey<ScrollSnapListState> challengerKey = GlobalKey();
+  final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final ScrollSnapList _puttPickerSnapList = ScrollSnapList(
-      focusToItem: (index) {},
-      itemSize: 80,
-      itemCount: _setLength + 1,
-      duration: 125,
-      focusOnItemTap: true,
-      onItemFocus: _onItemFocus,
-      itemBuilder: _buildListItem,
-      dynamicItemSize: true,
-      allowAnotherDirection: true,
-      dynamicSizeEquation: (displacement) {
-        const threshold = 0;
-        const maxDisplacement = 800;
-        if (displacement >= threshold) {
-          const slope = 1 / (-maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        } else {
-          const slope = 1 / (maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        }
-      }, // dynamicSizeEquation: customEquation, //optional
-    );
     return Scaffold(
       backgroundColor: Colors.grey[100]!,
       appBar: AppBar(
@@ -94,8 +63,24 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            //_detailsPanel(context),
-            _challengeProgressPanel(context),
+            Container(
+                padding: EdgeInsets.all(8),
+                height: 60,
+                child: Row(
+                  children: [
+                    SizedBox(width: 100, child: Text('Challenger')),
+                    ChallengeScrollSnapList(sslKey: challengerKey)
+                  ],
+                )),
+            Container(
+                padding: EdgeInsets.all(8),
+                height: 60,
+                child: Row(
+                  children: [
+                    SizedBox(width: 100, child: Text('You')),
+                    ChallengeScrollSnapList(sslKey: currentUserKey)
+                  ],
+                )),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
@@ -136,7 +121,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   width: double.infinity,
                   height: 50,
                   icon: FlutterRemix.add_line,
-                  onPressed: () {}),
+                  onPressed: () {
+                    _completedSets += 1;
+                    challengerKey.currentState?.focusToItem(
+                        _completedSets == 0 ? 0 : _completedSets - 1);
+                    currentUserKey.currentState?.focusToItem(
+                        _completedSets == 0 ? 0 : _completedSets - 1);
+                  }),
             ),
             const SizedBox(height: 10),
             _previousSetsList(context),
@@ -192,6 +183,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           color: Colors.white,
         ),
         child: ScrollSnapList(
+          updateOnScroll: true,
           focusToItem: (index) {},
           itemSize: 80,
           itemCount: _setLength + 1,
@@ -283,42 +275,72 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     });
   }
 
-  Widget _challengeProgressPanel(BuildContext context) {
-    return Container(
-      height: 80,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ScrollSnapList(
-          shrinkWrap: true,
-          itemBuilder: _buildChallengerListItem,
-          itemCount: 5,
-          itemSize: 50,
-          onItemFocus: (index) {
-            setState(() {
-              _focusedIndex = index;
-            });
-          }),
-    );
-  }
-
-  Widget _buildChallengerListItem(BuildContext context, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blueAccent[100]!,
-      ),
-      width: 50,
-      height: 50,
-      child: Text('box'),
-    );
-  }
-
   void dialogCallBack() {
     if (!sessionInProgress) {
       Navigator.pop(context);
     }
+  }
+}
+
+class ChallengeScrollSnapList extends StatefulWidget {
+  const ChallengeScrollSnapList({Key? key, required this.sslKey})
+      : super(key: key);
+
+  final GlobalKey<ScrollSnapListState> sslKey;
+
+  @override
+  _ChallengeScrollSnapListState createState() =>
+      _ChallengeScrollSnapListState();
+}
+
+class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
+  int _focusedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: ScrollSnapList(
+      curve: Curves.easeOutBack,
+      key: widget.sslKey,
+      updateOnScroll: true,
+      focusToItem: (index) {},
+      itemSize: 60,
+      itemCount: 10,
+      duration: 500,
+      focusOnItemTap: false,
+      onItemFocus: (index) {},
+      itemBuilder: _buildChallengeScrollListItem,
+      dynamicItemSize: true,
+      allowAnotherDirection: true,
+      dynamicSizeEquation: (displacement) {
+        const threshold = 0;
+        const maxDisplacement = 800;
+        if (displacement >= threshold) {
+          const slope = 1 / (-maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        } else {
+          const slope = 1 / (maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        }
+      },
+    ));
+  }
+
+  Widget _buildChallengeScrollListItem(BuildContext context, int index) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white, border: Border.all(color: Colors.grey[600]!)),
+      width: 60,
+      height: 40,
+      child: Center(
+        child: Column(
+          children: [
+            Text('10 feet'),
+            Text('8/10'),
+          ],
+        ),
+      ),
+    );
   }
 }
 

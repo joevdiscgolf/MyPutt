@@ -266,6 +266,7 @@ class _RecordScreenState extends State<RecordScreen> {
         color: Colors.white,
       ),
       child: ScrollSnapList(
+        updateOnScroll: true,
         itemSize: 80,
         itemCount: _setLength + 1,
         duration: 125,
