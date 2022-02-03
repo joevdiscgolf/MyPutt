@@ -8,16 +8,16 @@ part of 'stats.dart';
 
 Stats _$StatsFromJson(Map json) => Stats(
       circleOnePercentages: (json['circleOnePercentages'] as Map?)?.map(
-        (k, e) => MapEntry(int.parse(k as String), (e as num).toDouble()),
+        (k, e) => MapEntry(int.parse(k as String), e as num?),
       ),
       circleOneAverages: (json['circleOneAverages'] as Map?)?.map(
-        (k, e) => MapEntry(int.parse(k as String), (e as num).toDouble()),
+        (k, e) => MapEntry(int.parse(k as String), e as num?),
       ),
       circleTwoAverages: (json['circleTwoAverages'] as Map?)?.map(
-        (k, e) => MapEntry(int.parse(k as String), (e as num).toDouble()),
+        (k, e) => MapEntry(int.parse(k as String), e as num?),
       ),
       circleTwoPercentages: (json['circleTwoPercentages'] as Map?)?.map(
-        (k, e) => MapEntry(int.parse(k as String), (e as num).toDouble()),
+        (k, e) => MapEntry(int.parse(k as String), e as num?),
       ),
       generalStats: json['generalStats'] == null
           ? null

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/putting_set.dart';
 
@@ -5,7 +6,7 @@ part 'putting_session.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSession {
-  PuttingSession({required this.dateStarted});
+  PuttingSession({required this.dateStarted}) {}
   final String dateStarted;
   List<PuttingSet> sets = [];
 

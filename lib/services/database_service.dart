@@ -44,11 +44,18 @@ class DatabaseService {
   Future<PuttingSession?> getCurrentSession() async {
     final uid = _authService.getCurrentUserId();
 
+    final result = await _dataLoader.getUserSessionsDocument(uid!);
+    if (result == null) {
+      return null;
+    } else {
+      final sessionsDocument = result;
+      return sessionsDocument.currentSession;
+    }
+    /*
     final sessionsDocument = await _dataLoader.getUserSessionsDocument(uid!);
     if (sessionsDocument == null) {
       return null;
-    }
-    return sessionsDocument.currentSession;
+    }*/
   }
 
   Future<List<PuttingSession>?> getCompletedSessions() async {

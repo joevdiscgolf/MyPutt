@@ -53,7 +53,6 @@ class SessionRepository {
     final PuttingSession? newCurrentSession =
         await _databaseService.getCurrentSession();
     currentSession = newCurrentSession;
-    print(currentSession);
     return true;
   }
 
@@ -73,5 +72,4 @@ class SessionRepository {
     currentSession = null;
     allSessions = [];
   }
-
 }

@@ -53,8 +53,9 @@ class SessionsCubit extends Cubit<SessionsState> {
       sessions: _sessionRepository.allSessions,
       currentSession: _sessionRepository.currentSession ??
           PuttingSession(
-              dateStarted:
-                  '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}'),
+            dateStarted:
+                '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
+          ),
       individualStats: _statsService
           .generateSessionsStatsMap(_sessionRepository.allSessions),
       currentSessionStats: _statsService.getStatsForSession(
@@ -78,8 +79,9 @@ class SessionsCubit extends Cubit<SessionsState> {
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession ??
             PuttingSession(
-                dateStarted:
-                    '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}'),
+              dateStarted:
+                  '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
+            ),
         individualStats: _statsService
             .generateSessionsStatsMap(_sessionRepository.allSessions),
         currentSessionStats: _statsService.getStatsForSession(
