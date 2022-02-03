@@ -25,7 +25,10 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   int _setLength = 10;
 
   int _completedSets = 0;
+  int challengeFocusedIndex = 0;
 
+  final GlobalKey<_ChallengeRecordScreenState> challengeRecordScreenKey =
+      GlobalKey();
   final GlobalKey<ScrollSnapListState> challengerKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
@@ -63,11 +66,18 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           children: [
             Container(
                 padding: const EdgeInsets.all(8),
-                height: 60,
+                height: 50,
                 child: Row(
                   children: [
-                    const SizedBox(width: 100, child: Text('Challenger')),
-                    ChallengeScrollSnapList(sslKey: numberListKey)
+                    const SizedBox(width: 100, child: Text('Set')),
+                    CounterScrollSnapList(
+                      sslKey: numberListKey,
+                      onUpdate: (index) {
+                        challengerKey.currentState?.focusToItem(index);
+                        currentUserKey.currentState?.focusToItem(index);
+                        numberListKey.currentState?.focusToItem(index);
+                      },
+                    )
                   ],
                 )),
             Container(
@@ -76,7 +86,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 child: Row(
                   children: [
                     const SizedBox(width: 100, child: Text('Challenger')),
-                    ChallengeScrollSnapList(sslKey: challengerKey)
+                    ChallengeScrollSnapList(
+                      sslKey: challengerKey,
+                      onUpdate: (index) {
+                        challengerKey.currentState?.focusToItem(index);
+                        currentUserKey.currentState?.focusToItem(index);
+                        numberListKey.currentState?.focusToItem(index);
+                      },
+                    )
                   ],
                 )),
             Container(
@@ -85,7 +102,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 child: Row(
                   children: [
                     const SizedBox(width: 100, child: Text('You')),
-                    ChallengeScrollSnapList(sslKey: currentUserKey)
+                    ChallengeScrollSnapList(
+                      sslKey: currentUserKey,
+                      onUpdate: (index) {
+                        challengerKey.currentState?.focusToItem(index);
+                        currentUserKey.currentState?.focusToItem(index);
+                        numberListKey.currentState?.focusToItem(index);
+                      },
+                    )
                   ],
                 )),
             const SizedBox(height: 10),
@@ -133,6 +157,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     challengerKey.currentState?.focusToItem(
                         _completedSets == 0 ? 0 : _completedSets - 1);
                     currentUserKey.currentState?.focusToItem(
+                        _completedSets == 0 ? 0 : _completedSets - 1);
+                    numberListKey.currentState?.focusToItem(
                         _completedSets == 0 ? 0 : _completedSets - 1);
                   }),
             ),
@@ -290,10 +316,12 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 }
 
 class ChallengeScrollSnapList extends StatefulWidget {
-  const ChallengeScrollSnapList({Key? key, required this.sslKey})
+  const ChallengeScrollSnapList(
+      {Key? key, required this.sslKey, required this.onUpdate})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
+  final Function onUpdate;
 
   @override
   _ChallengeScrollSnapListState createState() =>
@@ -307,13 +335,15 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         child: ScrollSnapList(
       curve: Curves.easeOutBack,
       key: widget.sslKey,
-      updateOnScroll: true,
+      updateOnScroll: false,
       focusToItem: (index) {},
       itemSize: 60,
       itemCount: 10,
-      duration: 500,
-      focusOnItemTap: false,
-      onItemFocus: (index) {},
+      duration: 400,
+      focusOnItemTap: true,
+      onItemFocus: (index) {
+        widget.onUpdate(index);
+      },
       itemBuilder: _buildChallengeScrollListItem,
       dynamicItemSize: true,
       allowAnotherDirection: true,
@@ -346,6 +376,63 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         ),
       ),
     );
+  }
+}
+
+class CounterScrollSnapList extends StatefulWidget {
+  const CounterScrollSnapList(
+      {Key? key, required this.sslKey, required this.onUpdate})
+      : super(key: key);
+
+  final GlobalKey<ScrollSnapListState> sslKey;
+  final Function onUpdate;
+
+  @override
+  _CounterScrollSnapListState createState() => _CounterScrollSnapListState();
+}
+
+class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: ScrollSnapList(
+      curve: Curves.easeOutBack,
+      key: widget.sslKey,
+      updateOnScroll: false,
+      focusToItem: (index) {},
+      itemSize: 60,
+      itemCount: 10,
+      duration: 400,
+      focusOnItemTap: true,
+      onItemFocus: (index) {
+        print('item focusing. index: $index');
+        widget.onUpdate(index);
+      },
+      itemBuilder: _buildItem,
+      dynamicItemSize: true,
+      allowAnotherDirection: true,
+      dynamicSizeEquation: (displacement) {
+        const threshold = 0;
+        const maxDisplacement = 800;
+        if (displacement >= threshold) {
+          const slope = 1 / (-maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        } else {
+          const slope = 1 / (maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        }
+      },
+    ));
+  }
+
+  Widget _buildItem(BuildContext context, int index) {
+    return Container(
+        decoration: BoxDecoration(color: Colors.transparent),
+        width: 60,
+        height: 30,
+        child: Center(
+          child: Center(child: Text((index + 1).toString())),
+        ));
   }
 }
 
