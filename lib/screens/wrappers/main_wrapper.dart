@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/bloc/cubits/challenges_cubit.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
@@ -32,7 +34,12 @@ class _MainWrapperState extends State<MainWrapper> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         enableFeedback: true,
-        onTap: (int index) => setState(() => _currentIndex = index),
+        onTap: (int index) {
+          if (index == 2) {
+            BlocProvider.of<ChallengesCubit>(context).openChallenge();
+          }
+          setState(() => _currentIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(FlutterRemix.home_2_line),

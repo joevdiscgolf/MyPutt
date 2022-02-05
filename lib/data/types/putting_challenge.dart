@@ -11,18 +11,18 @@ class PuttingChallenge {
       required this.createdAt,
       required this.id,
       required this.challengerUid,
-      required this.currentUid,
+      required this.recipientUid,
       required this.challengeStructureDistances,
       required this.challengerSets,
-      required this.currentUserSets});
+      required this.recipientSets});
   ChallengeStatus status;
   final int createdAt;
   final String id;
   final String challengerUid;
-  final String currentUid;
+  final String recipientUid;
   final List<int> challengeStructureDistances; // = [10,10,15,15,20,20];
   final List<int> challengerSets; // = [6,6,7,5,4,4];
-  final List<int> currentUserSets;
+  final List<int> recipientSets;
 
   factory PuttingChallenge.fromJson(Map<String, dynamic> json) =>
       _$PuttingChallengeFromJson(json);

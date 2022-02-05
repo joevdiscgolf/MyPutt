@@ -6,7 +6,8 @@ import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/bloc/cubits/challenges_cubit.dart';
+import 'package:myputt/data/types/putting_challenge.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
@@ -49,63 +50,92 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Container(
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Column(children: [
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
-                    height: 30,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('Set'))),
-                        CounterScrollSnapList(
-                          sslKey: numberListKey,
-                          onUpdate: (index) {
-                            challengerKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                        )
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80,
-                            child: Center(
-                                child: Center(child: Text('Challenger')))),
-                        ChallengeScrollSnapList(
-                          sslKey: challengerKey,
-                          onUpdate: (index) {
-                            challengerKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                        )
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('You'))),
-                        ChallengeScrollSnapList(
-                          sslKey: currentUserKey,
-                          onUpdate: (index) {
-                            challengerKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                        )
-                      ],
-                    )),
-              ])),
+          BlocBuilder<ChallengesCubit, ChallengesState>(
+            buildWhen: (previous, current) {
+              return current is ChallengeInProgress;
+            },
+            builder: (context, state) {
+              if (state is ChallengeInProgress) {
+                final PuttingChallenge challenge = state.currentChallenge;
+                return Container(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(children: [
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+                          height: 30,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                  width: 80, child: Center(child: Text('Set'))),
+                              CounterScrollSnapList(
+                                sslKey: numberListKey,
+                                onUpdate: (index) {
+                                  challengerKey.currentState
+                                      ?.focusToItem(index);
+                                  currentUserKey.currentState
+                                      ?.focusToItem(index);
+                                  numberListKey.currentState
+                                      ?.focusToItem(index);
+                                },
+                                itemCount: challenge.challengerSets.length,
+                              )
+                            ],
+                          )),
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                          height: 60,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                  width: 80,
+                                  child: Center(
+                                      child:
+                                          Center(child: Text('Challenger')))),
+                              ChallengeScrollSnapList(
+                                sslKey: challengerKey,
+                                onUpdate: (index) {
+                                  challengerKey.currentState
+                                      ?.focusToItem(index);
+                                  currentUserKey.currentState
+                                      ?.focusToItem(index);
+                                  numberListKey.currentState
+                                      ?.focusToItem(index);
+                                },
+                                challengeDistances:
+                                    challenge.challengeStructureDistances,
+                                puttsMade: challenge.challengerSets,
+                              )
+                            ],
+                          )),
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                          height: 60,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                  width: 80, child: Center(child: Text('You'))),
+                              ChallengeScrollSnapList(
+                                sslKey: currentUserKey,
+                                onUpdate: (index) {
+                                  challengerKey.currentState
+                                      ?.focusToItem(index);
+                                  currentUserKey.currentState
+                                      ?.focusToItem(index);
+                                  numberListKey.currentState
+                                      ?.focusToItem(index);
+                                },
+                                challengeDistances:
+                                    challenge.challengeStructureDistances,
+                                puttsMade: challenge.recipientSets,
+                              )
+                            ],
+                          )),
+                    ]));
+              } else {
+                return Container();
+              }
+            },
+          ),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
@@ -271,11 +301,18 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
 class ChallengeScrollSnapList extends StatefulWidget {
   const ChallengeScrollSnapList(
-      {Key? key, required this.sslKey, required this.onUpdate})
+      {Key? key,
+      required this.sslKey,
+      required this.onUpdate,
+      required this.challengeDistances,
+      required this.puttsMade})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
+
+  final List<int> challengeDistances;
+  final List<int> puttsMade;
 
   @override
   _ChallengeScrollSnapListState createState() =>
@@ -292,7 +329,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       updateOnScroll: false,
       focusToItem: (index) {},
       itemSize: 60,
-      itemCount: 10,
+      itemCount: widget.puttsMade.length,
       duration: 400,
       focusOnItemTap: true,
       onItemFocus: (index) {
@@ -338,11 +375,15 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
 
 class CounterScrollSnapList extends StatefulWidget {
   const CounterScrollSnapList(
-      {Key? key, required this.sslKey, required this.onUpdate})
+      {Key? key,
+      required this.sslKey,
+      required this.onUpdate,
+      required this.itemCount})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
+  final int itemCount;
 
   @override
   _CounterScrollSnapListState createState() => _CounterScrollSnapListState();
@@ -358,7 +399,7 @@ class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
       updateOnScroll: false,
       focusToItem: (index) {},
       itemSize: 60,
-      itemCount: 10,
+      itemCount: widget.itemCount,
       duration: 400,
       focusOnItemTap: true,
       onItemFocus: (index) {

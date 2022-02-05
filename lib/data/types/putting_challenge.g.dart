@@ -11,7 +11,7 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
       createdAt: json['createdAt'] as int,
       id: json['id'] as String,
       challengerUid: json['challengerUid'] as String,
-      currentUid: json['currentUid'] as String,
+      recipientUid: json['recipientUid'] as String,
       challengeStructureDistances:
           (json['challengeStructureDistances'] as List<dynamic>)
               .map((e) => e as int)
@@ -19,7 +19,7 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
       challengerSets: (json['challengerSets'] as List<dynamic>)
           .map((e) => e as int)
           .toList(),
-      currentUserSets: (json['currentUserSets'] as List<dynamic>)
+      recipientSets: (json['recipientSets'] as List<dynamic>)
           .map((e) => e as int)
           .toList(),
     );
@@ -30,10 +30,10 @@ Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
       'createdAt': instance.createdAt,
       'id': instance.id,
       'challengerUid': instance.challengerUid,
-      'currentUid': instance.currentUid,
+      'recipientUid': instance.recipientUid,
       'challengeStructureDistances': instance.challengeStructureDistances,
       'challengerSets': instance.challengerSets,
-      'currentUserSets': instance.currentUserSets,
+      'recipientSets': instance.recipientSets,
     };
 
 K _$enumDecode<K, V>(
