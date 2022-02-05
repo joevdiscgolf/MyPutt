@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/bloc/cubits/sessions_cubit.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
@@ -22,10 +21,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
-  int _setLength = 10;
+  final int _setLength = 10;
 
   int _completedSets = 0;
   int challengeFocusedIndex = 0;
+  int challengeSetsCompleted = 0;
 
   final GlobalKey<_ChallengeRecordScreenState> challengeRecordScreenKey =
       GlobalKey();
@@ -36,157 +36,130 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100]!,
-      appBar: AppBar(
-        title: const Text('Challenges'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-                padding: const EdgeInsets.all(8),
-                height: 50,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 100, child: Text('Set')),
-                    CounterScrollSnapList(
-                      sslKey: numberListKey,
-                      onUpdate: (index) {
-                        challengerKey.currentState?.focusToItem(index);
-                        currentUserKey.currentState?.focusToItem(index);
-                        numberListKey.currentState?.focusToItem(index);
-                      },
-                    )
-                  ],
-                )),
-            Container(
-                padding: const EdgeInsets.all(8),
-                height: 60,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 100, child: Text('Challenger')),
-                    ChallengeScrollSnapList(
-                      sslKey: challengerKey,
-                      onUpdate: (index) {
-                        challengerKey.currentState?.focusToItem(index);
-                        currentUserKey.currentState?.focusToItem(index);
-                        numberListKey.currentState?.focusToItem(index);
-                      },
-                    )
-                  ],
-                )),
-            Container(
-                padding: const EdgeInsets.all(8),
-                height: 60,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 100, child: Text('You')),
-                    ChallengeScrollSnapList(
-                      sslKey: currentUserKey,
-                      onUpdate: (index) {
-                        challengerKey.currentState?.focusToItem(index);
-                        currentUserKey.currentState?.focusToItem(index);
-                        numberListKey.currentState?.focusToItem(index);
-                      },
-                    )
-                  ],
-                )),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Align(
-                          alignment: Alignment.topLeft,
-                          child: Text('Putts made',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _putterCountPicker(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  _puttsMadePicker(context),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: PrimaryButton(
-                  label: 'Add set',
-                  width: double.infinity,
-                  height: 50,
-                  icon: FlutterRemix.add_line,
-                  onPressed: () {
-                    _completedSets += 1;
-                    challengerKey.currentState?.focusToItem(
-                        _completedSets == 0 ? 0 : _completedSets - 1);
-                    currentUserKey.currentState?.focusToItem(
-                        _completedSets == 0 ? 0 : _completedSets - 1);
-                    numberListKey.currentState?.focusToItem(
-                        _completedSets == 0 ? 0 : _completedSets - 1);
-                  }),
-            ),
-            const SizedBox(height: 10),
-            _previousSetsList(context),
-          ],
+        backgroundColor: Colors.grey[100]!,
+        appBar: AppBar(
+          title: const Text('Challenges'),
         ),
-      ),
-    );
+        body: _mainBody(context));
   }
 
-  Widget _putterCountPicker(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Putters', style: TextStyle(fontWeight: FontWeight.bold)),
-        Row(
-          children: [
-            ElevatedButton(
-              child: const Text('-',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              onPressed: () {
-                setState(() {
-                  if (_setLength > 1) _setLength -= 1;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-              ),
+  Widget _mainBody(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+              decoration: const BoxDecoration(color: Colors.white),
+              child: Column(children: [
+                Container(
+                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+                    height: 30,
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                            width: 80, child: Center(child: Text('Set'))),
+                        CounterScrollSnapList(
+                          sslKey: numberListKey,
+                          onUpdate: (index) {
+                            challengerKey.currentState?.focusToItem(index);
+                            currentUserKey.currentState?.focusToItem(index);
+                            numberListKey.currentState?.focusToItem(index);
+                          },
+                        )
+                      ],
+                    )),
+                Container(
+                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                    height: 60,
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                            width: 80,
+                            child: Center(
+                                child: Center(child: Text('Challenger')))),
+                        ChallengeScrollSnapList(
+                          sslKey: challengerKey,
+                          onUpdate: (index) {
+                            challengerKey.currentState?.focusToItem(index);
+                            currentUserKey.currentState?.focusToItem(index);
+                            numberListKey.currentState?.focusToItem(index);
+                          },
+                        )
+                      ],
+                    )),
+                Container(
+                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                    height: 60,
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                            width: 80, child: Center(child: Text('You'))),
+                        ChallengeScrollSnapList(
+                          sslKey: currentUserKey,
+                          onUpdate: (index) {
+                            challengerKey.currentState?.focusToItem(index);
+                            currentUserKey.currentState?.focusToItem(index);
+                            numberListKey.currentState?.focusToItem(index);
+                          },
+                        )
+                      ],
+                    )),
+              ])),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
             ),
-            const SizedBox(width: 5),
-            Text(_setLength.toString()),
-            const SizedBox(width: 5),
-            ElevatedButton(
-              child: const Text('+',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              onPressed: () {
-                setState(() {
-                  _setLength += 1;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-              ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('Putts made',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
+                      /*Align(
+                        alignment: Alignment.centerRight,
+                        child: _putterCountPicker(context),
+                      ),*/
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 5),
+                _puttsMadePicker(context),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: PrimaryButton(
+                label: 'Add set',
+                width: double.infinity,
+                height: 50,
+                icon: FlutterRemix.add_line,
+                onPressed: () {
+                  _completedSets += 1;
+                  challengerKey.currentState?.focusToItem(
+                      _completedSets == 0 ? 0 : _completedSets - 1);
+                  currentUserKey.currentState?.focusToItem(
+                      _completedSets == 0 ? 0 : _completedSets - 1);
+                  numberListKey.currentState?.focusToItem(
+                      _completedSets == 0 ? 0 : _completedSets - 1);
+                }),
+          ),
+          const SizedBox(height: 10),
+          _previousSetsList(context),
+        ],
+      ),
     );
   }
 
@@ -345,14 +318,17 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
   Widget _buildChallengeScrollListItem(BuildContext context, int index) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: Colors.grey[600]!)),
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+          border: Border.all(color: Colors.grey[600]!)),
       width: 60,
       height: 40,
       child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Text('10 feet'),
-            Text('8/10'),
+            Text('10 ft'),
+            Text('8 / 10'),
           ],
         ),
       ),
@@ -386,15 +362,14 @@ class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
       duration: 400,
       focusOnItemTap: true,
       onItemFocus: (index) {
-        print('item focusing. index: $index');
         widget.onUpdate(index);
       },
       itemBuilder: _buildItem,
-      dynamicItemSize: true,
       allowAnotherDirection: true,
+      dynamicItemSize: true,
       dynamicSizeEquation: (displacement) {
         const threshold = 0;
-        const maxDisplacement = 800;
+        const maxDisplacement = 300;
         if (displacement >= threshold) {
           const slope = 1 / (-maxDisplacement);
           return slope * displacement + (1 - slope * threshold);
@@ -408,11 +383,17 @@ class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
 
   Widget _buildItem(BuildContext context, int index) {
     return Container(
-        decoration: BoxDecoration(color: Colors.transparent),
-        width: 60,
-        height: 30,
+      decoration: const BoxDecoration(color: Colors.transparent),
+      width: 60,
+      height: 40,
+      child: FittedBox(
         child: Center(
-          child: Center(child: Text((index + 1).toString())),
-        ));
+          child: Center(
+              child: Text(
+            (index + 1).toString(),
+          )),
+        ),
+      ),
+    );
   }
 }

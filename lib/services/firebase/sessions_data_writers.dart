@@ -4,7 +4,7 @@ import 'package:myputt/utils/constants.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-class FBDataWriter {
+class FBSessionsDataWriter {
   Future<bool> setCurrentSession(PuttingSession currentSession, uid) async {
     print('data writer starting current session');
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');

@@ -38,14 +38,11 @@ class AuthService {
           .signInWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
       final uid = getCurrentUserId();
-      print('user signed in correctly, uid: $uid');
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
         exception = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
         exception = 'Wrong password provided for that user.';
       }
     } catch (e) {
@@ -61,10 +58,8 @@ class AuthService {
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
         exception = 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
         exception = 'The account already exists for that email.';
       }
     } catch (e) {

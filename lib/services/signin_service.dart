@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:myputt/services/auth_service.dart';
-import 'package:myputt/repositories/sessions_repository.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/utils.dart';
 
 class SigninService {
   late StreamController<bool> controller;
@@ -25,6 +26,7 @@ class SigninService {
         _authService.getCurrentUserId() == null) {
       return false;
     }
+    //await fetchRepositoryData();
     await locator.get<SessionRepository>().fetchCurrentSession();
     await locator.get<SessionRepository>().fetchCompletedSessions();
     controller.add(true);

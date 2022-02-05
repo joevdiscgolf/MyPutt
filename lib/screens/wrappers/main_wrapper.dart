@@ -43,7 +43,7 @@ class _MainWrapperState extends State<MainWrapper> {
             label: 'Record',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.stack_fill),
+            icon: Icon(FlutterRemix.sword_line),
             label: 'Challenges',
           ),
         ],

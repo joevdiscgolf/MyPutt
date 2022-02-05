@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/utils/constants.dart';
-import 'dart:convert';
 import 'package:myputt/data/types/sessions_document.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-class FBDataLoader {
+class FBSessionsDataLoader {
   Future<SessionsDocument?> getUserSessionsDocument(String uid) async {
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
     final snapshot = await currentSessionReference.get();
