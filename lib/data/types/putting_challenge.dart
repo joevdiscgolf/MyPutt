@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../utils/constants.dart';
+import 'package:myputt/data/types/putting_set.dart';
 
 part 'putting_challenge.g.dart';
 
@@ -21,8 +22,8 @@ class PuttingChallenge {
   final String challengerUid;
   final String recipientUid;
   final List<int> challengeStructureDistances; // = [10,10,15,15,20,20];
-  final List<int> challengerSets; // = [6,6,7,5,4,4];
-  final List<int> recipientSets;
+  final List<PuttingSet> challengerSets; // = [6,6,7,5,4,4];
+  final List<PuttingSet> recipientSets;
 
   factory PuttingChallenge.fromJson(Map<String, dynamic> json) =>
       _$PuttingChallengeFromJson(json);

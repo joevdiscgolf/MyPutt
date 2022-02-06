@@ -74,6 +74,11 @@ class DatabaseService {
     return _challengesDataLoader.getPuttingChallenges(uid!, filters);
   }
 
+  Future<PuttingChallenge?> getCurrentPuttingChallenge() {
+    final uid = _authService.getCurrentUserId();
+    return _challengesDataLoader.getCurrentPuttingChallenge(uid!);
+  }
+
   Future<bool> updatePuttingChallenge(PuttingChallenge challengeToUpdate) {
     final uid = _authService.getCurrentUserId();
     return _challengesDataWriter.setPuttingChallenge(uid!, challengeToUpdate);

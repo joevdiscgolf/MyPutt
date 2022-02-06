@@ -9,6 +9,8 @@ import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/bloc/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 
+import '../../data/types/putting_set.dart';
+
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
 
@@ -21,7 +23,7 @@ class ChallengeRecordScreen extends StatefulWidget {
 class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
-  int _focusedIndex = 0;
+  int _focusedPuttPickerIndex = 0;
   final int _setLength = 10;
 
   int _completedSets = 0;
@@ -92,20 +94,20 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       child:
                                           Center(child: Text('Challenger')))),
                               ChallengeScrollSnapList(
-                                isCurrentUser: false,
-                                sslKey: challengerKey,
-                                onUpdate: (index) {
-                                  challengerKey.currentState
-                                      ?.focusToItem(index);
-                                  currentUserKey.currentState
-                                      ?.focusToItem(index);
-                                  numberListKey.currentState
-                                      ?.focusToItem(index);
-                                },
-                                challengeDistances:
-                                    challenge.challengeStructureDistances,
-                                puttsMade: challenge.challengerSets,
-                              )
+                                  isCurrentUser: false,
+                                  sslKey: challengerKey,
+                                  onUpdate: (index) {
+                                    challengerKey.currentState
+                                        ?.focusToItem(index);
+                                    currentUserKey.currentState
+                                        ?.focusToItem(index);
+                                    numberListKey.currentState
+                                        ?.focusToItem(index);
+                                  },
+                                  challengeDistances:
+                                      challenge.challengeStructureDistances,
+                                  puttingSets: challenge.challengerSets,
+                                  itemCount: challenge.recipientSets.length + 1)
                             ],
                           )),
                       Container(
@@ -128,7 +130,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 },
                                 challengeDistances:
                                     challenge.challengeStructureDistances,
-                                puttsMade: challenge.recipientSets,
+                                puttingSets: challenge.recipientSets,
+                                itemCount: challenge.recipientSets.length + 1,
                               )
                             ],
                           )),
@@ -186,6 +189,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       _completedSets == 0 ? 0 : _completedSets - 1);
                   numberListKey.currentState?.focusToItem(
                       _completedSets == 0 ? 0 : _completedSets - 1);
+                  //BlocProvider.of<ChallengesCubit>(context)
                 }),
           ),
           const SizedBox(height: 10),
@@ -228,7 +232,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
   void _onItemFocus(int index) {
     setState(() {
-      _focusedIndex = index;
+      _focusedPuttPickerIndex = index;
     });
     HapticFeedback.mediumImpact();
   }
@@ -237,11 +241,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     Color? iconColor;
     Color backgroundColor;
     if (index == 0) {
-      iconColor = _focusedIndex == index ? Colors.red : Colors.grey[400]!;
+      iconColor =
+          _focusedPuttPickerIndex == index ? Colors.red : Colors.grey[400]!;
       backgroundColor = Colors.transparent;
     } else {
-      backgroundColor =
-          index <= _focusedIndex ? const Color(0xff00d162) : Colors.grey[200]!;
+      backgroundColor = index <= _focusedPuttPickerIndex
+          ? const Color(0xff00d162)
+          : Colors.grey[200]!;
     }
     return Container(
       decoration: BoxDecoration(
@@ -258,8 +264,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 )
               : Text((index).toString(),
                   style: TextStyle(
-                      color:
-                          index <= _focusedIndex ? Colors.white : Colors.black,
+                      color: index <= _focusedPuttPickerIndex
+                          ? Colors.white
+                          : Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold))),
     );
@@ -307,16 +314,18 @@ class ChallengeScrollSnapList extends StatefulWidget {
       required this.sslKey,
       required this.onUpdate,
       required this.isCurrentUser,
+      required this.itemCount,
       required this.challengeDistances,
-      required this.puttsMade})
+      required this.puttingSets})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final bool isCurrentUser;
+  final int itemCount;
 
   final List<int> challengeDistances;
-  final List<int> puttsMade;
+  final List<PuttingSet> puttingSets;
 
   @override
   _ChallengeScrollSnapListState createState() =>
@@ -333,9 +342,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       updateOnScroll: false,
       focusToItem: (index) {},
       itemSize: 60,
-      itemCount: widget.isCurrentUser
-          ? widget.puttsMade.length + 1
-          : widget.puttsMade.length,
+      itemCount: widget.itemCount,
       duration: 400,
       focusOnItemTap: true,
       onItemFocus: (index) {
@@ -360,12 +367,12 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
 
   Widget _buildChallengeScrollListItem(BuildContext context, int index) {
     if (widget.isCurrentUser) {
-      if (index == widget.puttsMade.length) {
+      if (index == widget.puttingSets.length) {
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-              border: Border.all(color: Colors.blue[200]!)),
+              color: Colors.blue[200],
+              border: Border.all(color: Colors.grey[600]!)),
           width: 60,
           height: 40,
         );
@@ -381,9 +388,10 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('10 ft'),
-            Text('8 / 10'),
+          children: [
+            Text('${widget.puttingSets[index].distance} ft'),
+            Text(
+                '${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
           ],
         ),
       ),

@@ -19,4 +19,16 @@ class FBChallengesDataLoader {
             PuttingChallenge.fromJson(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
+  Future<PuttingChallenge?> getCurrentPuttingChallenge(String uid) async {
+    return firestore
+        .doc('$challengesCollection/$uid')
+        .get()
+        .then<PuttingChallenge?>((DocumentSnapshot snapshot) async {
+      if (snapshot.exists) {
+        return snapshot.data() as PuttingChallenge;
+      }
+      return null;
+    });
+  }
 }
