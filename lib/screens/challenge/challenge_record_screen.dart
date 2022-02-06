@@ -92,6 +92,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       child:
                                           Center(child: Text('Challenger')))),
                               ChallengeScrollSnapList(
+                                isCurrentUser: false,
                                 sslKey: challengerKey,
                                 onUpdate: (index) {
                                   challengerKey.currentState
@@ -115,6 +116,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               const SizedBox(
                                   width: 80, child: Center(child: Text('You'))),
                               ChallengeScrollSnapList(
+                                isCurrentUser: true,
                                 sslKey: currentUserKey,
                                 onUpdate: (index) {
                                   challengerKey.currentState
@@ -304,12 +306,14 @@ class ChallengeScrollSnapList extends StatefulWidget {
       {Key? key,
       required this.sslKey,
       required this.onUpdate,
+      required this.isCurrentUser,
       required this.challengeDistances,
       required this.puttsMade})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
+  final bool isCurrentUser;
 
   final List<int> challengeDistances;
   final List<int> puttsMade;
@@ -329,7 +333,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       updateOnScroll: false,
       focusToItem: (index) {},
       itemSize: 60,
-      itemCount: widget.puttsMade.length,
+      itemCount: widget.isCurrentUser
+          ? widget.puttsMade.length + 1
+          : widget.puttsMade.length,
       duration: 400,
       focusOnItemTap: true,
       onItemFocus: (index) {
@@ -353,6 +359,18 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
   }
 
   Widget _buildChallengeScrollListItem(BuildContext context, int index) {
+    if (widget.isCurrentUser) {
+      if (index == widget.puttsMade.length) {
+        return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+              border: Border.all(color: Colors.blue[200]!)),
+          width: 60,
+          height: 40,
+        );
+      }
+    }
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
