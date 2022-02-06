@@ -1,5 +1,6 @@
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/data/types/putting_set.dart';
 
 import '../utils/constants.dart';
 
@@ -28,12 +29,23 @@ class ChallengesRepository {
     if (result[2] is List<PuttingChallenge>) {
       completedChallenges = result[2] as List<PuttingChallenge>;
     }
-    if (result[3] is PuttingChallenge) {}
+    if (result[3] is PuttingChallenge) {
+      currentPuttingChallenge = result[3];
+    }
   }
 
   void activateChallenge(PuttingChallenge challenge) {
     pendingChallenges.remove(challenge);
     activeChallenges.add(challenge);
     _databaseService.updatePuttingChallenge(challenge);
+  }
+
+  Future<bool> addSet(PuttingSet set) async {
+    if (currentPuttingChallenge != null) {
+      currentPuttingChallenge?.recipientSets.add(set);
+      return _databaseService.updatePuttingChallenge(currentPuttingChallenge!);
+    } else {
+      return false;
+    }
   }
 }

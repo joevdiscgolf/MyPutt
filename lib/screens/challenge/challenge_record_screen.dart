@@ -189,7 +189,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       _completedSets == 0 ? 0 : _completedSets - 1);
                   numberListKey.currentState?.focusToItem(
                       _completedSets == 0 ? 0 : _completedSets - 1);
-                  //BlocProvider.of<ChallengesCubit>(context)
+                  /*BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                      distance: 10, puttsAttempted: 10, puttsMade: 5));*/
                 }),
           ),
           const SizedBox(height: 10),
