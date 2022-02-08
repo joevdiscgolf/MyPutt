@@ -14,36 +14,18 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   ChallengesCubit() : super(ChallengesInitial());
 
   void openChallenge(/*PuttingChallenge challenge*/) {
-    /*if (challenge.status == ChallengeStatus.pending) {
-      challenge.status = ChallengeStatus.active;
-      _challengesRepository.activateChallenge(challenge);
-      _challengesRepository.currentChallenge = challenge;
-    }*/
-    _challengesRepository.currentPuttingChallenge = PuttingChallenge(
-        challengerSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
-        ],
-        challengerUid: 'challengeruid',
-        challengeStructureDistances: [20, 20, 15],
-        createdAt: 1643453201,
-        id: 'thischallengeId',
-        recipientSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)
-        ],
-        recipientUid: 'recipientuid',
-        status: ChallengeStatus.active);
+    final challenge = _challengesRepository.pendingChallenges[0];
+    _challengesRepository.openChallenge(challenge);
     emit(ChallengeInProgress(
-        currentChallenge: _challengesRepository.currentPuttingChallenge!));
+        currentChallenge: _challengesRepository.currentChallenge!));
   }
 
   void addSet(PuttingSet set) {
     _challengesRepository.addSet(set);
-    if (_challengesRepository.currentPuttingChallenge != null) {
+    if (_challengesRepository.currentChallenge != null) {
+      _challengesRepository.addSet(set);
       emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentPuttingChallenge!));
+          currentChallenge: _challengesRepository.currentChallenge!));
     } else {
       emit(ChallengesErrorState());
     }

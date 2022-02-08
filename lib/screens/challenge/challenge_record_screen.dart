@@ -8,6 +8,7 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/bloc/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/components/putts_made_picker.dart';
 
 import '../../data/types/putting_set.dart';
 
@@ -21,12 +22,21 @@ class ChallengeRecordScreen extends StatefulWidget {
 }
 
 class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
-  bool sessionInProgress = true;
+  final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
+  late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
+    sslKey: puttsMadePickerKey,
+    onUpdate: (int newIndex) {
+      setState(() {
+        puttsPickerFocusedIndex = newIndex;
+      });
+    },
+  );
 
-  int _focusedPuttPickerIndex = 0;
+  bool sessionInProgress = true;
   final int _setLength = 10;
 
   int _completedSets = 0;
+  int puttsPickerFocusedIndex = 0;
   int challengeFocusedIndex = 0;
   int challengeSetsCompleted = 0;
 
@@ -169,7 +179,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   ),
                 ),
                 const SizedBox(height: 5),
-                _puttsMadePicker(context),
+                puttsMadePicker,
               ],
             ),
           ),
@@ -199,7 +209,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       ),
     );
   }
-
+/*
   Widget _puttsMadePicker(BuildContext context) {
     return Container(
         height: 80,
@@ -271,7 +281,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       fontSize: 20,
                       fontWeight: FontWeight.bold))),
     );
-  }
+  }*/
 
   Widget _previousSetsList(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
@@ -390,9 +400,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${widget.puttingSets[index].distance} ft'),
-            Text(
-                '${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
+            Text('10 feet'), //Text('${widget.puttingSets[index].distance} ft'),
+            Text('8/10'),
+            //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
           ],
         ),
       ),

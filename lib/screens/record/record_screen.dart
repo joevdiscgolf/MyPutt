@@ -8,17 +8,28 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/components/putts_made_picker.dart';
 
 class RecordScreen extends StatefulWidget {
-  const RecordScreen({Key? key}) : super(key: key);
+  RecordScreen({Key? key}) : super(key: key);
 
   static String routeName = '/record_screen';
 
+  final thisState = _RecordScreenState();
   @override
-  _RecordScreenState createState() => _RecordScreenState();
+  _RecordScreenState createState() => thisState;
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
+  late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
+      sslKey: puttsMadePickerKey,
+      onUpdate: (int newIndex) {
+        setState(() {
+          _focusedIndex = newIndex;
+        });
+      });
+
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
@@ -99,7 +110,7 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  _puttsMadePicker(context),
+                  puttsMadePicker,
                 ],
               ),
             ),
@@ -229,8 +240,11 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('-',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
+                puttsMadePicker.adjustSetLength(false);
                 setState(() {
-                  if (_setLength > 1) _setLength -= 1;
+                  if (_setLength > 1) {
+                    _setLength -= 1;
+                  }
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -244,6 +258,7 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('+',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
+                puttsMadePicker.adjustSetLength(true);
                 setState(() {
                   _setLength += 1;
                 });
@@ -458,7 +473,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                               backgroundColor: Colors.green,
                               onPressed: () {
                                 setState(() {
-                                  _dialogErrorText = "No ongoing session";
+                                  _dialogErrorText = "No active session";
                                 });
                                 return 'Finish';
                               });
