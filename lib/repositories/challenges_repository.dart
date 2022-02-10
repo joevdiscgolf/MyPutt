@@ -40,43 +40,67 @@ class ChallengesRepository {
       _databaseService.getCurrentPuttingChallenge(),
     ]);
 
-    if (result[0] is List<PuttingChallenge>) {
+    if (result[0] != null && result[0] is List<PuttingChallenge>) {
       pendingChallenges = result[0] as List<PuttingChallenge>;
     }
-    if (result[1] is List<PuttingChallenge>) {
+    if (result[1] != null && result[1] is List<PuttingChallenge>) {
       activeChallenges = result[1] as List<PuttingChallenge>;
     }
-    if (result[2] is List<PuttingChallenge>) {
+    if (result[2] != null && result[2] is List<PuttingChallenge>) {
       completedChallenges = result[2] as List<PuttingChallenge>;
     }
-    if (result[3] is PuttingChallenge) {
+    if (result[3] != null && result[3] is PuttingChallenge) {
       currentChallenge = result[3];
     }
   }
 
-  void openChallenge(PuttingChallenge challenge) {
-    currentChallenge = challenge;
-    if (challenge.status == ChallengeStatus.pending) {
-      challenge.status = ChallengeStatus.active;
-      pendingChallenges.remove(challenge);
-      activeChallenges.add(challenge);
+  void openChallenge(/*PuttingChallenge challenge*/) {
+    currentChallenge = PuttingChallenge(
+        challengerSets: [
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
+        ],
+        challengerUid: 'challengeruid',
+        challengeStructureDistances: [20, 20, 15],
+        createdAt: 1643453201,
+        id: 'thischallengeId',
+        recipientSets: [
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)
+        ],
+        recipientUid: 'recipientuid',
+        status: ChallengeStatus.active);
+    if (currentChallenge?.status == ChallengeStatus.pending) {
+      currentChallenge?.status = ChallengeStatus.active;
+      pendingChallenges.remove(currentChallenge);
+      activeChallenges.add(currentChallenge!);
     }
-    challenge.status = ChallengeStatus.active;
-    _databaseService.updatePuttingChallenge(challenge);
+    //_databaseService.updatePuttingChallenge(currentChallenge!);
   }
 
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
-      if (uid == currentChallenge!.recipientUid) {
-        currentChallenge!.recipientSets.add(set);
-      } else {
+      /*if (uid == currentChallenge?.recipientUid) {
+      }*/
+      currentChallenge!.recipientSets.add(set);
+      /*else if (uid == currentChallenge?.challengerUid) {
         currentChallenge!.challengerSets.add(set);
-      }
-      return _databaseService.updatePuttingChallenge(currentChallenge!);
+      } else {
+        return false;
+      }*/
+      return true;
     } else {
       return false;
     }
+  }
+
+  Future<bool> storeCurrentChallenge() async {
+    if (currentChallenge != null) {
+      return _databaseService.updatePuttingChallenge(currentChallenge!);
+    }
+    return false;
   }
 }
 /*

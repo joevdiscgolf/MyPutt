@@ -35,7 +35,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
   final int _setLength = 10;
 
-  int _completedSets = 0;
   int puttsPickerFocusedIndex = 0;
   int challengeFocusedIndex = 0;
   int challengeSetsCompleted = 0;
@@ -45,6 +44,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   final GlobalKey<ScrollSnapListState> challengerKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
+  final GlobalKey<_CounterScrollSnapListState> counterListKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +69,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             builder: (context, state) {
               if (state is ChallengeInProgress) {
                 final PuttingChallenge challenge = state.currentChallenge;
+                final int itemCount = challenge.recipientSets.length ==
+                        challenge.challengerSets.length
+                    ? challenge.recipientSets.length
+                    : challenge.recipientSets.length + 1;
+                print(itemCount);
                 return Container(
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(children: [
@@ -80,6 +85,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               const SizedBox(
                                   width: 80, child: Center(child: Text('Set'))),
                               CounterScrollSnapList(
+                                key: counterListKey,
                                 sslKey: numberListKey,
                                 onUpdate: (index) {
                                   challengerKey.currentState
@@ -89,7 +95,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   numberListKey.currentState
                                       ?.focusToItem(index);
                                 },
-                                itemCount: challenge.challengerSets.length,
+                                itemCount: itemCount,
                               )
                             ],
                           )),
@@ -117,7 +123,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   challengeDistances:
                                       challenge.challengeStructureDistances,
                                   puttingSets: challenge.challengerSets,
-                                  itemCount: challenge.recipientSets.length + 1)
+                                  itemCount: itemCount)
                             ],
                           )),
                       Container(
@@ -141,7 +147,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 challengeDistances:
                                     challenge.challengeStructureDistances,
                                 puttingSets: challenge.recipientSets,
-                                itemCount: challenge.recipientSets.length + 1,
+                                itemCount: itemCount,
                               )
                             ],
                           )),
@@ -186,22 +192,38 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           const SizedBox(height: 10),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: PrimaryButton(
-                label: 'Add set',
-                width: double.infinity,
-                height: 50,
-                icon: FlutterRemix.add_line,
-                onPressed: () {
-                  _completedSets += 1;
-                  challengerKey.currentState?.focusToItem(
-                      _completedSets == 0 ? 0 : _completedSets - 1);
-                  currentUserKey.currentState?.focusToItem(
-                      _completedSets == 0 ? 0 : _completedSets - 1);
-                  numberListKey.currentState?.focusToItem(
-                      _completedSets == 0 ? 0 : _completedSets - 1);
-                  /*BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                      distance: 10, puttsAttempted: 10, puttsMade: 5));*/
-                }),
+            child: BlocBuilder<ChallengesCubit, ChallengesState>(
+              builder: (context, state) {
+                if (state is ChallengeInProgress) {
+                  return PrimaryButton(
+                      label: 'Add set',
+                      width: double.infinity,
+                      height: 50,
+                      icon: FlutterRemix.add_line,
+                      onPressed: () {
+                        BlocProvider.of<ChallengesCubit>(context).addSet(
+                            PuttingSet(
+                                distance: 10,
+                                puttsAttempted: _setLength,
+                                puttsMade: puttsPickerFocusedIndex));
+                        print(
+                            'length: ${state.currentChallenge.recipientSets.length}');
+                        challengerKey.currentState?.focusToItem(
+                            state.currentChallenge.recipientSets.length - 1);
+                        currentUserKey.currentState?.focusToItem(
+                            state.currentChallenge.recipientSets.length - 1);
+                        numberListKey.currentState?.focusToItem(
+                            state.currentChallenge.recipientSets.length - 1);
+                      });
+                }
+                return PrimaryButton(
+                    label: 'Finish challenge',
+                    width: double.infinity,
+                    height: 50,
+                    icon: FlutterRemix.add_line,
+                    onPressed: () {});
+              },
+            ),
           ),
           const SizedBox(height: 10),
           _previousSetsList(context),
@@ -209,6 +231,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       ),
     );
   }
+
 /*
   Widget _puttsMadePicker(BuildContext context) {
     return Container(
@@ -399,8 +422,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('10 feet'), //Text('${widget.puttingSets[index].distance} ft'),
+          children: const [
+            Text('10 feet'),
+            //Text('${widget.puttingSets[index].distance} ft'),
             Text('8/10'),
             //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
           ],

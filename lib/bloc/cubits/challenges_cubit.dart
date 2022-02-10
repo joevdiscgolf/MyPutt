@@ -9,25 +9,37 @@ import 'package:myputt/data/types/putting_set.dart';
 part 'challenges_state.dart';
 
 class ChallengesCubit extends Cubit<ChallengesState> {
+  ChallengesState currentState = ChallengesInitial();
+
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
-  ChallengesCubit() : super(ChallengesInitial());
+  ChallengesCubit() : super(ChallengesInitial()) {
+    _challengesRepository.openChallenge();
+    openChallenge();
+  }
 
   void openChallenge(/*PuttingChallenge challenge*/) {
-    final challenge = _challengesRepository.pendingChallenges[0];
-    _challengesRepository.openChallenge(challenge);
+    _challengesRepository.openChallenge();
     emit(ChallengeInProgress(
-        currentChallenge: _challengesRepository.currentChallenge!));
+      currentChallenge: _challengesRepository.currentChallenge!,
+    ));
   }
 
   void addSet(PuttingSet set) {
-    _challengesRepository.addSet(set);
     if (_challengesRepository.currentChallenge != null) {
-      _challengesRepository.addSet(set);
-      emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentChallenge!));
-    } else {
-      emit(ChallengesErrorState());
+      final opponentSetsCount =
+          _challengesRepository.currentChallenge!.challengerSets.length;
+      final currentUserSetsCount =
+          _challengesRepository.currentChallenge!.recipientSets.length;
+      if (currentUserSetsCount < opponentSetsCount) {
+        print('adding set');
+        _challengesRepository.addSet(set);
+        _challengesRepository.storeCurrentChallenge();
+        emit(ChallengeInProgress(
+            currentChallenge: _challengesRepository.currentChallenge!));
+      } else {
+        emit(ChallengesErrorState());
+      }
     }
   }
 }

@@ -80,7 +80,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
     setState(() {
       focusedIndex = index;
     });
-    widget.onUpdate;
+    widget.onUpdate(index);
     HapticFeedback.mediumImpact();
   }
 
