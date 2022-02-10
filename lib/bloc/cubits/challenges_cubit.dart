@@ -38,6 +38,8 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         currentUserSetsCount =
             _challengesRepository.currentChallenge!.recipientSets.length;
         if (currentUserSetsCount == opponentSetsCount) {
+          print(
+              'emitting challenge complete, ${_challengesRepository.currentChallenge?.recipientSets}');
           emit(ChallengeComplete(
               currentChallenge: _challengesRepository.currentChallenge!));
         } else {
@@ -48,6 +50,24 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         emit(ChallengeComplete(
             currentChallenge: _challengesRepository.currentChallenge!));
       }
+    } else {
+      emit(ChallengesErrorState());
+    }
+  }
+
+  void undo() {
+    final List<PuttingSet>? recipientSets =
+        _challengesRepository.currentChallenge?.recipientSets;
+    if (recipientSets?.length == 0) {
+      return;
+    }
+    if (recipientSets == null) {
+      return;
+    }
+    _challengesRepository.deleteSet(recipientSets.last);
+    if (_challengesRepository.currentChallenge != null) {
+      emit(ChallengeInProgress(
+          currentChallenge: _challengesRepository.currentChallenge!));
     } else {
       emit(ChallengesErrorState());
     }

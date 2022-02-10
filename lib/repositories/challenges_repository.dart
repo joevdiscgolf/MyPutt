@@ -59,10 +59,12 @@ class ChallengesRepository {
         challengerSets: [
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
         ],
         challengerUid: 'challengeruid',
-        challengeStructureDistances: [20, 20, 15],
+        challengeStructureDistances: [20, 20, 15, 15, 15],
         createdAt: 1643453201,
         id: 'thischallengeId',
         recipientSets: [
@@ -93,6 +95,20 @@ class ChallengesRepository {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<void> deleteSet(PuttingSet set) async {
+    final String? uid = _authService.getCurrentUserId();
+    if (currentChallenge != null && uid != null) {
+      /*if (uid == currentChallenge?.recipientUid) {
+      }*/
+      currentChallenge!.recipientSets.remove(set);
+      /*else if (uid == currentChallenge?.challengerUid) {
+        currentChallenge!.challengerSets.add(set);
+      } else {
+        return false;
+      }*/
     }
   }
 

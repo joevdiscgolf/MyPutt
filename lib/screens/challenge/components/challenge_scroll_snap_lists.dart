@@ -10,13 +10,15 @@ class ChallengeScrollSnapList extends StatefulWidget {
       required this.isCurrentUser,
       required this.itemCount,
       required this.challengeDistances,
-      required this.puttingSets})
+      required this.puttingSets,
+      required this.maxSets})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final bool isCurrentUser;
   final int itemCount;
+  final int maxSets;
 
   final List<int> challengeDistances;
   final List<PuttingSet> puttingSets;
@@ -61,17 +63,19 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
 
   Widget _buildChallengeScrollListItem(BuildContext context, int index) {
     if (widget.isCurrentUser) {
-      if (index == widget.puttingSets.length) {
+      if (index == widget.puttingSets.length &&
+          widget.puttingSets.length < widget.maxSets) {
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.blue[200],
+              color: Colors.greenAccent[200],
               border: Border.all(color: Colors.grey[600]!)),
           width: 60,
           height: 40,
         );
       }
     }
+
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),

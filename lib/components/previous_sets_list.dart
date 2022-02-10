@@ -5,9 +5,12 @@ import 'package:myputt/components/putting_set_row.dart';
 import 'package:myputt/bloc/cubits/challenges_cubit.dart';
 
 class PreviousSetsList extends StatefulWidget {
-  const PreviousSetsList({Key? key, required this.sets}) : super(key: key);
+  const PreviousSetsList(
+      {Key? key, required this.sets, required this.deleteSet})
+      : super(key: key);
 
   final List<PuttingSet> sets;
+  final Function deleteSet;
 
   @override
   _PreviousSetsListState createState() => _PreviousSetsListState();
@@ -32,6 +35,7 @@ class _PreviousSetsListState extends State<PreviousSetsList> {
                           set: entry.value,
                           index: entry.key,
                           delete: () {
+                            widget.deleteSet(entry.value);
                             /*BlocProvider.of<ChallengesCubit>(context)
                                 .deleteSet(entry.value);*/
                           }))
@@ -53,6 +57,7 @@ class _PreviousSetsListState extends State<PreviousSetsList> {
                           set: entry.value,
                           index: entry.key,
                           delete: () {
+                            widget.deleteSet(entry.value);
                             /*BlocProvider.of<ChallengesCubit>(context)
                                 .deleteSet(entry.value);*/
                           }))
