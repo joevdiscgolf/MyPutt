@@ -69,27 +69,29 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: Colors.greenAccent[200],
-              border: Border.all(color: Colors.grey[600]!)),
+              border: Border.all(color: Colors.grey[600]!, width: 1.5)),
           width: 60,
           height: 40,
         );
       }
     }
-
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white,
-          border: Border.all(color: Colors.grey[600]!)),
+          border: Border.all(color: Colors.grey[600]!, width: 1.5)),
       width: 60,
       height: 40,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('10 feet'),
+          children: [
+            Text('${widget.puttingSets[index].distance} ft',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             //Text('${widget.puttingSets[index].distance} ft'),
-            Text('8/10'),
+            Text(
+                '${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
           ],
         ),

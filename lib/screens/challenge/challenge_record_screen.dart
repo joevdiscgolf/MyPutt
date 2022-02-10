@@ -95,44 +95,19 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           const SizedBox(height: 10),
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: _addSetButton(context)),
+              child: Row(
+                children: [
+                  Flexible(flex: 4, child: _addSetButton(context)),
+                  Flexible(flex: 1, child: _undoButton(context)),
+                ],
+              )),
           const SizedBox(height: 10),
-          BlocBuilder<ChallengesCubit, ChallengesState>(
-            builder: (context, state) {
-              if (state is ChallengeInProgress) {
-                return PrimaryButton(
-                    label: 'Undo',
-                    onPressed: () {
-                      BlocProvider.of<ChallengesCubit>(context).undo();
-                      challengerKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                      currentUserKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                      numberListKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                    });
-              } else if (state is ChallengeComplete) {
-                return PrimaryButton(
-                    label: 'Undo',
-                    onPressed: () {
-                      BlocProvider.of<ChallengesCubit>(context).undo();
-                      challengerKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                      currentUserKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                      numberListKey.currentState?.focusToItem(
-                          state.currentChallenge.recipientSets.length);
-                    });
-              } else {
-                return PrimaryButton(label: 'Undo', onPressed: () {});
-              }
-            },
-          ),
           const SizedBox(height: 10),
           BlocBuilder<ChallengesCubit, ChallengesState>(
             builder: (context, state) {
               if (state is ChallengeInProgress) {
                 return PreviousSetsList(
+                  deletable: false,
                   sets: state.currentChallenge.recipientSets,
                   deleteSet: (PuttingSet set) {
                     BlocProvider.of<ChallengesCubit>(context).undo();
@@ -140,6 +115,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 );
               } else if (state is ChallengeComplete) {
                 return PreviousSetsList(
+                  deletable: false,
                   sets: state.currentChallenge.recipientSets,
                   deleteSet: (PuttingSet set) {
                     BlocProvider.of<ChallengesCubit>(context).undo();
@@ -325,35 +301,114 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
         if (state is ChallengeComplete) {
-          return PrimaryButton(
-              label: 'Finish challenge',
-              width: double.infinity,
-              height: 50,
-              icon: FlutterRemix.check_line,
-              onPressed: () {});
+          return SizedBox(
+            height: 50,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(48)),
+                    primary: Colors.greenAccent[200],
+                    enableFeedback: true),
+                child: Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(FlutterRemix.check_line),
+                    Text('Finish challenge'),
+                  ],
+                )),
+                onPressed: () {}),
+          );
         }
         if (state is ChallengeInProgress) {
-          return PrimaryButton(
-              label: 'Add set',
-              width: double.infinity,
-              height: 50,
-              icon: FlutterRemix.add_line,
-              onPressed: () {
-                BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                    distance: 10,
-                    puttsAttempted: _setLength,
-                    puttsMade: puttsPickerFocusedIndex));
-                Future.delayed(const Duration(milliseconds: 200), () {
-                  challengerKey.currentState?.focusToItem(
-                      state.currentChallenge.recipientSets.length);
-                  currentUserKey.currentState?.focusToItem(
-                      state.currentChallenge.recipientSets.length);
-                  numberListKey.currentState?.focusToItem(
-                      state.currentChallenge.recipientSets.length);
-                });
-              });
+          return SizedBox(
+            height: 50,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(48)),
+                    enableFeedback: true),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(FlutterRemix.add_line),
+                    Text('Add set')
+                  ],
+                ),
+                onPressed: () {
+                  BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                      distance: 10,
+                      puttsAttempted: _setLength,
+                      puttsMade: puttsPickerFocusedIndex));
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    challengerKey.currentState?.focusToItem(
+                        state.currentChallenge.recipientSets.length);
+                    currentUserKey.currentState?.focusToItem(
+                        state.currentChallenge.recipientSets.length);
+                    numberListKey.currentState?.focusToItem(
+                        state.currentChallenge.recipientSets.length);
+                  });
+                }),
+          );
         } else {
           return const Text('Something went wrong');
+        }
+      },
+    );
+  }
+
+  Widget _undoButton(BuildContext context) {
+    return BlocBuilder<ChallengesCubit, ChallengesState>(
+      builder: (context, state) {
+        if (state is ChallengeInProgress) {
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48)),
+                primary: Colors.transparent,
+                shadowColor: Colors.transparent),
+            child: const Icon(
+              FlutterRemix.arrow_go_back_line,
+              color: Colors.blue,
+            ),
+            onPressed: () {
+              BlocProvider.of<ChallengesCubit>(context).undo();
+              challengerKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+              currentUserKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+              numberListKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+            },
+          );
+        } else if (state is ChallengeComplete) {
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48)),
+                primary: Colors.transparent,
+                shadowColor: Colors.transparent),
+            child: const Icon(
+              FlutterRemix.arrow_go_back_line,
+              color: Colors.blue,
+            ),
+            onPressed: () {
+              BlocProvider.of<ChallengesCubit>(context).undo();
+              challengerKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+              currentUserKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+              numberListKey.currentState
+                  ?.focusToItem(state.currentChallenge.recipientSets.length);
+            },
+          );
+        } else {
+          return PrimaryButton(
+            label: 'Undo',
+            onPressed: () {},
+            width: 100,
+            icon: FlutterRemix.arrow_go_back_line,
+          );
         }
       },
     );
