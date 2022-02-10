@@ -10,5 +10,11 @@ class ChallengesErrorState extends ChallengesState {}
 
 class ChallengeInProgress extends ChallengesState {
   ChallengeInProgress({required this.currentChallenge});
+
+  final PuttingChallenge currentChallenge;
+}
+
+class ChallengeComplete extends ChallengesState {
+  ChallengeComplete({required this.currentChallenge});
   final PuttingChallenge currentChallenge;
 }

@@ -37,7 +37,6 @@ class AuthService {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
-      final uid = getCurrentUserId();
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

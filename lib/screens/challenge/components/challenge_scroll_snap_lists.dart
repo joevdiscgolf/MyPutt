@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:myputt/data/types/putting_set.dart';
+
+class ChallengeScrollSnapList extends StatefulWidget {
+  const ChallengeScrollSnapList(
+      {Key? key,
+      required this.sslKey,
+      required this.onUpdate,
+      required this.isCurrentUser,
+      required this.itemCount,
+      required this.challengeDistances,
+      required this.puttingSets})
+      : super(key: key);
+
+  final GlobalKey<ScrollSnapListState> sslKey;
+  final Function onUpdate;
+  final bool isCurrentUser;
+  final int itemCount;
+
+  final List<int> challengeDistances;
+  final List<PuttingSet> puttingSets;
+
+  @override
+  _ChallengeScrollSnapListState createState() =>
+      _ChallengeScrollSnapListState();
+}
+
+class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: ScrollSnapList(
+      curve: Curves.easeOutBack,
+      key: widget.sslKey,
+      updateOnScroll: false,
+      focusToItem: (index) {},
+      itemSize: 60,
+      itemCount: widget.itemCount,
+      duration: 400,
+      focusOnItemTap: true,
+      onItemFocus: (index) {
+        widget.onUpdate(index);
+      },
+      itemBuilder: _buildChallengeScrollListItem,
+      dynamicItemSize: true,
+      allowAnotherDirection: true,
+      dynamicSizeEquation: (displacement) {
+        const threshold = 0;
+        const maxDisplacement = 800;
+        if (displacement >= threshold) {
+          const slope = 1 / (-maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        } else {
+          const slope = 1 / (maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        }
+      },
+    ));
+  }
+
+  Widget _buildChallengeScrollListItem(BuildContext context, int index) {
+    if (widget.isCurrentUser) {
+      if (index == widget.puttingSets.length) {
+        return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.blue[200],
+              border: Border.all(color: Colors.grey[600]!)),
+          width: 60,
+          height: 40,
+        );
+      }
+    }
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+          border: Border.all(color: Colors.grey[600]!)),
+      width: 60,
+      height: 40,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text('10 feet'),
+            //Text('${widget.puttingSets[index].distance} ft'),
+            Text('8/10'),
+            //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CounterScrollSnapList extends StatefulWidget {
+  const CounterScrollSnapList(
+      {Key? key,
+      required this.sslKey,
+      required this.onUpdate,
+      required this.itemCount})
+      : super(key: key);
+
+  final GlobalKey<ScrollSnapListState> sslKey;
+  final Function onUpdate;
+  final int itemCount;
+
+  @override
+  _CounterScrollSnapListState createState() => _CounterScrollSnapListState();
+}
+
+class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: ScrollSnapList(
+      curve: Curves.easeOutBack,
+      key: widget.sslKey,
+      updateOnScroll: false,
+      focusToItem: (index) {},
+      itemSize: 60,
+      itemCount: widget.itemCount,
+      duration: 400,
+      focusOnItemTap: true,
+      onItemFocus: (index) {
+        widget.onUpdate(index);
+      },
+      itemBuilder: _buildItem,
+      allowAnotherDirection: true,
+      dynamicItemSize: true,
+      dynamicSizeEquation: (displacement) {
+        const threshold = 0;
+        const maxDisplacement = 300;
+        if (displacement >= threshold) {
+          const slope = 1 / (-maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        } else {
+          const slope = 1 / (maxDisplacement);
+          return slope * displacement + (1 - slope * threshold);
+        }
+      },
+    ));
+  }
+
+  Widget _buildItem(BuildContext context, int index) {
+    return Container(
+      decoration: const BoxDecoration(color: Colors.transparent),
+      width: 60,
+      height: 40,
+      child: FittedBox(
+        child: Center(
+          child: Center(
+              child: Text(
+            (index + 1).toString(),
+          )),
+        ),
+      ),
+    );
+  }
+}

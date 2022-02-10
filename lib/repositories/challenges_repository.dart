@@ -23,8 +23,8 @@ class ChallengesRepository {
         createdAt: 1643453201,
         id: 'thischallengeId',
         recipientSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)
+          /*PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)*/
         ],
         recipientUid: 'recipientuid',
         status: ChallengeStatus.active)
@@ -66,8 +66,8 @@ class ChallengesRepository {
         createdAt: 1643453201,
         id: 'thischallengeId',
         recipientSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)
+          /*PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)*/
         ],
         recipientUid: 'recipientuid',
         status: ChallengeStatus.active);

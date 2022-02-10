@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/components/previous_sets_list.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/screens/record/components/putting_set_row.dart';
 import 'package:myputt/bloc/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/components/putts_made_picker.dart';
-
-import '../../data/types/putting_set.dart';
+import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
@@ -44,7 +42,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   final GlobalKey<ScrollSnapListState> challengerKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
-  final GlobalKey<_CounterScrollSnapListState> counterListKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +70,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         challenge.challengerSets.length
                     ? challenge.recipientSets.length
                     : challenge.recipientSets.length + 1;
-                print(itemCount);
+                print('item count: $itemCount');
                 return Container(
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(children: [
@@ -85,7 +82,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               const SizedBox(
                                   width: 80, child: Center(child: Text('Set'))),
                               CounterScrollSnapList(
-                                key: counterListKey,
                                 sslKey: numberListKey,
                                 onUpdate: (index) {
                                   challengerKey.currentState
@@ -194,6 +190,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 8),
             child: BlocBuilder<ChallengesCubit, ChallengesState>(
               builder: (context, state) {
+                if (state is ChallengeComplete) {
+                  return PrimaryButton(
+                      label: 'Finish challenge',
+                      width: double.infinity,
+                      height: 50,
+                      icon: FlutterRemix.check_line,
+                      onPressed: () {});
+                }
                 if (state is ChallengeInProgress) {
                   return PrimaryButton(
                       label: 'Add set',
@@ -207,26 +211,37 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 puttsAttempted: _setLength,
                                 puttsMade: puttsPickerFocusedIndex));
                         print(
-                            'length: ${state.currentChallenge.recipientSets.length}');
+                            "length: ${state.currentChallenge.recipientSets.length}");
                         challengerKey.currentState?.focusToItem(
-                            state.currentChallenge.recipientSets.length - 1);
+                            state.currentChallenge.recipientSets.length + 1);
                         currentUserKey.currentState?.focusToItem(
-                            state.currentChallenge.recipientSets.length - 1);
+                            state.currentChallenge.recipientSets.length + 1);
                         numberListKey.currentState?.focusToItem(
-                            state.currentChallenge.recipientSets.length - 1);
+                            state.currentChallenge.recipientSets.length + 1);
                       });
+                } else {
+                  return const Text('Something went wrong');
                 }
-                return PrimaryButton(
-                    label: 'Finish challenge',
-                    width: double.infinity,
-                    height: 50,
-                    icon: FlutterRemix.add_line,
-                    onPressed: () {});
               },
             ),
           ),
           const SizedBox(height: 10),
-          _previousSetsList(context),
+          BlocBuilder<ChallengesCubit, ChallengesState>(
+            builder: (context, state) {
+              if (state is ChallengeInProgress) {
+                return PreviousSetsList(
+                    sets: state.currentChallenge.recipientSets);
+              } else if (state is ChallengeComplete) {
+                print('challenge complete');
+                return PreviousSetsList(
+                    sets: state.currentChallenge.recipientSets);
+              } else {
+                return const Center(
+                  child: Text('Something went wrong'),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
@@ -306,196 +321,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     );
   }*/
 
-  Widget _previousSetsList(BuildContext context) {
-    return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
-      if (state is SessionInProgressState) {
-        return Flexible(
-          fit: FlexFit.loose,
-          child: state.currentSession.sets.isEmpty
-              ? const Center(child: Text('No sets yet'))
-              : ListView(
-                  children: List.from(state.currentSession.sets
-                      .asMap()
-                      .entries
-                      .map((entry) => PuttingSetRow(
-                          deletable: true,
-                          set: entry.value,
-                          index: entry.key,
-                          delete: () {
-                            BlocProvider.of<SessionsCubit>(context)
-                                .deleteSet(entry.value);
-                          }))
-                      .toList()
-                      .reversed),
-                ),
-        );
-      } else {
-        return Container();
-      }
-    });
-  }
-
   void dialogCallBack() {
     if (!sessionInProgress) {
       Navigator.pop(context);
     }
-  }
-}
-
-class ChallengeScrollSnapList extends StatefulWidget {
-  const ChallengeScrollSnapList(
-      {Key? key,
-      required this.sslKey,
-      required this.onUpdate,
-      required this.isCurrentUser,
-      required this.itemCount,
-      required this.challengeDistances,
-      required this.puttingSets})
-      : super(key: key);
-
-  final GlobalKey<ScrollSnapListState> sslKey;
-  final Function onUpdate;
-  final bool isCurrentUser;
-  final int itemCount;
-
-  final List<int> challengeDistances;
-  final List<PuttingSet> puttingSets;
-
-  @override
-  _ChallengeScrollSnapListState createState() =>
-      _ChallengeScrollSnapListState();
-}
-
-class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: ScrollSnapList(
-      curve: Curves.easeOutBack,
-      key: widget.sslKey,
-      updateOnScroll: false,
-      focusToItem: (index) {},
-      itemSize: 60,
-      itemCount: widget.itemCount,
-      duration: 400,
-      focusOnItemTap: true,
-      onItemFocus: (index) {
-        widget.onUpdate(index);
-      },
-      itemBuilder: _buildChallengeScrollListItem,
-      dynamicItemSize: true,
-      allowAnotherDirection: true,
-      dynamicSizeEquation: (displacement) {
-        const threshold = 0;
-        const maxDisplacement = 800;
-        if (displacement >= threshold) {
-          const slope = 1 / (-maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        } else {
-          const slope = 1 / (maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        }
-      },
-    ));
-  }
-
-  Widget _buildChallengeScrollListItem(BuildContext context, int index) {
-    if (widget.isCurrentUser) {
-      if (index == widget.puttingSets.length) {
-        return Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.blue[200],
-              border: Border.all(color: Colors.grey[600]!)),
-          width: 60,
-          height: 40,
-        );
-      }
-    }
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.white,
-          border: Border.all(color: Colors.grey[600]!)),
-      width: 60,
-      height: 40,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text('10 feet'),
-            //Text('${widget.puttingSets[index].distance} ft'),
-            Text('8/10'),
-            //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class CounterScrollSnapList extends StatefulWidget {
-  const CounterScrollSnapList(
-      {Key? key,
-      required this.sslKey,
-      required this.onUpdate,
-      required this.itemCount})
-      : super(key: key);
-
-  final GlobalKey<ScrollSnapListState> sslKey;
-  final Function onUpdate;
-  final int itemCount;
-
-  @override
-  _CounterScrollSnapListState createState() => _CounterScrollSnapListState();
-}
-
-class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: ScrollSnapList(
-      curve: Curves.easeOutBack,
-      key: widget.sslKey,
-      updateOnScroll: false,
-      focusToItem: (index) {},
-      itemSize: 60,
-      itemCount: widget.itemCount,
-      duration: 400,
-      focusOnItemTap: true,
-      onItemFocus: (index) {
-        widget.onUpdate(index);
-      },
-      itemBuilder: _buildItem,
-      allowAnotherDirection: true,
-      dynamicItemSize: true,
-      dynamicSizeEquation: (displacement) {
-        const threshold = 0;
-        const maxDisplacement = 300;
-        if (displacement >= threshold) {
-          const slope = 1 / (-maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        } else {
-          const slope = 1 / (maxDisplacement);
-          return slope * displacement + (1 - slope * threshold);
-        }
-      },
-    ));
-  }
-
-  Widget _buildItem(BuildContext context, int index) {
-    return Container(
-      decoration: const BoxDecoration(color: Colors.transparent),
-      width: 60,
-      height: 40,
-      child: FittedBox(
-        child: Center(
-          child: Center(
-              child: Text(
-            (index + 1).toString(),
-          )),
-        ),
-      ),
-    );
   }
 }

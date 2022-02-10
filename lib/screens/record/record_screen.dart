@@ -6,7 +6,7 @@ import 'package:myputt/bloc/cubits/sessions_cubit.dart';
 import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/screens/record/components/putting_set_row.dart';
+import 'package:myputt/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/putts_made_picker.dart';
 
