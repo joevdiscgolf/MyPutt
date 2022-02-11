@@ -147,75 +147,93 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   : challenge.recipientSets.length + 1;
           return Container(
               decoration: const BoxDecoration(color: Colors.white),
-              child: Column(children: [
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
-                    height: 30,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('Set'))),
-                        CounterScrollSnapList(
-                          sslKey: numberListKey,
-                          onUpdate: (index) {
-                            challengerKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                          itemCount: itemCount,
-                        )
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80,
-                            child: Center(
-                                child: Center(child: Text('Challenger')))),
-                        ChallengeScrollSnapList(
-                            isCurrentUser: false,
-                            sslKey: challengerKey,
-                            onUpdate: (index) {
-                              challengerKey.currentState?.focusToItem(index);
-                              currentUserKey.currentState?.focusToItem(index);
-                              numberListKey.currentState?.focusToItem(index);
-                            },
-                            challengeDistances:
-                                challenge.challengeStructureDistances,
-                            puttingSets: challenge.challengerSets,
-                            maxSets: challenge.challengerSets.length,
-                            itemCount: itemCount)
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('You'))),
-                        ChallengeScrollSnapList(
-                          isCurrentUser: true,
-                          sslKey: currentUserKey,
-                          onUpdate: (index) {
-                            challengerKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                          challengeDistances:
-                              challenge.challengeStructureDistances,
-                          puttingSets: challenge.recipientSets,
-                          maxSets: challenge.challengerSets.length,
-                          itemCount: itemCount,
-                        )
-                      ],
-                    )),
-              ]));
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+                        height: 30,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80, child: Center(child: Text('Set'))),
+                            CounterScrollSnapList(
+                              sslKey: numberListKey,
+                              onUpdate: (index) {
+                                challengerKey.currentState?.focusToItem(index);
+                                currentUserKey.currentState?.focusToItem(index);
+                                numberListKey.currentState?.focusToItem(index);
+                              },
+                              itemCount: itemCount,
+                            )
+                          ],
+                        )),
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        height: 60,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80,
+                                child: Center(
+                                    child: Center(child: Text('Challenger')))),
+                            ChallengeScrollSnapList(
+                                isCurrentUser: false,
+                                sslKey: challengerKey,
+                                onUpdate: (index) {
+                                  challengerKey.currentState
+                                      ?.focusToItem(index);
+                                  currentUserKey.currentState
+                                      ?.focusToItem(index);
+                                  numberListKey.currentState
+                                      ?.focusToItem(index);
+                                },
+                                challengeDistances:
+                                    challenge.challengeStructureDistances,
+                                puttingSets: challenge.challengerSets,
+                                maxSets: challenge.challengerSets.length,
+                                itemCount: itemCount)
+                          ],
+                        )),
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        height: 60,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80, child: Center(child: Text('You'))),
+                            ChallengeScrollSnapList(
+                              isCurrentUser: true,
+                              sslKey: currentUserKey,
+                              onUpdate: (index) {
+                                challengerKey.currentState?.focusToItem(index);
+                                currentUserKey.currentState?.focusToItem(index);
+                                numberListKey.currentState?.focusToItem(index);
+                              },
+                              challengeDistances:
+                                  challenge.challengeStructureDistances,
+                              puttingSets: challenge.recipientSets,
+                              maxSets: challenge.challengerSets.length,
+                              itemCount: itemCount,
+                            )
+                          ],
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SizedBox(
+                        width: 80,
+                        height: 30,
+                        child: state.currentChallenge.challengerSets.length -
+                                    state.currentChallenge.recipientSets
+                                        .length !=
+                                0
+                            ? Text(
+                                '${state.currentChallenge.challengerSets.length - state.currentChallenge.recipientSets.length} remaining')
+                            : Container(),
+                      ),
+                    )
+                  ]));
         } else if (state is ChallengeComplete) {
-          print('challenge complete state');
           final PuttingChallenge challenge = state.currentChallenge;
           final int itemCount =
               challenge.recipientSets.length == challenge.challengerSets.length
@@ -289,6 +307,19 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         )
                       ],
                     )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SizedBox(
+                    width: 80,
+                    height: 30,
+                    child: state.currentChallenge.challengerSets.length -
+                                state.currentChallenge.recipientSets.length !=
+                            0
+                        ? Text(
+                            '${state.currentChallenge.challengerSets.length - state.currentChallenge.recipientSets.length} remaining')
+                        : Container(),
+                  ),
+                )
               ]));
         } else {
           return Container();
