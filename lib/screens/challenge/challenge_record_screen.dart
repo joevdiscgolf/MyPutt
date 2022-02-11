@@ -4,7 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/previous_sets_list.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/bloc/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/components/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';

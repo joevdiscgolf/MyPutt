@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/components/putting_set_row.dart';
 import 'package:myputt/screens/home/components/enums.dart';

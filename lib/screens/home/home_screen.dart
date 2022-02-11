@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/locator.dart';

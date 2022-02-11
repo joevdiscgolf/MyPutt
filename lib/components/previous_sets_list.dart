@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/putting_set_row.dart';
-import 'package:myputt/bloc/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 
 class PreviousSetsList extends StatefulWidget {
   const PreviousSetsList(

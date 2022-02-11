@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
-import 'package:myputt/bloc/cubits/session_summary_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'session_summary_screen.dart';
 
 class SessionsScreen extends StatefulWidget {
