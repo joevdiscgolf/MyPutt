@@ -107,13 +107,14 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
                   .asMap()
                   .entries
                   .map((entry) => PuttingSetRow(
-                      set: entry.value,
-                      index: entry.key,
-                      deletable: false,
-                      delete: () {
-                        BlocProvider.of<SessionsCubit>(context)
-                            .deleteSet(entry.value);
-                      }))
+                        set: entry.value,
+                        index: entry.key,
+                        deletable: false,
+                        delete: () {
+                          BlocProvider.of<SessionsCubit>(context)
+                              .deleteSet(entry.value);
+                        },
+                      ))
                   .toList()
                   .reversed),
             ),

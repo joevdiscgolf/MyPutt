@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/theme/theme_data.dart';
 
 class ChallengeScrollSnapList extends StatefulWidget {
   const ChallengeScrollSnapList(
@@ -68,7 +69,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.greenAccent[200],
+              color: ThemeColors.green,
               border: Border.all(color: Colors.grey[600]!, width: 1.5)),
           width: 60,
           height: 40,

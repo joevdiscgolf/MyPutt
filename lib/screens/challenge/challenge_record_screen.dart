@@ -338,7 +338,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(48)),
-                    primary: Colors.greenAccent[200],
+                    primary: const Color(0xff00d162),
                     enableFeedback: true),
                 child: Center(
                     child: Row(
@@ -371,7 +371,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       distance: 10,
                       puttsAttempted: _setLength,
                       puttsMade: puttsPickerFocusedIndex));
-                  Future.delayed(const Duration(milliseconds: 200), () {
+                  Future.delayed(const Duration(milliseconds: 50), () {
                     challengerKey.currentState?.focusToItem(
                         state.currentChallenge.recipientSets.length);
                     currentUserKey.currentState?.focusToItem(

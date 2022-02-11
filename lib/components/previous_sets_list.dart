@@ -26,6 +26,7 @@ class _PreviousSetsListState extends State<PreviousSetsList> {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
         builder: (context, state) {
       if (state is ChallengeInProgress) {
+        final setCount = widget.sets.length;
         return Flexible(
           fit: FlexFit.loose,
           child: widget.sets.isEmpty
@@ -34,15 +35,17 @@ class _PreviousSetsListState extends State<PreviousSetsList> {
                   children: List.from(widget.sets
                       .asMap()
                       .entries
-                      .map((entry) => PuttingSetRow(
-                          deletable: widget.deletable,
-                          set: entry.value,
-                          index: entry.key,
-                          delete: () {
-                            widget.deleteSet(entry.value);
-                            /*BlocProvider.of<ChallengesCubit>(context)
+                      .map((entry) {
+                        return PuttingSetRow(
+                            deletable: widget.deletable,
+                            set: entry.value,
+                            index: entry.key,
+                            delete: () {
+                              widget.deleteSet(entry.value);
+                              /*BlocProvider.of<ChallengesCubit>(context)
                                 .deleteSet(entry.value);*/
-                          }))
+                            });
+                      })
                       .toList()
                       .reversed),
                 ),

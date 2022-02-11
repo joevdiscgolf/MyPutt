@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/utils.dart';
+import 'package:myputt/theme/theme_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChallengesCubit()),
       ],
       child: MaterialApp(
+        theme: lightTheme(context),
         title: 'MyPutt',
         debugShowCheckedModeBanner: false,
         home: StreamBuilder<bool>(

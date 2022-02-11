@@ -44,7 +44,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
           allowAnotherDirection: true,
           dynamicSizeEquation: (displacement) {
             const threshold = 0;
-            const maxDisplacement = 800;
+            const maxDisplacement = 600;
             if (displacement >= threshold) {
               const slope = 1 / (-maxDisplacement);
               return slope * displacement + (1 - slope * threshold);

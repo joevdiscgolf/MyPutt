@@ -4,13 +4,13 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class PuttingSetRow extends StatefulWidget {
-  const PuttingSetRow(
-      {Key? key,
-      required this.set,
-      required this.index,
-      required this.delete,
-      required this.deletable})
-      : super(key: key);
+  const PuttingSetRow({
+    Key? key,
+    required this.set,
+    required this.index,
+    required this.delete,
+    required this.deletable,
+  }) : super(key: key);
   final PuttingSet set;
   final int index;
   final Function delete;
@@ -21,6 +21,11 @@ class PuttingSetRow extends StatefulWidget {
 }
 
 class _PuttingSetRowState extends State<PuttingSetRow> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle =
