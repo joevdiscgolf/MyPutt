@@ -3,17 +3,42 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/utils.dart';
+import 'package:myputt/utils/constants.dart';
 
 class SigninService {
-  late StreamController<bool> controller;
-  late Stream<bool> siginStream;
+  late StreamController<LoginState> controller;
+  late Stream<LoginState> siginStream;
   final _authService = locator.get<AuthService>();
   SigninService() {
-    controller = StreamController<bool>();
+    controller = StreamController<LoginState>();
     siginStream = controller.stream;
+  }
+
+  Future<void> init() async {
     if (_authService.getCurrentUserId() != null) {
-      controller.add(true);
+      if (await _authService.userIsSetup()) {
+        controller.add(LoginState.loggedIn);
+      } else {
+        controller.add(LoginState.setup);
+      }
+    } else {
+      controller.add(LoginState.none);
     }
+  }
+
+  Future<bool> attemptSignUp(String email, String password) async {
+    print('attempting sign up');
+    final bool? signUpSuccess =
+        await _authService.signUpWithEmail(email, password);
+    print(signUpSuccess);
+    if (signUpSuccess == null ||
+        !signUpSuccess ||
+        _authService.getCurrentUserId() == null) {
+      return false;
+    }
+    await fetchRepositoryData();
+    controller.add(LoginState.setup);
+    return true;
   }
 
   Future<bool> attemptSignIn(String email, String password) async {
@@ -27,13 +52,13 @@ class SigninService {
       return false;
     }
     await fetchRepositoryData();
-    controller.add(true);
+    controller.add(LoginState.loggedIn);
     return true;
   }
 
   void signOut() {
     locator.get<SessionRepository>().clearData();
     _authService.logOut();
-    controller.add(false);
+    controller.add(LoginState.none);
   }
 }

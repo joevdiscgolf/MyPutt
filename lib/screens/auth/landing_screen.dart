@@ -54,8 +54,14 @@ class _LandingScreenState extends State<LandingScreen> {
                     const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.bottomCenter,
-                      child: _signInButton(context),
+                      child: Row(
+                        children: [
+                          _loginButton(context, true),
+                          _loginButton(context, false)
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 36),
                     _error
                         ? SizedBox(
                             height: 50,
@@ -174,7 +180,7 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  Widget _signInButton(BuildContext context) {
+  Widget _loginButton(BuildContext context, bool signIn) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -182,14 +188,13 @@ class _LandingScreenState extends State<LandingScreen> {
       children: <Widget>[
         PrimaryButton(
             loading: _loading,
-            label: 'Sign in',
+            label: signIn ? 'Sign in' : 'Sign up',
             fontSize: 20,
             // icon: FlutterRemix.cellphone_fill,
             backgroundColor: Colors.blue,
             height: 48,
             width: 260,
             onPressed: () async {
-              print('button pressed');
               if (_email == null || _password == null) {
                 print('email or password is null');
                 setState(() {
@@ -200,9 +205,13 @@ class _LandingScreenState extends State<LandingScreen> {
                 setState(() {
                   _loading = true;
                 });
-                final signInSuccess = await locator
-                    .get<SigninService>()
-                    .attemptSignIn(_email!, _password!);
+                final signInSuccess = signIn
+                    ? await locator
+                        .get<SigninService>()
+                        .attemptSignIn(_email!, _password!)
+                    : await locator
+                        .get<SigninService>()
+                        .attemptSignUp(_email!, _password!);
                 if (!signInSuccess) {
                   setState(() {
                     _loading = signInSuccess;
@@ -212,7 +221,6 @@ class _LandingScreenState extends State<LandingScreen> {
                 }
               }
             }),
-        const SizedBox(height: 36),
       ],
     );
   }

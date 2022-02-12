@@ -10,3 +10,8 @@ Future<void> fetchRepositoryData() async {
   ]);
   return;
 }
+
+void clearRepositoryData() {
+  locator.get<SessionRepository>().clearData();
+  // challenges repository.clearData();
+}
