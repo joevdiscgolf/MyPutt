@@ -26,9 +26,7 @@ class SigninService {
         _authService.getCurrentUserId() == null) {
       return false;
     }
-    //await fetchRepositoryData();
-    await locator.get<SessionRepository>().fetchCurrentSession();
-    await locator.get<SessionRepository>().fetchCompletedSessions();
+    await fetchRepositoryData();
     controller.add(true);
     return true;
   }
