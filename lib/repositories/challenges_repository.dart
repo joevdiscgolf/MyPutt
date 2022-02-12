@@ -31,6 +31,37 @@ class ChallengesRepository {
   List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> completedChallenges = [];
 
+  Future<bool> addSet(PuttingSet set) async {
+    final String? uid = _authService.getCurrentUserId();
+    if (currentChallenge != null && uid != null) {
+      /*if (uid == currentChallenge?.recipientUid) {
+      }*/
+      currentChallenge!.recipientSets.add(set);
+      /*else if (uid == currentChallenge?.challengerUid) {
+        currentChallenge!.challengerSets.add(set);
+      } else {
+        return false;
+      }*/
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> deleteSet(PuttingSet set) async {
+    final String? uid = _authService.getCurrentUserId();
+    if (currentChallenge != null && uid != null) {
+      /*if (uid == currentChallenge?.recipientUid) {
+      }*/
+      currentChallenge!.recipientSets.remove(set);
+      /*else if (uid == currentChallenge?.challengerUid) {
+        currentChallenge!.challengerSets.add(set);
+      } else {
+        return false;
+      }*/
+    }
+  }
+
   Future<void> fetchAllChallenges() async {
     final List<dynamic> result = await Future.wait([
       _databaseService.getChallengesWithFilters([ChallengeStatus.pending]),
@@ -65,39 +96,37 @@ class ChallengesRepository {
     //_databaseService.updatePuttingChallenge(currentChallenge!);
   }
 
+  Future<bool> completeCurrentChallenge() async {
+    if (currentChallenge == null) {
+      return false;
+    } else {
+      currentChallenge?.status = ChallengeStatus.complete;
+      if (pendingChallenges.contains(currentChallenge)) {
+        completedChallenges.add(currentChallenge!);
+        pendingChallenges.remove(currentChallenge);
+        // database event here
+      } else if (activeChallenges.contains(currentChallenge)) {
+        completedChallenges.add(currentChallenge!);
+        activeChallenges.remove(currentChallenge);
+        // database event here
+      }
+      currentChallenge = null;
+      return true;
+    }
+  }
+
   void exitChallenge() {
     currentChallenge = null;
     //_databaseService.updatePuttingChallenge(currentChallenge!);
   }
 
-  Future<bool> addSet(PuttingSet set) async {
-    final String? uid = _authService.getCurrentUserId();
-    if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.recipientUid) {
-      }*/
-      currentChallenge!.recipientSets.add(set);
-      /*else if (uid == currentChallenge?.challengerUid) {
-        currentChallenge!.challengerSets.add(set);
-      } else {
-        return false;
-      }*/
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<void> deleteSet(PuttingSet set) async {
-    final String? uid = _authService.getCurrentUserId();
-    if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.recipientUid) {
-      }*/
-      currentChallenge!.recipientSets.remove(set);
-      /*else if (uid == currentChallenge?.challengerUid) {
-        currentChallenge!.challengerSets.add(set);
-      } else {
-        return false;
-      }*/
+  void deleteChallenge(PuttingChallenge challenge) {
+    if (pendingChallenges.contains(challenge)) {
+      pendingChallenges.remove(challenge);
+      // database event here
+    } else if (activeChallenges.contains(challenge)) {
+      activeChallenges.remove(challenge);
+      // database event here
     }
   }
 

@@ -361,7 +361,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               setState(() {
                                 sessionInProgress = false;
                                 BlocProvider.of<ChallengesCubit>(context)
-                                    .exitChallenge();
+                                    .completeCurrentChallenge();
                               });
                             },
                             buttonlabel: 'Finish',

@@ -5,7 +5,6 @@ import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
-import 'components/pending_challenge_item.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
 
@@ -128,27 +127,30 @@ class _ChallengesState extends State<ChallengesScreen> {
                         unselectedLabelColor: Colors.black,
                         tabs: [
                           ChallengeCategoryTab(
+                            showCounter: true,
                             challenges: state.activeChallenges,
                             label: 'Active',
                             icon: const Icon(
                               FlutterRemix.play_mini_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                           ChallengeCategoryTab(
+                            showCounter: true,
                             challenges: state.pendingChallenges,
                             label: 'Pending',
                             icon: const Icon(
                               FlutterRemix.repeat_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                           ChallengeCategoryTab(
+                            showCounter: false,
                             challenges: state.completedChallenges,
                             label: 'Completed',
                             icon: const Icon(
                               FlutterRemix.check_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                         ],
@@ -165,27 +167,30 @@ class _ChallengesState extends State<ChallengesScreen> {
                         unselectedLabelColor: Colors.black,
                         tabs: [
                           ChallengeCategoryTab(
+                            showCounter: true,
                             challenges: state.activeChallenges,
                             label: 'Active',
                             icon: const Icon(
                               FlutterRemix.play_mini_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                           ChallengeCategoryTab(
+                            showCounter: true,
                             challenges: state.pendingChallenges,
                             label: 'Pending',
                             icon: const Icon(
                               FlutterRemix.repeat_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                           ChallengeCategoryTab(
+                            showCounter: false,
                             challenges: state.completedChallenges,
                             label: 'Completed',
                             icon: const Icon(
                               FlutterRemix.check_line,
-                              size: 15,
+                              size: 10,
                             ),
                           ),
                         ],
@@ -208,7 +213,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                             category: ChallengeCategory.pending,
                             challenges: state.pendingChallenges),
                         ChallengesList(
-                            category: ChallengeCategory.pending,
+                            category: ChallengeCategory.complete,
                             challenges: state.completedChallenges),
                       ]);
                     } else if (state is NoCurrentChallenge) {
@@ -220,7 +225,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                             category: ChallengeCategory.pending,
                             challenges: state.pendingChallenges),
                         ChallengesList(
-                            category: ChallengeCategory.pending,
+                            category: ChallengeCategory.complete,
                             challenges: state.completedChallenges),
                       ]);
                     } else {

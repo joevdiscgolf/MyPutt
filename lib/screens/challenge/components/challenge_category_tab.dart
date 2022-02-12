@@ -8,12 +8,14 @@ class ChallengeCategoryTab extends StatelessWidget {
       {Key? key,
       required this.challenges,
       required this.label,
-      required this.icon})
+      required this.icon,
+      required this.showCounter})
       : super(key: key);
 
   final String label;
   final Icon icon;
   final List<PuttingChallenge> challenges;
+  final bool showCounter;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class ChallengeCategoryTab extends StatelessWidget {
         Text(label),
         icon,
         Visibility(
-            visible: challenges.isNotEmpty,
+            visible: challenges.isNotEmpty && showCounter,
             child: Container(
               width: 15,
               height: 15,

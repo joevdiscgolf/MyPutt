@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/screens/challenge/components/active_challenge_item.dart';
-import 'package:myputt/screens/challenge/components/pending_challenge_item.dart';
+import 'package:myputt/screens/challenge/components/challenge_items.dart';
 import 'package:myputt/utils/constants.dart';
 
 import '../../../cubits/challenges_cubit.dart';
@@ -43,7 +42,7 @@ class ChallengesList extends StatelessWidget {
                             },
                             challenge: challenge,
                           );
-                        } else {
+                        } else if (category == ChallengeCategory.active) {
                           return ActiveChallengeItem(
                               accept: () {
                                 BlocProvider.of<ChallengesCubit>(context)
@@ -57,6 +56,12 @@ class ChallengesList extends StatelessWidget {
                                                 const ChallengeRecordScreen())));
                               },
                               challenge: challenge);
+                        } else {
+                          return CompletedChallengeItem(
+                              challenge: challenge,
+                              onTap: () {
+                                print('ontap');
+                              });
                         }
                       }),
                     )

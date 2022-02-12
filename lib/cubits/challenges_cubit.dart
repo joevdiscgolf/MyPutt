@@ -46,6 +46,19 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
+  void completeCurrentChallenge() {
+    print('completing challenge');
+    _challengesRepository.completeCurrentChallenge();
+    emit(NoCurrentChallenge(
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges));
+  }
+
+  void deleteChallenge(PuttingChallenge challenge) {
+    _challengesRepository.deleteChallenge(challenge);
+  }
+
   void exitChallenge() {
     _challengesRepository.exitChallenge();
     emit(NoCurrentChallenge(
