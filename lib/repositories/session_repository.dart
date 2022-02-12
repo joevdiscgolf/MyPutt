@@ -49,11 +49,9 @@ class SessionRepository {
   }
 
   Future<bool> fetchCurrentSession() async {
-    print('fetching current session');
     final PuttingSession? newCurrentSession =
         await _databaseService.getCurrentSession();
     currentSession = newCurrentSession;
-    print(currentSession);
     return true;
   }
 
@@ -65,7 +63,6 @@ class SessionRepository {
     } else {
       allSessions = [];
     }
-    print(allSessions);
     return true;
   }
 
@@ -73,5 +70,4 @@ class SessionRepository {
     currentSession = null;
     allSessions = [];
   }
-
 }

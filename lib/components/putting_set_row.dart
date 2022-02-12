@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/screens/components/confirm_delete_dialog.dart';
+import 'package:myputt/components/confirm_dialog.dart';
+
+import '../theme/theme_data.dart';
 
 class PuttingSetRow extends StatefulWidget {
-  const PuttingSetRow(
-      {Key? key,
-      required this.set,
-      required this.index,
-      required this.delete,
-      required this.deletable})
-      : super(key: key);
+  const PuttingSetRow({
+    Key? key,
+    required this.set,
+    required this.index,
+    required this.delete,
+    required this.deletable,
+  }) : super(key: key);
   final PuttingSet set;
   final int index;
   final Function delete;
@@ -22,6 +23,11 @@ class PuttingSetRow extends StatefulWidget {
 }
 
 class _PuttingSetRowState extends State<PuttingSetRow> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle =
@@ -59,7 +65,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             width: 40,
             height: 40,
             child: CircularProgressIndicator(
-              color: Colors.greenAccent,
+              color: ThemeColors.green,
               backgroundColor: Colors.grey[200],
               value: widget.set.puttsMade / widget.set.puttsAttempted,
               strokeWidth: 5,
@@ -86,8 +92,11 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                       onPressed: () {
                         showDialog(
                             context: context,
-                            builder: (context) => ConfirmDeleteDialog(
-                                delete: widget.delete, title: 'Delete set'));
+                            builder: (context) => ConfirmDialog(
+                                actionPressed: widget.delete,
+                                buttonlabel: 'Delete',
+                                confirmColor: Colors.red,
+                                title: 'Delete set'));
                       },
                     ),
                   ),

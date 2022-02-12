@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,8 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  final AuthService _authService = locator.get<AuthService>();
-
   int _sessionRangeIndex = 0;
   final List<String> _sessionRangeLabels = [
     'Last 5',
@@ -88,7 +85,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget _sessionRangeRow(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
       ),
       child: Row(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
-import 'package:myputt/bloc/cubits/session_summary_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/home/components/percentages_card.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 

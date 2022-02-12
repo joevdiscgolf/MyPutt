@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/theme/theme_data.dart';
 
 class PercentageRow extends StatefulWidget {
   const PercentageRow(
@@ -48,7 +49,7 @@ class _PercentageRowState extends State<PercentageRow> {
                       builder: (context, value, _) => CircularProgressIndicator(
                         color: widget.percentage! < widget.allTimePercentage!
                             ? Colors.red
-                            : Colors.greenAccent,
+                            : ThemeColors.green,
                         backgroundColor: Colors.grey[200],
                         value: value,
                         strokeWidth: 5,

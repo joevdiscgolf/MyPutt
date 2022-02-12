@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/data/types/stats.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
-import 'package:myputt/screens/record/components/putting_set_row.dart';
+import 'package:myputt/components/putting_set_row.dart';
 import 'package:myputt/screens/home/components/enums.dart';
 
 class SessionSummaryScreen extends StatefulWidget {
@@ -108,13 +107,14 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
                   .asMap()
                   .entries
                   .map((entry) => PuttingSetRow(
-                      set: entry.value,
-                      index: entry.key,
-                      deletable: false,
-                      delete: () {
-                        BlocProvider.of<SessionsCubit>(context)
-                            .deleteSet(entry.value);
-                      }))
+                        set: entry.value,
+                        index: entry.key,
+                        deletable: false,
+                        delete: () {
+                          BlocProvider.of<SessionsCubit>(context)
+                              .deleteSet(entry.value);
+                        },
+                      ))
                   .toList()
                   .reversed),
             ),

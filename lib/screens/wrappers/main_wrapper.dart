@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
+
+import '../challenge/challenges_screen.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -20,6 +23,7 @@ class _MainWrapperState extends State<MainWrapper> {
   final List<Widget> screens = <Widget>[
     const HomeScreen(),
     const SessionsScreen(),
+    const ChallengesScreen(),
   ];
 
   @override
@@ -32,7 +36,13 @@ class _MainWrapperState extends State<MainWrapper> {
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         enableFeedback: true,
-        onTap: (int index) => setState(() => _currentIndex = index),
+        onTap: (int index) {
+          /*
+          if (index == 2) {
+            BlocProvider.of<ChallengesCubit>(context).openChallenge();
+          }*/
+          setState(() => _currentIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(FlutterRemix.home_2_line),
@@ -41,6 +51,10 @@ class _MainWrapperState extends State<MainWrapper> {
           BottomNavigationBarItem(
             icon: Icon(FlutterRemix.record_circle_line),
             label: 'Record',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FlutterRemix.sword_line),
+            label: 'Challenges',
           ),
         ],
       ),

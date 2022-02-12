@@ -9,7 +9,7 @@ class PrimaryButton extends StatelessWidget {
     this.labelColor = Colors.white,
     this.iconColor = Colors.white,
     this.height = 48,
-    this.width = double.infinity,
+    required this.width,
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.icon,

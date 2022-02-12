@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>727184721057-hge5vrj7kqar3fluneb27pd1rnfspvn2.apps.googleusercontent.com</string>
+	<string>727184721057-533lak3smi9qv85ttd36gpb31ptkp7lf.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.727184721057-hge5vrj7kqar3fluneb27pd1rnfspvn2</string>
+	<string>com.googleusercontent.apps.727184721057-533lak3smi9qv85ttd36gpb31ptkp7lf</string>
 	<key>API_KEY</key>
 	<string>AIzaSyADO_CRDWSoIOoK-nQqIHSr8gG3SRRUgDY</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.joevanderveen.myputt</string>
+	<string>com.joev.myputtapp</string>
 	<key>PROJECT_ID</key>
 	<string>myputt-14d54</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:727184721057:ios:de1d3466bd0db06a9d9ce0</string>
+	<string>1:727184721057:ios:bc9981e8684edcec9d9ce0</string>
 </dict>
 </plist>

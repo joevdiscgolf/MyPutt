@@ -4,8 +4,7 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/stats_service.dart';
-import 'package:myputt/repositories/sessions_repository.dart';
-import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/session_repository.dart';
 
 part 'session_summary_state.dart';
 

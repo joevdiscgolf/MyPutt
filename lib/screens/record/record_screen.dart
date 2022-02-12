@@ -2,23 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/screens/record/components/putting_set_row.dart';
+import 'package:myputt/components/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/components/putts_made_picker.dart';
 
 class RecordScreen extends StatefulWidget {
-  const RecordScreen({Key? key}) : super(key: key);
+  RecordScreen({Key? key}) : super(key: key);
 
   static String routeName = '/record_screen';
 
+  final thisState = _RecordScreenState();
   @override
-  _RecordScreenState createState() => _RecordScreenState();
+  _RecordScreenState createState() => thisState;
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
+  late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
+      sslKey: puttsMadePickerKey,
+      onUpdate: (int newIndex) {
+        setState(() {
+          _focusedIndex = newIndex;
+        });
+      });
+
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
@@ -58,6 +69,11 @@ class _RecordScreenState extends State<RecordScreen> {
                             builder: (dialogContext) => BlocProvider.value(
                                 value: BlocProvider.of<SessionsCubit>(context),
                                 child: FinishSessionDialog(
+                                    stopSession: () {
+                                      setState(() {
+                                        sessionInProgress = false;
+                                      });
+                                    },
                                     recordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
@@ -99,7 +115,7 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  _puttsMadePicker(context),
+                  puttsMadePicker,
                 ],
               ),
             ),
@@ -110,7 +126,7 @@ class _RecordScreenState extends State<RecordScreen> {
                   label: 'Add set',
                   width: double.infinity,
                   height: 50,
-                  icon: FlutterRemix.arrow_right_line,
+                  icon: FlutterRemix.add_line,
                   onPressed: () {
                     BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
                         puttsMade: _focusedIndex,
@@ -229,8 +245,11 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('-',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
+                puttsMadePicker.adjustSetLength(false);
                 setState(() {
-                  if (_setLength > 1) _setLength -= 1;
+                  if (_setLength > 1) {
+                    _setLength -= 1;
+                  }
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -244,6 +263,7 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('+',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
+                puttsMadePicker.adjustSetLength(true);
                 setState(() {
                   _setLength += 1;
                 });
@@ -266,6 +286,7 @@ class _RecordScreenState extends State<RecordScreen> {
         color: Colors.white,
       ),
       child: ScrollSnapList(
+        updateOnScroll: true,
         itemSize: 80,
         itemCount: _setLength + 1,
         duration: 125,
@@ -341,13 +362,14 @@ class _RecordScreenState extends State<RecordScreen> {
                       .asMap()
                       .entries
                       .map((entry) => PuttingSetRow(
-                          deletable: true,
-                          set: entry.value,
-                          index: entry.key,
-                          delete: () {
-                            BlocProvider.of<SessionsCubit>(context)
-                                .deleteSet(entry.value);
-                          }))
+                            deletable: true,
+                            set: entry.value,
+                            index: entry.key,
+                            delete: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .deleteSet(entry.value);
+                            },
+                          ))
                       .toList()
                       .reversed),
                 ),
@@ -366,10 +388,12 @@ class _RecordScreenState extends State<RecordScreen> {
 }
 
 class FinishSessionDialog extends StatefulWidget {
-  const FinishSessionDialog({Key? key, required this.recordScreenState})
+  const FinishSessionDialog(
+      {Key? key, required this.recordScreenState, required this.stopSession})
       : super(key: key);
 
   final _RecordScreenState recordScreenState;
+  final Function stopSession;
   @override
   _FinishSessionDialogState createState() => _FinishSessionDialogState();
 }
@@ -442,8 +466,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                     .completeSession();
                                 BlocProvider.of<HomeScreenCubit>(context)
                                     .reloadStats();
-                                widget.recordScreenState.sessionInProgress =
-                                    false;
+                                widget.stopSession;
                                 Navigator.pop(context);
                               }
                             },
@@ -457,7 +480,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                               backgroundColor: Colors.green,
                               onPressed: () {
                                 setState(() {
-                                  _dialogErrorText = "No ongoing session";
+                                  _dialogErrorText = "No active session";
                                 });
                                 return 'Finish';
                               });

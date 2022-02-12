@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/bloc/cubits/home_screen_cubit.dart';
-import 'package:myputt/bloc/cubits/session_summary_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
-import 'package:myputt/bloc/cubits/sessions_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'session_summary_screen.dart';
-import 'package:myputt/screens/components/confirm_delete_dialog.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -82,8 +81,6 @@ class _SessionsState extends State<SessionsScreen> {
   }
 
   Widget _continueSessionCard(BuildContext context) {
-    TextStyle textStyle =
-        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is! SessionInProgressState) {
@@ -94,7 +91,7 @@ class _SessionsState extends State<SessionsScreen> {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => BlocProvider.value(
                         value: BlocProvider.of<SessionsCubit>(context),
-                        child: const RecordScreen())));
+                        child: RecordScreen())));
               },
               child: SessionListRow(
                 isCurrentSession: true,
@@ -104,96 +101,7 @@ class _SessionsState extends State<SessionsScreen> {
                 },
                 session: state.currentSession,
                 stats: state.currentSessionStats,
-              ) /*Card(
-              color: Colors.blue[100]!,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 2),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Text('CURRENT',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                )))),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(state.currentSession.dateStarted,
-                                style: textStyle),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: 80,
-                                  child: Text(
-                                      '${state.currentSession.sets.length.toString()} sets'),
-                                ),
-                                state.currentSessionStats.generalStats
-                                                ?.totalMade !=
-                                            null &&
-                                        state.currentSessionStats.generalStats
-                                                ?.totalAttempts !=
-                                            null
-                                    ? SizedBox(
-                                        width: 120,
-                                        child: Text(
-                                            '${state.currentSessionStats.generalStats?.totalMade} / ${state.currentSessionStats.generalStats?.totalAttempts} putts'),
-                                      )
-                                    : Container()
-                              ],
-                            ),
-                          ],
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: const Icon(
-                                FlutterRemix.close_line,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => ConfirmDeleteDialog(
-                                        title: 'Delete Session',
-                                        delete: () {
-                                          BlocProvider.of<SessionsCubit>(
-                                                  context)
-                                              .deleteCurrentSession();
-                                          BlocProvider.of<HomeScreenCubit>(
-                                                  context)
-                                              .reloadStats();
-                                        }));
-                              }),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),*/
-              );
+              ));
         }
       },
     );
@@ -299,7 +207,7 @@ class _SessionsState extends State<SessionsScreen> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => BlocProvider.value(
                           value: BlocProvider.of<SessionsCubit>(context),
-                          child: const RecordScreen())));
+                          child: RecordScreen())));
                 }
               }),
         );
