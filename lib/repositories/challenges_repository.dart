@@ -58,8 +58,10 @@ class ChallengesRepository {
     if (currentChallenge?.status == ChallengeStatus.pending) {
       currentChallenge?.status = ChallengeStatus.active;
     }
-    pendingChallenges.remove(challenge);
-    activeChallenges.add(currentChallenge!);
+    if (pendingChallenges.contains(challenge)) {
+      pendingChallenges.remove(challenge);
+      activeChallenges.add(currentChallenge!);
+    }
     //_databaseService.updatePuttingChallenge(currentChallenge!);
   }
 

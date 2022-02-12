@@ -50,7 +50,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       allowAnotherDirection: true,
       dynamicSizeEquation: (displacement) {
         const threshold = 0;
-        const maxDisplacement = 800;
+        const maxDisplacement = 500;
         if (displacement >= threshold) {
           const slope = 1 / (-maxDisplacement);
           return slope * displacement + (1 - slope * threshold);

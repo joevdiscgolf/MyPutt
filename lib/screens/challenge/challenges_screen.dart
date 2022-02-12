@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'components/pending_challenge_item.dart';
-
-enum ChallengeCategory { active, pending, complete, none }
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/screens/challenge/components/challenges_list.dart';
 
 class ChallengesScreen extends StatefulWidget {
   const ChallengesScreen({Key? key}) : super(key: key);
@@ -126,93 +127,30 @@ class _ChallengesState extends State<ChallengesScreen> {
                         labelColor: Colors.white,
                         unselectedLabelColor: Colors.black,
                         tabs: [
-                          Tab(
-                              child: Stack(children: [
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text('Active'),
-                                  const Icon(
-                                    FlutterRemix.play_mini_line,
-                                    size: 15,
-                                  ),
-                                  Visibility(
-                                      visible:
-                                          state.activeChallenges.isNotEmpty,
-                                      child: Container(
-                                        width: 15,
-                                        height: 15,
-                                        child: Center(
-                                          child: Text(
-                                              state.activeChallenges.length
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.black)),
-                                        ),
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white),
-                                      ))
-                                ],
-                              ),
+                          ChallengeCategoryTab(
+                            challenges: state.activeChallenges,
+                            label: 'Active',
+                            icon: const Icon(
+                              FlutterRemix.play_mini_line,
+                              size: 15,
                             ),
-                          ])),
-                          Tab(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('Pending'),
-                              const SizedBox(width: 2),
-                              const Icon(
-                                FlutterRemix.repeat_line,
-                                size: 15,
-                              ),
-                              Visibility(
-                                  visible: state.pendingChallenges.isNotEmpty,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    child: Center(
-                                      child: Text(
-                                          state.pendingChallenges.length
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black)),
-                                    ),
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
-                                  ))
-                            ],
-                          )),
-                          Tab(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('Complete'),
-                              const Icon(
-                                FlutterRemix.check_line,
-                                size: 15,
-                              ),
-                              Visibility(
-                                  visible: state.completedChallenges.isNotEmpty,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    child: Center(
-                                      child: Text(
-                                          state.completedChallenges.length
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black)),
-                                    ),
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
-                                  ))
-                            ],
-                          ))
+                          ),
+                          ChallengeCategoryTab(
+                            challenges: state.pendingChallenges,
+                            label: 'Pending',
+                            icon: const Icon(
+                              FlutterRemix.repeat_line,
+                              size: 15,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            challenges: state.completedChallenges,
+                            label: 'Completed',
+                            icon: const Icon(
+                              FlutterRemix.check_line,
+                              size: 15,
+                            ),
+                          ),
                         ],
                       );
                     } else if (state is NoCurrentChallenge) {
@@ -226,93 +164,30 @@ class _ChallengesState extends State<ChallengesScreen> {
                         labelColor: Colors.white,
                         unselectedLabelColor: Colors.black,
                         tabs: [
-                          Tab(
-                              child: Stack(children: [
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text('Active'),
-                                  const Icon(
-                                    FlutterRemix.play_mini_line,
-                                    size: 15,
-                                  ),
-                                  Visibility(
-                                      visible:
-                                          state.activeChallenges.isNotEmpty,
-                                      child: Container(
-                                        width: 15,
-                                        height: 15,
-                                        child: Center(
-                                          child: Text(
-                                              state.activeChallenges.length
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.black)),
-                                        ),
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white),
-                                      ))
-                                ],
-                              ),
+                          ChallengeCategoryTab(
+                            challenges: state.activeChallenges,
+                            label: 'Active',
+                            icon: const Icon(
+                              FlutterRemix.play_mini_line,
+                              size: 15,
                             ),
-                          ])),
-                          Tab(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('Pending'),
-                              const SizedBox(width: 2),
-                              const Icon(
-                                FlutterRemix.repeat_line,
-                                size: 15,
-                              ),
-                              Visibility(
-                                  visible: state.pendingChallenges.isNotEmpty,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    child: Center(
-                                      child: Text(
-                                          state.pendingChallenges.length
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black)),
-                                    ),
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
-                                  ))
-                            ],
-                          )),
-                          Tab(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('Complete'),
-                              const Icon(
-                                FlutterRemix.check_line,
-                                size: 15,
-                              ),
-                              Visibility(
-                                  visible: state.completedChallenges.isNotEmpty,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    child: Center(
-                                      child: Text(
-                                          state.completedChallenges.length
-                                              .toString(),
-                                          style: const TextStyle(
-                                              color: Colors.black)),
-                                    ),
-                                    decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
-                                  ))
-                            ],
-                          ))
+                          ),
+                          ChallengeCategoryTab(
+                            challenges: state.pendingChallenges,
+                            label: 'Pending',
+                            icon: const Icon(
+                              FlutterRemix.repeat_line,
+                              size: 15,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            challenges: state.completedChallenges,
+                            label: 'Completed',
+                            icon: const Icon(
+                              FlutterRemix.check_line,
+                              size: 15,
+                            ),
+                          ),
                         ],
                       );
                     } else {
@@ -357,142 +232,5 @@ class _ChallengesState extends State<ChallengesScreen> {
             ],
           )),
     );
-  }
-}
-/*
-class ChallengesLists extends StatefulWidget {
-  const ChallengesLists({Key? key}) : super(key: key);
-
-  @override
-  _ChallengesListsState createState() => _ChallengesListsState();
-}
-
-class _ChallengesListsState extends State<ChallengesLists> {
-  ChallengeCategory displayedChallenges = ChallengeCategory.active;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ChallengesCubit, ChallengesState>(
-        builder: (context, state) {
-      if (state is ChallengeInProgress) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Flexible(
-              fit: FlexFit.loose,
-              child: ChallengesList(
-                  category: ChallengeCategory.active,
-                  onPressed: () {
-                    setState(() {
-                      displayedChallenges =
-                          displayedChallenges == ChallengeCategory.active
-                              ? ChallengeCategory.none
-                              : ChallengeCategory.active;
-                    });
-                  },
-                  title: 'Active',
-                  isHighlighted:
-                      displayedChallenges == ChallengeCategory.active,
-                  challenges: state.activeChallenges),
-            ),
-            const SizedBox(height: 10),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ChallengesList(
-                  category: ChallengeCategory.pending,
-                  onPressed: () {
-                    setState(() {
-                      displayedChallenges =
-                          displayedChallenges == ChallengeCategory.pending
-                              ? ChallengeCategory.none
-                              : ChallengeCategory.pending;
-                    });
-                  },
-                  title: 'Pending',
-                  isHighlighted:
-                      displayedChallenges == ChallengeCategory.pending,
-                  challenges: state.pendingChallenges),
-            ),
-            const SizedBox(height: 10),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ChallengesList(
-                  category: ChallengeCategory.complete,
-                  onPressed: () {
-                    setState(() {
-                      displayedChallenges =
-                          displayedChallenges == ChallengeCategory.complete
-                              ? ChallengeCategory.none
-                              : ChallengeCategory.complete;
-                    });
-                  },
-                  title: 'Completed',
-                  isHighlighted:
-                      displayedChallenges == ChallengeCategory.complete,
-                  challenges: state.completedChallenges),
-            )
-          ],
-        );
-      } else {
-        return Container();
-      }
-    });
-  }
-}*/
-
-class ChallengesList extends StatelessWidget {
-  const ChallengesList(
-      {Key? key, required this.category, required this.challenges})
-      : super(key: key);
-
-  final ChallengeCategory category;
-  final List<PuttingChallenge> challenges;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(8),
-        child: challenges.isEmpty
-            ? const Center(child: Text('No challenges'))
-            : ListView(
-                shrinkWrap: true,
-                children: challenges
-                    .map(
-                      (challenge) => Builder(builder: (context) {
-                        if (category == ChallengeCategory.pending) {
-                          return PendingChallengeItem(
-                            accept: () {
-                              BlocProvider.of<ChallengesCubit>(context)
-                                  .openChallenge(challenge);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      BlocProvider.value(
-                                          value:
-                                              BlocProvider.of<ChallengesCubit>(
-                                                  context),
-                                          child:
-                                              const ChallengeRecordScreen())));
-                            },
-                            challenge: challenge,
-                          );
-                        } else {
-                          return PendingChallengeItem(
-                              accept: () {
-                                BlocProvider.of<ChallengesCubit>(context)
-                                    .openChallenge(challenge);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        BlocProvider.value(
-                                            value: BlocProvider.of<
-                                                ChallengesCubit>(context),
-                                            child:
-                                                const ChallengeRecordScreen())));
-                              },
-                              challenge: challenge);
-                        }
-                      }),
-                    )
-                    .toList(),
-              ));
   }
 }
