@@ -93,7 +93,8 @@ class AuthService {
     }
   }
 
-  Future<bool> setupNewUser(String username) async {
+  Future<bool> setupNewUser(
+      String username, String displayName, int? pdgaNumber) async {
     final User? user = await getUser();
     if (user == null) {
       return false;
@@ -155,7 +156,8 @@ class AuthService {
     if (!userDoc.exists) {
       return false;
     } else {
-      currentMyPuttUser = MyPuttUser.fromJson(userDoc as Map<String, dynamic>);
+      currentMyPuttUser =
+          MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
       if (currentMyPuttUser.username != null &&
           currentMyPuttUser.displayName != null) {
         return true;

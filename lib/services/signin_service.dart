@@ -56,6 +56,13 @@ class SigninService {
     return true;
   }
 
+  Future<bool> setupNewUser(
+      String username, String displayName, int? pdgaNumber) async {
+    final bool setupNewUserSuccess =
+        await _authService.setupNewUser(username, displayName, pdgaNumber);
+    return true;
+  }
+
   void signOut() {
     locator.get<SessionRepository>().clearData();
     _authService.logOut();
