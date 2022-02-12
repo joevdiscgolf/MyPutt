@@ -8,7 +8,7 @@ part of 'putting_challenge.dart';
 
 PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
       status: _$enumDecode(_$ChallengeStatusEnumMap, json['status']),
-      createdAt: json['createdAt'] as int,
+      creationTimeStamp: json['creationTimeStamp'] as int,
       id: json['id'] as String,
       challengerUid: json['challengerUid'] as String,
       recipientUid: json['recipientUid'] as String,
@@ -27,7 +27,7 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
 Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
     <String, dynamic>{
       'status': _$ChallengeStatusEnumMap[instance.status],
-      'createdAt': instance.createdAt,
+      'creationTimeStamp': instance.creationTimeStamp,
       'id': instance.id,
       'challengerUid': instance.challengerUid,
       'recipientUid': instance.recipientUid,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/screens/components/confirm_delete_dialog.dart';
+import 'package:myputt/components/confirm_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
 
@@ -23,74 +23,78 @@ class SessionListRow extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle textStyle =
         const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
-    return Card(
-      color: isCurrentSession ? Colors.blue[100]! : Colors.white,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            isCurrentSession
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: const Text('CURRENT',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ))))
-                : Container(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(session.dateStarted, style: textStyle),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${session.sets.length.toString()} sets'),
-                        const SizedBox(width: 20),
-                        stats.generalStats?.totalMade != null &&
-                                stats.generalStats?.totalAttempts != null
-                            ? Text(
-                                '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
-                            : Container()
-                      ],
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(width: 1, color: Colors.grey[400]!),
+        color: isCurrentSession ? Colors.blue[100]! : Colors.white,
+      ),
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          isCurrentSession
+              ? Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 2),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Text('CURRENT',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ))))
+              : Container(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(session.dateStarted, style: textStyle),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${session.sets.length.toString()} sets'),
+                      const SizedBox(width: 20),
+                      stats.generalStats?.totalMade != null &&
+                              stats.generalStats?.totalAttempts != null
+                          ? Text(
+                              '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
+                          : Container()
+                    ],
+                  ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
                     ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                      child: const Icon(
-                        FlutterRemix.close_line,
-                        color: Colors.red,
-                      ),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => ConfirmDeleteDialog(
-                                title: 'Delete Session', delete: delete));
-                      }),
-                )
-              ],
-            ),
-          ],
-        ),
+                    child: const Icon(
+                      FlutterRemix.close_line,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => ConfirmDialog(
+                                title: 'Delete Session',
+                                actionPressed: delete,
+                                confirmColor: Colors.red,
+                                buttonlabel: 'Delete',
+                              ));
+                    }),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }

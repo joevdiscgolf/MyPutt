@@ -6,7 +6,7 @@ Future<void> fetchRepositoryData() async {
   await Future.wait([
     locator.get<SessionRepository>().fetchCompletedSessions(),
     locator.get<SessionRepository>().fetchCurrentSession(),
-    locator.get<ChallengesRepository>().fetchAllChallenges()
+    /*locator.get<ChallengesRepository>().fetchAllChallenges()*/
   ]);
   return;
 }

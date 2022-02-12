@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 
-class ConfirmDeleteDialog extends StatefulWidget {
-  const ConfirmDeleteDialog(
-      {Key? key, required this.delete, required this.title})
+class ConfirmDialog extends StatefulWidget {
+  const ConfirmDialog(
+      {Key? key,
+      required this.actionPressed,
+      required this.title,
+      required this.confirmColor,
+      required this.buttonlabel})
       : super(key: key);
 
   final String title;
-  final Function delete;
+  final Function actionPressed;
+  final String buttonlabel;
+  final Color confirmColor;
+
   @override
-  _ConfirmDeleteDialogState createState() => _ConfirmDeleteDialogState();
+  _ConfirmDialogState createState() => _ConfirmDialogState();
 }
 
-class _ConfirmDeleteDialogState extends State<ConfirmDeleteDialog> {
+class _ConfirmDialogState extends State<ConfirmDialog> {
   String? _dialogErrorText;
 
   @override
@@ -62,13 +69,13 @@ class _ConfirmDeleteDialogState extends State<ConfirmDeleteDialog> {
                       Navigator.pop(context);
                     }),
                 PrimaryButton(
-                  label: 'Delete',
+                  label: widget.buttonlabel,
                   fontSize: 18,
                   width: 100,
                   height: 50,
-                  backgroundColor: Colors.red,
+                  backgroundColor: widget.confirmColor,
                   onPressed: () {
-                    widget.delete();
+                    widget.actionPressed();
                     Navigator.pop(context);
                   },
                 )

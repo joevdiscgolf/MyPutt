@@ -9,7 +9,7 @@ part 'putting_challenge.g.dart';
 class PuttingChallenge {
   PuttingChallenge(
       {required this.status,
-      required this.createdAt,
+      required this.creationTimeStamp,
       required this.id,
       required this.challengerUid,
       required this.recipientUid,
@@ -18,7 +18,7 @@ class PuttingChallenge {
       required this.recipientSets});
 
   ChallengeStatus status;
-  final int createdAt;
+  final int creationTimeStamp;
   final String id;
   final String challengerUid;
   final String recipientUid;

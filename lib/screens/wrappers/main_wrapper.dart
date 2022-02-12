@@ -6,6 +6,8 @@ import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
 
+import '../challenge/challenges_screen.dart';
+
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
 
@@ -21,7 +23,7 @@ class _MainWrapperState extends State<MainWrapper> {
   final List<Widget> screens = <Widget>[
     const HomeScreen(),
     const SessionsScreen(),
-    const ChallengeRecordScreen(),
+    const ChallengesScreen(),
   ];
 
   @override
@@ -35,9 +37,10 @@ class _MainWrapperState extends State<MainWrapper> {
         currentIndex: _currentIndex,
         enableFeedback: true,
         onTap: (int index) {
+          /*
           if (index == 2) {
             BlocProvider.of<ChallengesCubit>(context).openChallenge();
-          }
+          }*/
           setState(() => _currentIndex = index);
         },
         items: const [

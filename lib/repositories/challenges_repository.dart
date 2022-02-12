@@ -16,18 +16,17 @@ class ChallengesRepository {
         challengerSets: [
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
+          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
         ],
         challengerUid: 'challengeruid',
-        challengeStructureDistances: [20, 20, 15],
-        createdAt: 1643453201,
+        challengeStructureDistances: [20, 20, 15, 15, 15],
+        creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
         id: 'thischallengeId',
-        recipientSets: [
-          /*PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)*/
-        ],
+        recipientSets: [],
         recipientUid: 'recipientuid',
-        status: ChallengeStatus.active)
+        status: ChallengeStatus.pending)
   ];
   List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> completedChallenges = [];
@@ -54,30 +53,18 @@ class ChallengesRepository {
     }
   }
 
-  void openChallenge(/*PuttingChallenge challenge*/) {
-    currentChallenge = PuttingChallenge(
-        challengerSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
-        ],
-        challengerUid: 'challengeruid',
-        challengeStructureDistances: [20, 20, 15, 15, 15],
-        createdAt: 1643453201,
-        id: 'thischallengeId',
-        recipientSets: [
-          /*PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 3),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 4)*/
-        ],
-        recipientUid: 'recipientuid',
-        status: ChallengeStatus.active);
+  void openChallenge(PuttingChallenge challenge) {
+    currentChallenge = challenge;
     if (currentChallenge?.status == ChallengeStatus.pending) {
       currentChallenge?.status = ChallengeStatus.active;
-      pendingChallenges.remove(currentChallenge);
-      activeChallenges.add(currentChallenge!);
     }
+    pendingChallenges.remove(challenge);
+    activeChallenges.add(currentChallenge!);
+    //_databaseService.updatePuttingChallenge(currentChallenge!);
+  }
+
+  void exitChallenge() {
+    currentChallenge = null;
     //_databaseService.updatePuttingChallenge(currentChallenge!);
   }
 
@@ -117,6 +104,11 @@ class ChallengesRepository {
       return _databaseService.updatePuttingChallenge(currentChallenge!);
     }
     return false;
+  }
+
+  void declineChallenge(PuttingChallenge challenge) {
+    pendingChallenges.remove(challenge);
+    // async database call
   }
 }
 /*

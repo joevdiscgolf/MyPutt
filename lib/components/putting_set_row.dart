@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/screens/components/confirm_delete_dialog.dart';
+import 'package:myputt/components/confirm_dialog.dart';
 
 class PuttingSetRow extends StatefulWidget {
   const PuttingSetRow({
@@ -90,8 +90,11 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                       onPressed: () {
                         showDialog(
                             context: context,
-                            builder: (context) => ConfirmDeleteDialog(
-                                delete: widget.delete, title: 'Delete set'));
+                            builder: (context) => ConfirmDialog(
+                                actionPressed: widget.delete,
+                                buttonlabel: 'Delete',
+                                confirmColor: Colors.red,
+                                title: 'Delete set'));
                       },
                     ),
                   ),

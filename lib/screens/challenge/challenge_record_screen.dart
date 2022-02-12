@@ -10,6 +10,9 @@ import 'package:myputt/components/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
 
+import '../../components/confirm_dialog.dart';
+import '../../theme/theme_data.dart';
+
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
 
@@ -348,7 +351,24 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     Text('Finish challenge'),
                   ],
                 )),
-                onPressed: () {}),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (dialogContext) => BlocProvider.value(
+                          value: BlocProvider.of<ChallengesCubit>(context),
+                          child: ConfirmDialog(
+                            actionPressed: () {
+                              setState(() {
+                                sessionInProgress = false;
+                                BlocProvider.of<ChallengesCubit>(context)
+                                    .exitChallenge();
+                              });
+                            },
+                            buttonlabel: 'Finish',
+                            title: 'Finish challenge?',
+                            confirmColor: ThemeColors.green,
+                          ))).then((value) => dialogCallBack());
+                }),
           );
         }
         if (state is ChallengeInProgress) {

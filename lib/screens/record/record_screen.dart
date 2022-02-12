@@ -69,6 +69,11 @@ class _RecordScreenState extends State<RecordScreen> {
                             builder: (dialogContext) => BlocProvider.value(
                                 value: BlocProvider.of<SessionsCubit>(context),
                                 child: FinishSessionDialog(
+                                    stopSession: () {
+                                      setState(() {
+                                        sessionInProgress = false;
+                                      });
+                                    },
                                     recordScreenState: this)))
                         .then((value) => dialogCallBack());
                   },
@@ -383,10 +388,12 @@ class _RecordScreenState extends State<RecordScreen> {
 }
 
 class FinishSessionDialog extends StatefulWidget {
-  const FinishSessionDialog({Key? key, required this.recordScreenState})
+  const FinishSessionDialog(
+      {Key? key, required this.recordScreenState, required this.stopSession})
       : super(key: key);
 
   final _RecordScreenState recordScreenState;
+  final Function stopSession;
   @override
   _FinishSessionDialogState createState() => _FinishSessionDialogState();
 }
@@ -459,8 +466,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                                     .completeSession();
                                 BlocProvider.of<HomeScreenCubit>(context)
                                     .reloadStats();
-                                widget.recordScreenState.sessionInProgress =
-                                    false;
+                                widget.stopSession;
                                 Navigator.pop(context);
                               }
                             },
