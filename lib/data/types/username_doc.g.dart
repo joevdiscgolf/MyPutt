@@ -1,22 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'myputt_user.dart';
+part of 'username_doc.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
+UsernameDoc _$UsernameDocFromJson(Map json) => UsernameDoc(
       username: json['username'] as String,
-      displayName: json['displayName'] as String,
       uid: json['uid'] as String,
-      pdgaNum: json['pdgaNum'] as int?,
     );
 
-Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
+Map<String, dynamic> _$UsernameDocToJson(UsernameDoc instance) =>
     <String, dynamic>{
       'username': instance.username,
-      'displayName': instance.displayName,
       'uid': instance.uid,
-      'pdgaNum': instance.pdgaNum,
     };

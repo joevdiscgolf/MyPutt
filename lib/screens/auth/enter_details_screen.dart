@@ -191,9 +191,9 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         counter: const Offstage(),
       ),
       onChanged: (text) {
-        displayName = text;
-        print(_disabled);
-        print(displayNameController.value.text);
+        setState(() {
+          displayName = text;
+        });
       },
     );
   }
@@ -308,7 +308,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         final bool success = await _signinService.setupNewUser(
             usernameController.value.text,
             displayNameController.value.text,
-            pdgaNumberController.value.text as int);
+            int.parse(pdgaNumberController.value.text));
         if (success) {
           print('success');
         }

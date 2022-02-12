@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myputt/data/types/username_doc.dart';
 
 import '../data/types/myputt_user.dart';
 
@@ -99,27 +100,26 @@ class AuthService {
     if (user == null) {
       return false;
     }
-
-    return FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        // ignore: always_specify_types
-        .set({}, SetOptions(merge: true))
-        .then((_) async {
-          return FirebaseFirestore.instance
-              .collection('Usernames')
-              .doc(username)
-              .set(<String, dynamic>{
-            'username': username,
-            'uid': user.uid,
-          });
-        })
-        .then((_) async => user.updateDisplayName(username))
-        .then((_) => true)
-        .catchError((e) {
-          print(e.toString());
-          return false;
-        });
+    final userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(user.uid);
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    final usernameDoc =
+        FirebaseFirestore.instance.collection('Usernames').doc(username);
+    batch.set(
+        userDoc,
+        MyPuttUser(
+                username: username,
+                displayName: displayName,
+                uid: user.uid,
+                pdgaNum: pdgaNumber)
+            .toJson());
+    batch.set(
+        usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
+    await batch.commit().catchError((e) {
+      print(e);
+      return false;
+    });
+    return true;
   }
 
   Future<void> saveUserInfo(String name, String? bio) async {
@@ -153,7 +153,9 @@ class AuthService {
         .collection('Users')
         .doc(_auth.currentUser!.uid)
         .get();
-    if (!userDoc.exists) {
+    print(userDoc.data());
+    if (!userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
+      print('data does not exist');
       return false;
     } else {
       currentMyPuttUser =
@@ -173,5 +175,9 @@ class AuthService {
     } catch (error) {
       print(error.toString());
     }
+  }
+
+  bool userDocIsValid(Map<String, dynamic> doc) {
+    return doc['username'] != null && doc['displayName'] != null;
   }
 }

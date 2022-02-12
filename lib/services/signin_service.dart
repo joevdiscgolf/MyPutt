@@ -16,10 +16,10 @@ class SigninService {
 
   Future<void> init() async {
     if (_authService.getCurrentUserId() != null) {
-      if (await _authService.userIsSetup()) {
-        controller.add(LoginState.loggedIn);
-      } else {
+      if (!(await _authService.userIsSetup())) {
         controller.add(LoginState.setup);
+      } else {
+        controller.add(LoginState.loggedIn);
       }
     } else {
       controller.add(LoginState.none);
@@ -60,7 +60,10 @@ class SigninService {
       String username, String displayName, int? pdgaNumber) async {
     final bool setupNewUserSuccess =
         await _authService.setupNewUser(username, displayName, pdgaNumber);
-    return true;
+    if (await _authService.userIsSetup()) {
+      controller.add(LoginState.loggedIn);
+    }
+    return setupNewUserSuccess;
   }
 
   void signOut() {

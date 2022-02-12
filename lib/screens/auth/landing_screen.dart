@@ -20,7 +20,8 @@ class _LandingScreenState extends State<LandingScreen> {
   String? _password;
   bool _error = false;
   String _errorText = '';
-  bool _loading = false;
+  bool _signInLoading = false;
+  bool _signUpLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +56,10 @@ class _LandingScreenState extends State<LandingScreen> {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _loginButton(context, true),
+                          const SizedBox(height: 10),
                           _loginButton(context, false)
                         ],
                       ),
@@ -187,13 +190,13 @@ class _LandingScreenState extends State<LandingScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         PrimaryButton(
-            loading: _loading,
+            loading: signIn ? _signInLoading : _signUpLoading,
             label: signIn ? 'Sign in' : 'Sign up',
             fontSize: 20,
             // icon: FlutterRemix.cellphone_fill,
             backgroundColor: Colors.blue,
             height: 48,
-            width: 260,
+            width: 120,
             onPressed: () async {
               if (_email == null || _password == null) {
                 print('email or password is null');
@@ -203,18 +206,27 @@ class _LandingScreenState extends State<LandingScreen> {
                 });
               } else {
                 setState(() {
-                  _loading = true;
+                  if (signIn) {
+                    _signInLoading = true;
+                  } else {
+                    _signUpLoading = true;
+                  }
                 });
-                final signInSuccess = signIn
+                print("signInLoading: $_signInLoading");
+                final authSuccess = signIn
                     ? await locator
                         .get<SigninService>()
                         .attemptSignIn(_email!, _password!)
                     : await locator
                         .get<SigninService>()
                         .attemptSignUp(_email!, _password!);
-                if (!signInSuccess) {
+                if (!authSuccess) {
                   setState(() {
-                    _loading = signInSuccess;
+                    if (signIn) {
+                      _signInLoading = false;
+                    } else {
+                      _signUpLoading = false;
+                    }
                     _error = true;
                     _errorText = _authService.exception;
                   });
