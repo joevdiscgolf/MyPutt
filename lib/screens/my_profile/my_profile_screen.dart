@@ -5,6 +5,7 @@ import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 
 import '../../locator.dart';
+import '../../services/signin_service.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -21,15 +22,28 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(title: BlocBuilder<MyProfileCubit, MyProfileState>(
-        builder: (context, state) {
-          if (state is MyProfileLoaded) {
-            return Text(state.myUser.username);
-          } else {
-            return Text('Loading');
-          }
-        },
-      )),
+      appBar: AppBar(
+        title: BlocBuilder<MyProfileCubit, MyProfileState>(
+          builder: (context, state) {
+            if (state is MyProfileLoaded) {
+              return Text(state.myUser.username);
+            } else {
+              return Text('Loading');
+            }
+          },
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shadowColor: Colors.transparent,
+            ),
+            onPressed: () {
+              locator.get<SigninService>().signOut();
+            },
+            child: const Text('Logout'),
+          )
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

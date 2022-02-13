@@ -189,7 +189,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 child: Center(
                                     child: Center(
                                         child: Text(
-                                  'opponent',
+                                  'Opponent',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -214,8 +214,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 60,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 100, child: Center(child: Text('You'))),
+                            SizedBox(
+                                width: 100,
+                                child: Center(
+                                    child: Text(
+                                  'You',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ))),
                             ChallengeScrollSnapList(
                               isCurrentUser: true,
                               sslKey: currentUserKey,
@@ -241,7 +246,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               0
                           ? Text(
                               '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: Theme.of(context).textTheme.bodySmall,
                             )
                           : Container(height: 20),
                     ),
@@ -329,7 +334,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 child: Center(
                                     child: Center(
                                         child: Text(
-                                  'opponent',
+                                  'Opponent',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -389,7 +394,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               0
                           ? Text(
                               '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: Theme.of(context).textTheme.bodySmall,
                             )
                           : Container(height: 20),
                     ),
