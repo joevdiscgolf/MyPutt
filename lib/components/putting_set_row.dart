@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/confirm_dialog.dart';
+import 'package:myputt/utils/calculators.dart';
 
 import '../theme/theme_data.dart';
 
@@ -65,7 +66,8 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             width: 40,
             height: 40,
             child: CircularProgressIndicator(
-              color: ThemeColors.green,
+              color: colorFromDecimal(widget.set.puttsMade.toDouble() /
+                  widget.set.puttsAttempted.toDouble()),
               backgroundColor: Colors.grey[200],
               value: widget.set.puttsMade / widget.set.puttsAttempted,
               strokeWidth: 5,

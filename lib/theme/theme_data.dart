@@ -3,7 +3,7 @@ import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ThemeColors {
-  static Color get green => const Color(0xff00d162);
+  static Color get green => const Color(0xff00de64);
 }
 
 ThemeData lightTheme(BuildContext context) {

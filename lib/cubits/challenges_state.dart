@@ -22,8 +22,16 @@ class ChallengeInProgress extends ChallengesState {
 }
 
 class ChallengeComplete extends ChallengesState {
-  ChallengeComplete({required this.currentChallenge});
+  ChallengeComplete({
+    required this.currentChallenge,
+    required this.activeChallenges,
+    required this.pendingChallenges,
+    required this.completedChallenges,
+  });
   final PuttingChallenge currentChallenge;
+  final List<PuttingChallenge> activeChallenges;
+  final List<PuttingChallenge> pendingChallenges;
+  final List<PuttingChallenge> completedChallenges;
 }
 
 class NoCurrentChallenge extends ChallengesState {

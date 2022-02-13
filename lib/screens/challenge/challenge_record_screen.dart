@@ -12,6 +12,7 @@ import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.
 
 import '../../components/confirm_dialog.dart';
 import '../../theme/theme_data.dart';
+import '../../utils/calculators.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
@@ -142,10 +143,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       builder: (context, state) {
         if (state is ChallengeInProgress) {
           final PuttingChallenge challenge = state.currentChallenge;
-          final int itemCount =
-              challenge.currentUserSets.length == challenge.opponentSets.length
-                  ? challenge.currentUserSets.length
-                  : challenge.currentUserSets.length + 1;
+          final bool currentUserSetsComplete =
+              challenge.currentUserSets.length == challenge.opponentSets.length;
+          final int opponentListItemCount = currentUserSetsComplete
+              ? challenge.currentUserSets.length
+              : challenge.currentUserSets.length + 1;
+          final int currentUserListItemCount = currentUserSetsComplete
+              ? state.currentChallenge.currentUserSets.length
+              : state.currentChallenge.currentUserSets.length + 2;
           return Container(
               decoration: const BoxDecoration(color: Colors.white),
               child: Column(
@@ -156,8 +161,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 30,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 80, child: Center(child: Text('Set'))),
+                            SizedBox(
+                                width: 100,
+                                child: Center(
+                                    child: Text(
+                                  'Set',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ))),
                             CounterScrollSnapList(
                               sslKey: numberListKey,
                               onUpdate: (index) {
@@ -165,7 +175,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 currentUserKey.currentState?.focusToItem(index);
                                 numberListKey.currentState?.focusToItem(index);
                               },
-                              itemCount: itemCount,
+                              itemCount: opponentListItemCount,
                             )
                           ],
                         )),
@@ -174,10 +184,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 60,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 80,
+                            SizedBox(
+                                width: 100,
                                 child: Center(
-                                    child: Center(child: Text('opponent')))),
+                                    child: Center(
+                                        child: Text(
+                                  'opponent',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                )))),
                             ChallengeScrollSnapList(
                                 isCurrentUser: false,
                                 sslKey: opponentKey,
@@ -192,7 +206,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                     challenge.challengeStructureDistances,
                                 puttingSets: challenge.opponentSets,
                                 maxSets: challenge.opponentSets.length,
-                                itemCount: itemCount)
+                                itemCount: opponentListItemCount)
                           ],
                         )),
                     Container(
@@ -201,7 +215,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         child: Row(
                           children: [
                             const SizedBox(
-                                width: 80, child: Center(child: Text('You'))),
+                                width: 100, child: Center(child: Text('You'))),
                             ChallengeScrollSnapList(
                               isCurrentUser: true,
                               sslKey: currentUserKey,
@@ -214,7 +228,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   challenge.challengeStructureDistances,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
-                              itemCount: itemCount + 1,
+                              itemCount: currentUserListItemCount,
                             )
                           ],
                         )),
@@ -226,7 +240,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       .length !=
                               0
                           ? Text(
-                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
+                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )
                           : Container(height: 20),
                     ),
                     Padding(
@@ -253,8 +269,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 duration: const Duration(milliseconds: 100),
                                 builder: (context, value, _) =>
                                     LinearProgressIndicator(
+                                      minHeight: 10,
                                       value: value,
-                                      color: ThemeColors.green,
+                                      color: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
                                     )),
                           ),
@@ -262,7 +279,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               flex: 1,
                               child: Center(
                                 child: Text(
-                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() / state.currentChallenge.opponentSets.length.toDouble()} %'),
+                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() ~/ state.currentChallenge.opponentSets.length.toDouble()} %'),
                               ))
                         ],
                       ),
@@ -274,8 +291,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               challenge.currentUserSets.length == challenge.opponentSets.length
                   ? challenge.currentUserSets.length
                   : challenge.currentUserSets.length + 1;
-          print('current user: ${challenge.currentUserSets.length}');
-          print('opponent: ${challenge.opponentSets.length}');
           return Container(
               decoration: const BoxDecoration(color: Colors.white),
               child: Column(
@@ -286,8 +301,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 30,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 80, child: Center(child: Text('Set'))),
+                            SizedBox(
+                                width: 100,
+                                child: Center(
+                                    child: Text(
+                                  'Set',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ))),
                             CounterScrollSnapList(
                               sslKey: numberListKey,
                               onUpdate: (index) {
@@ -304,10 +324,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 60,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 80,
+                            SizedBox(
+                                width: 100,
                                 child: Center(
-                                    child: Center(child: Text('opponent')))),
+                                    child: Center(
+                                        child: Text(
+                                  'opponent',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                )))),
                             ChallengeScrollSnapList(
                                 isCurrentUser: false,
                                 sslKey: opponentKey,
@@ -330,8 +354,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                         height: 60,
                         child: Row(
                           children: [
-                            const SizedBox(
-                                width: 80, child: Center(child: Text('You'))),
+                            SizedBox(
+                                width: 100,
+                                child: Center(
+                                    child: Text(
+                                  'You',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ))),
                             ChallengeScrollSnapList(
                               isCurrentUser: true,
                               sslKey: currentUserKey,
@@ -347,7 +376,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               itemCount: challenge.opponentSets.length ==
                                       challenge.currentUserSets.length
                                   ? itemCount
-                                  : itemCount + 1,
+                                  : itemCount,
                             )
                           ],
                         )),
@@ -359,7 +388,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       .length !=
                               0
                           ? Text(
-                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
+                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )
                           : Container(height: 20),
                     ),
                     Padding(
@@ -369,12 +400,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                           Flexible(
                               flex: 5,
                               child: LinearProgressIndicator(
+                                minHeight: 10,
                                 value: state
                                         .currentChallenge.currentUserSets.length
                                         .toDouble() /
                                     state.currentChallenge.opponentSets.length
                                         .toDouble(),
-                                color: ThemeColors.green,
+                                color: colorFromDecimal(1),
                                 backgroundColor: Colors.grey[200],
                               )),
                           Flexible(

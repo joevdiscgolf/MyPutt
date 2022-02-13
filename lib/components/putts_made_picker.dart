@@ -37,10 +37,12 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
       return BlocBuilder<ChallengesCubit, ChallengesState>(
         builder: (context, state) {
           if (state is ChallengeInProgress) {
+            final int index = state.currentChallenge.currentUserSets.length ==
+                    state.currentChallenge.opponentSets.length
+                ? state.currentChallenge.currentUserSets.length - 1
+                : state.currentChallenge.currentUserSets.length;
             final int newSetLength = state
-                .currentChallenge
-                .opponentSets[state.currentChallenge.currentUserSets.length]
-                .puttsAttempted as int;
+                .currentChallenge.opponentSets[index].puttsAttempted as int;
             return Container(
                 height: 80,
                 decoration: const BoxDecoration(
@@ -109,36 +111,37 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
           }
         },
       );
+    } else {
+      return Container(
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
+          child: ScrollSnapList(
+            key: widget.sslKey,
+            updateOnScroll: true,
+            focusToItem: (index) {},
+            itemSize: 80,
+            itemCount: setLength + 1,
+            duration: 125,
+            focusOnItemTap: true,
+            onItemFocus: _onItemFocus,
+            itemBuilder: _buildListItem,
+            dynamicItemSize: true,
+            allowAnotherDirection: true,
+            dynamicSizeEquation: (displacement) {
+              const threshold = 0;
+              const maxDisplacement = 600;
+              if (displacement >= threshold) {
+                const slope = 1 / (-maxDisplacement);
+                return slope * displacement + (1 - slope * threshold);
+              } else {
+                const slope = 1 / (maxDisplacement);
+                return slope * displacement + (1 - slope * threshold);
+              }
+            }, // dynamicSizeEquation: customEquation, //optional
+          ));
     }
-    return Container(
-        height: 80,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: ScrollSnapList(
-          key: widget.sslKey,
-          updateOnScroll: true,
-          focusToItem: (index) {},
-          itemSize: 80,
-          itemCount: setLength + 1,
-          duration: 125,
-          focusOnItemTap: true,
-          onItemFocus: _onItemFocus,
-          itemBuilder: _buildListItem,
-          dynamicItemSize: true,
-          allowAnotherDirection: true,
-          dynamicSizeEquation: (displacement) {
-            const threshold = 0;
-            const maxDisplacement = 600;
-            if (displacement >= threshold) {
-              const slope = 1 / (-maxDisplacement);
-              return slope * displacement + (1 - slope * threshold);
-            } else {
-              const slope = 1 / (maxDisplacement);
-              return slope * displacement + (1 - slope * threshold);
-            }
-          }, // dynamicSizeEquation: customEquation, //optional
-        ));
   }
 
   void adjustSetLength(bool incremented) {

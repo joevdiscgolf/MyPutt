@@ -84,7 +84,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
             _challengesRepository.currentChallenge!.currentUserSets.length;
         if (currentUserSetsCount == opponentSetsCount) {
           emit(ChallengeComplete(
-              currentChallenge: _challengesRepository.currentChallenge!));
+            currentChallenge: _challengesRepository.currentChallenge!,
+            activeChallenges: _challengesRepository.activeChallenges,
+            pendingChallenges: _challengesRepository.pendingChallenges,
+            completedChallenges: _challengesRepository.completedChallenges,
+          ));
         } else {
           final int setLength = _challengesRepository
               .currentChallenge!
@@ -101,7 +105,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         }
       } else {
         emit(ChallengeComplete(
-            currentChallenge: _challengesRepository.currentChallenge!));
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
       }
     } else {
       emit(ChallengesErrorState());

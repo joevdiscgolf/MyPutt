@@ -195,6 +195,86 @@ class _ChallengesState extends State<ChallengesScreen> {
                           ),
                         ],
                       );
+                    } else if (state is ChallengeComplete) {
+                      return TabBar(
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            25.0,
+                          ),
+                          color: Colors.blue,
+                        ),
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.black,
+                        tabs: [
+                          ChallengeCategoryTab(
+                            showCounter: true,
+                            challenges: state.activeChallenges,
+                            label: 'Active',
+                            icon: const Icon(
+                              FlutterRemix.play_mini_line,
+                              size: 10,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            showCounter: true,
+                            challenges: state.pendingChallenges,
+                            label: 'Pending',
+                            icon: const Icon(
+                              FlutterRemix.repeat_line,
+                              size: 10,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            showCounter: false,
+                            challenges: state.completedChallenges,
+                            label: 'Completed',
+                            icon: const Icon(
+                              FlutterRemix.check_line,
+                              size: 10,
+                            ),
+                          ),
+                        ],
+                      );
+                    } else if (state is NoCurrentChallenge) {
+                      return TabBar(
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            25.0,
+                          ),
+                          color: Colors.blue,
+                        ),
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.black,
+                        tabs: [
+                          ChallengeCategoryTab(
+                            showCounter: true,
+                            challenges: state.activeChallenges,
+                            label: 'Active',
+                            icon: const Icon(
+                              FlutterRemix.play_mini_line,
+                              size: 10,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            showCounter: true,
+                            challenges: state.pendingChallenges,
+                            label: 'Pending',
+                            icon: const Icon(
+                              FlutterRemix.repeat_line,
+                              size: 10,
+                            ),
+                          ),
+                          ChallengeCategoryTab(
+                            showCounter: false,
+                            challenges: state.completedChallenges,
+                            label: 'Completed',
+                            icon: const Icon(
+                              FlutterRemix.check_line,
+                              size: 10,
+                            ),
+                          ),
+                        ],
+                      );
                     } else {
                       return Container();
                     }
@@ -203,36 +283,47 @@ class _ChallengesState extends State<ChallengesScreen> {
               ),
               Expanded(
                 child: BlocBuilder<ChallengesCubit, ChallengesState>(
-                  builder: (context, state) {
-                    if (state is ChallengeInProgress) {
-                      return TabBarView(children: [
-                        ChallengesList(
-                            category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
-                        ChallengesList(
-                            category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
-                        ChallengesList(
-                            category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
-                      ]);
-                    } else if (state is NoCurrentChallenge) {
-                      return TabBarView(children: [
-                        ChallengesList(
-                            category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
-                        ChallengesList(
-                            category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
-                        ChallengesList(
-                            category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
-                      ]);
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
+                    builder: (context, state) {
+                  if (state is ChallengeInProgress) {
+                    return TabBarView(children: [
+                      ChallengesList(
+                          category: ChallengeCategory.active,
+                          challenges: state.activeChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.pending,
+                          challenges: state.pendingChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.complete,
+                          challenges: state.completedChallenges),
+                    ]);
+                  } else if (state is NoCurrentChallenge) {
+                    return TabBarView(children: [
+                      ChallengesList(
+                          category: ChallengeCategory.active,
+                          challenges: state.activeChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.pending,
+                          challenges: state.pendingChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.complete,
+                          challenges: state.completedChallenges),
+                    ]);
+                  } else if (state is ChallengeComplete) {
+                    return TabBarView(children: [
+                      ChallengesList(
+                          category: ChallengeCategory.active,
+                          challenges: state.activeChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.pending,
+                          challenges: state.pendingChallenges),
+                      ChallengesList(
+                          category: ChallengeCategory.complete,
+                          challenges: state.completedChallenges),
+                    ]);
+                  } else {
+                    return Container();
+                  }
+                }),
               ),
             ],
           )),
