@@ -12,7 +12,7 @@ import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/services/auth_service.dart';
-import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -23,11 +23,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await setUpLocator();
+  locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<SigninService>().init();
 
-  if (locator.get<AuthService>().getCurrentUserId() != null) {
+  /*if (locator.get<AuthService>().getCurrentUserId() != null) {
     await fetchRepositoryData();
-  }
+  }*/
   locator.get<ChallengesRepository>().getTestChallenge();
   //locator.get<WebScraperService>().getPDGAData(132408);
 

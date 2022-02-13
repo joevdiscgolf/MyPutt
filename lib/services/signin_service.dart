@@ -4,6 +4,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/utils.dart';
 
 class SigninService {
   late StreamController<LoginState> controller;
@@ -19,6 +20,7 @@ class SigninService {
       if (!(await _authService.userIsSetup())) {
         controller.add(LoginState.setup);
       } else {
+        await fetchRepositoryData();
         controller.add(LoginState.loggedIn);
       }
     } else {
