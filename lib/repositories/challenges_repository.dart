@@ -19,9 +19,9 @@ class ChallengesRepository {
   List<PuttingChallenge> pendingChallenges = [
     PuttingChallenge(
         opponentSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
+          PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
+          PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
         ],

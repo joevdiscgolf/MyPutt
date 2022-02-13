@@ -8,11 +8,19 @@ class FBUserDataLoader {
   Future<MyPuttUser?> getUser(String uid) async {
     final currentSessionReference = firestore.doc('$usersCollection/$uid');
     final snapshot = await currentSessionReference.get();
-    if (snapshot.exists) {
+    if (snapshot.exists &&
+        isValidUser(snapshot.data() as Map<String, dynamic>)) {
       final Map<String, dynamic>? data = snapshot.data();
+      print('User | ${data}');
       return MyPuttUser.fromJson(data!);
     } else {
       return null;
     }
+  }
+
+  bool isValidUser(Map<String, dynamic> data) {
+    return data['username'] != null &&
+        data['displayName'] != null &&
+        data['uid'] != null;
   }
 }

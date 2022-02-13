@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -74,6 +75,15 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           width: 60,
           height: 40,
         );
+      } else if (index == widget.puttingSets.length + 1) {
+        return SizedBox(
+          width: 60,
+          height: 40,
+          child: Icon(
+            FlutterRemix.arrow_left_line,
+            color: ThemeColors.green,
+          ),
+        );
       }
     }
     return Container(
@@ -89,11 +99,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           children: [
             Text('${widget.puttingSets[index].distance} ft',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            //Text('${widget.puttingSets[index].distance} ft'),
             Text(
                 '${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            //Text('${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}'),
           ],
         ),
       ),

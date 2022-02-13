@@ -11,13 +11,12 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/signin_service.dart';
-import 'package:myputt/utils/utils.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/services/web_scraper.dart';
+
+import 'cubits/my_profile_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +48,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => HomeScreenCubit()),
         BlocProvider(create: (_) => SessionSummaryCubit()),
         BlocProvider(create: (_) => ChallengesCubit()),
+        BlocProvider(create: (_) => MyProfileCubit()),
       ],
       child: MaterialApp(
         theme: lightTheme(context),

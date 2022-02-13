@@ -25,6 +25,7 @@ class ChallengeRecordScreen extends StatefulWidget {
 class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
   late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
+    challengeMode: true,
     sslKey: puttsMadePickerKey,
     onUpdate: (int newIndex) {
       setState(() {
@@ -34,14 +35,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   );
 
   bool sessionInProgress = true;
-  final int _setLength = 10;
 
   int puttsPickerFocusedIndex = 0;
   int challengeFocusedIndex = 0;
   int challengeSetsCompleted = 0;
 
-  final GlobalKey<_ChallengeRecordScreenState> ChallengeRecordScreenKey =
-      GlobalKey();
   final GlobalKey<ScrollSnapListState> opponentKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
@@ -216,22 +214,57 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   challenge.challengeStructureDistances,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
-                              itemCount: itemCount,
+                              itemCount: itemCount + 1,
                             )
                           ],
                         )),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      height: 20,
+                      child: state.currentChallenge.opponentSets.length -
+                                  state.currentChallenge.currentUserSets
+                                      .length !=
+                              0
+                          ? Text(
+                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
+                          : Container(height: 20),
+                    ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: SizedBox(
-                        width: 80,
-                        height: 30,
-                        child: state.currentChallenge.opponentSets.length -
-                                    state.currentChallenge.currentUserSets
-                                        .length !=
-                                0
-                            ? Text(
-                                '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
-                            : Container(),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            flex: 5,
+                            child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                    begin: (state.currentChallenge
+                                                    .currentUserSets.length -
+                                                1)
+                                            .toDouble() /
+                                        state.currentChallenge.opponentSets
+                                            .length
+                                            .toDouble(),
+                                    end: state.currentChallenge.currentUserSets
+                                            .length
+                                            .toDouble() /
+                                        state.currentChallenge.opponentSets
+                                            .length
+                                            .toDouble()),
+                                duration: const Duration(milliseconds: 100),
+                                builder: (context, value, _) =>
+                                    LinearProgressIndicator(
+                                      value: value,
+                                      color: ThemeColors.green,
+                                      backgroundColor: Colors.grey[200],
+                                    )),
+                          ),
+                          Flexible(
+                              flex: 1,
+                              child: Center(
+                                child: Text(
+                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() / state.currentChallenge.opponentSets.length.toDouble()} %'),
+                              ))
+                        ],
                       ),
                     )
                   ]));
@@ -241,88 +274,119 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               challenge.currentUserSets.length == challenge.opponentSets.length
                   ? challenge.currentUserSets.length
                   : challenge.currentUserSets.length + 1;
+          print('current user: ${challenge.currentUserSets.length}');
+          print('opponent: ${challenge.opponentSets.length}');
           return Container(
               decoration: const BoxDecoration(color: Colors.white),
-              child: Column(children: [
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
-                    height: 30,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('Set'))),
-                        CounterScrollSnapList(
-                          sslKey: numberListKey,
-                          onUpdate: (index) {
-                            opponentKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                          itemCount: itemCount,
-                        )
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80,
-                            child:
-                                Center(child: Center(child: Text('opponent')))),
-                        ChallengeScrollSnapList(
-                            isCurrentUser: false,
-                            sslKey: opponentKey,
-                            onUpdate: (index) {
-                              opponentKey.currentState?.focusToItem(index);
-                              currentUserKey.currentState?.focusToItem(index);
-                              numberListKey.currentState?.focusToItem(index);
-                            },
-                            challengeDistances:
-                                challenge.challengeStructureDistances,
-                            puttingSets: challenge.opponentSets,
-                            maxSets: challenge.opponentSets.length,
-                            itemCount: itemCount)
-                      ],
-                    )),
-                Container(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                    height: 60,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                            width: 80, child: Center(child: Text('You'))),
-                        ChallengeScrollSnapList(
-                          isCurrentUser: true,
-                          sslKey: currentUserKey,
-                          onUpdate: (index) {
-                            opponentKey.currentState?.focusToItem(index);
-                            currentUserKey.currentState?.focusToItem(index);
-                            numberListKey.currentState?.focusToItem(index);
-                          },
-                          challengeDistances:
-                              challenge.challengeStructureDistances,
-                          puttingSets: challenge.currentUserSets,
-                          maxSets: challenge.opponentSets.length,
-                          itemCount: itemCount,
-                        )
-                      ],
-                    )),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SizedBox(
-                    width: 80,
-                    height: 30,
-                    child: state.currentChallenge.opponentSets.length -
-                                state.currentChallenge.currentUserSets.length !=
-                            0
-                        ? Text(
-                            '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
-                        : Container(),
-                  ),
-                )
-              ]));
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+                        height: 30,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80, child: Center(child: Text('Set'))),
+                            CounterScrollSnapList(
+                              sslKey: numberListKey,
+                              onUpdate: (index) {
+                                opponentKey.currentState?.focusToItem(index);
+                                currentUserKey.currentState?.focusToItem(index);
+                                numberListKey.currentState?.focusToItem(index);
+                              },
+                              itemCount: itemCount,
+                            )
+                          ],
+                        )),
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        height: 60,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80,
+                                child: Center(
+                                    child: Center(child: Text('opponent')))),
+                            ChallengeScrollSnapList(
+                                isCurrentUser: false,
+                                sslKey: opponentKey,
+                                onUpdate: (index) {
+                                  opponentKey.currentState?.focusToItem(index);
+                                  currentUserKey.currentState
+                                      ?.focusToItem(index);
+                                  numberListKey.currentState
+                                      ?.focusToItem(index);
+                                },
+                                challengeDistances:
+                                    challenge.challengeStructureDistances,
+                                puttingSets: challenge.opponentSets,
+                                maxSets: challenge.opponentSets.length,
+                                itemCount: itemCount)
+                          ],
+                        )),
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        height: 60,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                width: 80, child: Center(child: Text('You'))),
+                            ChallengeScrollSnapList(
+                              isCurrentUser: true,
+                              sslKey: currentUserKey,
+                              onUpdate: (index) {
+                                opponentKey.currentState?.focusToItem(index);
+                                currentUserKey.currentState?.focusToItem(index);
+                                numberListKey.currentState?.focusToItem(index);
+                              },
+                              challengeDistances:
+                                  challenge.challengeStructureDistances,
+                              puttingSets: challenge.currentUserSets,
+                              maxSets: challenge.opponentSets.length,
+                              itemCount: challenge.opponentSets.length ==
+                                      challenge.currentUserSets.length
+                                  ? itemCount
+                                  : itemCount + 1,
+                            )
+                          ],
+                        )),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      height: 20,
+                      child: state.currentChallenge.opponentSets.length -
+                                  state.currentChallenge.currentUserSets
+                                      .length !=
+                              0
+                          ? Text(
+                              '${state.currentChallenge.opponentSets.length - state.currentChallenge.currentUserSets.length} remaining')
+                          : Container(height: 20),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                              flex: 5,
+                              child: LinearProgressIndicator(
+                                value: state
+                                        .currentChallenge.currentUserSets.length
+                                        .toDouble() /
+                                    state.currentChallenge.opponentSets.length
+                                        .toDouble(),
+                                color: ThemeColors.green,
+                                backgroundColor: Colors.grey[200],
+                              )),
+                          Flexible(
+                              flex: 1,
+                              child: Center(
+                                child: Text(
+                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() / state.currentChallenge.opponentSets.length.toDouble()} %'),
+                              ))
+                        ],
+                      ),
+                    )
+                  ]));
         } else {
           return Container();
         }
@@ -387,8 +451,16 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 ),
                 onPressed: () {
                   BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                      distance: 10,
-                      puttsAttempted: _setLength,
+                      distance: state
+                          .currentChallenge
+                          .opponentSets[
+                              state.currentChallenge.currentUserSets.length]
+                          .distance,
+                      puttsAttempted: state
+                          .currentChallenge
+                          .opponentSets[
+                              state.currentChallenge.currentUserSets.length]
+                          .puttsAttempted,
                       puttsMade: puttsPickerFocusedIndex));
                   Future.delayed(const Duration(milliseconds: 50), () {
                     opponentKey.currentState?.focusToItem(
