@@ -70,16 +70,16 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void addSet(PuttingSet set) {
     if (_challengesRepository.currentChallenge != null) {
       var opponentSetsCount =
-          _challengesRepository.currentChallenge!.challengerSets.length;
+          _challengesRepository.currentChallenge!.opponentSets.length;
       var currentUserSetsCount =
-          _challengesRepository.currentChallenge!.recipientSets.length;
+          _challengesRepository.currentChallenge!.currentUserSets.length;
       if (currentUserSetsCount < opponentSetsCount) {
         _challengesRepository.addSet(set);
         _challengesRepository.storeCurrentChallenge();
         opponentSetsCount =
-            _challengesRepository.currentChallenge!.challengerSets.length;
+            _challengesRepository.currentChallenge!.opponentSets.length;
         currentUserSetsCount =
-            _challengesRepository.currentChallenge!.recipientSets.length;
+            _challengesRepository.currentChallenge!.currentUserSets.length;
         if (currentUserSetsCount == opponentSetsCount) {
           emit(ChallengeComplete(
               currentChallenge: _challengesRepository.currentChallenge!));
@@ -100,15 +100,15 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   void undo() {
-    final List<PuttingSet>? recipientSets =
-        _challengesRepository.currentChallenge?.recipientSets;
-    if (recipientSets?.length == 0) {
+    final List<PuttingSet>? currentUserSets =
+        _challengesRepository.currentChallenge?.currentUserSets;
+    if (currentUserSets?.length == 0) {
       return;
     }
-    if (recipientSets == null) {
+    if (currentUserSets == null) {
       return;
     }
-    _challengesRepository.deleteSet(recipientSets.last);
+    _challengesRepository.deleteSet(currentUserSets.last);
     if (_challengesRepository.currentChallenge != null) {
       emit(ChallengeInProgress(
           currentChallenge: _challengesRepository.currentChallenge!,

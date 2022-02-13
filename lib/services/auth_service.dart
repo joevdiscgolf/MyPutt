@@ -153,7 +153,6 @@ class AuthService {
         .collection('Users')
         .doc(_auth.currentUser!.uid)
         .get();
-    print(userDoc.data());
     if (!userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       print('data does not exist');
       return false;

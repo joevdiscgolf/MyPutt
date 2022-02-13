@@ -1,40 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'putting_challenge.dart';
+part of 'storage_putting_challenge.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
+StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
+    StoragePuttingChallenge(
       status: _$enumDecode(_$ChallengeStatusEnumMap, json['status']),
       creationTimeStamp: json['creationTimeStamp'] as int,
       id: json['id'] as String,
-      opponentUid: json['opponentUid'] as String,
-      currentUid: json['currentUid'] as String,
+      challengerUid: json['challengerUid'] as String,
+      recipientUid: json['recipientUid'] as String,
       challengeStructureDistances:
           (json['challengeStructureDistances'] as List<dynamic>)
               .map((e) => e as int)
               .toList(),
-      opponentSets: (json['opponentSets'] as List<dynamic>)
+      challengerSets: (json['challengerSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
-      currentUserSets: (json['currentUserSets'] as List<dynamic>)
+      recipientSets: (json['recipientSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
     );
 
-Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
+Map<String, dynamic> _$StoragePuttingChallengeToJson(
+        StoragePuttingChallenge instance) =>
     <String, dynamic>{
       'status': _$ChallengeStatusEnumMap[instance.status],
       'creationTimeStamp': instance.creationTimeStamp,
       'id': instance.id,
-      'opponentUid': instance.opponentUid,
-      'currentUid': instance.currentUid,
+      'challengerUid': instance.challengerUid,
+      'recipientUid': instance.recipientUid,
       'challengeStructureDistances': instance.challengeStructureDistances,
-      'opponentSets': instance.opponentSets.map((e) => e.toJson()).toList(),
-      'currentUserSets':
-          instance.currentUserSets.map((e) => e.toJson()).toList(),
+      'challengerSets': instance.challengerSets.map((e) => e.toJson()).toList(),
+      'recipientSets': instance.recipientSets.map((e) => e.toJson()).toList(),
     };
 
 K _$enumDecode<K, V>(

@@ -6,6 +6,7 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/services/web_scraper.dart';
 
 final locator = GetIt.instance;
 Future<void> setUpLocator() async {
@@ -16,4 +17,5 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<UserRepository>(UserRepository());
   locator.registerSingleton<StatsService>(StatsService());
   locator.registerSingleton<SigninService>(SigninService());
+  locator.registerSingleton<WebScraperService>(WebScraperService());
 }

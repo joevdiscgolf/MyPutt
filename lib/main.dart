@@ -3,6 +3,7 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
@@ -11,10 +12,12 @@ import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/services/web_scraper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,9 +27,9 @@ void main() async {
 
   if (locator.get<AuthService>().getCurrentUserId() != null) {
     await fetchRepositoryData();
-    //await locator.get<SessionRepository>().fetchCurrentSession();
-    //await locator.get<SessionRepository>().fetchCompletedSessions();
   }
+  locator.get<ChallengesRepository>().getTestChallenge();
+  //locator.get<WebScraperService>().getPDGAData(132408);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
