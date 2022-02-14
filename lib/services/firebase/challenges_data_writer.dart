@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -8,15 +9,28 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataWriter {
   Future<bool> setPuttingChallenge(
-      String uid, PuttingChallenge puttingChallenge) {
+      MyPuttUser currentUser, PuttingChallenge puttingChallenge) {
     final currentSessionReference = firestore.doc(
-        '$challengesCollection/$uid/$challengesCollection/$puttingChallenge.id');
+        '$challengesCollection/${currentUser.uid}/$challengesCollection/${puttingChallenge.id}');
 
     return currentSessionReference
         .set(
-            StoragePuttingChallenge.fromPuttingChallenge(puttingChallenge, uid)
+            StoragePuttingChallenge.fromPuttingChallenge(
+                    puttingChallenge, currentUser)
                 .toJson(),
             SetOptions(merge: true))
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  Future<bool> sendPuttingChallenge(String recipientUid, String currentUid,
+      StoragePuttingChallenge storageChallenge) {
+    print('sending test challenge');
+    final challengeRef = firestore.doc(
+        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
+
+    return challengeRef
+        .set(storageChallenge.toJson())
         .then((value) => true)
         .catchError((error) => false);
   }

@@ -17,6 +17,7 @@ class UserRepository {
       return false;
     } else {
       currentUser = await _databaseService.getCurrentUser();
+      //print(currentUser);
       return currentUser != null;
     }
   }

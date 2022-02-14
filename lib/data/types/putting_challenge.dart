@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/storage_putting_challenge.dart';
 
 import '../../utils/constants.dart';
@@ -12,8 +13,8 @@ class PuttingChallenge {
       {required this.status,
       required this.creationTimeStamp,
       required this.id,
-      required this.opponentUid,
-      required this.currentUid,
+      required this.opponentUser,
+      required this.currentUser,
       required this.challengeStructureDistances,
       required this.opponentSets,
       required this.currentUserSets});
@@ -21,30 +22,30 @@ class PuttingChallenge {
   ChallengeStatus status;
   final int creationTimeStamp;
   final String id;
-  final String opponentUid;
-  final String currentUid;
+  final MyPuttUser opponentUser;
+  final MyPuttUser currentUser;
   final List<int> challengeStructureDistances;
   final List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
 
   factory PuttingChallenge.fromStorageChallenge(
-      StoragePuttingChallenge storageChallenge, String currentUid) {
+      StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
     return PuttingChallenge(
         status: storageChallenge.status,
         creationTimeStamp: storageChallenge.creationTimeStamp,
         id: storageChallenge.id,
-        opponentUid: storageChallenge.challengerUid == currentUid
-            ? currentUid
-            : storageChallenge.recipientUid,
-        currentUid: storageChallenge.recipientUid == currentUid
-            ? currentUid
-            : storageChallenge.challengerUid,
+        opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
+            ? currentUser
+            : storageChallenge.recipientUser,
+        currentUser: storageChallenge.recipientUser.uid == currentUser.uid
+            ? currentUser
+            : storageChallenge.challengerUser,
         challengeStructureDistances:
             storageChallenge.challengeStructureDistances,
-        opponentSets: storageChallenge.challengerUid == currentUid
+        opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
             ? storageChallenge.challengerSets
             : storageChallenge.recipientSets,
-        currentUserSets: storageChallenge.recipientUid == currentUid
+        currentUserSets: storageChallenge.recipientUser.uid == currentUser.uid
             ? storageChallenge.recipientSets
             : storageChallenge.challengerSets);
   }

@@ -11,8 +11,10 @@ StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
       status: _$enumDecode(_$ChallengeStatusEnumMap, json['status']),
       creationTimeStamp: json['creationTimeStamp'] as int,
       id: json['id'] as String,
-      challengerUid: json['challengerUid'] as String,
-      recipientUid: json['recipientUid'] as String,
+      challengerUser: MyPuttUser.fromJson(
+          Map<String, dynamic>.from(json['challengerUser'] as Map)),
+      recipientUser: MyPuttUser.fromJson(
+          Map<String, dynamic>.from(json['recipientUser'] as Map)),
       challengeStructureDistances:
           (json['challengeStructureDistances'] as List<dynamic>)
               .map((e) => e as int)
@@ -31,8 +33,8 @@ Map<String, dynamic> _$StoragePuttingChallengeToJson(
       'status': _$ChallengeStatusEnumMap[instance.status],
       'creationTimeStamp': instance.creationTimeStamp,
       'id': instance.id,
-      'challengerUid': instance.challengerUid,
-      'recipientUid': instance.recipientUid,
+      'challengerUser': instance.challengerUser.toJson(),
+      'recipientUser': instance.recipientUser.toJson(),
       'challengeStructureDistances': instance.challengeStructureDistances,
       'challengerSets': instance.challengerSets.map((e) => e.toJson()).toList(),
       'recipientSets': instance.recipientSets.map((e) => e.toJson()).toList(),

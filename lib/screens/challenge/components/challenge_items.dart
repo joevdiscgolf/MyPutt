@@ -37,7 +37,7 @@ class ActiveChallengeItem extends StatelessWidget {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(challenge.opponentUid,
+                          Text(challenge.opponentUser.displayName,
                               style: Theme.of(context).textTheme.bodySmall),
                           Text(
                               DateFormat.yMMMMd('en_US')
@@ -76,7 +76,7 @@ class ActiveChallengeItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(challenge.opponentUid),
+                          Text(challenge.opponentUser.displayName),
                           const Text('22/100'),
                         ]),
                   ),
@@ -128,7 +128,7 @@ class PendingChallengeItem extends StatelessWidget {
             children: [
               const SizedBox(width: 10),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(challenge.opponentUid,
+                Text(challenge.opponentUser.displayName,
                     style: Theme.of(context).textTheme.bodyLarge),
                 Text(
                     DateFormat.yMMMMd('en_US')
@@ -225,7 +225,7 @@ class CompletedChallengeItem extends StatelessWidget {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(challenge.opponentUid,
+                            Text(challenge.opponentUser.displayName,
                                 style: Theme.of(context).textTheme.bodySmall),
                             Text(
                                 DateFormat.yMMMMd('en_US')
@@ -264,7 +264,7 @@ class CompletedChallengeItem extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(challenge.opponentUid),
+                            Text(challenge.opponentUser.displayName),
                             const Text('22/100'),
                           ]),
                     ),

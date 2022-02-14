@@ -5,13 +5,12 @@ import 'package:myputt/repositories/user_repository.dart';
 
 Future<void> fetchRepositoryData() async {
   print('fetching repository data');
+  await locator.get<UserRepository>().fetchCurrentUser();
   await Future.wait([
     locator.get<SessionRepository>().fetchCompletedSessions(),
     locator.get<SessionRepository>().fetchCurrentSession(),
-    locator.get<UserRepository>().fetchCurrentUser(),
-    /*locator.get<ChallengesRepository>().fetchAllChallenges()*/
+    locator.get<ChallengesRepository>().fetchAllChallenges(),
   ]);
-  return;
 }
 
 void clearRepositoryData() {

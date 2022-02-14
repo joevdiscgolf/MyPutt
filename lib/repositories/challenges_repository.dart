@@ -1,4 +1,6 @@
+import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/data/types/putting_set.dart';
@@ -9,6 +11,36 @@ import '../utils/constants.dart';
 class ChallengesRepository {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final AuthService _authService = locator.get<AuthService>();
+  final UserRepository _userRepository = locator.get<UserRepository>();
+
+  ChallengesRepository() {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser != null) {
+      pendingChallenges = [
+        PuttingChallenge(
+            opponentSets: [
+              PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
+              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
+              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
+              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
+              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
+            ],
+            opponentUser: MyPuttUser(
+                username: 'joevdiscgolf',
+                displayName: 'joe bro',
+                pdgaNum: 132408,
+                uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
+            challengeStructureDistances: [20, 20, 15, 15, 15],
+            creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
+            id: 'opponentuid' +
+                '~' +
+                DateTime.now().millisecondsSinceEpoch.toString(),
+            currentUserSets: [],
+            currentUser: currentUser,
+            status: ChallengeStatus.pending)
+      ];
+    }
+  }
 
   Future<void> getTestChallenge() async {
     print(await _databaseService
@@ -16,23 +48,7 @@ class ChallengesRepository {
   }
 
   PuttingChallenge? currentChallenge;
-  List<PuttingChallenge> pendingChallenges = [
-    PuttingChallenge(
-        opponentSets: [
-          PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-          PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
-        ],
-        opponentUid: 'opponentuid',
-        challengeStructureDistances: [20, 20, 15, 15, 15],
-        creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-        id: '${DateTime.now().millisecondsSinceEpoch}opponentuid',
-        currentUserSets: [],
-        currentUid: 'currentUid',
-        status: ChallengeStatus.pending)
-  ];
+  List<PuttingChallenge> pendingChallenges = [];
   List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> completedChallenges = [];
 
@@ -68,12 +84,15 @@ class ChallengesRepository {
   }
 
   Future<void> fetchAllChallenges() async {
+    print('fetching all challenges');
     final List<dynamic> result = await Future.wait([
       _databaseService.getChallengesWithFilters([ChallengeStatus.pending]),
       _databaseService.getChallengesWithFilters([ChallengeStatus.active]),
       _databaseService.getChallengesWithFilters([ChallengeStatus.complete]),
       _databaseService.getCurrentPuttingChallenge(),
     ]);
+
+    print('result: $result');
 
     if (result[0] != null && result[0] is List<PuttingChallenge>) {
       pendingChallenges = result[0] as List<PuttingChallenge>;
