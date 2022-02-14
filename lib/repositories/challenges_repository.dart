@@ -10,22 +10,27 @@ class ChallengesRepository {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final AuthService _authService = locator.get<AuthService>();
 
+  Future<void> getTestChallenge() async {
+    print(await _databaseService
+        .getChallengesWithFilters([ChallengeStatus.active]));
+  }
+
   PuttingChallenge? currentChallenge;
   List<PuttingChallenge> pendingChallenges = [
     PuttingChallenge(
-        challengerSets: [
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 5),
+        opponentSets: [
+          PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-          PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
+          PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
           PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
         ],
-        challengerUid: 'challengeruid',
+        opponentUid: 'opponentuid',
         challengeStructureDistances: [20, 20, 15, 15, 15],
         creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-        id: 'thischallengeId',
-        recipientSets: [],
-        recipientUid: 'recipientuid',
+        id: '${DateTime.now().millisecondsSinceEpoch}opponentuid',
+        currentUserSets: [],
+        currentUid: 'currentUid',
         status: ChallengeStatus.pending)
   ];
   List<PuttingChallenge> activeChallenges = [];
@@ -34,11 +39,11 @@ class ChallengesRepository {
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.recipientUid) {
+      /*if (uid == currentChallenge?.currentUid) {
       }*/
-      currentChallenge!.recipientSets.add(set);
-      /*else if (uid == currentChallenge?.challengerUid) {
-        currentChallenge!.challengerSets.add(set);
+      currentChallenge!.currentUserSets.add(set);
+      /*else if (uid == currentChallenge?.opponentUid) {
+        currentChallenge!.opponentSets.add(set);
       } else {
         return false;
       }*/
@@ -51,11 +56,11 @@ class ChallengesRepository {
   Future<void> deleteSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.recipientUid) {
+      /*if (uid == currentChallenge?.currentUid) {
       }*/
-      currentChallenge!.recipientSets.remove(set);
-      /*else if (uid == currentChallenge?.challengerUid) {
-        currentChallenge!.challengerSets.add(set);
+      currentChallenge!.currentUserSets.remove(set);
+      /*else if (uid == currentChallenge?.opponentUid) {
+        currentChallenge!.opponentSets.add(set);
       } else {
         return false;
       }*/
@@ -147,8 +152,8 @@ class ChallengesRepository {
         status: ChallengeStatus.pending,
         createdAt: 12345,
         id: 'id',
-        challengerUid: 'challengerUid',
-        recipientUid: 'recipientUid',
+        opponentUid: 'opponentUid',
+        currentUid: 'currentUid',
         challengeStructureDistances: [1, 2, 3],
-        challengerSets: [],
-        recipientSets: [])*/*/
+        opponentSets: [],
+        currentUserSets: [])*/*/

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:myputt/data/types/storage_putting_challenge.dart';
 
 import '../../utils/constants.dart';
 import 'package:myputt/data/types/putting_set.dart';
@@ -11,20 +12,42 @@ class PuttingChallenge {
       {required this.status,
       required this.creationTimeStamp,
       required this.id,
-      required this.challengerUid,
-      required this.recipientUid,
+      required this.opponentUid,
+      required this.currentUid,
       required this.challengeStructureDistances,
-      required this.challengerSets,
-      required this.recipientSets});
+      required this.opponentSets,
+      required this.currentUserSets});
 
   ChallengeStatus status;
   final int creationTimeStamp;
   final String id;
-  final String challengerUid;
-  final String recipientUid;
+  final String opponentUid;
+  final String currentUid;
   final List<int> challengeStructureDistances;
-  final List<PuttingSet> challengerSets;
-  final List<PuttingSet> recipientSets;
+  final List<PuttingSet> opponentSets;
+  final List<PuttingSet> currentUserSets;
+
+  factory PuttingChallenge.fromStorageChallenge(
+      StoragePuttingChallenge storageChallenge, String currentUid) {
+    return PuttingChallenge(
+        status: storageChallenge.status,
+        creationTimeStamp: storageChallenge.creationTimeStamp,
+        id: storageChallenge.id,
+        opponentUid: storageChallenge.challengerUid == currentUid
+            ? currentUid
+            : storageChallenge.recipientUid,
+        currentUid: storageChallenge.recipientUid == currentUid
+            ? currentUid
+            : storageChallenge.challengerUid,
+        challengeStructureDistances:
+            storageChallenge.challengeStructureDistances,
+        opponentSets: storageChallenge.challengerUid == currentUid
+            ? storageChallenge.challengerSets
+            : storageChallenge.recipientSets,
+        currentUserSets: storageChallenge.recipientUid == currentUid
+            ? storageChallenge.recipientSets
+            : storageChallenge.challengerSets);
+  }
 
   factory PuttingChallenge.fromJson(Map<String, dynamic> json) =>
       _$PuttingChallengeFromJson(json);

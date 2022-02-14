@@ -1,3 +1,4 @@
+import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/services/auth_service.dart';
@@ -5,6 +6,7 @@ import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/firebase/user_data_loader.dart';
 
 import '../utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
@@ -14,6 +16,7 @@ class DatabaseService {
   final FBSessionsDataWriter _sessionsDataWriter = FBSessionsDataWriter();
   final FBChallengesDataWriter _challengesDataWriter = FBChallengesDataWriter();
   final FBChallengesDataLoader _challengesDataLoader = FBChallengesDataLoader();
+  final FBUserDataLoader _userDataLoader = FBUserDataLoader();
 
   final AuthService _authService = locator.get<AuthService>();
 
@@ -82,5 +85,10 @@ class DatabaseService {
   Future<bool> updatePuttingChallenge(PuttingChallenge challengeToUpdate) {
     final uid = _authService.getCurrentUserId();
     return _challengesDataWriter.setPuttingChallenge(uid!, challengeToUpdate);
+  }
+
+  Future<MyPuttUser?> getCurrentUser() {
+    final uid = _authService.getCurrentUserId();
+    return _userDataLoader.getUser(uid!);
   }
 }

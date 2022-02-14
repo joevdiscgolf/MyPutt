@@ -23,6 +23,7 @@ class RecordScreen extends StatefulWidget {
 class _RecordScreenState extends State<RecordScreen> {
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
   late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
+      challengeMode: false,
       sslKey: puttsMadePickerKey,
       onUpdate: (int newIndex) {
         setState(() {

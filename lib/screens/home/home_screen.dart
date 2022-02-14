@@ -32,17 +32,6 @@ class HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
           backgroundColor: Colors.grey[100]!,
           appBar: AppBar(
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shadowColor: Colors.transparent,
-                ),
-                onPressed: () {
-                  locator.get<SigninService>().signOut();
-                },
-                child: const Text('Logout'),
-              )
-            ],
             backgroundColor: Colors.blue,
             title: RichText(
               text: TextSpan(

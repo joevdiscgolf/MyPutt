@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myputt/data/types/username_doc.dart';
+
+import '../data/types/myputt_user.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,11 +35,39 @@ class AuthService {
     }
   }
 
+  Future<bool> signUpWithEmail(String inputEmail, String inputPassword) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: inputEmail, password: inputPassword);
+      if (userCredential.user == null) {
+        return false;
+      }
+      return await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userCredential.user?.uid)
+          .set(<String, dynamic>{
+        'uid': userCredential.user?.uid,
+        'createdAt': DateTime.now().toUtc().toIso8601String()
+      }).then((_) => true);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        exception = 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        exception = 'Email already in use';
+      }
+      return false;
+    }
+  }
+
   Future<bool?> signInWithEmail(String inputEmail, String inputPassword) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: inputEmail, password: inputPassword);
+      if (userCredential.user == null) {
+        return false;
+      }
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -44,48 +75,9 @@ class AuthService {
       } else if (e.code == 'wrong-password') {
         exception = 'Wrong password provided for that user.';
       }
-    } catch (e) {
       print(e);
       return false;
     }
-
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: inputEmail, password: inputPassword);
-
-      return true;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        exception = 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        exception = 'The account already exists for that email.';
-      }
-    } catch (e) {
-      print(e);
-      return false;
-    }
-/*
-      final bool userExists = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user.uid)
-          .get()
-          .then((document) => document.exists);
-      if (!userExists) {
-        return await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(user.uid)
-            .set(<String, dynamic>{
-          'uid': user.uid,
-          'createdAt': DateTime.now().toUtc().toIso8601String()
-        }).then((_) => user);
-      }
-      return user;
-    } catch (e) {
-      print(e);
-      return null;
-    }*/
-    exception = 'Error signing in';
   }
 
   Future<bool> usernameIsAvailable(String username) async {
@@ -102,45 +94,33 @@ class AuthService {
     }
   }
 
-  /*Future<bool> setupNewUser(String username) async {
+  Future<bool> setupNewUser(
+      String username, String displayName, int? pdgaNumber) async {
     final User? user = await getUser();
     if (user == null) {
       return false;
     }
-
-    return FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        // ignore: always_specify_types
-        .update({
-          'username': username,
-          'avatar': _getRandomAvatar().toJson(),
-          'keywords': getPrefixes(username),
-          'preferences': UserPreferences(
-            notificationPreferences: NotificationPreferences(
-              followNotifications: true,
-              tradeNotifications: true,
-            ),
-          ).toJson(),
-          'name': 'OnlyTrades Member',
-          'bio': 'Joined OnlyTrades on ${_formatter.format(DateTime.now())}.',
-        })
-        .then((_) async {
-          return FirebaseFirestore.instance
-              .collection('Usernames')
-              .doc(username)
-              .set(<String, dynamic>{
-            'username': username,
-            'uid': user.uid,
-          });
-        })
-        .then((_) async => user.updateDisplayName(username))
-        .then((_) => true)
-        .catchError((e) {
-          print(e.toString());
-          return false;
-        });
-  }*/
+    final userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(user.uid);
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    final usernameDoc =
+        FirebaseFirestore.instance.collection('Usernames').doc(username);
+    batch.set(
+        userDoc,
+        MyPuttUser(
+                username: username,
+                displayName: displayName,
+                uid: user.uid,
+                pdgaNum: pdgaNumber)
+            .toJson());
+    batch.set(
+        usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
+    await batch.commit().catchError((e) {
+      print(e);
+      return false;
+    });
+    return true;
+  }
 
   Future<void> saveUserInfo(String name, String? bio) async {
     final User? user = await getUser();
@@ -164,11 +144,39 @@ class AuthService {
     });
   }
 
+  Future<bool> userIsSetup() async {
+    MyPuttUser currentMyPuttUser;
+    if (_auth.currentUser?.uid == null) {
+      return false;
+    }
+    final DocumentSnapshot<dynamic> userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(_auth.currentUser!.uid)
+        .get();
+    if (!userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
+      print('data does not exist');
+      return false;
+    } else {
+      currentMyPuttUser =
+          MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
+      if (currentMyPuttUser.username != null &&
+          currentMyPuttUser.displayName != null) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   Future<void> logOut() async {
     try {
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());
     }
+  }
+
+  bool userDocIsValid(Map<String, dynamic> doc) {
+    return doc['username'] != null && doc['displayName'] != null;
   }
 }

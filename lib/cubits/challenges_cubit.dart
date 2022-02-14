@@ -16,10 +16,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     print('initializing');
     if (_challengesRepository.currentChallenge != null) {
       emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentChallenge!,
-          activeChallenges: _challengesRepository.activeChallenges,
-          pendingChallenges: _challengesRepository.pendingChallenges,
-          completedChallenges: _challengesRepository.completedChallenges));
+        currentChallenge: _challengesRepository.currentChallenge!,
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges,
+      ));
     } else {
       emit(NoCurrentChallenge(
           activeChallenges: _challengesRepository.activeChallenges,
@@ -37,10 +38,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
       emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentChallenge!,
-          activeChallenges: _challengesRepository.activeChallenges,
-          pendingChallenges: _challengesRepository.pendingChallenges,
-          completedChallenges: _challengesRepository.completedChallenges));
+        currentChallenge: _challengesRepository.currentChallenge!,
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges,
+      ));
     } else {
       emit(ChallengesErrorState());
     }
@@ -70,29 +72,44 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void addSet(PuttingSet set) {
     if (_challengesRepository.currentChallenge != null) {
       var opponentSetsCount =
-          _challengesRepository.currentChallenge!.challengerSets.length;
+          _challengesRepository.currentChallenge!.opponentSets.length;
       var currentUserSetsCount =
-          _challengesRepository.currentChallenge!.recipientSets.length;
+          _challengesRepository.currentChallenge!.currentUserSets.length;
       if (currentUserSetsCount < opponentSetsCount) {
         _challengesRepository.addSet(set);
         _challengesRepository.storeCurrentChallenge();
         opponentSetsCount =
-            _challengesRepository.currentChallenge!.challengerSets.length;
+            _challengesRepository.currentChallenge!.opponentSets.length;
         currentUserSetsCount =
-            _challengesRepository.currentChallenge!.recipientSets.length;
+            _challengesRepository.currentChallenge!.currentUserSets.length;
         if (currentUserSetsCount == opponentSetsCount) {
           emit(ChallengeComplete(
-              currentChallenge: _challengesRepository.currentChallenge!));
+            currentChallenge: _challengesRepository.currentChallenge!,
+            activeChallenges: _challengesRepository.activeChallenges,
+            pendingChallenges: _challengesRepository.pendingChallenges,
+            completedChallenges: _challengesRepository.completedChallenges,
+          ));
         } else {
+          final int setLength = _challengesRepository
+              .currentChallenge!
+              .opponentSets[_challengesRepository
+                      .currentChallenge!.currentUserSets.length -
+                  1]
+              .puttsAttempted as int;
           emit(ChallengeInProgress(
-              currentChallenge: _challengesRepository.currentChallenge!,
-              activeChallenges: _challengesRepository.activeChallenges,
-              pendingChallenges: _challengesRepository.pendingChallenges,
-              completedChallenges: _challengesRepository.completedChallenges));
+            currentChallenge: _challengesRepository.currentChallenge!,
+            activeChallenges: _challengesRepository.activeChallenges,
+            pendingChallenges: _challengesRepository.pendingChallenges,
+            completedChallenges: _challengesRepository.completedChallenges,
+          ));
         }
       } else {
         emit(ChallengeComplete(
-            currentChallenge: _challengesRepository.currentChallenge!));
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
       }
     } else {
       emit(ChallengesErrorState());
@@ -100,21 +117,22 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   void undo() {
-    final List<PuttingSet>? recipientSets =
-        _challengesRepository.currentChallenge?.recipientSets;
-    if (recipientSets?.length == 0) {
+    final List<PuttingSet>? currentUserSets =
+        _challengesRepository.currentChallenge?.currentUserSets;
+    if (currentUserSets?.length == 0) {
       return;
     }
-    if (recipientSets == null) {
+    if (currentUserSets == null) {
       return;
     }
-    _challengesRepository.deleteSet(recipientSets.last);
+    _challengesRepository.deleteSet(currentUserSets.last);
     if (_challengesRepository.currentChallenge != null) {
       emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentChallenge!,
-          activeChallenges: _challengesRepository.activeChallenges,
-          pendingChallenges: _challengesRepository.pendingChallenges,
-          completedChallenges: _challengesRepository.completedChallenges));
+        currentChallenge: _challengesRepository.currentChallenge!,
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges,
+      ));
     } else {
       emit(ChallengesErrorState());
     }
@@ -123,16 +141,32 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void declineChallenge(PuttingChallenge challenge) {
     _challengesRepository.declineChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
+      final int setLength = _challengesRepository
+          .currentChallenge!
+          .opponentSets[
+              _challengesRepository.currentChallenge!.currentUserSets.length -
+                  1]
+          .puttsAttempted as int;
       emit(ChallengeInProgress(
-          currentChallenge: _challengesRepository.currentChallenge!,
-          activeChallenges: _challengesRepository.activeChallenges,
-          pendingChallenges: _challengesRepository.pendingChallenges,
-          completedChallenges: _challengesRepository.completedChallenges));
+        currentChallenge: _challengesRepository.currentChallenge!,
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges,
+      ));
     } else {
       emit(NoCurrentChallenge(
           activeChallenges: _challengesRepository.activeChallenges,
           pendingChallenges: _challengesRepository.pendingChallenges,
           completedChallenges: _challengesRepository.completedChallenges));
     }
+  }
+
+  ChallengeInProgress _challengeInProgress() {
+    return ChallengeInProgress(
+      currentChallenge: _challengesRepository.currentChallenge!,
+      activeChallenges: _challengesRepository.activeChallenges,
+      pendingChallenges: _challengesRepository.pendingChallenges,
+      completedChallenges: _challengesRepository.completedChallenges,
+    );
   }
 }

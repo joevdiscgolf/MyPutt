@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:flutter/services.dart';
 
 class PuttsMadePicker extends StatefulWidget {
-  PuttsMadePicker({Key? key, required this.sslKey, required this.onUpdate})
+  PuttsMadePicker(
+      {Key? key,
+      required this.sslKey,
+      required this.onUpdate,
+      required this.challengeMode})
       : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
+  final bool challengeMode;
 
   final _PuttsMadePickerState thisState = _PuttsMadePickerState();
+
   @override
   _PuttsMadePickerState createState() => thisState;
 
@@ -25,35 +33,115 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 80,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: ScrollSnapList(
-          key: widget.sslKey,
-          updateOnScroll: true,
-          focusToItem: (index) {},
-          itemSize: 80,
-          itemCount: setLength + 1,
-          duration: 125,
-          focusOnItemTap: true,
-          onItemFocus: _onItemFocus,
-          itemBuilder: _buildListItem,
-          dynamicItemSize: true,
-          allowAnotherDirection: true,
-          dynamicSizeEquation: (displacement) {
-            const threshold = 0;
-            const maxDisplacement = 600;
-            if (displacement >= threshold) {
-              const slope = 1 / (-maxDisplacement);
-              return slope * displacement + (1 - slope * threshold);
-            } else {
-              const slope = 1 / (maxDisplacement);
-              return slope * displacement + (1 - slope * threshold);
-            }
-          }, // dynamicSizeEquation: customEquation, //optional
-        ));
+    if (widget.challengeMode) {
+      return BlocBuilder<ChallengesCubit, ChallengesState>(
+        builder: (context, state) {
+          if (state is ChallengeInProgress) {
+            final int index = state.currentChallenge.currentUserSets.length ==
+                    state.currentChallenge.opponentSets.length
+                ? state.currentChallenge.currentUserSets.length - 1
+                : state.currentChallenge.currentUserSets.length;
+            final int newSetLength = state
+                .currentChallenge.opponentSets[index].puttsAttempted as int;
+            return Container(
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: ScrollSnapList(
+                  key: widget.sslKey,
+                  updateOnScroll: true,
+                  focusToItem: (index) {},
+                  itemSize: 80,
+                  itemCount: newSetLength + 1,
+                  duration: 125,
+                  focusOnItemTap: true,
+                  onItemFocus: _onItemFocus,
+                  itemBuilder: _buildListItem,
+                  dynamicItemSize: true,
+                  allowAnotherDirection: true,
+                  dynamicSizeEquation: (displacement) {
+                    const threshold = 0;
+                    const maxDisplacement = 600;
+                    if (displacement >= threshold) {
+                      const slope = 1 / (-maxDisplacement);
+                      return slope * displacement + (1 - slope * threshold);
+                    } else {
+                      const slope = 1 / (maxDisplacement);
+                      return slope * displacement + (1 - slope * threshold);
+                    }
+                  }, // dynamicSizeEquation: customEquation, //optional
+                ));
+          } else if (state is ChallengeComplete) {
+            final int newSetLength = state
+                .currentChallenge
+                .opponentSets[state.currentChallenge.currentUserSets.length - 1]
+                .puttsAttempted as int;
+            return Container(
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: ScrollSnapList(
+                  key: widget.sslKey,
+                  updateOnScroll: true,
+                  focusToItem: (index) {},
+                  itemSize: 80,
+                  itemCount: newSetLength + 1,
+                  duration: 125,
+                  focusOnItemTap: true,
+                  onItemFocus: _onItemFocus,
+                  itemBuilder: _buildListItem,
+                  dynamicItemSize: true,
+                  allowAnotherDirection: true,
+                  dynamicSizeEquation: (displacement) {
+                    const threshold = 0;
+                    const maxDisplacement = 600;
+                    if (displacement >= threshold) {
+                      const slope = 1 / (-maxDisplacement);
+                      return slope * displacement + (1 - slope * threshold);
+                    } else {
+                      const slope = 1 / (maxDisplacement);
+                      return slope * displacement + (1 - slope * threshold);
+                    }
+                  }, // dynamicSizeEquation: customEquation, //optional
+                ));
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      );
+    } else {
+      return Container(
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
+          child: ScrollSnapList(
+            key: widget.sslKey,
+            updateOnScroll: true,
+            focusToItem: (index) {},
+            itemSize: 80,
+            itemCount: setLength + 1,
+            duration: 125,
+            focusOnItemTap: true,
+            onItemFocus: _onItemFocus,
+            itemBuilder: _buildListItem,
+            dynamicItemSize: true,
+            allowAnotherDirection: true,
+            dynamicSizeEquation: (displacement) {
+              const threshold = 0;
+              const maxDisplacement = 600;
+              if (displacement >= threshold) {
+                const slope = 1 / (-maxDisplacement);
+                return slope * displacement + (1 - slope * threshold);
+              } else {
+                const slope = 1 / (maxDisplacement);
+                return slope * displacement + (1 - slope * threshold);
+              }
+            }, // dynamicSizeEquation: customEquation, //optional
+          ));
+    }
   }
 
   void adjustSetLength(bool incremented) {

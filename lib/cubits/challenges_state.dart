@@ -9,11 +9,12 @@ class ChallengesInitial extends ChallengesState {}
 class ChallengesErrorState extends ChallengesState {}
 
 class ChallengeInProgress extends ChallengesState {
-  ChallengeInProgress(
-      {required this.currentChallenge,
-      required this.activeChallenges,
-      required this.pendingChallenges,
-      required this.completedChallenges});
+  ChallengeInProgress({
+    required this.currentChallenge,
+    required this.activeChallenges,
+    required this.pendingChallenges,
+    required this.completedChallenges,
+  });
   final PuttingChallenge currentChallenge;
   final List<PuttingChallenge> activeChallenges;
   final List<PuttingChallenge> pendingChallenges;
@@ -21,8 +22,16 @@ class ChallengeInProgress extends ChallengesState {
 }
 
 class ChallengeComplete extends ChallengesState {
-  ChallengeComplete({required this.currentChallenge});
+  ChallengeComplete({
+    required this.currentChallenge,
+    required this.activeChallenges,
+    required this.pendingChallenges,
+    required this.completedChallenges,
+  });
   final PuttingChallenge currentChallenge;
+  final List<PuttingChallenge> activeChallenges;
+  final List<PuttingChallenge> pendingChallenges;
+  final List<PuttingChallenge> completedChallenges;
 }
 
 class NoCurrentChallenge extends ChallengesState {
