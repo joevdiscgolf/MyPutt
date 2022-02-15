@@ -15,12 +15,22 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   ChallengesCubit() : super(ChallengesInitial()) {
     print('initializing');
     if (_challengesRepository.currentChallenge != null) {
-      emit(ChallengeInProgress(
-        currentChallenge: _challengesRepository.currentChallenge!,
-        activeChallenges: _challengesRepository.activeChallenges,
-        pendingChallenges: _challengesRepository.pendingChallenges,
-        completedChallenges: _challengesRepository.completedChallenges,
-      ));
+      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
+          _challengesRepository.currentChallenge?.opponentSets.length) {
+        emit(ChallengeComplete(
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
+      } else {
+        emit(ChallengeInProgress(
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
+      }
     } else {
       emit(NoCurrentChallenge(
           activeChallenges: _challengesRepository.activeChallenges,
@@ -29,20 +39,27 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  void reload() {
-    print('reloading');
-  }
-
   void openChallenge(PuttingChallenge challenge) {
     print('opening challenge');
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      emit(ChallengeInProgress(
-        currentChallenge: _challengesRepository.currentChallenge!,
-        activeChallenges: _challengesRepository.activeChallenges,
-        pendingChallenges: _challengesRepository.pendingChallenges,
-        completedChallenges: _challengesRepository.completedChallenges,
-      ));
+      print(_challengesRepository.currentChallenge?.toJson());
+      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
+          _challengesRepository.currentChallenge?.opponentSets.length) {
+        emit(ChallengeComplete(
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
+      } else {
+        emit(ChallengeInProgress(
+          currentChallenge: _challengesRepository.currentChallenge!,
+          activeChallenges: _challengesRepository.activeChallenges,
+          pendingChallenges: _challengesRepository.pendingChallenges,
+          completedChallenges: _challengesRepository.completedChallenges,
+        ));
+      }
     } else {
       emit(ChallengesErrorState());
     }
@@ -90,12 +107,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
             completedChallenges: _challengesRepository.completedChallenges,
           ));
         } else {
-          final int setLength = _challengesRepository
-              .currentChallenge!
-              .opponentSets[_challengesRepository
-                      .currentChallenge!.currentUserSets.length -
-                  1]
-              .puttsAttempted as int;
           emit(ChallengeInProgress(
             currentChallenge: _challengesRepository.currentChallenge!,
             activeChallenges: _challengesRepository.activeChallenges,

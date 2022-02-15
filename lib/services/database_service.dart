@@ -73,8 +73,7 @@ class DatabaseService {
     return completedSessions?.where((session) => session != null).toList();
   }
 
-  Future<List<PuttingChallenge>> getChallengesWithFilters(
-      List<ChallengeStatus> filters) async {
+  Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
@@ -82,7 +81,8 @@ class DatabaseService {
       return [];
     }
 
-    return _challengesDataLoader.getPuttingChallenges(currentUser, filters);
+    return _challengesDataLoader.getPuttingChallengesWithStatus(
+        currentUser, status);
   }
 
   Future<PuttingChallenge?> getCurrentPuttingChallenge() async {

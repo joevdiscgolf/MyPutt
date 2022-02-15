@@ -16,7 +16,7 @@ class ChallengesRepository {
   ChallengesRepository() {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser != null) {
-      pendingChallenges = [
+      /*pendingChallenges = [
         PuttingChallenge(
             opponentSets: [
               PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
@@ -38,13 +38,8 @@ class ChallengesRepository {
             currentUserSets: [],
             currentUser: currentUser,
             status: ChallengeStatus.pending)
-      ];
+      ];*/
     }
-  }
-
-  Future<void> getTestChallenge() async {
-    print(await _databaseService
-        .getChallengesWithFilters([ChallengeStatus.active]));
   }
 
   PuttingChallenge? currentChallenge;
@@ -55,14 +50,7 @@ class ChallengesRepository {
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.currentUid) {
-      }*/
       currentChallenge!.currentUserSets.add(set);
-      /*else if (uid == currentChallenge?.opponentUid) {
-        currentChallenge!.opponentSets.add(set);
-      } else {
-        return false;
-      }*/
       return true;
     } else {
       return false;
@@ -72,23 +60,17 @@ class ChallengesRepository {
   Future<void> deleteSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
-      /*if (uid == currentChallenge?.currentUid) {
-      }*/
       currentChallenge!.currentUserSets.remove(set);
-      /*else if (uid == currentChallenge?.opponentUid) {
-        currentChallenge!.opponentSets.add(set);
-      } else {
-        return false;
-      }*/
+      await _databaseService.updatePuttingChallenge(currentChallenge!);
     }
   }
 
   Future<void> fetchAllChallenges() async {
     print('fetching all challenges');
     final List<dynamic> result = await Future.wait([
-      _databaseService.getChallengesWithFilters([ChallengeStatus.pending]),
-      _databaseService.getChallengesWithFilters([ChallengeStatus.active]),
-      _databaseService.getChallengesWithFilters([ChallengeStatus.complete]),
+      _databaseService.getChallengesWithStatus(ChallengeStatus.pending),
+      _databaseService.getChallengesWithStatus(ChallengeStatus.active),
+      _databaseService.getChallengesWithStatus(ChallengeStatus.complete),
       _databaseService.getCurrentPuttingChallenge(),
     ]);
 

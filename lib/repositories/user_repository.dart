@@ -17,7 +17,7 @@ class UserRepository {
       return false;
     } else {
       currentUser = await _databaseService.getCurrentUser();
-      //print(currentUser);
+      print('User | ${currentUser?.toJson()}');
       return currentUser != null;
     }
   }

@@ -19,7 +19,7 @@ class StoragePuttingChallenge {
       required this.challengerSets,
       required this.recipientSets});
 
-  ChallengeStatus status;
+  String status;
   final int creationTimeStamp;
   final String id;
   final MyPuttUser challengerUser;
@@ -34,17 +34,17 @@ class StoragePuttingChallenge {
         status: challenge.status,
         creationTimeStamp: challenge.creationTimeStamp,
         id: challenge.id,
-        challengerUser: challenge.opponentUser.uid == currentUser.uid
-            ? currentUser
-            : challenge.currentUser,
-        recipientUser: challenge.currentUser.uid == currentUser.uid
+        challengerUser: challenge.challengerUser.uid == currentUser.uid
             ? currentUser
             : challenge.opponentUser,
+        recipientUser: challenge.recipientUser.uid == currentUser.uid
+            ? currentUser
+            : challenge.challengerUser,
         challengeStructureDistances: challenge.challengeStructureDistances,
-        challengerSets: challenge.opponentUser.uid == currentUser.uid
-            ? challenge.opponentSets
-            : challenge.currentUserSets,
-        recipientSets: challenge.currentUser.uid == currentUser.uid
+        challengerSets: challenge.challengerUser.uid == currentUser.uid
+            ? challenge.currentUserSets
+            : challenge.opponentSets,
+        recipientSets: challenge.recipientUser.uid == currentUser.uid
             ? challenge.currentUserSets
             : challenge.opponentSets);
   }

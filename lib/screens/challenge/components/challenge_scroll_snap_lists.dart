@@ -5,16 +5,16 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
 
 class ChallengeScrollSnapList extends StatefulWidget {
-  const ChallengeScrollSnapList(
-      {Key? key,
-      required this.sslKey,
-      required this.onUpdate,
-      required this.isCurrentUser,
-      required this.itemCount,
-      required this.challengeDistances,
-      required this.puttingSets,
-      required this.maxSets})
-      : super(key: key);
+  const ChallengeScrollSnapList({
+    Key? key,
+    required this.sslKey,
+    required this.onUpdate,
+    required this.isCurrentUser,
+    required this.itemCount,
+    required this.challengeDistances,
+    required this.puttingSets,
+    required this.maxSets,
+  }) : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;

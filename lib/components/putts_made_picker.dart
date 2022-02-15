@@ -37,6 +37,8 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
       return BlocBuilder<ChallengesCubit, ChallengesState>(
         builder: (context, state) {
           if (state is ChallengeInProgress) {
+            print(state.currentChallenge.opponentSets);
+            print(state.currentChallenge.currentUserSets);
             final int index = state.currentChallenge.currentUserSets.length ==
                     state.currentChallenge.opponentSets.length
                 ? state.currentChallenge.currentUserSets.length - 1
@@ -73,10 +75,13 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
                   }, // dynamicSizeEquation: customEquation, //optional
                 ));
           } else if (state is ChallengeComplete) {
+            print(state.currentChallenge.toJson());
+            final int index = state.currentChallenge.currentUserSets.length ==
+                    state.currentChallenge.opponentSets.length
+                ? state.currentChallenge.currentUserSets.length - 1
+                : state.currentChallenge.currentUserSets.length;
             final int newSetLength = state
-                .currentChallenge
-                .opponentSets[state.currentChallenge.currentUserSets.length - 1]
-                .puttsAttempted as int;
+                .currentChallenge.opponentSets[index].puttsAttempted as int;
             return Container(
                 height: 80,
                 decoration: const BoxDecoration(

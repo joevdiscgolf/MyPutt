@@ -8,7 +8,7 @@ part of 'storage_putting_challenge.dart';
 
 StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
     StoragePuttingChallenge(
-      status: _$enumDecode(_$ChallengeStatusEnumMap, json['status']),
+      status: json['status'] as String,
       creationTimeStamp: json['creationTimeStamp'] as int,
       id: json['id'] as String,
       challengerUser: MyPuttUser.fromJson(
@@ -30,7 +30,7 @@ StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
 Map<String, dynamic> _$StoragePuttingChallengeToJson(
         StoragePuttingChallenge instance) =>
     <String, dynamic>{
-      'status': _$ChallengeStatusEnumMap[instance.status],
+      'status': instance.status,
       'creationTimeStamp': instance.creationTimeStamp,
       'id': instance.id,
       'challengerUser': instance.challengerUser.toJson(),
@@ -39,35 +39,3 @@ Map<String, dynamic> _$StoragePuttingChallengeToJson(
       'challengerSets': instance.challengerSets.map((e) => e.toJson()).toList(),
       'recipientSets': instance.recipientSets.map((e) => e.toJson()).toList(),
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
-const _$ChallengeStatusEnumMap = {
-  ChallengeStatus.pending: 'pending',
-  ChallengeStatus.active: 'active',
-  ChallengeStatus.complete: 'complete',
-};

@@ -11,7 +11,6 @@ class FBUserDataLoader {
     if (snapshot.exists &&
         isValidUser(snapshot.data() as Map<String, dynamic>)) {
       final Map<String, dynamic>? data = snapshot.data();
-      print('User | ${data}');
       return MyPuttUser.fromJson(data!);
     } else {
       return null;

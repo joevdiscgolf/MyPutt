@@ -8,25 +8,29 @@ import 'package:myputt/utils/constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
-  Future<List<PuttingChallenge>> getPuttingChallenges(
-      MyPuttUser currentUser, List<ChallengeStatus> filters) async {
+  Future<List<PuttingChallenge>> getPuttingChallengesWithStatus(
+      MyPuttUser currentUser, String status) async {
     QuerySnapshot querySnapshot = await firestore
         .collection(
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
-        .where('status', whereIn: filters)
+        .where('status', isEqualTo: status)
         .get()
         .catchError((error) {
       if (kDebugMode) {
-        print('[getPuttingChallenges] $error, filters: $filters');
+        print('[getPuttingChallenges] $error, status: $status');
       }
     });
 
-    return querySnapshot.docs
-        .map((doc) => PuttingChallenge.fromStorageChallenge(
-            StoragePuttingChallenge.fromJson(
-                doc.data() as Map<String, dynamic>),
-            currentUser))
-        .toList();
+    return querySnapshot.docs.map((doc) {
+      print(PuttingChallenge.fromStorageChallenge(
+              StoragePuttingChallenge.fromJson(
+                  doc.data() as Map<String, dynamic>),
+              currentUser)
+          .toJson());
+      return PuttingChallenge.fromStorageChallenge(
+          StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
+          currentUser);
+    }).toList();
   }
 
   Future<PuttingChallenge?> getCurrentPuttingChallenge(
