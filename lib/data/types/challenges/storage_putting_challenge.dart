@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 
-import '../../utils/constants.dart';
-import 'myputt_user.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/data/types/myputt_user.dart';
 
 part 'storage_putting_challenge.g.dart';
 

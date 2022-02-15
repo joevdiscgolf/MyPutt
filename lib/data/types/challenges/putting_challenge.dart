@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/myputt_user.dart';
-import 'package:myputt/data/types/storage_putting_challenge.dart';
+import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/data/types/putting_set.dart';

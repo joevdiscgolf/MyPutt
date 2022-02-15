@@ -3,7 +3,7 @@ import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/utils/constants.dart';
 
-import '../../data/types/storage_putting_challenge.dart';
+import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 

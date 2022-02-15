@@ -10,7 +10,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 
 import '../data/types/putting_set.dart';
-import '../data/types/storage_putting_challenge.dart';
+import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import '../utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
