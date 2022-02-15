@@ -66,7 +66,6 @@ class ChallengesRepository {
   }
 
   Future<void> fetchAllChallenges() async {
-    print('fetching all challenges');
     final List<dynamic> result = await Future.wait([
       _databaseService.getChallengesWithStatus(ChallengeStatus.pending),
       _databaseService.getChallengesWithStatus(ChallengeStatus.active),
@@ -74,7 +73,7 @@ class ChallengesRepository {
       _databaseService.getCurrentPuttingChallenge(),
     ]);
 
-    print('result: $result');
+    print('fetching all challenges, result: $result');
 
     if (result[0] != null && result[0] is List<PuttingChallenge>) {
       pendingChallenges = result[0] as List<PuttingChallenge>;
@@ -107,15 +106,11 @@ class ChallengesRepository {
       return false;
     } else {
       currentChallenge?.status = ChallengeStatus.complete;
-      if (pendingChallenges.contains(currentChallenge)) {
-        completedChallenges.add(currentChallenge!);
-        pendingChallenges.remove(currentChallenge);
-        // database event here
-      } else if (activeChallenges.contains(currentChallenge)) {
+      if (activeChallenges.contains(currentChallenge)) {
         completedChallenges.add(currentChallenge!);
         activeChallenges.remove(currentChallenge);
-        // database event here
       }
+      await _databaseService.updatePuttingChallenge(currentChallenge!);
       currentChallenge = null;
       return true;
     }

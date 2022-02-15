@@ -35,8 +35,6 @@ class PuttingChallenge {
 
   factory PuttingChallenge.fromStorageChallenge(
       StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
-    print(storageChallenge.recipientUser);
-    print(storageChallenge.challengerUser);
     return PuttingChallenge(
       status: storageChallenge.status,
       creationTimeStamp: storageChallenge.creationTimeStamp,

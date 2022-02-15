@@ -22,11 +22,6 @@ class FBChallengesDataLoader {
     });
 
     return querySnapshot.docs.map((doc) {
-      print(PuttingChallenge.fromStorageChallenge(
-              StoragePuttingChallenge.fromJson(
-                  doc.data() as Map<String, dynamic>),
-              currentUser)
-          .toJson());
       return PuttingChallenge.fromStorageChallenge(
           StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
           currentUser);

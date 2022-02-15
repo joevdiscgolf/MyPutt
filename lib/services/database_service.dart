@@ -77,7 +77,6 @@ class DatabaseService {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
-      print('current user : $currentUser');
       return [];
     }
 

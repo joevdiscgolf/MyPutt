@@ -553,13 +553,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 setState(() {
                   lastClickTime = DateTime.now().millisecondsSinceEpoch;
                 });
-                print(state.currentChallenge.currentUserSets.length);
-                opponentKey.currentState?.focusToItem(
-                    state.currentChallenge.currentUserSets.length);
-                currentUserKey.currentState?.focusToItem(
-                    state.currentChallenge.currentUserSets.length);
-                numberListKey.currentState?.focusToItem(
-                    state.currentChallenge.currentUserSets.length);
+                focusAllToIndex(state.currentChallenge.currentUserSets.length);
               }
             },
           );
@@ -588,6 +582,12 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         }
       },
     );
+  }
+
+  void focusAllToIndex(int index) {
+    opponentKey.currentState?.focusToItem(index);
+    currentUserKey.currentState?.focusToItem(index);
+    numberListKey.currentState?.focusToItem(index);
   }
 
   void dialogCallBack() {
