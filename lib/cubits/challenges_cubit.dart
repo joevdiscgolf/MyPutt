@@ -127,7 +127,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  void undo() {
+  Future<void> undo() async {
     final List<PuttingSet>? currentUserSets =
         _challengesRepository.currentChallenge?.currentUserSets;
     if (currentUserSets?.length == 0) {
@@ -136,7 +136,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     if (currentUserSets == null) {
       return;
     }
-    _challengesRepository.deleteSet(currentUserSets.last);
+    await _challengesRepository.deleteSet(currentUserSets.last);
     if (_challengesRepository.currentChallenge != null) {
       emit(ChallengeInProgress(
         currentChallenge: _challengesRepository.currentChallenge!,

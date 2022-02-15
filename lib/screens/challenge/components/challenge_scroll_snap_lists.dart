@@ -38,7 +38,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       curve: Curves.easeOutBack,
       key: widget.sslKey,
       updateOnScroll: false,
-      focusToItem: (index) {},
+      focusToItem: (index) {
+        print('focusing to $index');
+      },
       itemSize: 60,
       itemCount: widget.itemCount,
       duration: 400,

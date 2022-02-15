@@ -40,6 +40,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   int puttsPickerFocusedIndex = 0;
   int challengeFocusedIndex = 0;
   int challengeSetsCompleted = 0;
+  int lastClickTime = 0;
 
   final GlobalKey<ScrollSnapListState> opponentKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
@@ -143,12 +144,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       builder: (context, state) {
         if (state is ChallengeInProgress) {
           final PuttingChallenge challenge = state.currentChallenge;
-          final initialIndex = challenge.currentUserSets.isEmpty
-              ? 0
-              : challenge.currentUserSets.length - 1;
-          opponentKey.currentState?.focusToItem(initialIndex);
-          currentUserKey.currentState?.focusToItem(initialIndex);
-          numberListKey.currentState?.focusToItem(initialIndex);
           final bool currentUserSetsComplete =
               challenge.currentUserSets.length == challenge.opponentSets.length;
           final int opponentListItemCount = currentUserSetsComplete
@@ -303,12 +298,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   ]));
         } else if (state is ChallengeComplete) {
           final PuttingChallenge challenge = state.currentChallenge;
-          final initialIndex = challenge.currentUserSets.isEmpty
-              ? 0
-              : challenge.currentUserSets.length - 1;
-          opponentKey.currentState?.focusToItem(initialIndex);
-          currentUserKey.currentState?.focusToItem(initialIndex);
-          numberListKey.currentState?.focusToItem(initialIndex);
           final int itemCount =
               challenge.currentUserSets.length == challenge.opponentSets.length
                   ? challenge.currentUserSets.length
@@ -559,17 +548,19 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               color: Colors.blue,
             ),
             onPressed: () async {
-              BlocProvider.of<ChallengesCubit>(context).undo();
-              print('index: ${state.currentChallenge.currentUserSets.length}');
-              Future.delayed(const Duration(milliseconds: 50), () {
+              if (DateTime.now().millisecondsSinceEpoch - lastClickTime > 500) {
+                await BlocProvider.of<ChallengesCubit>(context).undo();
+                setState(() {
+                  lastClickTime = DateTime.now().millisecondsSinceEpoch;
+                });
+                print(state.currentChallenge.currentUserSets.length);
                 opponentKey.currentState?.focusToItem(
                     state.currentChallenge.currentUserSets.length);
                 currentUserKey.currentState?.focusToItem(
                     state.currentChallenge.currentUserSets.length);
                 numberListKey.currentState?.focusToItem(
                     state.currentChallenge.currentUserSets.length);
-              });
-              print('index: ${state.currentChallenge.currentUserSets.length}');
+              }
             },
           );
         } else if (state is ChallengeComplete) {
@@ -583,15 +574,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               FlutterRemix.arrow_go_back_line,
               color: Colors.blue,
             ),
-            onPressed: () {
-              opponentKey.currentState?.focusToItem(
-                  state.currentChallenge.currentUserSets.length - 1);
-              currentUserKey.currentState?.focusToItem(
-                  state.currentChallenge.currentUserSets.length - 1);
-              numberListKey.currentState?.focusToItem(
-                  state.currentChallenge.currentUserSets.length - 1);
-              BlocProvider.of<ChallengesCubit>(context).undo();
-              print('length: ${state.currentChallenge.currentUserSets.length}');
+            onPressed: () async {
+              await BlocProvider.of<ChallengesCubit>(context).undo();
             },
           );
         } else {
