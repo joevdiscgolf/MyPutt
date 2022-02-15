@@ -1,5 +1,5 @@
 import 'package:myputt/data/types/myputt_user.dart';
-import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
@@ -30,7 +30,7 @@ class ChallengesRepository {
                 displayName: 'joe bro',
                 pdgaNum: 132408,
                 uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructureDistances: [20, 20, 15, 15, 15],
+            challengeStructure: [20, 20, 15, 15, 15],
             creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
             id: 'opponentuid' +
                 '~' +
@@ -150,6 +150,6 @@ class ChallengesRepository {
         id: 'id',
         opponentUid: 'opponentUid',
         currentUid: 'currentUid',
-        challengeStructureDistances: [1, 2, 3],
+        challengeStructure: [1, 2, 3],
         opponentSets: [],
         currentUserSets: [])*/*/

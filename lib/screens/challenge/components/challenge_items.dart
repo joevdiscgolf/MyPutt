@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/theme/theme_data.dart';
 
 import '../../../components/confirm_dialog.dart';

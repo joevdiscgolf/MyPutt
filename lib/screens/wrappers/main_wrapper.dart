@@ -5,7 +5,7 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
-import '../../data/types/putting_challenge.dart';
+import '../../data/types/challenges/putting_challenge.dart';
 import '../challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 
@@ -83,7 +83,7 @@ class _MainWrapperState extends State<MainWrapper> {
       height: 40,
       width: 40,
       child: Stack(children: [
-        Center(child: Icon(FlutterRemix.sword_line)),
+        Center(child: const Icon(FlutterRemix.sword_line)),
         Visibility(
           visible: pendingChallenges.isNotEmpty,
           child: Positioned(

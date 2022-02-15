@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 
 import '../../locator.dart';

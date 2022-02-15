@@ -5,7 +5,7 @@ import 'package:myputt/components/previous_sets_list.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
@@ -204,7 +204,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       ?.focusToItem(index);
                                 },
                                 challengeDistances:
-                                    challenge.challengeStructureDistances,
+                                    challenge.challengeStructure,
                                 puttingSets: challenge.opponentSets,
                                 maxSets: challenge.opponentSets.length,
                                 itemCount: opponentListItemCount)
@@ -230,8 +230,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 currentUserKey.currentState?.focusToItem(index);
                                 numberListKey.currentState?.focusToItem(index);
                               },
-                              challengeDistances:
-                                  challenge.challengeStructureDistances,
+                              challengeDistances: challenge.challengeStructure,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
                               itemCount: currentUserListItemCount,
@@ -354,7 +353,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       ?.focusToItem(index);
                                 },
                                 challengeDistances:
-                                    challenge.challengeStructureDistances,
+                                    challenge.challengeStructure,
                                 puttingSets: challenge.opponentSets,
                                 maxSets: challenge.opponentSets.length,
                                 itemCount: itemCount)
@@ -380,8 +379,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 currentUserKey.currentState?.focusToItem(index);
                                 numberListKey.currentState?.focusToItem(index);
                               },
-                              challengeDistances:
-                                  challenge.challengeStructureDistances,
+                              challengeDistances: challenge.challengeStructure,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
                               itemCount: challenge.opponentSets.length ==

@@ -15,10 +15,9 @@ StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
           Map<String, dynamic>.from(json['challengerUser'] as Map)),
       recipientUser: MyPuttUser.fromJson(
           Map<String, dynamic>.from(json['recipientUser'] as Map)),
-      challengeStructureDistances:
-          (json['challengeStructureDistances'] as List<dynamic>)
-              .map((e) => e as int)
-              .toList(),
+      challengeStructure: (json['challengeStructure'] as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
       challengerSets: (json['challengerSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
@@ -35,7 +34,7 @@ Map<String, dynamic> _$StoragePuttingChallengeToJson(
       'id': instance.id,
       'challengerUser': instance.challengerUser.toJson(),
       'recipientUser': instance.recipientUser.toJson(),
-      'challengeStructureDistances': instance.challengeStructureDistances,
+      'challengeStructure': instance.challengeStructure,
       'challengerSets': instance.challengerSets.map((e) => e.toJson()).toList(),
       'recipientSets': instance.recipientSets.map((e) => e.toJson()).toList(),
     };

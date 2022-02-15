@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/storage_putting_challenge.dart';
 
-import '../../utils/constants.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/data/types/putting_set.dart';
 
 part 'putting_challenge.g.dart';
@@ -18,7 +18,7 @@ class PuttingChallenge {
       required this.currentUser,
       required this.challengerUser,
       required this.recipientUser,
-      required this.challengeStructureDistances,
+      required this.challengeStructure,
       required this.opponentSets,
       required this.currentUserSets});
 
@@ -29,7 +29,7 @@ class PuttingChallenge {
   final MyPuttUser currentUser;
   final MyPuttUser challengerUser;
   final MyPuttUser recipientUser;
-  final List<int> challengeStructureDistances;
+  final List<int> challengeStructure;
   final List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
 
@@ -45,7 +45,7 @@ class PuttingChallenge {
       currentUser: storageChallenge.recipientUser.uid == currentUser.uid
           ? storageChallenge.recipientUser
           : storageChallenge.challengerUser,
-      challengeStructureDistances: storageChallenge.challengeStructureDistances,
+      challengeStructure: storageChallenge.challengeStructure,
       opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
           ? storageChallenge.recipientSets
           : storageChallenge.challengerSets,

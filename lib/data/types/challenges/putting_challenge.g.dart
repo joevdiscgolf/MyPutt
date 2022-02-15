@@ -18,10 +18,9 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
           Map<String, dynamic>.from(json['challengerUser'] as Map)),
       recipientUser: MyPuttUser.fromJson(
           Map<String, dynamic>.from(json['recipientUser'] as Map)),
-      challengeStructureDistances:
-          (json['challengeStructureDistances'] as List<dynamic>)
-              .map((e) => e as int)
-              .toList(),
+      challengeStructure: (json['challengeStructure'] as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
       opponentSets: (json['opponentSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
@@ -39,7 +38,7 @@ Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
       'currentUser': instance.currentUser.toJson(),
       'challengerUser': instance.challengerUser.toJson(),
       'recipientUser': instance.recipientUser.toJson(),
-      'challengeStructureDistances': instance.challengeStructureDistances,
+      'challengeStructure': instance.challengeStructure,
       'opponentSets': instance.opponentSets.map((e) => e.toJson()).toList(),
       'currentUserSets':
           instance.currentUserSets.map((e) => e.toJson()).toList(),
