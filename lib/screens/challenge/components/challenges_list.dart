@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/screens/challenge/challenge_summary_screen.dart';
 import 'package:myputt/screens/challenge/components/challenge_items.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -58,10 +59,8 @@ class ChallengesList extends StatelessWidget {
                               challenge: challenge);
                         } else {
                           return CompletedChallengeItem(
-                              challenge: challenge,
-                              onTap: () {
-                                print('ontap');
-                              });
+                            challenge: challenge,
+                          );
                         }
                       }),
                     )

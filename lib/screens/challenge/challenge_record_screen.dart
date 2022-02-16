@@ -88,6 +88,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             builder: (context, state) {
               if (state is ChallengeInProgress) {
                 return PreviousSetsList(
+                  static: false,
                   deletable: false,
                   sets: state.currentChallenge.currentUserSets,
                   deleteSet: (PuttingSet set) {
@@ -96,6 +97,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 );
               } else if (state is ChallengeComplete) {
                 return PreviousSetsList(
+                  static: false,
                   deletable: false,
                   sets: state.currentChallenge.currentUserSets,
                   deleteSet: (PuttingSet set) {

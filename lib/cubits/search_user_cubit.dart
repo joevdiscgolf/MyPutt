@@ -11,11 +11,10 @@ class SearchUserCubit extends Cubit<SearchUsersState> {
   final UserRepository _userRepository = locator.get<UserRepository>();
   SearchUserCubit() : super(SearchUsersInitial());
 
-  void searchUsersByUsername(String username) async {
+  Future<void> searchUsersByUsername(String username) async {
     emit(SearchUsersLoading());
     final List<MyPuttUser> users =
         await _userRepository.fetchUsersByUsername(username);
-    print('$username, $users');
     emit(SearchUsersLoaded(users: users));
   }
 }

@@ -50,7 +50,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SessionSummaryCubit()),
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
-        BlocProvider(create: (_) => SearchUserCubit()),
+        BlocProvider(
+          create: (_) => SearchUserCubit(),
+        )
       ],
       child: MaterialApp(
         theme: lightTheme(context),

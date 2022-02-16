@@ -21,64 +21,60 @@ class SearchUsersSheet extends StatefulWidget {
 class _SearchUsersSheetState extends State<SearchUsersSheet> {
   final TextEditingController _searchTextController = TextEditingController();
 
-  int lastChanged = 0;
+  int lastUpdated = 0;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchUserCubit(),
-      child: Container(
-          decoration: BoxDecoration(color: Colors.grey[100]),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Text(
-                'Challenge a friend',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              TextFormField(
-                controller: _searchTextController,
-                autocorrect: false,
-                maxLines: 1,
-                maxLength: 24,
-                style: Theme.of(context)
+    return Container(
+        decoration: BoxDecoration(color: Colors.grey[100]),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              'Challenge a friend',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            TextFormField(
+              controller: _searchTextController,
+              autocorrect: false,
+              maxLines: 1,
+              maxLength: 24,
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1!
+                  .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText: 'Enter username',
+                contentPadding: const EdgeInsets.only(
+                    left: 12, right: 12, top: 18, bottom: 18),
+                isDense: true,
+                hintStyle: Theme.of(context)
                     .textTheme
                     .subtitle1!
-                    .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  hintText: 'Enter username',
-                  contentPadding: const EdgeInsets.only(
-                      left: 12, right: 12, top: 18, bottom: 18),
-                  isDense: true,
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .subtitle1!
-                      .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-                  enabledBorder: Theme.of(context).inputDecorationTheme.border,
-                  focusedBorder: Theme.of(context).inputDecorationTheme.border,
-                  prefixIcon: const Icon(
-                    FlutterRemix.user_line,
-                    color: TWUIColors.gray,
-                    size: 22,
-                  ),
-                  counter: const Offstage(),
+                    .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+                enabledBorder: Theme.of(context).inputDecorationTheme.border,
+                focusedBorder: Theme.of(context).inputDecorationTheme.border,
+                prefixIcon: const Icon(
+                  FlutterRemix.user_line,
+                  color: TWUIColors.gray,
+                  size: 22,
                 ),
-                onChanged: (String username) {
-                  if (DateTime.now().millisecondsSinceEpoch - lastChanged >
-                      200) {
-                    BlocProvider.of<SearchUserCubit>(context)
-                        .searchUsersByUsername(username);
-                  }
-                  setState(() {
-                    lastChanged = DateTime.now().millisecondsSinceEpoch;
-                  });
-                },
+                counter: const Offstage(),
               ),
-              Expanded(child: UserListView(session: widget.session))
-            ],
-          )),
-    );
+              onChanged: (String username) async {
+                if (DateTime.now().millisecondsSinceEpoch - lastUpdated > 200) {
+                  await BlocProvider.of<SearchUserCubit>(context)
+                      .searchUsersByUsername(username);
+                }
+                setState(() {
+                  lastUpdated = DateTime.now().millisecondsSinceEpoch;
+                });
+              },
+            ),
+            Expanded(child: UserListView(session: widget.session))
+          ],
+        ));
   }
 }
 
@@ -96,7 +92,11 @@ class _UserListViewState extends State<UserListView> {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchUserCubit, SearchUsersState>(
       builder: (context, state) {
+        print('updated and rebuilding, state: $state');
         if (state is SearchUsersLoaded) {
+          for (var user in state.users) {
+            print(user.toJson());
+          }
           return ListView(
             children: state.users
                 .map(
@@ -104,7 +104,7 @@ class _UserListViewState extends State<UserListView> {
                 .toList(),
           );
         } else if (state is SearchUsersLoading) {
-          return CircularProgressIndicator();
+          return Center(child: const CircularProgressIndicator());
         } else {
           return Container();
         }
@@ -122,6 +122,7 @@ class UserListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.toJson());
     return InkWell(
       onTap: () {
         showDialog(

@@ -7,6 +7,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 class PreviousSetsList extends StatefulWidget {
   const PreviousSetsList(
       {Key? key,
+      required this.static,
       required this.sets,
       required this.deleteSet,
       required this.deletable})
@@ -15,6 +16,7 @@ class PreviousSetsList extends StatefulWidget {
   final List<PuttingSet> sets;
   final Function deleteSet;
   final bool deletable;
+  final bool static;
 
   @override
   _PreviousSetsListState createState() => _PreviousSetsListState();
@@ -23,56 +25,77 @@ class PreviousSetsList extends StatefulWidget {
 class _PreviousSetsListState extends State<PreviousSetsList> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChallengesCubit, ChallengesState>(
-        builder: (context, state) {
-      if (state is ChallengeInProgress) {
-        return Flexible(
-          fit: FlexFit.loose,
-          child: widget.sets.isEmpty
-              ? const Center(child: Text('No sets yet'))
-              : ListView(
-                  children: List.from(widget.sets
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                        return PuttingSetRow(
-                            deletable: widget.deletable,
-                            set: entry.value,
-                            index: entry.key,
-                            delete: () {
-                              widget.deleteSet(entry.value);
-                              /*BlocProvider.of<ChallengesCubit>(context)
-                                .deleteSet(entry.value);*/
-                            });
-                      })
-                      .toList()
-                      .reversed),
-                ),
-        );
-      } else if (state is ChallengeComplete) {
-        return Flexible(
-          fit: FlexFit.loose,
-          child: widget.sets.isEmpty
-              ? const Center(child: Text('No sets yet'))
-              : ListView(
-                  children: List.from(widget.sets
-                      .asMap()
-                      .entries
-                      .map((entry) => PuttingSetRow(
+    return widget.static
+        ? widget.sets.isEmpty
+            ? const Center(child: Text('No sets yet'))
+            : ListView(
+                children: List.from(widget.sets
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                      return PuttingSetRow(
                           deletable: widget.deletable,
                           set: entry.value,
                           index: entry.key,
                           delete: () {
                             widget.deleteSet(entry.value);
                             /*BlocProvider.of<ChallengesCubit>(context)
+                            .deleteSet(entry.value);*/
+                          });
+                    })
+                    .toList()
+                    .reversed),
+              )
+        : BlocBuilder<ChallengesCubit, ChallengesState>(
+            builder: (context, state) {
+            if (state is ChallengeInProgress) {
+              return Flexible(
+                fit: FlexFit.loose,
+                child: widget.sets.isEmpty
+                    ? const Center(child: Text('No sets yet'))
+                    : ListView(
+                        children: List.from(widget.sets
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                              return PuttingSetRow(
+                                  deletable: widget.deletable,
+                                  set: entry.value,
+                                  index: entry.key,
+                                  delete: () {
+                                    widget.deleteSet(entry.value);
+                                    /*BlocProvider.of<ChallengesCubit>(context)
                                 .deleteSet(entry.value);*/
-                          }))
-                      .toList()
-                      .reversed),
-                ),
-        );
-      }
-      return Container();
-    });
+                                  });
+                            })
+                            .toList()
+                            .reversed),
+                      ),
+              );
+            } else if (state is ChallengeComplete) {
+              return Flexible(
+                fit: FlexFit.loose,
+                child: widget.sets.isEmpty
+                    ? const Center(child: Text('No sets yet'))
+                    : ListView(
+                        children: List.from(widget.sets
+                            .asMap()
+                            .entries
+                            .map((entry) => PuttingSetRow(
+                                deletable: widget.deletable,
+                                set: entry.value,
+                                index: entry.key,
+                                delete: () {
+                                  widget.deleteSet(entry.value);
+                                  /*BlocProvider.of<ChallengesCubit>(context)
+                                .deleteSet(entry.value);*/
+                                }))
+                            .toList()
+                            .reversed),
+                      ),
+              );
+            }
+            return Container();
+          });
   }
 }
