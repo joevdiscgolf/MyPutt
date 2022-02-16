@@ -9,6 +9,7 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
+import 'package:myputt/utils/utils.dart';
 
 import '../data/types/putting_set.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
@@ -105,6 +106,36 @@ class DatabaseService {
         currentUser, challengeToUpdate);
   }
 
+  Future<bool> sendCompletedChallenge(PuttingChallenge challenge) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+    print('sending putting challenge');
+
+    return _challengesDataWriter.sendPuttingChallenge(
+        challenge.opponentUser.uid,
+        currentUser,
+        StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
+  }
+
+  Future<bool> sendStorageChallenge(
+      StoragePuttingChallenge storageChallenge) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+    print('sending putting challenge');
+    if (storageChallenge.recipientUser == null) {
+      return false;
+    } else {
+      return _challengesDataWriter.sendPuttingChallenge(
+          storageChallenge.recipientUser!.uid, currentUser, storageChallenge);
+    }
+  }
+
   Future<MyPuttUser?> getCurrentUser() {
     final uid = _authService.getCurrentUserId();
     return _userDataLoader.getUser(uid!);
@@ -116,10 +147,14 @@ class DatabaseService {
     if (currentUser == null) {
       return false;
     }
-    const recipientUid = 'k7W1STgUdlWLZP4ayenPk1a8OI82';
-    return _challengesDataWriter.sendPuttingChallenge(
+    return _challengesDataWriter.sendTestChallenge(
         currentUser.uid,
-        recipientUid,
+        MyPuttUser(
+            keywords: getPrefixes('joevdiscgolf'),
+            username: 'joevdiscgolf',
+            displayName: 'joe bro',
+            pdgaNum: 132408,
+            uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
         StoragePuttingChallenge(
             challengerSets: [
               PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 5),
@@ -129,6 +164,7 @@ class DatabaseService {
               PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7)
             ],
             challengerUser: MyPuttUser(
+                keywords: getPrefixes('joevdiscgolf'),
                 username: 'joevdiscgolf',
                 displayName: 'joe bro',
                 pdgaNum: 132408,
@@ -146,5 +182,17 @@ class DatabaseService {
             recipientSets: [],
             recipientUser: currentUser,
             status: ChallengeStatus.pending));
+  }
+
+  Future<List<MyPuttUser>> getUsersByUsername(String username) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      print('current user is null');
+      return [];
+    }
+    final List<MyPuttUser> users =
+        await _userDataLoader.getUsersByUsername(username);
+    return users.where((user) => user.uid != currentUser.uid).toList();
   }
 }

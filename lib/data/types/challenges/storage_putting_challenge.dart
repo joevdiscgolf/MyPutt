@@ -4,6 +4,10 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 
+import '../../../utils/constants.dart';
+import '../../../utils/utils.dart';
+import '../putting_session.dart';
+
 part 'storage_putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
@@ -13,7 +17,7 @@ class StoragePuttingChallenge {
       required this.creationTimeStamp,
       required this.id,
       required this.challengerUser,
-      required this.recipientUser,
+      this.recipientUser,
       required this.challengeStructure,
       required this.challengerSets,
       required this.recipientSets});
@@ -22,7 +26,7 @@ class StoragePuttingChallenge {
   final int creationTimeStamp;
   final String id;
   final MyPuttUser challengerUser;
-  final MyPuttUser recipientUser;
+  final MyPuttUser? recipientUser;
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> challengerSets;
   final List<PuttingSet> recipientSets;
@@ -46,6 +50,21 @@ class StoragePuttingChallenge {
         recipientSets: challenge.recipientUser.uid == currentUser.uid
             ? challenge.currentUserSets
             : challenge.opponentSets);
+  }
+
+  factory StoragePuttingChallenge.fromSession(
+      PuttingSession session, MyPuttUser currentUser, MyPuttUser opponentUser) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    return StoragePuttingChallenge(
+      status: ChallengeStatus.pending,
+      creationTimeStamp: now,
+      id: currentUser.uid + '~' + now.toString(),
+      challengeStructure: challengeStructureFromSession(session),
+      recipientSets: [],
+      challengerSets: session.sets,
+      challengerUser: currentUser,
+      recipientUser: opponentUser,
+    );
   }
 
   factory StoragePuttingChallenge.fromJson(Map<String, dynamic> json) =>

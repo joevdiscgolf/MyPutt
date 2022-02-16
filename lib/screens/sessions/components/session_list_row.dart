@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/confirm_dialog.dart';
+import 'package:myputt/components/search_users_sheet.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
+import 'package:myputt/theme/theme_data.dart';
+
+import '../../../cubits/challenges_cubit.dart';
 
 class SessionListRow extends StatelessWidget {
-  const SessionListRow(
-      {Key? key,
-      required this.session,
-      this.index,
-      required this.delete,
-      required this.stats,
-      required this.isCurrentSession})
-      : super(key: key);
+  const SessionListRow({
+    Key? key,
+    required this.session,
+    this.index,
+    required this.delete,
+    required this.stats,
+    required this.isCurrentSession,
+  }) : super(key: key);
   final Function delete;
   final PuttingSession session;
   final int? index;
@@ -52,26 +57,52 @@ class SessionListRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(session.dateStarted, style: textStyle),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('${session.sets.length.toString()} sets'),
-                      const SizedBox(width: 20),
-                      stats.generalStats?.totalMade != null &&
-                              stats.generalStats?.totalAttempts != null
-                          ? Text(
-                              '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
-                          : Container()
-                    ],
-                  ),
-                ],
+              Flexible(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(session.dateStarted, style: textStyle),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('${session.sets.length.toString()} sets'),
+                        const SizedBox(width: 20),
+                        stats.generalStats?.totalMade != null &&
+                                stats.generalStats?.totalAttempts != null
+                            ? Text(
+                                '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
+                            : Container()
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
+              Visibility(
+                visible: !isCurrentSession,
+                child: Flexible(
+                  flex: 1,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const Icon(
+                      FlutterRemix.sword_line,
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => SearchUsersSheet(
+                                session: session,
+                              ));
+                    },
+                  ),
+                ),
+              ),
+              Flexible(
+                flex: 1,
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.transparent,

@@ -6,10 +6,12 @@ part 'myputt_user.g.dart';
 class MyPuttUser {
   MyPuttUser(
       {required this.username,
+      required this.keywords,
       required this.displayName,
       required this.uid,
       this.pdgaNum});
   final String username;
+  final List<String> keywords;
   final String displayName;
   final String uid;
   final int? pdgaNum;

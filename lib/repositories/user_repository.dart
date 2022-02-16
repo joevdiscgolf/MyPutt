@@ -21,4 +21,8 @@ class UserRepository {
       return currentUser != null;
     }
   }
+
+  Future<List<MyPuttUser>> fetchUsersByUsername(String username) async {
+    return _databaseService.getUsersByUsername(username);
+  }
 }

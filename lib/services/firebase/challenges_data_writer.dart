@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/utils/constants.dart';
@@ -23,7 +24,19 @@ class FBChallengesDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> sendPuttingChallenge(String recipientUid, String currentUid,
+  Future<bool> sendPuttingChallenge(String recipientUid, MyPuttUser currentUser,
+      StoragePuttingChallenge storageChallenge) {
+    print('sending test challenge');
+    final challengeRef = firestore.doc(
+        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
+
+    return challengeRef
+        .set(storageChallenge.toJson())
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  Future<bool> sendTestChallenge(String recipientUid, MyPuttUser challengerUser,
       StoragePuttingChallenge storageChallenge) {
     print('sending test challenge');
     final challengeRef = firestore.doc(

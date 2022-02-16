@@ -437,8 +437,6 @@ class _RecordScreenState extends State<RecordScreen> {
                               } else {
                                 await BlocProvider.of<SessionsCubit>(context)
                                     .completeSession();
-                                BlocProvider.of<HomeScreenCubit>(context)
-                                    .reloadStats();
                                 setState(() {
                                   sessionInProgress = false;
                                 });

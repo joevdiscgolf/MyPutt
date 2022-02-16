@@ -3,6 +3,10 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 
+import '../data/types/challenges/challenge_structure_item.dart';
+import '../data/types/challenges/putting_challenge.dart';
+import '../data/types/putting_session.dart';
+
 Future<void> fetchRepositoryData() async {
   print('fetching repository data');
   await locator.get<UserRepository>().fetchCurrentUser();
@@ -17,4 +21,26 @@ Future<void> fetchRepositoryData() async {
 void clearRepositoryData() {
   locator.get<SessionRepository>().clearData();
   // challenges repository.clearData();
+}
+
+List<ChallengeStructureItem> challengeStructureFromSession(
+    PuttingSession session) {
+  return session.sets
+      .map((set) => ChallengeStructureItem(
+          distance: set.distance.toInt(),
+          setLength: set.puttsAttempted.toInt()))
+      .toList();
+}
+
+List<String> getPrefixes(String str) {
+  final List<String> result = <String>[];
+
+  if (str.isEmpty) {
+    return result;
+  }
+
+  for (int i = 1; i <= str.length; i++) {
+    result.add(str.substring(0, i));
+  }
+  return result;
 }

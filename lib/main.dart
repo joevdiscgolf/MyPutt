@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,7 @@ void main() async {
 
   //await locator.get<DatabaseService>().sendTestChallenge();
 
-  locator.get<WebScraperService>().getPDGAData(132408);
+  //locator.get<WebScraperService>().getPDGAData(132408);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SessionSummaryCubit()),
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
+        BlocProvider(create: (_) => SearchUserCubit()),
       ],
       child: MaterialApp(
         theme: lightTheme(context),

@@ -111,6 +111,7 @@ class ChallengesRepository {
         activeChallenges.remove(currentChallenge);
       }
       await _databaseService.updatePuttingChallenge(currentChallenge!);
+      await _databaseService.sendCompletedChallenge(currentChallenge!);
       currentChallenge = null;
       return true;
     }

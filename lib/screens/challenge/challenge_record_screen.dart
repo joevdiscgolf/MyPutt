@@ -231,48 +231,43 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: TweenAnimationBuilder<double>(
-                                tween: Tween<double>(
-                                    begin:
-                                        state.currentChallenge.opponentSets.isEmpty
-                                            ? 0
-                                            : (state.currentChallenge
-                                                        .currentUserSets.length)
-                                                    .toDouble() /
-                                                state.currentChallenge
-                                                    .opponentSets.length
-                                                    .toDouble(),
-                                    end: state.currentChallenge.opponentSets
-                                            .isEmpty
-                                        ? 0
-                                        : state.currentChallenge.currentUserSets
-                                                .length
-                                                .toDouble() /
-                                            state.currentChallenge.opponentSets
-                                                .length
-                                                .toDouble()),
-                                duration: const Duration(milliseconds: 100),
-                                builder: (context, value, _) =>
-                                    LinearPercentIndicator(
+                      child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : (state.currentChallenge.currentUserSets
+                                              .length)
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble(),
+                              end: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : state.currentChallenge.currentUserSets
+                                          .length
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble()),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (context, value, _) => Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: LinearPercentIndicator(
                                       lineHeight: 15,
                                       percent: value,
                                       progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
                                       barRadius: Radius.circular(10),
-                                    )),
-                          ),
-                          Flexible(
-                              flex: 1,
-                              child: Center(
-                                child: Text(
-                                    '${state.currentChallenge.opponentSets.isEmpty ? 0 : 100 * state.currentChallenge.currentUserSets.length.toDouble() ~/ state.currentChallenge.opponentSets.length.toDouble()} %'),
-                              ))
-                        ],
-                      ),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text('${(value * 100).toInt()} %'),
+                                    ),
+                                  )
+                                ],
+                              )),
                     )
                   ]));
         } else if (state is ChallengeComplete) {
@@ -385,33 +380,43 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                              flex: 5,
-                              child: LinearPercentIndicator(
-                                lineHeight: 15,
-                                percent:
-                                    state.currentChallenge.opponentSets.isEmpty
-                                        ? 0
-                                        : (state.currentChallenge
-                                                    .currentUserSets.length)
-                                                .toDouble() /
-                                            state.currentChallenge.opponentSets
-                                                .length
-                                                .toDouble(),
-                                progressColor: colorFromDecimal(1),
-                                backgroundColor: Colors.grey[200],
-                                barRadius: Radius.circular(10),
+                      child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : (state.currentChallenge.currentUserSets
+                                              .length)
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble(),
+                              end: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : state.currentChallenge.currentUserSets
+                                          .length
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble()),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (context, value, _) => Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: LinearPercentIndicator(
+                                      lineHeight: 15,
+                                      percent: value,
+                                      progressColor: colorFromDecimal(value),
+                                      backgroundColor: Colors.grey[200],
+                                      barRadius: Radius.circular(10),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text('${(value * 100).toInt()} %'),
+                                    ),
+                                  )
+                                ],
                               )),
-                          Flexible(
-                              flex: 1,
-                              child: Center(
-                                child: Text(
-                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() / state.currentChallenge.opponentSets.length.toDouble()} %'),
-                              ))
-                        ],
-                      ),
                     )
                   ]));
         } else {
@@ -447,12 +452,12 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       builder: (dialogContext) => BlocProvider.value(
                           value: BlocProvider.of<ChallengesCubit>(context),
                           child: ConfirmDialog(
-                            actionPressed: () {
+                            actionPressed: () async {
                               setState(() {
                                 sessionInProgress = false;
-                                BlocProvider.of<ChallengesCubit>(context)
-                                    .completeCurrentChallenge();
                               });
+                              await BlocProvider.of<ChallengesCubit>(context)
+                                  .completeCurrentChallenge();
                             },
                             buttonlabel: 'Finish',
                             title: 'Finish challenge?',
