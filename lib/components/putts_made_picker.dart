@@ -73,10 +73,12 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
                   }, // dynamicSizeEquation: customEquation, //optional
                 ));
           } else if (state is ChallengeComplete) {
+            final int index = state.currentChallenge.currentUserSets.length ==
+                    state.currentChallenge.opponentSets.length
+                ? state.currentChallenge.currentUserSets.length - 1
+                : state.currentChallenge.currentUserSets.length;
             final int newSetLength = state
-                .currentChallenge
-                .opponentSets[state.currentChallenge.currentUserSets.length - 1]
-                .puttsAttempted as int;
+                .currentChallenge.opponentSets[index].puttsAttempted as int;
             return Container(
                 height: 80,
                 decoration: const BoxDecoration(

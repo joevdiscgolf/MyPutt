@@ -8,6 +8,8 @@ part of 'myputt_user.dart';
 
 MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
       username: json['username'] as String,
+      keywords:
+          (json['keywords'] as List<dynamic>).map((e) => e as String).toList(),
       displayName: json['displayName'] as String,
       uid: json['uid'] as String,
       pdgaNum: json['pdgaNum'] as int?,
@@ -16,6 +18,7 @@ MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
 Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
     <String, dynamic>{
       'username': instance.username,
+      'keywords': instance.keywords,
       'displayName': instance.displayName,
       'uid': instance.uid,
       'pdgaNum': instance.pdgaNum,

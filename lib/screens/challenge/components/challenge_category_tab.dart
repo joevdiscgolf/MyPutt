@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/types/putting_challenge.dart';
+import '../../../data/types/challenges/putting_challenge.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 
 class ChallengeCategoryTab extends StatelessWidget {
@@ -19,25 +19,32 @@ class ChallengeCategoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tab(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(label),
-        icon,
-        Visibility(
-            visible: challenges.isNotEmpty && showCounter,
-            child: Container(
-              width: 15,
-              height: 15,
-              child: Center(
-                child: Text(challenges.length.toString(),
-                    style: const TextStyle(color: Colors.black)),
-              ),
-              decoration: const BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.white),
-            ))
-      ],
-    ));
+    return Stack(children: [
+      Center(
+        child: Tab(
+            icon: icon,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(label),
+              ],
+            )),
+      ),
+      Positioned(
+          top: 5,
+          right: 0,
+          child: Visibility(
+              visible: challenges.isNotEmpty && showCounter,
+              child: Container(
+                width: 15,
+                height: 15,
+                child: Center(
+                  child: Text(challenges.length.toString(),
+                      style: const TextStyle(color: Colors.black)),
+                ),
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+              )))
+    ]);
   }
 }

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
 
 class ChallengeScrollSnapList extends StatefulWidget {
-  const ChallengeScrollSnapList(
-      {Key? key,
-      required this.sslKey,
-      required this.onUpdate,
-      required this.isCurrentUser,
-      required this.itemCount,
-      required this.challengeDistances,
-      required this.puttingSets,
-      required this.maxSets})
-      : super(key: key);
+  const ChallengeScrollSnapList({
+    Key? key,
+    required this.sslKey,
+    required this.onUpdate,
+    required this.isCurrentUser,
+    required this.itemCount,
+    required this.challengeStructure,
+    required this.puttingSets,
+    required this.maxSets,
+  }) : super(key: key);
 
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
@@ -22,7 +23,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
   final int itemCount;
   final int maxSets;
 
-  final List<int> challengeDistances;
+  final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> puttingSets;
 
   @override
@@ -38,7 +39,9 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       curve: Curves.easeOutBack,
       key: widget.sslKey,
       updateOnScroll: false,
-      focusToItem: (index) {},
+      focusToItem: (index) {
+        print('focusing to $index');
+      },
       itemSize: 60,
       itemCount: widget.itemCount,
       duration: 400,

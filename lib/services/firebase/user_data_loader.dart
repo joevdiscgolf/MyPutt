@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -11,11 +12,38 @@ class FBUserDataLoader {
     if (snapshot.exists &&
         isValidUser(snapshot.data() as Map<String, dynamic>)) {
       final Map<String, dynamic>? data = snapshot.data();
-      print('User | ${data}');
       return MyPuttUser.fromJson(data!);
     } else {
       return null;
     }
+  }
+
+  Future<List<MyPuttUser>> getUsersByUsername(String username) async {
+    QuerySnapshot querySnapshot = await firestore
+        .collection(usersCollection)
+        .where('keywords', arrayContains: username)
+        .get()
+        .catchError((error) {
+      print(error);
+    });
+
+    final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
+      if (doc.exists) {
+        return MyPuttUser.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
+    }).toList();
+
+    List<MyPuttUser> existingUsers = [];
+
+    for (var user in users) {
+      if (user != null) {
+        existingUsers.add(user);
+      }
+    }
+
+    return existingUsers;
   }
 
   bool isValidUser(Map<String, dynamic> data) {

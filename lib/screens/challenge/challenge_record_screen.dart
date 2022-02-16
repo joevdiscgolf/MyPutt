@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/previous_sets_list.dart';
+import 'package:myputt/screens/challenge/components/challenge_director_panel.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/data/types/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
@@ -40,6 +42,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   int puttsPickerFocusedIndex = 0;
   int challengeFocusedIndex = 0;
   int challengeSetsCompleted = 0;
+  int lastClickTime = 0;
 
   final GlobalKey<ScrollSnapListState> opponentKey = GlobalKey();
   final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
@@ -63,37 +66,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         children: [
           _challengeListContainer(context),
           const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('Putts made',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                      /*Align(
-                        alignment: Alignment.centerRight,
-                        child: _putterCountPicker(context),
-                      ),*/
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 5),
-                puttsMadePicker,
-              ],
-            ),
+          Row(
+            children: const [
+              Expanded(child: ChallengeDirectorPanel()),
+            ],
           ),
+          const SizedBox(height: 10),
+          _puttsMadeContainer(context),
           const SizedBox(height: 10),
           Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -109,6 +88,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             builder: (context, state) {
               if (state is ChallengeInProgress) {
                 return PreviousSetsList(
+                  static: false,
                   deletable: false,
                   sets: state.currentChallenge.currentUserSets,
                   deleteSet: (PuttingSet set) {
@@ -117,6 +97,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 );
               } else if (state is ChallengeComplete) {
                 return PreviousSetsList(
+                  static: false,
                   deletable: false,
                   sets: state.currentChallenge.currentUserSets,
                   deleteSet: (PuttingSet set) {
@@ -189,7 +170,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 child: Center(
                                     child: Center(
                                         child: Text(
-                                  'Opponent',
+                                  state.currentChallenge.opponentUser
+                                      .displayName,
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -202,8 +184,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   numberListKey.currentState
                                       ?.focusToItem(index);
                                 },
-                                challengeDistances:
-                                    challenge.challengeStructureDistances,
+                                challengeStructure:
+                                    challenge.challengeStructure,
                                 puttingSets: challenge.opponentSets,
                                 maxSets: challenge.opponentSets.length,
                                 itemCount: opponentListItemCount)
@@ -229,8 +211,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 currentUserKey.currentState?.focusToItem(index);
                                 numberListKey.currentState?.focusToItem(index);
                               },
-                              challengeDistances:
-                                  challenge.challengeStructureDistances,
+                              challengeStructure: challenge.challengeStructure,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
                               itemCount: currentUserListItemCount,
@@ -252,42 +233,43 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: TweenAnimationBuilder<double>(
-                                tween: Tween<double>(
-                                    begin: (state.currentChallenge
-                                                    .currentUserSets.length -
-                                                1)
-                                            .toDouble() /
-                                        state.currentChallenge.opponentSets
-                                            .length
-                                            .toDouble(),
-                                    end: state.currentChallenge.currentUserSets
-                                            .length
-                                            .toDouble() /
-                                        state.currentChallenge.opponentSets
-                                            .length
-                                            .toDouble()),
-                                duration: const Duration(milliseconds: 100),
-                                builder: (context, value, _) =>
-                                    LinearProgressIndicator(
-                                      minHeight: 10,
-                                      value: value,
-                                      color: colorFromDecimal(value),
+                      child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : (state.currentChallenge.currentUserSets
+                                              .length)
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble(),
+                              end: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : state.currentChallenge.currentUserSets
+                                          .length
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble()),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (context, value, _) => Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: LinearPercentIndicator(
+                                      lineHeight: 15,
+                                      percent: value,
+                                      progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
-                                    )),
-                          ),
-                          Flexible(
-                              flex: 1,
-                              child: Center(
-                                child: Text(
-                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() ~/ state.currentChallenge.opponentSets.length.toDouble()} %'),
-                              ))
-                        ],
-                      ),
+                                      barRadius: Radius.circular(10),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text('${(value * 100).toInt()} %'),
+                                    ),
+                                  )
+                                ],
+                              )),
                     )
                   ]));
         } else if (state is ChallengeComplete) {
@@ -334,7 +316,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 child: Center(
                                     child: Center(
                                         child: Text(
-                                  'Opponent',
+                                  state.currentChallenge.opponentUser
+                                      .displayName,
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -347,8 +330,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                   numberListKey.currentState
                                       ?.focusToItem(index);
                                 },
-                                challengeDistances:
-                                    challenge.challengeStructureDistances,
+                                challengeStructure:
+                                    challenge.challengeStructure,
                                 puttingSets: challenge.opponentSets,
                                 maxSets: challenge.opponentSets.length,
                                 itemCount: itemCount)
@@ -374,8 +357,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 currentUserKey.currentState?.focusToItem(index);
                                 numberListKey.currentState?.focusToItem(index);
                               },
-                              challengeDistances:
-                                  challenge.challengeStructureDistances,
+                              challengeStructure: challenge.challengeStructure,
                               puttingSets: challenge.currentUserSets,
                               maxSets: challenge.opponentSets.length,
                               itemCount: challenge.opponentSets.length ==
@@ -386,7 +368,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                           ],
                         )),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       height: 20,
                       child: state.currentChallenge.opponentSets.length -
                                   state.currentChallenge.currentUserSets
@@ -400,28 +382,43 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                              flex: 5,
-                              child: LinearProgressIndicator(
-                                minHeight: 10,
-                                value: state
-                                        .currentChallenge.currentUserSets.length
-                                        .toDouble() /
-                                    state.currentChallenge.opponentSets.length
-                                        .toDouble(),
-                                color: colorFromDecimal(1),
-                                backgroundColor: Colors.grey[200],
+                      child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                              begin: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : (state.currentChallenge.currentUserSets
+                                              .length)
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble(),
+                              end: state.currentChallenge.opponentSets.isEmpty
+                                  ? 0
+                                  : state.currentChallenge.currentUserSets
+                                          .length
+                                          .toDouble() /
+                                      state.currentChallenge.opponentSets.length
+                                          .toDouble()),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (context, value, _) => Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: LinearPercentIndicator(
+                                      lineHeight: 15,
+                                      percent: value,
+                                      progressColor: colorFromDecimal(value),
+                                      backgroundColor: Colors.grey[200],
+                                      barRadius: Radius.circular(10),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Text('${(value * 100).toInt()} %'),
+                                    ),
+                                  )
+                                ],
                               )),
-                          Flexible(
-                              flex: 1,
-                              child: Center(
-                                child: Text(
-                                    '${100 * state.currentChallenge.currentUserSets.length.toDouble() / state.currentChallenge.opponentSets.length.toDouble()} %'),
-                              ))
-                        ],
-                      ),
                     )
                   ]));
         } else {
@@ -457,12 +454,12 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       builder: (dialogContext) => BlocProvider.value(
                           value: BlocProvider.of<ChallengesCubit>(context),
                           child: ConfirmDialog(
-                            actionPressed: () {
+                            actionPressed: () async {
                               setState(() {
                                 sessionInProgress = false;
-                                BlocProvider.of<ChallengesCubit>(context)
-                                    .completeCurrentChallenge();
                               });
+                              await BlocProvider.of<ChallengesCubit>(context)
+                                  .completeCurrentChallenge();
                             },
                             buttonlabel: 'Finish',
                             title: 'Finish challenge?',
@@ -530,14 +527,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               FlutterRemix.arrow_go_back_line,
               color: Colors.blue,
             ),
-            onPressed: () {
-              BlocProvider.of<ChallengesCubit>(context).undo();
-              opponentKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
-              currentUserKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
-              numberListKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
+            onPressed: () async {
+              if (DateTime.now().millisecondsSinceEpoch - lastClickTime > 500) {
+                await BlocProvider.of<ChallengesCubit>(context).undo();
+                setState(() {
+                  lastClickTime = DateTime.now().millisecondsSinceEpoch;
+                });
+                focusAllToIndex(state.currentChallenge.currentUserSets.length);
+              }
             },
           );
         } else if (state is ChallengeComplete) {
@@ -551,14 +548,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               FlutterRemix.arrow_go_back_line,
               color: Colors.blue,
             ),
-            onPressed: () {
-              BlocProvider.of<ChallengesCubit>(context).undo();
-              opponentKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
-              currentUserKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
-              numberListKey.currentState
-                  ?.focusToItem(state.currentChallenge.currentUserSets.length);
+            onPressed: () async {
+              setState(() {
+                lastClickTime = DateTime.now().millisecondsSinceEpoch;
+              });
+              await BlocProvider.of<ChallengesCubit>(context).undo();
             },
           );
         } else {
@@ -571,6 +565,46 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         }
       },
     );
+  }
+
+  Widget _puttsMadeContainer(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text('Putts made',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ),
+                /*Align(
+                        alignment: Alignment.centerRight,
+                        child: _putterCountPicker(context),
+                      ),*/
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          puttsMadePicker,
+        ],
+      ),
+    );
+  }
+
+  void focusAllToIndex(int index) {
+    opponentKey.currentState?.focusToItem(index);
+    currentUserKey.currentState?.focusToItem(index);
+    numberListKey.currentState?.focusToItem(index);
   }
 
   void dialogCallBack() {

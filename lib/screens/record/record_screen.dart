@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
@@ -11,13 +10,12 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/putts_made_picker.dart';
 
 class RecordScreen extends StatefulWidget {
-  RecordScreen({Key? key}) : super(key: key);
+  const RecordScreen({Key? key}) : super(key: key);
 
   static String routeName = '/record_screen';
 
-  final thisState = _RecordScreenState();
   @override
-  _RecordScreenState createState() => thisState;
+  _RecordScreenState createState() => _RecordScreenState();
 }
 
 class _RecordScreenState extends State<RecordScreen> {
@@ -31,6 +29,7 @@ class _RecordScreenState extends State<RecordScreen> {
         });
       });
 
+  String? _dialogErrorText;
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
@@ -69,13 +68,7 @@ class _RecordScreenState extends State<RecordScreen> {
                             context: context,
                             builder: (dialogContext) => BlocProvider.value(
                                 value: BlocProvider.of<SessionsCubit>(context),
-                                child: FinishSessionDialog(
-                                    stopSession: () {
-                                      setState(() {
-                                        sessionInProgress = false;
-                                      });
-                                    },
-                                    recordScreenState: this)))
+                                child: _finishSessionDialog(context)))
                         .then((value) => dialogCallBack());
                   },
                   child: const Text('Finish'));
@@ -279,6 +272,7 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
+/*
   Widget _puttsMadePicker(BuildContext context) {
     return Container(
       height: 80,
@@ -350,7 +344,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       fontWeight: FontWeight.bold))),
     );
   }
-
+*/
   Widget _previousSetsList(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
       if (state is SessionInProgressState) {
@@ -381,29 +375,7 @@ class _RecordScreenState extends State<RecordScreen> {
     });
   }
 
-  void dialogCallBack() {
-    if (!sessionInProgress) {
-      Navigator.pop(context);
-    }
-  }
-}
-
-class FinishSessionDialog extends StatefulWidget {
-  const FinishSessionDialog(
-      {Key? key, required this.recordScreenState, required this.stopSession})
-      : super(key: key);
-
-  final _RecordScreenState recordScreenState;
-  final Function stopSession;
-  @override
-  _FinishSessionDialogState createState() => _FinishSessionDialogState();
-}
-
-class _FinishSessionDialogState extends State<FinishSessionDialog> {
-  String? _dialogErrorText;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _finishSessionDialog(BuildContext context) {
     return Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         shape: RoundedRectangleBorder(
@@ -465,9 +437,9 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                               } else {
                                 await BlocProvider.of<SessionsCubit>(context)
                                     .completeSession();
-                                BlocProvider.of<HomeScreenCubit>(context)
-                                    .reloadStats();
-                                widget.stopSession;
+                                setState(() {
+                                  sessionInProgress = false;
+                                });
                                 Navigator.pop(context);
                               }
                             },
@@ -494,5 +466,11 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
             ],
           ),
         ));
+  }
+
+  void dialogCallBack() {
+    if (!sessionInProgress) {
+      Navigator.pop(context);
+    }
   }
 }

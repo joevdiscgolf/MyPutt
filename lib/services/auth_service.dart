@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/data/types/username_doc.dart';
+import 'package:myputt/utils/utils.dart';
 
 import '../data/types/myputt_user.dart';
 
@@ -108,6 +109,7 @@ class AuthService {
     batch.set(
         userDoc,
         MyPuttUser(
+                keywords: getPrefixes(username),
                 username: username,
                 displayName: displayName,
                 uid: user.uid,

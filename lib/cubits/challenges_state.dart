@@ -6,6 +6,8 @@ abstract class ChallengesState {
 
 class ChallengesInitial extends ChallengesState {}
 
+class ChallengesLoading extends ChallengesState {}
+
 class ChallengesErrorState extends ChallengesState {}
 
 class ChallengeInProgress extends ChallengesState {

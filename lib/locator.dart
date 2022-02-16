@@ -13,9 +13,9 @@ final locator = GetIt.instance;
 Future<void> setUpLocator() async {
   locator.registerSingleton<AuthService>(AuthService());
   locator.registerSingleton<DatabaseService>(DatabaseService());
+  locator.registerSingleton<UserRepository>(UserRepository());
   locator.registerSingleton<SessionRepository>(SessionRepository());
   locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
-  locator.registerSingleton<UserRepository>(UserRepository());
   locator.registerSingleton<StatsService>(StatsService());
   locator.registerSingleton<SigninService>(SigninService());
   locator.registerSingleton<WebScraperService>(WebScraperService());

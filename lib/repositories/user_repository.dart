@@ -17,7 +17,12 @@ class UserRepository {
       return false;
     } else {
       currentUser = await _databaseService.getCurrentUser();
+      print('User | ${currentUser?.toJson()}');
       return currentUser != null;
     }
+  }
+
+  Future<List<MyPuttUser>> fetchUsersByUsername(String username) async {
+    return _databaseService.getUsersByUsername(username);
   }
 }
