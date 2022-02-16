@@ -1,3 +1,4 @@
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
@@ -121,18 +122,24 @@ class DatabaseService {
         recipientUid,
         StoragePuttingChallenge(
             challengerSets: [
-              PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
+              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 5),
               PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
               PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
+              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7),
+              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7)
             ],
             challengerUser: MyPuttUser(
                 username: 'joevdiscgolf',
                 displayName: 'joe bro',
                 pdgaNum: 132408,
                 uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructure: [20, 20, 15, 15, 15],
+            challengeStructure: [
+              ChallengeStructureItem(distance: 20, setLength: 10),
+              ChallengeStructureItem(distance: 25, setLength: 10),
+              ChallengeStructureItem(distance: 25, setLength: 10),
+              ChallengeStructureItem(distance: 30, setLength: 10),
+              ChallengeStructureItem(distance: 30, setLength: 10)
+            ],
             creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
             id: 'k7W1STgUdlWLZP4ayenPk1a8OI82~' +
                 DateTime.now().millisecondsSinceEpoch.toString(),

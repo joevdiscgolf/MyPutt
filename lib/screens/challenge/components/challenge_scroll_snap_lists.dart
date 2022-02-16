@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -11,7 +12,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
     required this.onUpdate,
     required this.isCurrentUser,
     required this.itemCount,
-    required this.challengeDistances,
+    required this.challengeStructure,
     required this.puttingSets,
     required this.maxSets,
   }) : super(key: key);
@@ -22,7 +23,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
   final int itemCount;
   final int maxSets;
 
-  final List<int> challengeDistances;
+  final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> puttingSets;
 
   @override

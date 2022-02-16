@@ -1,8 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
-
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 
 part 'storage_putting_challenge.g.dart';
@@ -24,7 +23,7 @@ class StoragePuttingChallenge {
   final String id;
   final MyPuttUser challengerUser;
   final MyPuttUser recipientUser;
-  final List<int> challengeStructure;
+  final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> challengerSets;
   final List<PuttingSet> recipientSets;
 

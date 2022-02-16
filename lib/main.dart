@@ -29,7 +29,7 @@ void main() async {
 
   //await locator.get<DatabaseService>().sendTestChallenge();
 
-  //locator.get<WebScraperService>().getPDGAData(132408);
+  locator.get<WebScraperService>().getPDGAData(132408);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

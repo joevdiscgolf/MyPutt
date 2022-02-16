@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../data/types/putting_set.dart';
+
 int totalPuttsMade() {
   return 5;
 }
@@ -34,4 +36,36 @@ int blueFromDecimal(double decimal) {
   } else {
     return (33 * decimal).toInt();
   }
+}
+
+int totalMadeFromSets(List<PuttingSet> sets) {
+  int total = 0;
+  for (var set in sets) {
+    total += set.puttsMade.toInt();
+  }
+  return total;
+}
+
+int totalAttemptsFromSet(List<PuttingSet> sets) {
+  int total = 0;
+  for (var set in sets) {
+    total += set.puttsAttempted.toInt();
+  }
+  return total;
+}
+
+int totalMadeFromSubset(List<PuttingSet> sets, int limit) {
+  int total = 0;
+  for (int i = 0; i < limit; i++) {
+    total += sets[i].puttsMade.toInt();
+  }
+  return total;
+}
+
+int totalAttemptsFromSubset(List<PuttingSet> sets, int limit) {
+  int total = 0;
+  for (int i = 0; i < limit; i++) {
+    total += sets[i].puttsAttempted.toInt();
+  }
+  return total;
 }
