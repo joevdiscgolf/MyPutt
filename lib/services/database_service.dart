@@ -112,7 +112,6 @@ class DatabaseService {
     if (currentUser == null) {
       return false;
     }
-    print('sending putting challenge');
 
     return _challengesDataWriter.sendPuttingChallenge(
         challenge.opponentUser.uid,
@@ -188,11 +187,20 @@ class DatabaseService {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
-      print('current user is null');
       return [];
     }
     final List<MyPuttUser> users =
         await _userDataLoader.getUsersByUsername(username);
     return users.where((user) => user.uid != currentUser.uid).toList();
+  }
+
+  Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+    return _challengesDataWriter.deleteChallenge(
+        currentUser.uid, challengeToDelete);
   }
 }

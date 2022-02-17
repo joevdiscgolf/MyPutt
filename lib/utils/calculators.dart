@@ -46,7 +46,7 @@ int totalMadeFromSets(List<PuttingSet> sets) {
   return total;
 }
 
-int totalAttemptsFromSet(List<PuttingSet> sets) {
+int totalAttemptsFromSets(List<PuttingSet> sets) {
   int total = 0;
   for (var set in sets) {
     total += set.puttsAttempted.toInt();

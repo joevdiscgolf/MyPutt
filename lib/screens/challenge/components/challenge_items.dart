@@ -22,6 +22,7 @@ class ActiveChallengeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        margin: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(width: 1, color: Colors.grey[400]!),
@@ -62,9 +63,10 @@ class ActiveChallengeItem extends StatelessWidget {
                     flex: 2,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('You'),
-                        Text('55/100'),
+                      children: [
+                        const Text('You'),
+                        Text(
+                            '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
                       ],
                     ),
                   ),
@@ -78,8 +80,10 @@ class ActiveChallengeItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(challenge.opponentUser.displayName),
-                          const Text('22/100'),
+                          const Text('You'),
+                          Text(
+                            '${totalMadeFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}/${totalAttemptsFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}',
+                          ),
                         ]),
                   ),
                   ElevatedButton(
@@ -224,71 +228,69 @@ class CompletedChallengeItem extends StatelessWidget {
           color = Colors.grey[200];
         }
         return Container(
+            margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(width: 1, color: Colors.grey[400]!),
             ),
             padding: const EdgeInsets.all(8),
-            child: Column(
-              children: [
-                IntrinsicHeight(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: IntrinsicHeight(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                  const SizedBox(width: 10),
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                      const SizedBox(width: 10),
-                      Flexible(
-                        flex: 3,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(challenge.opponentUser.displayName,
-                                  style: Theme.of(context).textTheme.bodySmall),
-                              Text(
-                                  DateFormat.yMMMMd('en_US')
-                                      .format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              challenge.creationTimeStamp))
-                                      .toString(),
-                                  style: Theme.of(context).textTheme.bodySmall),
-                              Text(
-                                  DateFormat.jm().format(
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          challenge.creationTimeStamp)),
-                                  style: Theme.of(context).textTheme.bodySmall),
-                            ]),
-                      ),
-                      VerticalDivider(
-                        thickness: 1,
-                        color: Colors.grey[400]!,
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text('You'),
-                            Text('55/100'),
-                          ],
-                        ),
-                      ),
-                      VerticalDivider(
-                        thickness: 1,
-                        color: Colors.grey[400]!,
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(challenge.opponentUser.displayName),
-                              const Text('22/100'),
-                            ]),
-                      ),
-                    ])),
-              ],
-            ));
+                          Text(challenge.opponentUser.displayName,
+                              style: Theme.of(context).textTheme.bodySmall),
+                          Text(
+                              DateFormat.yMMMMd('en_US')
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      challenge.creationTimeStamp))
+                                  .toString(),
+                              style: Theme.of(context).textTheme.bodySmall),
+                          Text(
+                              DateFormat.jm().format(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      challenge.creationTimeStamp)),
+                              style: Theme.of(context).textTheme.bodySmall),
+                        ]),
+                  ),
+                  VerticalDivider(
+                    thickness: 1,
+                    color: Colors.grey[400]!,
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('You'),
+                        Text(
+                            '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
+                      ],
+                    ),
+                  ),
+                  VerticalDivider(
+                    thickness: 1,
+                    color: Colors.grey[400]!,
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(challenge.opponentUser.displayName),
+                          Text(
+                              '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}')
+                        ]),
+                  ),
+                ])));
       }),
     );
   }

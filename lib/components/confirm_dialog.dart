@@ -47,6 +47,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
           Text(
             widget.title,
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(
             height: 16,

@@ -190,12 +190,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void declineChallenge(PuttingChallenge challenge) {
     _challengesRepository.declineChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      final int setLength = _challengesRepository
-          .currentChallenge!
-          .opponentSets[
-              _challengesRepository.currentChallenge!.currentUserSets.length -
-                  1]
-          .puttsAttempted as int;
       emit(ChallengeInProgress(
         currentChallenge: _challengesRepository.currentChallenge!,
         activeChallenges: _challengesRepository.activeChallenges,
@@ -212,6 +206,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   Future<bool> sendChallenge(PuttingSession session) async {
     print('sending challenge');
+    emit(ChallengesLoading());
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       print('current user is null');

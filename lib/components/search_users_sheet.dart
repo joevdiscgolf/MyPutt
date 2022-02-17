@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/confirm_dialog.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
-import '../cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
+import 'buttons/primary_button.dart';
+
+enum LoadingState { static, loading, loaded }
 
 class SearchUsersSheet extends StatefulWidget {
   const SearchUsersSheet({Key? key, required this.session}) : super(key: key);
@@ -63,13 +65,13 @@ class _SearchUsersSheetState extends State<SearchUsersSheet> {
                 counter: const Offstage(),
               ),
               onChanged: (String username) async {
-                if (DateTime.now().millisecondsSinceEpoch - lastUpdated > 200) {
-                  await BlocProvider.of<SearchUserCubit>(context)
-                      .searchUsersByUsername(username);
-                }
+                if (DateTime.now().millisecondsSinceEpoch - lastUpdated >
+                    200) {}
                 setState(() {
                   lastUpdated = DateTime.now().millisecondsSinceEpoch;
                 });
+                await BlocProvider.of<SearchUserCubit>(context)
+                    .searchUsersByUsername(username);
               },
             ),
             Expanded(child: UserListView(session: widget.session))
@@ -92,11 +94,7 @@ class _UserListViewState extends State<UserListView> {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchUserCubit, SearchUsersState>(
       builder: (context, state) {
-        print('updated and rebuilding, state: $state');
         if (state is SearchUsersLoaded) {
-          for (var user in state.users) {
-            print(user.toJson());
-          }
           return ListView(
             children: state.users
                 .map(
@@ -104,7 +102,7 @@ class _UserListViewState extends State<UserListView> {
                 .toList(),
           );
         } else if (state is SearchUsersLoading) {
-          return Center(child: const CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else {
           return Container();
         }
@@ -127,14 +125,8 @@ class UserListItem extends StatelessWidget {
       onTap: () {
         showDialog(
             context: context,
-            builder: (context) => ConfirmDialog(
-                actionPressed: () {
-                  BlocProvider.of<ChallengesCubit>(context)
-                      .sendChallenge(session);
-                },
-                title: 'Send challenge',
-                confirmColor: ThemeColors.green,
-                buttonlabel: 'Send'));
+            builder: (context) => SendChallengeDialog(
+                displayName: user.displayName, session: session));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -143,8 +135,186 @@ class UserListItem extends StatelessWidget {
             border: Border.all(width: 2, color: Colors.grey[400]!)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [Text(user.displayName), Text(user.username)],
+          children: [
+            const Flexible(
+              flex: 1,
+              child: DefaultProfileCircle(),
+            ),
+            Flexible(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Text(
+                      'Username',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(user.username),
+                  ],
+                )),
+            Flexible(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Text(
+                      'Display name',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(user.displayName),
+                  ],
+                )),
+            const Flexible(
+                flex: 2, child: Icon(FlutterRemix.arrow_right_s_line))
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class DefaultProfileCircle extends StatelessWidget {
+  const DefaultProfileCircle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration:
+          BoxDecoration(color: Colors.grey[300]!, shape: BoxShape.circle),
+      child:
+          Center(child: Icon(FlutterRemix.user_fill, color: Colors.grey[600]!)),
+    );
+  }
+}
+
+class SendChallengeDialog extends StatefulWidget {
+  const SendChallengeDialog(
+      {Key? key, required this.displayName, required this.session})
+      : super(key: key);
+
+  final String displayName;
+  final PuttingSession session;
+
+  @override
+  _SendChallengeDialogState createState() => _SendChallengeDialogState();
+}
+
+class _SendChallengeDialogState extends State<SendChallengeDialog> {
+  String? _dialogErrorText;
+  LoadingState _loadingState = LoadingState.static;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Container(
+            padding: const EdgeInsets.all(24),
+            width: double.infinity,
+            child: _mainBody(context)));
+  }
+
+  Widget _mainBody(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            children: [
+              const Text(
+                'Send challenge to',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                ' ${widget.displayName}',
+                style: TextStyle(
+                    color: ThemeColors.green,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Text(_dialogErrorText ?? ''),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                PrimaryButton(
+                    width: 100,
+                    height: 50,
+                    label: 'Cancel',
+                    fontSize: 18,
+                    labelColor: Colors.grey[600]!,
+                    backgroundColor: Colors.grey[200]!,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                SizedBox(
+                  width: 100,
+                  height: 50,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: ThemeColors.green,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(48)),
+                        enableFeedback: true,
+                        shadowColor: Colors.transparent,
+                        elevation: 0,
+                        onPrimary: Colors.grey[100],
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          _loadingState = LoadingState.loading;
+                        });
+
+                        await BlocProvider.of<ChallengesCubit>(context)
+                            .sendChallenge(widget.session);
+                        setState(() {
+                          _loadingState = LoadingState.loaded;
+                        });
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          Navigator.pop(context);
+                        });
+                      },
+                      child: Builder(builder: (context) {
+                        switch (_loadingState) {
+                          case LoadingState.static:
+                            return Text('Send');
+                          case LoadingState.loading:
+                            return const CircularProgressIndicator(
+                              color: Colors.white,
+                            );
+                          case LoadingState.loaded:
+                            return const Icon(
+                              FlutterRemix.check_line,
+                              color: Colors.white,
+                            );
+                        }
+                        return Text('Send');
+                      })),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

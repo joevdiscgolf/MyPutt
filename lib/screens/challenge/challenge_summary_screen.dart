@@ -19,6 +19,7 @@ class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100]!,
       appBar: AppBar(
         title: const Text('Challenge summary'),
       ),
@@ -57,7 +58,7 @@ class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {
                           decoration:
                               BoxDecoration(border: Border.all(width: 2)),
                           child: Text(
-                              '${totalMadeFromSets(widget.challenge.currentUserSets)}/${totalAttemptsFromSet(widget.challenge.currentUserSets)}'),
+                              '${totalMadeFromSets(widget.challenge.currentUserSets)}/${totalAttemptsFromSets(widget.challenge.currentUserSets)}'),
                         ),
                       ),
                     ],
@@ -78,7 +79,7 @@ class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {
                       child: Container(
                         decoration: BoxDecoration(border: Border.all(width: 2)),
                         child: Text(
-                            '${totalMadeFromSets(widget.challenge.opponentSets)}/${totalAttemptsFromSet(widget.challenge.opponentSets)}'),
+                            '${totalMadeFromSets(widget.challenge.opponentSets)}/${totalAttemptsFromSets(widget.challenge.opponentSets)}'),
                       ),
                     ),
                   ],

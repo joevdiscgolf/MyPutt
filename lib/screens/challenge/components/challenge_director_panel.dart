@@ -152,7 +152,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                               '/',
                               style: Theme.of(context).textTheme.headline6,
                             ),
-                            _textAnimation(totalAttemptsFromSet(
+                            _textAnimation(totalAttemptsFromSets(
                                     state.currentChallenge.currentUserSets)
                                 .toDouble())
                           ],
@@ -337,7 +337,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                               '/',
                               style: Theme.of(context).textTheme.headline6,
                             ),
-                            _textAnimation(totalAttemptsFromSet(
+                            _textAnimation(totalAttemptsFromSets(
                                     state.currentChallenge.currentUserSets)
                                 .toDouble())
                           ],

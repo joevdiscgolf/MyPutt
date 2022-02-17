@@ -15,31 +15,6 @@ class ChallengesRepository {
 
   ChallengesRepository() {
     final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser != null) {
-      /*pendingChallenges = [
-        PuttingChallenge(
-            opponentSets: [
-              PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
-            ],
-            opponentUser: MyPuttUser(
-                username: 'joevdiscgolf',
-                displayName: 'joe bro',
-                pdgaNum: 132408,
-                uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructure: [20, 20, 15, 15, 15],
-            creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-            id: 'opponentuid' +
-                '~' +
-                DateTime.now().millisecondsSinceEpoch.toString(),
-            currentUserSets: [],
-            currentUser: currentUser,
-            status: ChallengeStatus.pending)
-      ];*/
-    }
   }
 
   PuttingChallenge? currentChallenge;
@@ -141,16 +116,6 @@ class ChallengesRepository {
 
   void declineChallenge(PuttingChallenge challenge) {
     pendingChallenges.remove(challenge);
-    // async database call
+    _databaseService.deleteChallenge(challenge);
   }
 }
-/*
-    /*PuttingChallenge(
-        status: ChallengeStatus.pending,
-        createdAt: 12345,
-        id: 'id',
-        opponentUid: 'opponentUid',
-        currentUid: 'currentUid',
-        challengeStructure: [1, 2, 3],
-        opponentSets: [],
-        currentUserSets: [])*/*/
