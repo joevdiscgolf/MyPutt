@@ -20,6 +20,7 @@ class SessionRepository {
 
   void startCurrentSession() {
     currentSession = PuttingSession(
+      timeStamp: DateTime.now().millisecondsSinceEpoch,
       dateStarted:
           '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
     );

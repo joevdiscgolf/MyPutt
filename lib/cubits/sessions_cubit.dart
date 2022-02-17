@@ -53,6 +53,7 @@ class SessionsCubit extends Cubit<SessionsState> {
       sessions: _sessionRepository.allSessions,
       currentSession: _sessionRepository.currentSession ??
           PuttingSession(
+            timeStamp: DateTime.now().millisecondsSinceEpoch,
             dateStarted:
                 '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
           ),
@@ -79,6 +80,7 @@ class SessionsCubit extends Cubit<SessionsState> {
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession ??
             PuttingSession(
+              timeStamp: DateTime.now().millisecondsSinceEpoch,
               dateStarted:
                   '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
             ),

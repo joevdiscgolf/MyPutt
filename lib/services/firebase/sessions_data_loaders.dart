@@ -22,6 +22,7 @@ class FBSessionsDataLoader {
         .collection('$sessionsCollection/$uid/$completedSessionsCollection');
 
     QuerySnapshot querySnapshot = await completedSessionsReference
+        .orderBy('timeStamp')
         .get()
         .catchError((error) => print(error));
 

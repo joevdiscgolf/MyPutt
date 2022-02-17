@@ -126,7 +126,6 @@ class DatabaseService {
     if (currentUser == null) {
       return false;
     }
-    print('sending putting challenge');
     if (storageChallenge.recipientUser == null) {
       return false;
     } else {
