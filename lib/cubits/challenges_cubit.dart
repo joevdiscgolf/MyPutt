@@ -204,7 +204,8 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  Future<bool> sendChallenge(PuttingSession session) async {
+  Future<bool> sendChallenge(
+      PuttingSession session, MyPuttUser recipientUser) async {
     print('sending challenge');
     emit(ChallengesLoading());
     final MyPuttUser? currentUser = _userRepository.currentUser;
@@ -215,12 +216,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
       final generatedChallenge = StoragePuttingChallenge.fromSession(
         session,
         currentUser,
-        MyPuttUser(
-            keywords: getPrefixes('joevdiscgolf'),
-            username: 'joevdiscgolf',
-            displayName: 'joe bro',
-            pdgaNum: 132408,
-            uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
+        recipientUser,
       );
       print(generatedChallenge.toJson());
       return _databaseService.sendStorageChallenge(generatedChallenge);

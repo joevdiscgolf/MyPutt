@@ -120,13 +120,12 @@ class UserListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user.toJson());
     return InkWell(
       onTap: () {
         showDialog(
             context: context,
-            builder: (context) => SendChallengeDialog(
-                displayName: user.displayName, session: session));
+            builder: (context) =>
+                SendChallengeDialog(recipientUser: user, session: session));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -192,10 +191,10 @@ class DefaultProfileCircle extends StatelessWidget {
 
 class SendChallengeDialog extends StatefulWidget {
   const SendChallengeDialog(
-      {Key? key, required this.displayName, required this.session})
+      {Key? key, required this.recipientUser, required this.session})
       : super(key: key);
 
-  final String displayName;
+  final MyPuttUser recipientUser;
   final PuttingSession session;
 
   @override
@@ -236,7 +235,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                 textAlign: TextAlign.center,
               ),
               Text(
-                ' ${widget.displayName}',
+                ' ${widget.recipientUser.displayName}',
                 style: TextStyle(
                     color: ThemeColors.green,
                     fontSize: 25,
@@ -286,7 +285,8 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                         });
 
                         await BlocProvider.of<ChallengesCubit>(context)
-                            .sendChallenge(widget.session);
+                            .sendChallenge(
+                                widget.session, widget.recipientUser);
                         setState(() {
                           _loadingState = LoadingState.loaded;
                         });

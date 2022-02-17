@@ -263,37 +263,46 @@ class _ChallengesState extends State<ChallengesScreen> {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is NoCurrentChallenge) {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is ChallengeComplete) {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is ChallengesLoading) {
                       return const Center(child: CircularProgressIndicator());
