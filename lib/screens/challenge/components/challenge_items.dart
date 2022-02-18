@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/constants.dart';
 
 import '../../../components/confirm_dialog.dart';
 import '../../../cubits/challenges_cubit.dart';
@@ -217,80 +218,169 @@ class CompletedChallengeItem extends StatelessWidget {
                 ChallengeSummaryScreen(challenge: challenge)));
       },
       child: Builder(builder: (context) {
-        Color? color;
-        if (totalMadeFromSets(challenge.currentUserSets) >
-            totalMadeFromSets(challenge.opponentSets)) {
-          color = Colors.green[100];
-        } else if (totalMadeFromSets(challenge.currentUserSets) <
-            totalMadeFromSets(challenge.opponentSets)) {
-          color = Colors.red[100];
+        final int currentUserPuttsMade =
+            totalMadeFromSets(challenge.currentUserSets);
+        final int opponentPuttsMade = totalMadeFromSets(challenge.opponentSets);
+        String resultText;
+        final int difference = totalMadeFromSets(challenge.currentUserSets) -
+            totalMadeFromSets(challenge.opponentSets);
+        if (difference > 0) {
+          resultText = "VICTORY";
+        } else if (difference < 0) {
+          resultText = "DEFEAT";
         } else {
-          color = Colors.grey[200];
+          resultText = "DRAW";
         }
         return Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(width: 1, color: Colors.grey[400]!),
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                  width: 1,
+                  color: difference == 0
+                      ? Colors.white
+                      : (difference > 0)
+                          ? ThemeColors.lightBlue
+                          : Colors.red),
             ),
-            padding: const EdgeInsets.all(8),
             child: IntrinsicHeight(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(color: Colors.grey[400]!),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  const SizedBox(width: 10),
-                  Flexible(
-                    flex: 3,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(challenge.opponentUser.displayName,
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                              DateFormat.yMMMMd('en_US')
-                                  .format(DateTime.fromMillisecondsSinceEpoch(
-                                      challenge.creationTimeStamp))
-                                  .toString(),
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                              DateFormat.jm().format(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      challenge.creationTimeStamp)),
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ]),
+                      Expanded(
+                        child: Text(resultText,
+                            style:
+                                Theme.of(context).textTheme.headline5?.copyWith(
+                                    shadows: [
+                                  const Shadow(
+                                      color: Colors.black,
+                                      offset: (Offset(0.3, 0.3))),
+                                  const Shadow(
+                                      color: Colors.black,
+                                      offset: (Offset(-0.3, 0.3))),
+                                  const Shadow(
+                                      color: Colors.black,
+                                      offset: (Offset(0.3, -0.3))),
+                                  const Shadow(
+                                      color: Colors.black,
+                                      offset: (Offset(-0.3, -0.3)))
+                                ],
+                                    color: difference == 0
+                                        ? Colors.white
+                                        : (difference > 0)
+                                            ? ThemeColors.lightBlue
+                                            : Colors.red)),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[900]!,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: Image(image: blueFrisbeeIcon)),
+                            Text('$currentUserPuttsMade  -  $opponentPuttsMade',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(color: Colors.white)),
+                            const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: Image(image: redFrisbeeIcon))
+                          ],
+                        ),
+                      ),
+                      const Spacer()
+                    ],
                   ),
-                  VerticalDivider(
-                    thickness: 1,
-                    color: Colors.grey[400]!,
-                  ),
-                  Flexible(
-                    flex: 2,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: IntrinsicHeight(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('You'),
-                        Text(
-                            '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
+                        Row(children: [
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const DefaultProfileCircle(),
+                                const SizedBox(width: 10),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      challenge.currentUser.displayName
+                                          .toUpperCase(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline6
+                                          ?.copyWith(
+                                              color: ThemeColors.lightBlue),
+                                    ),
+                                    Text(
+                                        '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          VerticalDivider(
+                            color: Colors.grey[400]!,
+                            thickness: 2,
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        challenge.opponentUser.displayName
+                                            .toUpperCase(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6
+                                            ?.copyWith(color: Colors.red),
+                                      ),
+                                      Text(
+                                          '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}')
+                                    ]),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                const DefaultProfileCircle(),
+                              ],
+                            ),
+                          ),
+                        ]),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                                '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}',
+                                style: Theme.of(context).textTheme.bodySmall),
+                            const Spacer(),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  VerticalDivider(
-                    thickness: 1,
-                    color: Colors.grey[400]!,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(challenge.opponentUser.displayName),
-                          Text(
-                              '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}')
-                        ]),
-                  ),
-                ])));
+                ),
+              ],
+            )));
       }),
     );
   }

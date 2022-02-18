@@ -37,42 +37,68 @@ class _SessionsState extends State<SessionsScreen> {
               ),
               body: Container(
                 padding: const EdgeInsets.all(8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    BlocBuilder<SessionsCubit, SessionsState>(
-                      builder: (context, state) {
-                        if (state is SessionErrorState) {
-                          return Container();
-                        } else {
-                          return Align(
+                child: BlocBuilder<SessionsCubit, SessionsState>(
+                  builder: (context, state) {
+                    if (state is SessionErrorState) {
+                      return Container();
+                    } else if (state is SessionInProgressState) {
+                      return Column(
+                        children: [
+                          Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
                               padding: const EdgeInsets.all(8),
-                              child: Text('${state.sessions.length} Sessions',
+                              child: Text(
+                                  '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
                                   style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold)),
                             ),
-                          );
-                        }
-                      },
-                    ),
-                    _continueSessionCard(context),
-                    BlocBuilder<SessionsCubit, SessionsState>(
-                      builder: (context, state) {
-                        if (state is SessionInProgressState ||
-                            state is NoActiveSessionState) {
-                          return _sessionsListView(context);
-                        } else if (state is SessionErrorState) {
-                          return const Center(
-                              child: Text('Something went wrong'));
-                        } else {
-                          return const Center(child: Text('No sessions yet'));
-                        }
-                      },
-                    ),
-                  ],
+                          ),
+                          _continueSessionCard(context),
+                          _sessionsListView(context),
+                        ],
+                      );
+                    } else if (state is NoActiveSessionState) {
+                      print('no active session state');
+                      return Column(
+                        mainAxisAlignment: state.sessions.isEmpty
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
+                        children: [
+                          Visibility(
+                            visible: state.sessions.isNotEmpty,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                child: Text(
+                                    '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ),
+                          state.sessions.isEmpty
+                              ? const Center(
+                                  child: Text('No sessions yet'),
+                                )
+                              : _sessionsListView(context),
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          Text(
+                            '${state.sessions.length} sessions',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          _sessionsListView(context),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ),
             );
@@ -181,9 +207,7 @@ class _SessionsState extends State<SessionsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [Text('Something went wrong')]);
         } else {
-          return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [Text('No sessions yet')]);
+          return const Text('No sessions yet');
         }
       },
     );

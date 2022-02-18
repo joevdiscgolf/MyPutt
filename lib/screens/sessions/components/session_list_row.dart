@@ -29,7 +29,7 @@ class SessionListRow extends StatelessWidget {
     TextStyle textStyle =
         const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(width: 1, color: Colors.grey[400]!),
@@ -38,21 +38,22 @@ class SessionListRow extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          isCurrentSession
-              ? Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Text('CURRENT',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ))))
-              : Container(),
+          Visibility(
+            visible: isCurrentSession,
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 2),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Text('CURRENT',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )))),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

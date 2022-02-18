@@ -80,7 +80,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                               ),
                             ),
                             ChallengeCategoryTab(
-                              showCounter: false,
+                              showCounter: true,
                               challenges: state.completedChallenges,
                               label: 'Completed',
                               icon: const Icon(

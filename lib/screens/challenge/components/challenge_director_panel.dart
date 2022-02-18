@@ -30,165 +30,201 @@ class ChallengeDirectorPanel extends StatelessWidget {
               color: Colors.white,
             ),
             child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+              child: Column(
                 children: [
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Text(
-                            'Distance',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            'Putters',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  VerticalDivider(
-                    width: 5,
-                    color: Colors.grey[400]!,
-                    thickness: 1,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Center(
-                          child: TweenAnimationBuilder<double>(
-                            tween: Tween<double>(
-                                begin: 0.0,
-                                end: state
-                                    .currentChallenge
-                                    .challengeStructure[state.currentChallenge
-                                        .currentUserSets.length]
-                                    .distance
-                                    .toDouble()),
-                            duration: const Duration(milliseconds: 300),
-                            builder: (context, value, _) => Text(
-                              ' ${value.toInt().toString()} ft',
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: TweenAnimationBuilder<double>(
-                            tween: Tween<double>(
-                                begin: 0.0,
-                                end: state
-                                    .currentChallenge
-                                    .challengeStructure[state.currentChallenge
-                                        .currentUserSets.length]
-                                    .setLength
-                                    .toDouble()),
-                            duration: const Duration(milliseconds: 300),
-                            builder: (context, value, _) => Text(
-                              ' ${value.toInt().toString()}',
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  VerticalDivider(
-                    thickness: 2,
-                    color: Colors.grey[800],
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Text(
-                            state.currentChallenge.opponentUser.displayName,
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            'You',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        Row(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Column(
                           children: [
-                            _textAnimation(totalMadeFromSubset(
-                                    state.currentChallenge.opponentSets,
-                                    state.currentChallenge.currentUserSets
-                                        .length)
-                                .toDouble()),
-                            Text(
-                              '/',
-                              style: Theme.of(context).textTheme.headline6,
+                            Center(
+                              child: Text(
+                                'Distance',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
                             ),
-                            _textAnimation(totalAttemptsFromSubset(
-                                    state.currentChallenge.opponentSets,
-                                    state.currentChallenge.currentUserSets
-                                        .length)
-                                .toDouble()),
+                            Center(
+                              child: Text(
+                                'Putters',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
                           ],
                         ),
-                        Row(
+                      ),
+                      const SizedBox(width: 10),
+                      VerticalDivider(
+                        width: 5,
+                        color: Colors.grey[400]!,
+                        thickness: 1,
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: Column(
                           children: [
-                            _textAnimation(totalMadeFromSets(
-                                    state.currentChallenge.currentUserSets)
-                                .toDouble()),
-                            Text(
-                              '/',
-                              style: Theme.of(context).textTheme.headline6,
+                            Center(
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                    begin: 0.0,
+                                    end: state
+                                        .currentChallenge
+                                        .challengeStructure[state
+                                            .currentChallenge
+                                            .currentUserSets
+                                            .length]
+                                        .distance
+                                        .toDouble()),
+                                duration: const Duration(milliseconds: 300),
+                                builder: (context, value, _) => Text(
+                                  ' ${value.toInt().toString()} ft',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
                             ),
-                            _textAnimation(totalAttemptsFromSets(
-                                    state.currentChallenge.currentUserSets)
-                                .toDouble())
+                            Center(
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                    begin: 0.0,
+                                    end: state
+                                        .currentChallenge
+                                        .challengeStructure[state
+                                            .currentChallenge
+                                            .currentUserSets
+                                            .length]
+                                        .setLength
+                                        .toDouble()),
+                                duration: const Duration(milliseconds: 300),
+                                builder: (context, value, _) => Text(
+                                  ' ${value.toInt().toString()}',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(
-                            begin: 0.0,
-                            end: puttsMadeDifference.toDouble(),
-                          ),
-                          duration: const Duration(milliseconds: 300),
-                          builder: (context, value, _) => Text(
-                            '${puttsMadeDifference > 0 ? '+' : ''}${value.toInt()}',
-                            style: TextStyle(
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.grey[800],
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                state.currentChallenge.opponentUser.displayName,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                'You',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                _textAnimation(totalMadeFromSubset(
+                                        state.currentChallenge.opponentSets,
+                                        state.currentChallenge.currentUserSets
+                                            .length)
+                                    .toDouble()),
+                                Text(
+                                  '/',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                _textAnimation(totalAttemptsFromSubset(
+                                        state.currentChallenge.opponentSets,
+                                        state.currentChallenge.currentUserSets
+                                            .length)
+                                    .toDouble()),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                _textAnimation(totalMadeFromSets(
+                                        state.currentChallenge.currentUserSets)
+                                    .toDouble()),
+                                Text(
+                                  '/',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                _textAnimation(totalAttemptsFromSets(
+                                        state.currentChallenge.currentUserSets)
+                                    .toDouble())
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            TweenAnimationBuilder<double>(
+                              tween: Tween<double>(
+                                begin: 0.0,
+                                end: puttsMadeDifference.toDouble(),
+                              ),
+                              duration: const Duration(milliseconds: 300),
+                              builder: (context, value, _) => Text(
+                                '${puttsMadeDifference > 0 ? '+' : ''}${value.toInt()}',
+                                style: TextStyle(
+                                  color: puttsMadeDifference >= 0
+                                      ? ThemeColors.green
+                                      : Colors.red,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              puttsMadeDifference >= 0
+                                  ? FlutterRemix.arrow_up_line
+                                  : FlutterRemix.arrow_down_line,
                               color: puttsMadeDifference >= 0
                                   ? ThemeColors.green
                                   : Colors.red,
                             ),
-                          ),
+                          ],
                         ),
-                        Icon(
-                          puttsMadeDifference >= 0
-                              ? FlutterRemix.arrow_up_line
-                              : FlutterRemix.arrow_down_line,
-                          color: puttsMadeDifference >= 0
-                              ? ThemeColors.green
-                              : Colors.red,
-                        ),
-                      ],
-                    ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Builder(builder: (context) {
+                      final TextStyle? style =
+                          Theme.of(context).textTheme.headline6;
+                      final difference = totalMadeFromSets(
+                              state.currentChallenge.currentUserSets) -
+                          totalMadeFromSubset(
+                              state.currentChallenge.opponentSets,
+                              state.currentChallenge.currentUserSets.length);
+                      if (difference > 0) {
+                        return Text(
+                            "You're ahead by $difference ${difference == 1 ? 'putt' : 'putts'}",
+                            style: style);
+                      } else if (difference < 0) {
+                        return Text(
+                          "You're behind behind by ${difference.abs()} ${difference == -1 ? 'putt' : 'putts'}",
+                          style: style,
+                        );
+                      } else {
+                        return Text(
+                          'All tied up',
+                          style: style,
+                        );
+                      }
+                    }),
                   )
                 ],
               ),
@@ -223,18 +259,19 @@ class ChallengeDirectorPanel extends StatelessWidget {
                         Center(
                           child: Text(
                             'Distance',
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                         Center(
                           child: Text(
                             'Putters',
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 10),
                   VerticalDivider(
                     width: 5,
                     color: Colors.grey[400]!,
@@ -258,7 +295,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                             duration: const Duration(milliseconds: 300),
                             builder: (context, value, _) => Text(
                               ' ${value.toInt().toString()} ft',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
                         ),
@@ -276,7 +313,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                             duration: const Duration(milliseconds: 300),
                             builder: (context, value, _) => Text(
                               ' ${value.toInt().toString()}',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
                         ),
@@ -294,13 +331,13 @@ class ChallengeDirectorPanel extends StatelessWidget {
                         Center(
                           child: Text(
                             state.currentChallenge.opponentUser.displayName,
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                         Center(
                           child: Text(
                             'You',
-                            style: Theme.of(context).textTheme.headline6,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
                       ],
@@ -319,7 +356,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 .toDouble()),
                             Text(
                               '/',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             _textAnimation(totalAttemptsFromSubset(
                                     state.currentChallenge.opponentSets,
@@ -335,7 +372,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 .toDouble()),
                             Text(
                               '/',
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             _textAnimation(totalAttemptsFromSets(
                                     state.currentChallenge.currentUserSets)
@@ -395,7 +432,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       builder: (context, value, _) => Text(
         '${value.toInt().toString()}',
-        style: Theme.of(context).textTheme.headline6,
+        style: Theme.of(context).textTheme.bodyLarge,
       ),
     );
   }

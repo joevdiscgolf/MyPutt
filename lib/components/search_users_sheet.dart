@@ -8,6 +8,7 @@ import 'package:myputt/theme/theme_data.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'buttons/primary_button.dart';
+import 'package:myputt/utils/constants.dart';
 
 enum LoadingState { static, loading, loaded }
 
@@ -170,21 +171,6 @@ class UserListItem extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class DefaultProfileCircle extends StatelessWidget {
-  const DefaultProfileCircle({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration:
-          BoxDecoration(color: Colors.grey[300]!, shape: BoxShape.circle),
-      child:
-          Center(child: Icon(FlutterRemix.user_fill, color: Colors.grey[600]!)),
     );
   }
 }

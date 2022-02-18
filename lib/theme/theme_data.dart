@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ThemeColors {
   static Color get green => const Color(0xff00de64);
+  static Color get lightBlue => const Color(0xff00bbff);
 }
 
 ThemeData lightTheme(BuildContext context) {
