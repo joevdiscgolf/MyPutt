@@ -1,3 +1,4 @@
+import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -13,39 +14,11 @@ class ChallengesRepository {
   final AuthService _authService = locator.get<AuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
-  ChallengesRepository() {
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser != null) {
-      /*pendingChallenges = [
-        PuttingChallenge(
-            opponentSets: [
-              PuttingSet(distance: 30, puttsAttempted: 8, puttsMade: 5),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7)
-            ],
-            opponentUser: MyPuttUser(
-                username: 'joevdiscgolf',
-                displayName: 'joe bro',
-                pdgaNum: 132408,
-                uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructure: [20, 20, 15, 15, 15],
-            creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-            id: 'opponentuid' +
-                '~' +
-                DateTime.now().millisecondsSinceEpoch.toString(),
-            currentUserSets: [],
-            currentUser: currentUser,
-            status: ChallengeStatus.pending)
-      ];*/
-    }
-  }
-
   PuttingChallenge? currentChallenge;
   List<PuttingChallenge> pendingChallenges = [];
   List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> completedChallenges = [];
+  List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
@@ -61,7 +34,7 @@ class ChallengesRepository {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
       currentChallenge!.currentUserSets.remove(set);
-      await _databaseService.updatePuttingChallenge(currentChallenge!);
+      await _databaseService.setPuttingChallenge(currentChallenge!);
     }
   }
 
@@ -72,8 +45,6 @@ class ChallengesRepository {
       _databaseService.getChallengesWithStatus(ChallengeStatus.complete),
       _databaseService.getCurrentPuttingChallenge(),
     ]);
-
-    print('fetching all challenges, result: $result');
 
     if (result[0] != null && result[0] is List<PuttingChallenge>) {
       pendingChallenges = result[0] as List<PuttingChallenge>;
@@ -110,7 +81,7 @@ class ChallengesRepository {
         completedChallenges.add(currentChallenge!);
         activeChallenges.remove(currentChallenge);
       }
-      await _databaseService.updatePuttingChallenge(currentChallenge!);
+      await _databaseService.setPuttingChallenge(currentChallenge!);
       await _databaseService.sendCompletedChallenge(currentChallenge!);
       currentChallenge = null;
       return true;
@@ -134,23 +105,28 @@ class ChallengesRepository {
 
   Future<bool> storeCurrentChallenge() async {
     if (currentChallenge != null) {
-      return _databaseService.updatePuttingChallenge(currentChallenge!);
+      return _databaseService.setPuttingChallenge(currentChallenge!);
     }
     return false;
   }
 
   void declineChallenge(PuttingChallenge challenge) {
     pendingChallenges.remove(challenge);
-    // async database call
+    _databaseService.deleteChallenge(challenge);
+  }
+
+  Future<void> addDeepLinkChallenges() async {
+    print('adding deep link challenges. Challenges: ${deepLinkChallenges}');
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser != null) {
+      for (var storageChallenge in deepLinkChallenges) {
+        final PuttingChallenge challenge =
+            PuttingChallenge.fromStorageChallenge(
+                storageChallenge, currentUser);
+        challenge.status = ChallengeStatus.active;
+        activeChallenges.add(challenge);
+        await _databaseService.setPuttingChallenge(challenge);
+      }
+    }
   }
 }
-/*
-    /*PuttingChallenge(
-        status: ChallengeStatus.pending,
-        createdAt: 12345,
-        id: 'id',
-        opponentUid: 'opponentUid',
-        currentUid: 'currentUid',
-        challengeStructure: [1, 2, 3],
-        opponentSets: [],
-        currentUserSets: [])*/*/

@@ -32,8 +32,8 @@ class _ChallengesState extends State<ChallengesScreen> {
                   style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
                       primary: Colors.transparent),
-                  onPressed: () async {
-                    await BlocProvider.of<ChallengesCubit>(context).reload();
+                  onPressed: () {
+                    BlocProvider.of<ChallengesCubit>(context).reload();
                   },
                   child: const Center(
                     child: Icon(IconData(0xe514, fontFamily: 'MaterialIcons')),
@@ -80,7 +80,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                               ),
                             ),
                             ChallengeCategoryTab(
-                              showCounter: false,
+                              showCounter: true,
                               challenges: state.completedChallenges,
                               label: 'Completed',
                               icon: const Icon(
@@ -263,40 +263,51 @@ class _ChallengesState extends State<ChallengesScreen> {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is NoCurrentChallenge) {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is ChallengeComplete) {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,
-                            challenges: state.activeChallenges),
+                            challenges:
+                                List.from(state.activeChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.pending,
-                            challenges: state.pendingChallenges),
+                            challenges:
+                                List.from(state.pendingChallenges.reversed)),
                         ChallengesList(
                             category: ChallengeCategory.complete,
-                            challenges: state.completedChallenges),
+                            challenges:
+                                List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is ChallengesLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Container(
+                          child:
+                              const Center(child: CircularProgressIndicator()));
                     } else {
                       return Container();
                     }

@@ -55,6 +55,7 @@ dependencies:
   web_scraper: ^0.1.4
   firebase_dynamic_links: ^4.0.6
   percent_indicator: ^4.0.0
+  share: ^2.0.4
   
 
 dev_dependencies:
@@ -78,6 +79,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

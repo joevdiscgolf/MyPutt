@@ -8,7 +8,7 @@ import '../data/types/challenges/putting_challenge.dart';
 import '../data/types/putting_session.dart';
 
 Future<void> fetchRepositoryData() async {
-  print('fetching repository data');
+  print('fetching repo data');
   await locator.get<UserRepository>().fetchCurrentUser();
 
   await Future.wait([
@@ -16,6 +16,7 @@ Future<void> fetchRepositoryData() async {
     locator.get<SessionRepository>().fetchCurrentSession(),
     locator.get<ChallengesRepository>().fetchAllChallenges(),
   ]);
+  await locator.get<ChallengesRepository>().addDeepLinkChallenges();
 }
 
 void clearRepositoryData() {

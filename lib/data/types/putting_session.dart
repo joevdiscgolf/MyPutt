@@ -5,7 +5,8 @@ part 'putting_session.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSession {
-  PuttingSession({required this.dateStarted});
+  PuttingSession({required this.dateStarted, required this.timeStamp});
+  final int timeStamp;
   final String dateStarted;
   List<PuttingSet> sets = [];
 

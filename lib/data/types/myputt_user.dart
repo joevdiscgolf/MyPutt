@@ -1,3 +1,4 @@
+import 'dart:io' show File;
 import 'package:json_annotation/json_annotation.dart';
 
 part 'myputt_user.g.dart';
@@ -9,12 +10,14 @@ class MyPuttUser {
       required this.keywords,
       required this.displayName,
       required this.uid,
-      this.pdgaNum});
+      this.pdgaNum,
+      this.profilePicture});
   final String username;
   final List<String> keywords;
   final String displayName;
   final String uid;
   final int? pdgaNum;
+  final File? profilePicture;
 
   factory MyPuttUser.fromJson(Map<String, dynamic> json) =>
       _$MyPuttUserFromJson(json);

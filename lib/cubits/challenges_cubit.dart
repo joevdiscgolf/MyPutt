@@ -22,7 +22,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   final UserRepository _userRepository = locator.get<UserRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   ChallengesCubit() : super(ChallengesInitial()) {
-    print('initializing');
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
           _challengesRepository.currentChallenge?.opponentSets.length) {
@@ -50,7 +49,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   Future<void> reload() async {
     emit(ChallengesLoading());
-    print('reloading challenges');
     await _challengesRepository.fetchAllChallenges();
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
@@ -78,10 +76,8 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   void openChallenge(PuttingChallenge challenge) {
-    print('opening challenge');
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      print(_challengesRepository.currentChallenge?.toJson());
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
           _challengesRepository.currentChallenge?.opponentSets.length) {
         emit(ChallengeComplete(
@@ -104,7 +100,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> completeCurrentChallenge() async {
-    print('completing challenge');
     await _challengesRepository.completeCurrentChallenge();
     emit(NoCurrentChallenge(
         activeChallenges: _challengesRepository.activeChallenges,
@@ -190,12 +185,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void declineChallenge(PuttingChallenge challenge) {
     _challengesRepository.declineChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      final int setLength = _challengesRepository
-          .currentChallenge!
-          .opponentSets[
-              _challengesRepository.currentChallenge!.currentUserSets.length -
-                  1]
-          .puttsAttempted as int;
       emit(ChallengeInProgress(
         currentChallenge: _challengesRepository.currentChallenge!,
         activeChallenges: _challengesRepository.activeChallenges,
@@ -210,24 +199,18 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  Future<bool> sendChallenge(PuttingSession session) async {
-    print('sending challenge');
+  Future<bool> generateAndSendChallengeToUser(
+      PuttingSession session, MyPuttUser recipientUser) async {
+    emit(ChallengesLoading());
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
-      print('current user is null');
       return false;
     } else {
       final generatedChallenge = StoragePuttingChallenge.fromSession(
         session,
         currentUser,
-        MyPuttUser(
-            keywords: getPrefixes('joevdiscgolf'),
-            username: 'joevdiscgolf',
-            displayName: 'joe bro',
-            pdgaNum: 132408,
-            uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
+        opponentUser: recipientUser,
       );
-      print(generatedChallenge.toJson());
       return _databaseService.sendStorageChallenge(generatedChallenge);
     }
   }

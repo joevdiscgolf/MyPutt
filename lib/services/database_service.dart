@@ -1,4 +1,3 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
@@ -9,11 +8,7 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
-import 'package:myputt/utils/utils.dart';
-
-import '../data/types/putting_set.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import '../utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -95,8 +90,7 @@ class DatabaseService {
     return _challengesDataLoader.getCurrentPuttingChallenge(currentUser);
   }
 
-  Future<bool> updatePuttingChallenge(
-      PuttingChallenge challengeToUpdate) async {
+  Future<bool> setPuttingChallenge(PuttingChallenge challengeToUpdate) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
@@ -112,9 +106,8 @@ class DatabaseService {
     if (currentUser == null) {
       return false;
     }
-    print('sending putting challenge');
 
-    return _challengesDataWriter.sendPuttingChallenge(
+    return _challengesDataWriter.sendChallengeToUser(
         challenge.opponentUser.uid,
         currentUser,
         StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
@@ -127,13 +120,22 @@ class DatabaseService {
     if (currentUser == null) {
       return false;
     }
-    print('sending putting challenge');
     if (storageChallenge.recipientUser == null) {
       return false;
     } else {
-      return _challengesDataWriter.sendPuttingChallenge(
+      return _challengesDataWriter.sendChallengeToUser(
           storageChallenge.recipientUser!.uid, currentUser, storageChallenge);
     }
+  }
+
+  Future<bool> uploadUnclaimedChallenge(
+      StoragePuttingChallenge storageChallenge) {
+    return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
+  }
+
+  Future<StoragePuttingChallenge?> retrieveUnclaimedChallenge(
+      String challengeId) async {
+    return _challengesDataLoader.retrieveUnclaimedChallenge(challengeId);
   }
 
   Future<MyPuttUser?> getCurrentUser() {
@@ -141,58 +143,24 @@ class DatabaseService {
     return _userDataLoader.getUser(uid!);
   }
 
-  Future<bool> sendTestChallenge() async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    }
-    return _challengesDataWriter.sendTestChallenge(
-        currentUser.uid,
-        MyPuttUser(
-            keywords: getPrefixes('joevdiscgolf'),
-            username: 'joevdiscgolf',
-            displayName: 'joe bro',
-            pdgaNum: 132408,
-            uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-        StoragePuttingChallenge(
-            challengerSets: [
-              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 5),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7)
-            ],
-            challengerUser: MyPuttUser(
-                keywords: getPrefixes('joevdiscgolf'),
-                username: 'joevdiscgolf',
-                displayName: 'joe bro',
-                pdgaNum: 132408,
-                uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructure: [
-              ChallengeStructureItem(distance: 20, setLength: 10),
-              ChallengeStructureItem(distance: 25, setLength: 10),
-              ChallengeStructureItem(distance: 25, setLength: 10),
-              ChallengeStructureItem(distance: 30, setLength: 10),
-              ChallengeStructureItem(distance: 30, setLength: 10)
-            ],
-            creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-            id: 'k7W1STgUdlWLZP4ayenPk1a8OI82~' +
-                DateTime.now().millisecondsSinceEpoch.toString(),
-            recipientSets: [],
-            recipientUser: currentUser,
-            status: ChallengeStatus.pending));
-  }
-
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
-      print('current user is null');
       return [];
     }
     final List<MyPuttUser> users =
         await _userDataLoader.getUsersByUsername(username);
     return users.where((user) => user.uid != currentUser.uid).toList();
+  }
+
+  Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+    return _challengesDataWriter.deleteChallenge(
+        currentUser.uid, challengeToDelete);
   }
 }
