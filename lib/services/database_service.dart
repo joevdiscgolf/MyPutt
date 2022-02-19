@@ -138,6 +138,15 @@ class DatabaseService {
     return _challengesDataLoader.retrieveUnclaimedChallenge(challengeId);
   }
 
+  Future<bool> removeUnclaimedChallenge(String challengeId) async {
+    return true;
+  }
+
+  Future<StoragePuttingChallenge?> getChallengeByUid(
+      String uid, String challengeId) {
+    return _challengesDataLoader.getChallengeByUid(uid, challengeId);
+  }
+
   Future<MyPuttUser?> getCurrentUser() {
     final uid = _authService.getCurrentUserId();
     return _userDataLoader.getUser(uid!);

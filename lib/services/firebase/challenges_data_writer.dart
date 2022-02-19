@@ -42,6 +42,14 @@ class FBChallengesDataWriter {
         .catchError((e) => false);
   }
 
+  Future<bool> deleteUnclaimedChallenge(String challengeId) async {
+    return firestore
+        .doc('$unclaimedChallengesCollection/$challengeId')
+        .delete()
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
   Future<bool> deleteChallenge(
       String currentUid, PuttingChallenge challengeToDelete) {
     return firestore
