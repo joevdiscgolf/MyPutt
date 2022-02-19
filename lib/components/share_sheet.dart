@@ -106,12 +106,13 @@ class _ShareSheetState extends State<ShareSheet> {
     if (currentUser != null) {
       final StoragePuttingChallenge newChallenge =
           StoragePuttingChallenge.fromSession(widget.session, currentUser);
-      locator.get<DatabaseService>().uploadUnclaimedChallenge(newChallenge);
+      await locator
+          .get<DatabaseService>()
+          .uploadUnclaimedChallenge(newChallenge);
       final Uri uri = await locator
           .get<DynamicLinkService>()
           .generateDynamicLinkFromId(newChallenge.id);
       print(uri.toString());
-      //Share.share('testMessage');
     }
   }
 }

@@ -1,15 +1,16 @@
 import 'dart:async';
+import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/services/auth_service.dart';
-import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/utils.dart';
 
 class SigninService {
   late StreamController<LoginState> controller;
   late Stream<LoginState> siginStream;
   final _authService = locator.get<AuthService>();
+  final ChallengesRepository _challengesRepository =
+      locator.get<ChallengesRepository>();
   SigninService() {
     controller = StreamController<LoginState>();
     siginStream = controller.stream;
@@ -69,7 +70,7 @@ class SigninService {
   }
 
   void signOut() {
-    locator.get<SessionRepository>().clearData();
+    clearRepositoryData();
     _authService.logOut();
     controller.add(LoginState.none);
   }

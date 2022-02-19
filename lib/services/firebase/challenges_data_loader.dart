@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/services/firebase/fb_constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -46,5 +46,20 @@ class FBChallengesDataLoader {
 
   bool isValidStorageChallenge(Map<String, dynamic> data) {
     return data['id'] != null;
+  }
+
+  Future<StoragePuttingChallenge?> retrieveUnclaimedChallenge(
+      String challengeId) async {
+    final DocumentSnapshot<dynamic> snapshot = await firestore
+        .doc('$unclaimedChallengesCollection/$challengeId')
+        .get();
+
+    if (snapshot.exists &&
+        isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
+      return StoragePuttingChallenge.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    } else {
+      return null;
+    }
   }
 }

@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/utils/constants.dart';
-
+import 'package:myputt/services/firebase/fb_constants.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;

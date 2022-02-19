@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 
-const completedSessionsCollection = 'CompletedSessions';
-const sessionsCollection = 'Sessions';
-const challengesCollection = 'Challenges';
-const usersCollection = 'Users';
-
 class ChallengeStatus {
   static String pending = 'pending';
   static String active = 'active';

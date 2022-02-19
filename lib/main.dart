@@ -25,12 +25,8 @@ void main() async {
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   await setUpLocator();
-  locator.get<DynamicLinkService>().handleDynamicLinks();
+  await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<SigninService>().init();
-
-  //await locator.get<DatabaseService>().sendTestChallenge();
-
-  //locator.get<WebScraperService>().getPDGAData(132408);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

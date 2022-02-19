@@ -1,4 +1,3 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
@@ -9,11 +8,7 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
-import 'package:myputt/utils/utils.dart';
-
-import '../data/types/putting_set.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import '../utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -95,8 +90,7 @@ class DatabaseService {
     return _challengesDataLoader.getCurrentPuttingChallenge(currentUser);
   }
 
-  Future<bool> updatePuttingChallenge(
-      PuttingChallenge challengeToUpdate) async {
+  Future<bool> setPuttingChallenge(PuttingChallenge challengeToUpdate) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
@@ -137,6 +131,11 @@ class DatabaseService {
   Future<bool> uploadUnclaimedChallenge(
       StoragePuttingChallenge storageChallenge) {
     return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
+  }
+
+  Future<StoragePuttingChallenge?> retrieveUnclaimedChallenge(
+      String challengeId) async {
+    return _challengesDataLoader.retrieveUnclaimedChallenge(challengeId);
   }
 
   Future<MyPuttUser?> getCurrentUser() {
