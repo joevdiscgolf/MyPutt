@@ -32,8 +32,8 @@ class _ChallengesState extends State<ChallengesScreen> {
                   style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
                       primary: Colors.transparent),
-                  onPressed: () async {
-                    await BlocProvider.of<ChallengesCubit>(context).reload();
+                  onPressed: () {
+                    BlocProvider.of<ChallengesCubit>(context).reload();
                   },
                   child: const Center(
                     child: Icon(IconData(0xe514, fontFamily: 'MaterialIcons')),
@@ -305,7 +305,9 @@ class _ChallengesState extends State<ChallengesScreen> {
                                 List.from(state.completedChallenges.reversed)),
                       ]);
                     } else if (state is ChallengesLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Container(
+                          child:
+                              const Center(child: CircularProgressIndicator()));
                     } else {
                       return Container();
                     }

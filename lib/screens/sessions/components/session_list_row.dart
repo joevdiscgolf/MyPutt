@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/confirm_dialog.dart';
-import 'package:myputt/components/search_users_sheet.dart';
+import 'package:myputt/components/share_sheet.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
-import 'package:myputt/theme/theme_data.dart';
-
-import '../../../cubits/challenges_cubit.dart';
 
 class SessionListRow extends StatelessWidget {
   const SessionListRow({
@@ -26,16 +22,14 @@ class SessionListRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle =
-        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(5),
         border: Border.all(width: 1, color: Colors.grey[400]!),
         color: isCurrentSession ? Colors.blue[100]! : Colors.white,
       ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Column(
         children: [
           Visibility(
@@ -48,11 +42,13 @@ class SessionListRow extends StatelessWidget {
                       border: Border.all(color: Colors.white, width: 2),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: const Text('CURRENT',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        )))),
+                    child: Text(
+                      'CURRENT',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(color: Colors.white),
+                    ))),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,17 +59,25 @@ class SessionListRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(session.dateStarted, style: textStyle),
+                    Text(session.dateStarted,
+                        style: Theme.of(context).textTheme.headline6),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('${session.sets.length.toString()} sets'),
+                        Text(
+                          '${session.sets.length.toString()} sets',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                         const SizedBox(width: 20),
-                        stats.generalStats?.totalMade != null &&
-                                stats.generalStats?.totalAttempts != null
-                            ? Text(
-                                '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts')
-                            : Container()
+                        Visibility(
+                          visible: stats.generalStats?.totalMade != null &&
+                              stats.generalStats?.totalAttempts != null,
+                          child: Text(
+                            '${stats.generalStats?.totalMade} / ${stats.generalStats?.totalAttempts} putts',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        )
                       ],
                     ),
                   ],
@@ -95,7 +99,7 @@ class SessionListRow extends StatelessWidget {
                     onPressed: () {
                       showModalBottomSheet(
                           context: context,
-                          builder: (context) => SearchUsersSheet(
+                          builder: (context) => ShareSheet(
                                 session: session,
                               ));
                     },

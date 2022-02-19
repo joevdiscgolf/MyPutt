@@ -53,7 +53,8 @@ class StoragePuttingChallenge {
   }
 
   factory StoragePuttingChallenge.fromSession(
-      PuttingSession session, MyPuttUser currentUser, MyPuttUser opponentUser) {
+      PuttingSession session, MyPuttUser currentUser,
+      {MyPuttUser? opponentUser}) {
     final now = DateTime.now().millisecondsSinceEpoch;
     return StoragePuttingChallenge(
       status: ChallengeStatus.pending,

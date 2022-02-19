@@ -48,8 +48,6 @@ class ChallengesRepository {
       _databaseService.getCurrentPuttingChallenge(),
     ]);
 
-    print('fetching all challenges, result: $result');
-
     if (result[0] != null && result[0] is List<PuttingChallenge>) {
       pendingChallenges = result[0] as List<PuttingChallenge>;
     }

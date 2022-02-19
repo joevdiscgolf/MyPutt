@@ -8,7 +8,6 @@ import '../data/types/challenges/putting_challenge.dart';
 import '../data/types/putting_session.dart';
 
 Future<void> fetchRepositoryData() async {
-  print('fetching repository data');
   await locator.get<UserRepository>().fetchCurrentUser();
 
   await Future.wait([

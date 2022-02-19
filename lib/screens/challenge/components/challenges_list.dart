@@ -15,7 +15,6 @@ class ChallengesList extends StatelessWidget {
 
   final ChallengeCategory category;
   final List<PuttingChallenge> challenges;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,7 +27,7 @@ class ChallengesList extends StatelessWidget {
                     .map(
                       (challenge) => Builder(builder: (context) {
                         if (category == ChallengeCategory.pending) {
-                          return PendingChallengeItem(
+                          return NewPendingChallengeItem(
                             accept: () {
                               BlocProvider.of<ChallengesCubit>(context)
                                   .openChallenge(challenge);
@@ -44,7 +43,9 @@ class ChallengesList extends StatelessWidget {
                             challenge: challenge,
                           );
                         } else if (category == ChallengeCategory.active) {
-                          return ActiveChallengeItem(
+                          return NewActiveChallengeItem(
+                              challenge:
+                                  challenge); /*ActiveChallengeItem(
                               accept: () {
                                 BlocProvider.of<ChallengesCubit>(context)
                                     .openChallenge(challenge);
@@ -56,7 +57,7 @@ class ChallengesList extends StatelessWidget {
                                             child:
                                                 const ChallengeRecordScreen())));
                               },
-                              challenge: challenge);
+                              challenge: challenge);*/
                         } else {
                           return CompletedChallengeItem(
                             challenge: challenge,

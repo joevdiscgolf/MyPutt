@@ -6,7 +6,7 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
-import '../../components/search_users_sheet.dart';
+import '../../components/share_sheet.dart';
 import '../../cubits/challenges_cubit.dart';
 import 'session_summary_screen.dart';
 
@@ -50,9 +50,9 @@ class _SessionsState extends State<SessionsScreen> {
                               padding: const EdgeInsets.all(8),
                               child: Text(
                                   '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium),
                             ),
                           ),
                           _continueSessionCard(context),
@@ -60,7 +60,6 @@ class _SessionsState extends State<SessionsScreen> {
                         ],
                       );
                     } else if (state is NoActiveSessionState) {
-                      print('no active session state');
                       return Column(
                         mainAxisAlignment: state.sessions.isEmpty
                             ? MainAxisAlignment.center
@@ -74,9 +73,9 @@ class _SessionsState extends State<SessionsScreen> {
                                 padding: const EdgeInsets.all(8),
                                 child: Text(
                                     '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineLarge),
                               ),
                             ),
                           ),
@@ -92,7 +91,7 @@ class _SessionsState extends State<SessionsScreen> {
                         children: [
                           Text(
                             '${state.sessions.length} sessions',
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style: Theme.of(context).textTheme.headlineLarge,
                           ),
                           _sessionsListView(context),
                         ],

@@ -24,7 +24,7 @@ class FBChallengesDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> sendPuttingChallenge(String recipientUid, MyPuttUser currentUser,
+  Future<bool> sendChallengeToUser(String recipientUid, MyPuttUser currentUser,
       StoragePuttingChallenge storageChallenge) {
     final challengeRef = firestore.doc(
         '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
@@ -34,16 +34,14 @@ class FBChallengesDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> sendTestChallenge(String recipientUid, MyPuttUser challengerUser,
+  Future<bool> uploadUnclaimedChallenge(
       StoragePuttingChallenge storageChallenge) {
-    print('sending test challenge');
-    final challengeRef = firestore.doc(
-        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
-
-    return challengeRef
+    return firestore
+        .collection('Unclaimed_Challenges')
+        .doc(storageChallenge.id)
         .set(storageChallenge.toJson())
         .then((value) => true)
-        .catchError((error) => false);
+        .catchError((e) => false);
   }
 
   Future<bool> deleteChallenge(

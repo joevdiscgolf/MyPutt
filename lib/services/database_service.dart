@@ -113,7 +113,7 @@ class DatabaseService {
       return false;
     }
 
-    return _challengesDataWriter.sendPuttingChallenge(
+    return _challengesDataWriter.sendChallengeToUser(
         challenge.opponentUser.uid,
         currentUser,
         StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
@@ -129,57 +129,19 @@ class DatabaseService {
     if (storageChallenge.recipientUser == null) {
       return false;
     } else {
-      return _challengesDataWriter.sendPuttingChallenge(
+      return _challengesDataWriter.sendChallengeToUser(
           storageChallenge.recipientUser!.uid, currentUser, storageChallenge);
     }
+  }
+
+  Future<bool> uploadUnclaimedChallenge(
+      StoragePuttingChallenge storageChallenge) {
+    return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
   }
 
   Future<MyPuttUser?> getCurrentUser() {
     final uid = _authService.getCurrentUserId();
     return _userDataLoader.getUser(uid!);
-  }
-
-  Future<bool> sendTestChallenge() async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    }
-    return _challengesDataWriter.sendTestChallenge(
-        currentUser.uid,
-        MyPuttUser(
-            keywords: getPrefixes('joevdiscgolf'),
-            username: 'joevdiscgolf',
-            displayName: 'joe bro',
-            pdgaNum: 132408,
-            uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-        StoragePuttingChallenge(
-            challengerSets: [
-              PuttingSet(distance: 20, puttsAttempted: 10, puttsMade: 5),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 6),
-              PuttingSet(distance: 25, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7),
-              PuttingSet(distance: 30, puttsAttempted: 10, puttsMade: 7)
-            ],
-            challengerUser: MyPuttUser(
-                keywords: getPrefixes('joevdiscgolf'),
-                username: 'joevdiscgolf',
-                displayName: 'joe bro',
-                pdgaNum: 132408,
-                uid: 'k7W1STgUdlWLZP4ayenPk1a8OI82'),
-            challengeStructure: [
-              ChallengeStructureItem(distance: 20, setLength: 10),
-              ChallengeStructureItem(distance: 25, setLength: 10),
-              ChallengeStructureItem(distance: 25, setLength: 10),
-              ChallengeStructureItem(distance: 30, setLength: 10),
-              ChallengeStructureItem(distance: 30, setLength: 10)
-            ],
-            creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-            id: 'k7W1STgUdlWLZP4ayenPk1a8OI82~' +
-                DateTime.now().millisecondsSinceEpoch.toString(),
-            recipientSets: [],
-            recipientUser: currentUser,
-            status: ChallengeStatus.pending));
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

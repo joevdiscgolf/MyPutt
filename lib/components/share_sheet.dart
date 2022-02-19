@@ -4,24 +4,30 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/database_service.dart';
 import 'package:myputt/theme/theme_data.dart';
+import 'package:share/share.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'buttons/primary_button.dart';
 import 'package:myputt/utils/constants.dart';
+import '../data/types/challenges/storage_putting_challenge.dart';
+import '../locator.dart';
+import '../services/dynamic_link_service.dart';
+import 'buttons/primary_button.dart';
 
 enum LoadingState { static, loading, loaded }
 
-class SearchUsersSheet extends StatefulWidget {
-  const SearchUsersSheet({Key? key, required this.session}) : super(key: key);
+class ShareSheet extends StatefulWidget {
+  const ShareSheet({Key? key, required this.session}) : super(key: key);
 
   final PuttingSession session;
 
   @override
-  _SearchUsersSheetState createState() => _SearchUsersSheetState();
+  _ShareSheetState createState() => _ShareSheetState();
 }
 
-class _SearchUsersSheetState extends State<SearchUsersSheet> {
+class _ShareSheetState extends State<ShareSheet> {
   final TextEditingController _searchTextController = TextEditingController();
 
   int lastUpdated = 0;
@@ -29,13 +35,28 @@ class _SearchUsersSheetState extends State<SearchUsersSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: BoxDecoration(color: Colors.grey[100]),
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+            color: Colors.grey[100], borderRadius: BorderRadius.circular(5)),
         child: Column(
           children: [
             const SizedBox(height: 10),
             Text(
               'Challenge a friend',
               style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 10),
+            PrimaryButton(
+              width: double.infinity,
+              label: 'Share with anyone',
+              onPressed: () => _share(),
+              icon: FlutterRemix.share_box_line,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'or\n Find a MyPutt user',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
             ),
             TextFormField(
               controller: _searchTextController,
@@ -78,6 +99,20 @@ class _SearchUsersSheetState extends State<SearchUsersSheet> {
             Expanded(child: UserListView(session: widget.session))
           ],
         ));
+  }
+
+  Future<void> _share() async {
+    final MyPuttUser? currentUser = locator.get<UserRepository>().currentUser;
+    if (currentUser != null) {
+      final StoragePuttingChallenge newChallenge =
+          StoragePuttingChallenge.fromSession(widget.session, currentUser);
+      locator.get<DatabaseService>().uploadUnclaimedChallenge(newChallenge);
+      final Uri uri = await locator
+          .get<DynamicLinkService>()
+          .generateDynamicLinkFromId(newChallenge.id);
+      print(uri.toString());
+      //Share.share('testMessage');
+    }
   }
 }
 
@@ -271,7 +306,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                         });
 
                         await BlocProvider.of<ChallengesCubit>(context)
-                            .sendChallenge(
+                            .generateAndSendChallengeToUser(
                                 widget.session, widget.recipientUser);
                         setState(() {
                           _loadingState = LoadingState.loaded;
@@ -283,7 +318,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                       child: Builder(builder: (context) {
                         switch (_loadingState) {
                           case LoadingState.static:
-                            return Text('Send');
+                            return const Text('Send');
                           case LoadingState.loading:
                             return const CircularProgressIndicator(
                               color: Colors.white,
@@ -294,7 +329,6 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                               color: Colors.white,
                             );
                         }
-                        return Text('Send');
                       })),
                 ),
               ],
