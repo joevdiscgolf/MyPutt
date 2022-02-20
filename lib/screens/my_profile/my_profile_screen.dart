@@ -11,6 +11,8 @@ import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
 
+import 'components/pdga_info_panel.dart';
+
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
 
@@ -45,7 +47,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   const SizedBox(height: 10),
                   _lifetimeStatsPanel(context),
                   const SizedBox(height: 10),
-                  _pdgaStatsPanel(context),
+                  const PDGAInfoPanel(),
                 ]),
               );
             } else {
@@ -56,106 +58,106 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           },
         ));
   }
-
-  Widget _pdgaStatsPanel(BuildContext context) {
-    return BlocBuilder<MyProfileCubit, MyProfileState>(
-      builder: (context, state) {
-        if (state is MyProfileLoaded && state.pdgaPlayerInfo != null) {
-          final PDGAPlayerInfo playerInfo = state.pdgaPlayerInfo!;
-          return Container(
-              padding: EdgeInsets.all(8),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'PDGA player info',
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Class',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${state.pdgaPlayerInfo?.classification}')
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Rating',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.rating}')
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Since',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.memberSince}')
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Events',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.careerEvents}')
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Wins',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.careerWins}')
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Earnings',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.careerEvents}')
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text('Next event: ',
-                          style: Theme.of(context).textTheme.headline6),
-                      Text(playerInfo.nextEvent)
-                    ],
-                  )
-                ],
-              ));
-        } else {
-          return Container();
-        }
-      },
-    );
-  }
+  //
+  // Widget _pdgaStatsPanel(BuildContext context) {
+  //   return BlocBuilder<MyProfileCubit, MyProfileState>(
+  //     builder: (context, state) {
+  //       if (state is MyProfileLoaded && state.pdgaPlayerInfo != null) {
+  //         final PDGAPlayerInfo playerInfo = state.pdgaPlayerInfo!;
+  //         return Container(
+  //             padding: const EdgeInsets.all(8),
+  //             color: Colors.white,
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   'PDGA player info',
+  //                   style: Theme.of(context).textTheme.headline5,
+  //                 ),
+  //                 const SizedBox(height: 10),
+  //                 Row(
+  //                   children: [
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Class',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text('${state.pdgaPlayerInfo?.classification}')
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Rating',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text('${playerInfo.rating}')
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Since',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text(playerInfo.memberSince)
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 const SizedBox(
+  //                   height: 5,
+  //                 ),
+  //                 Row(
+  //                   children: [
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Events',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text('${playerInfo.careerEvents}')
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Wins',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text('${playerInfo.careerWins}')
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Column(
+  //                         children: [
+  //                           Text('Earnings',
+  //                               style: Theme.of(context).textTheme.headline6),
+  //                           Text('${playerInfo.careerEvents}')
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 const SizedBox(
+  //                   height: 5,
+  //                 ),
+  //                 Row(
+  //                   children: [
+  //                     Text('Next event: ',
+  //                         style: Theme.of(context).textTheme.headline6),
+  //                     Text(playerInfo.nextEvent)
+  //                   ],
+  //                 )
+  //               ],
+  //             ));
+  //       } else {
+  //         return Container();
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _title(BuildContext context) {
     return BlocBuilder<MyProfileCubit, MyProfileState>(
@@ -632,7 +634,7 @@ class PercentageCircle extends StatelessWidget {
           return SizedBox(
               height: diameter,
               width: diameter,
-              child: Center(child: const Text('- %')));
+              child: const Center(child: Text('- %')));
         }
       })
     ]);

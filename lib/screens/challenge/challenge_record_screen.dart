@@ -259,7 +259,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       percent: value,
                                       progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
-                                      barRadius: Radius.circular(10),
+                                      barRadius: const Radius.circular(10),
                                     ),
                                   ),
                                   Flexible(
@@ -408,7 +408,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       percent: value,
                                       progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
-                                      barRadius: Radius.circular(10),
+                                      barRadius: const Radius.circular(10),
                                     ),
                                   ),
                                   Flexible(

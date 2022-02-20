@@ -3,11 +3,6 @@ import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/utils/utils.dart';
-
-import '../../../utils/constants.dart';
-import '../putting_session.dart';
-
 part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)

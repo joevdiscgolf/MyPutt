@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
-import '../../data/types/challenges/putting_challenge.dart';
-import '../challenge/challenges_screen.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 
 class MainWrapper extends StatefulWidget {

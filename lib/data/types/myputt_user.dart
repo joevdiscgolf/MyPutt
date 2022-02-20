@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/pdga_player_info.dart';
 
 part 'myputt_user.g.dart';
 
@@ -16,7 +15,7 @@ class MyPuttUser {
   final List<String> keywords;
   final String displayName;
   final String uid;
-  final int? pdgaNum;
+  int? pdgaNum;
 
   factory MyPuttUser.fromJson(Map<String, dynamic> json) =>
       _$MyPuttUserFromJson(json);

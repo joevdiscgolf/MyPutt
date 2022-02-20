@@ -2,10 +2,8 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
-
-import '../data/types/challenges/challenge_structure_item.dart';
-import '../data/types/challenges/putting_challenge.dart';
-import '../data/types/putting_session.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/data/types/putting_session.dart';
 
 Future<void> fetchRepositoryData() async {
   await locator.get<UserRepository>().fetchCurrentUser();

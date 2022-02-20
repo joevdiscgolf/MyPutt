@@ -5,12 +5,9 @@ import 'package:myputt/data/types/myputt_user.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
-import 'package:myputt/utils/utils.dart';
-
-import '../../locator.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/data/types/putting_set.dart';
-
-import '../data/types/putting_session.dart';
+import 'package:myputt/data/types/putting_session.dart';
 
 part 'challenges_state.dart';
 

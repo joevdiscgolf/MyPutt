@@ -3,7 +3,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/utils/calculators.dart';
-import 'package:myputt/theme/theme_data.dart';
 
 class PuttingSetRow extends StatefulWidget {
   const PuttingSetRow({

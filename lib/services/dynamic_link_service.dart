@@ -1,7 +1,6 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';
 
@@ -9,7 +8,6 @@ class DynamicLinkService {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
-  final AuthService _authService = locator.get<AuthService>();
   Future<Uri> generateDynamicLinkFromId(String challengeId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
         link: Uri.parse(

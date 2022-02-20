@@ -230,7 +230,7 @@ class _SessionsState extends State<SessionsScreen> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => BlocProvider.value(
                           value: BlocProvider.of<SessionsCubit>(context),
-                          child: RecordScreen())));
+                          child: const RecordScreen())));
                 }
               }),
         );

@@ -37,7 +37,7 @@ class StatsService {
     num sessionIndex = 0;
 
     final sessionsInOrder = List.from(sessions).reversed;
-    sessionsInOrder.forEach((session) {
+    for (var session in sessionsInOrder) {
       final sets = session.sets;
       sets.forEach((set) {
         final distance = set.distance;
@@ -66,9 +66,9 @@ class StatsService {
         }
       });
       sessionIndex += 1;
-    });
+    }
 
-    sessionRangePuttsAttempted.entries.forEach((entry) {
+    for (var entry in sessionRangePuttsAttempted.entries) {
       if (sessionRangePuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneSessionRangeFractions[entry.key] =
@@ -78,9 +78,9 @@ class StatsService {
               sessionRangePuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
-    overallPuttsAttempted.entries.forEach((entry) {
+    for (var entry in overallPuttsAttempted.entries) {
       if (overallPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneOverallFractions[entry.key] =
@@ -90,7 +90,7 @@ class StatsService {
               overallPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
     return Stats(
         circleOnePercentages: circleOneSessionRangeFractions,
@@ -132,7 +132,7 @@ class StatsService {
     num sessionIndex = 0;
 
     final sessionsInOrder = List.from(sessions).reversed;
-    sessionsInOrder.forEach((session) {
+    for (var session in sessionsInOrder) {
       final sets = session.sets;
       sets.forEach((set) {
         final distance = set.distance;
@@ -146,10 +146,10 @@ class StatsService {
             : overallPuttsMade[distance]! + set.puttsMade;
       });
       sessionIndex += 1;
-    });
+    }
 
     final focusSessionSets = focusSession.sets;
-    focusSessionSets.forEach((set) {
+    for (var set in focusSessionSets) {
       final distance = set.distance as int;
       totalAttempts += set.puttsAttempted as int;
       totalMade += set.puttsMade as int;
@@ -161,9 +161,9 @@ class StatsService {
       focusSessionPuttsMade[distance] = focusSessionPuttsMade[distance] == null
           ? set.puttsMade
           : focusSessionPuttsMade[distance]! + set.puttsMade;
-    });
+    }
 
-    focusSessionPuttsAttempted.entries.forEach((entry) {
+    for (var entry in focusSessionPuttsAttempted.entries) {
       if (focusSessionPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneFocusFractions[entry.key] =
@@ -173,9 +173,9 @@ class StatsService {
               focusSessionPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
-    overallPuttsAttempted.entries.forEach((entry) {
+    for (var entry in overallPuttsAttempted.entries) {
       if (overallPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneOverallFractions[entry.key] =
@@ -185,7 +185,7 @@ class StatsService {
               overallPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
     return Stats(
         circleOnePercentages: circleOneFocusFractions,

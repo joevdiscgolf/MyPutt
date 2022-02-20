@@ -156,7 +156,6 @@ class AuthService {
         .doc(_auth.currentUser!.uid)
         .get();
     if (!userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
-      print('data does not exist');
       return false;
     } else {
       currentMyPuttUser =
