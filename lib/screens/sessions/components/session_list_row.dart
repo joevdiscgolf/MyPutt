@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:myputt/components/confirm_dialog.dart';
-import 'package:myputt/components/share_sheet.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
+
+import '../../share/share_sheet.dart';
 
 class SessionListRow extends StatelessWidget {
   const SessionListRow({
@@ -96,7 +98,7 @@ class SessionListRow extends StatelessWidget {
                       FlutterRemix.sword_line,
                       color: Colors.blue,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       showModalBottomSheet(
                           context: context,
                           builder: (context) => ShareSheet(

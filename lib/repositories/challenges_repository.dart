@@ -20,6 +20,13 @@ class ChallengesRepository {
   List<PuttingChallenge> completedChallenges = [];
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
+  void clearData() {
+    currentChallenge = null;
+    pendingChallenges = [];
+    activeChallenges = [];
+    completedChallenges = [];
+  }
+
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
