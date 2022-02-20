@@ -7,6 +7,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -139,7 +140,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              'Career stats',
+                              'Lifetime stats',
                               style: Theme.of(context).textTheme.headline5,
                             )
                           ],
@@ -147,8 +148,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         const SizedBox(height: 5),
                         _puttsMadeRow(context),
                         const SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
+                        _circleStatsRow(context)
                       ],
                     )),
               ),
@@ -233,7 +235,115 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       ],
     );
   }
-  // Widget _circleStatsRow(BuildContext context) {
-  //   return
-  // }
+
+  Widget _circleStatsRow(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              Text('Circle 1X', style: Theme.of(context).textTheme.headline6),
+              const SizedBox(height: 5),
+              Builder(builder: (context) {
+                final double? c1XPercentage =
+                    _statsService.getPercentagesWithCutoff(
+                        _sessionRepository.allSessions,
+                        _challengesRepository.completedChallenges,
+                        Cutoffs.c1x);
+                return _percentageCircle(c1XPercentage, 60);
+              })
+            ],
+          ),
+        ),
+        Expanded(
+          child: Builder(builder: (context) {
+            return Column(
+              children: [
+                Text('Circle 2', style: Theme.of(context).textTheme.headline6),
+                const SizedBox(height: 5),
+                Builder(builder: (context) {
+                  final double? c2Percentage =
+                      _statsService.getPercentagesWithCutoff(
+                          _sessionRepository.allSessions,
+                          _challengesRepository.completedChallenges,
+                          Cutoffs.c2);
+                  return _percentageCircle(c2Percentage, 60);
+                })
+              ],
+            );
+          }),
+        ),
+        Expanded(
+          child: Builder(builder: (context) {
+            return Column(
+              children: [
+                Text('All distances',
+                    style: Theme.of(context).textTheme.headline6),
+                const SizedBox(height: 5),
+                Builder(builder: (context) {
+                  final double? c2Percentage =
+                      _statsService.getPercentagesWithCutoff(
+                          _sessionRepository.allSessions,
+                          _challengesRepository.completedChallenges,
+                          Cutoffs.none);
+                  return _percentageCircle(c2Percentage, 60);
+                })
+              ],
+            );
+          }),
+        )
+      ],
+    );
+  }
+
+  Widget _percentageCircle(double? decimal, double diameter) {
+    return Stack(children: <Widget>[
+      Builder(builder: (context) {
+        if (decimal != null) {
+          return SizedBox(
+              width: diameter,
+              height: diameter,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: decimal),
+                duration: const Duration(milliseconds: 300),
+                builder: (context, value, _) => CircularProgressIndicator(
+                  color: ThemeColors.green,
+                  backgroundColor: Colors.grey[200],
+                  value: value,
+                  strokeWidth: 5,
+                ),
+              ));
+        } else {
+          return SizedBox(
+            width: diameter,
+            height: diameter,
+            child: CircularProgressIndicator(
+              color: ThemeColors.green,
+              backgroundColor: Colors.grey[200],
+              value: 0,
+              strokeWidth: 5,
+            ),
+          );
+        }
+      }),
+      Builder(builder: (context) {
+        if (decimal != null) {
+          return SizedBox(
+            height: diameter,
+            width: diameter,
+            child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: decimal),
+                duration: const Duration(milliseconds: 300),
+                builder: (context, value, _) => Center(
+                    child: (Text((value * 100).round().toString() + ' %')))),
+          );
+        } else {
+          return SizedBox(
+              height: diameter,
+              width: diameter,
+              child: Center(child: const Text('- %')));
+        }
+      })
+    ]);
+  }
 }

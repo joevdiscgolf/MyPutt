@@ -227,13 +227,13 @@ class StatsService {
     return total;
   }
 
-  double getOverallC1x(
-      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+  double? getPercentagesWithCutoff(List<PuttingSession> sessions,
+      List<PuttingChallenge> challenges, int cutoff) {
     double totalMade = 0;
     double totalAttmpted = 0;
     for (var session in sessions) {
       for (var set in session.sets) {
-        if (set.distance > 10) {
+        if (set.distance > cutoff) {
           totalMade += set.puttsMade.toInt();
           totalAttmpted += set.puttsAttempted.toInt();
         }
@@ -241,12 +241,12 @@ class StatsService {
     }
     for (var challenge in challenges) {
       for (var set in challenge.currentUserSets) {
-        if (set.distance > 10) {
+        if (set.distance > cutoff) {
           totalMade += set.puttsMade.toInt();
           totalAttmpted += set.puttsAttempted.toInt();
         }
       }
     }
-    return totalMade / totalAttmpted;
+    return totalAttmpted == 0 ? null : (totalMade / totalAttmpted);
   }
 }

@@ -51,6 +51,14 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        builder: (context, child) {
+          final mediaQueryData = MediaQuery.of(context);
+          final scale = mediaQueryData.textScaleFactor.clamp(1.0, 1.0);
+          return MediaQuery(
+            child: child!,
+            data: MediaQuery.of(context).copyWith(textScaleFactor: scale),
+          );
+        },
         theme: lightTheme(context),
         title: 'MyPutt',
         debugShowCheckedModeBanner: false,

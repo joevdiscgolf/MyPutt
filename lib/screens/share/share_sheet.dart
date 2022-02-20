@@ -52,7 +52,7 @@ class _ShareSheetState extends State<ShareSheet> {
             const SizedBox(height: 10),
             PrimaryButton(
               width: double.infinity,
-              label: 'Share with anyone',
+              label: 'Share with link',
               onPressed: () => _share(),
               icon: FlutterRemix.share_box_line,
             ),

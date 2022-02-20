@@ -28,7 +28,6 @@ class _RecordScreenState extends State<RecordScreen> {
         });
       });
 
-  String? _dialogErrorText;
   bool sessionInProgress = true;
 
   int _focusedIndex = 0;
@@ -64,11 +63,13 @@ class _RecordScreenState extends State<RecordScreen> {
                       ElevatedButton.styleFrom(shadowColor: Colors.transparent),
                   onPressed: () {
                     showDialog(
-                            context: context,
-                            builder: (dialogContext) => BlocProvider.value(
-                                value: BlocProvider.of<SessionsCubit>(context),
-                                child: _finishSessionDialog(context)))
-                        .then((value) => dialogCallBack());
+                        context: context,
+                        builder: (dialogContext) =>
+                            FinishSessionDialog(stopSession: () {
+                              setState(() {
+                                sessionInProgress = false;
+                              });
+                            })).then((value) => dialogCallBack());
                   },
                   child: const Text('Finish'));
             },
@@ -373,8 +374,122 @@ class _RecordScreenState extends State<RecordScreen> {
       }
     });
   }
+  //
+  // Widget _finishSessionDialog(BuildContext context) {
+  //   return Dialog(
+  //       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(24),
+  //       ),
+  //       child: Container(
+  //         padding: const EdgeInsets.all(24),
+  //         width: double.infinity,
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.start,
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             const Text(
+  //               'Finish Putting Session',
+  //               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+  //             ),
+  //             const SizedBox(
+  //               height: 24,
+  //             ),
+  //             Text(_dialogErrorText ?? ''),
+  //             const SizedBox(height: 24),
+  //             SizedBox(
+  //               width: double.infinity,
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   PrimaryButton(
+  //                       width: 100,
+  //                       height: 50,
+  //                       label: 'Cancel',
+  //                       fontSize: 18,
+  //                       labelColor: Colors.grey[600]!,
+  //                       backgroundColor: Colors.grey[200]!,
+  //                       onPressed: () {
+  //                         setState(() {
+  //                           _dialogErrorText = '';
+  //                         });
+  //                         BlocProvider.of<SessionsCubit>(context)
+  //                             .continueSession();
+  //                         Navigator.pop(context);
+  //                       }),
+  //                   BlocBuilder<SessionsCubit, SessionsState>(
+  //                     builder: (context, state) {
+  //                       if (state is SessionInProgressState) {
+  //                         return PrimaryButton(
+  //                           label: 'Finish',
+  //                           fontSize: 18,
+  //                           width: 100,
+  //                           height: 50,
+  //                           backgroundColor: Colors.green,
+  //                           onPressed: () async {
+  //                             final List<PuttingSet>? sets =
+  //                                 state.currentSession.sets;
+  //                             if (sets == null || sets.isEmpty) {
+  //                               setState(() {
+  //                                 _dialogErrorText = 'Empty session!';
+  //                               });
+  //                             } else {
+  //                               await BlocProvider.of<SessionsCubit>(context)
+  //                                   .completeSession();
+  //                               setState(() {
+  //                                 sessionInProgress = false;
+  //                               });
+  //                               Navigator.pop(context);
+  //                             }
+  //                           },
+  //                         );
+  //                       } else {
+  //                         return PrimaryButton(
+  //                             label: 'Finish',
+  //                             fontSize: 18,
+  //                             width: 100,
+  //                             height: 50,
+  //                             backgroundColor: Colors.green,
+  //                             onPressed: () {
+  //                               setState(() {
+  //                                 _dialogErrorText = "No active session";
+  //                               });
+  //                               return 'Finish';
+  //                             });
+  //                       }
+  //                     },
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ));
+  // }
 
-  Widget _finishSessionDialog(BuildContext context) {
+  void dialogCallBack() {
+    if (!sessionInProgress) {
+      Navigator.pop(context);
+    }
+  }
+}
+
+class FinishSessionDialog extends StatefulWidget {
+  const FinishSessionDialog({Key? key, required this.stopSession})
+      : super(key: key);
+
+  final Function stopSession;
+
+  @override
+  State<FinishSessionDialog> createState() => _FinishSessionDialogState();
+}
+
+class _FinishSessionDialogState extends State<FinishSessionDialog> {
+  String _dialogErrorText = '';
+
+  @override
+  Widget build(BuildContext context) {
     return Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         shape: RoundedRectangleBorder(
@@ -395,7 +510,7 @@ class _RecordScreenState extends State<RecordScreen> {
               const SizedBox(
                 height: 24,
               ),
-              Text(_dialogErrorText ?? ''),
+              Text(_dialogErrorText),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -409,12 +524,8 @@ class _RecordScreenState extends State<RecordScreen> {
                         fontSize: 18,
                         labelColor: Colors.grey[600]!,
                         backgroundColor: Colors.grey[200]!,
-                        onPressed: () {
-                          setState(() {
-                            _dialogErrorText = '';
-                          });
-                          BlocProvider.of<SessionsCubit>(context)
-                              .continueSession();
+                        onPressed: () async {
+                          _dialogErrorText = '';
                           Navigator.pop(context);
                         }),
                     BlocBuilder<SessionsCubit, SessionsState>(
@@ -436,9 +547,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               } else {
                                 await BlocProvider.of<SessionsCubit>(context)
                                     .completeSession();
-                                setState(() {
-                                  sessionInProgress = false;
-                                });
+                                widget.stopSession();
                                 Navigator.pop(context);
                               }
                             },
@@ -465,11 +574,5 @@ class _RecordScreenState extends State<RecordScreen> {
             ],
           ),
         ));
-  }
-
-  void dialogCallBack() {
-    if (!sessionInProgress) {
-      Navigator.pop(context);
-    }
   }
 }
