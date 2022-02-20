@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_share/flutter_share.dart';
-import 'package:myputt/components/confirm_dialog.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats.dart';
 
@@ -100,6 +99,9 @@ class SessionListRow extends StatelessWidget {
                     ),
                     onPressed: () async {
                       showModalBottomSheet(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                           context: context,
                           builder: (context) => ShareSheet(
                                 session: session,

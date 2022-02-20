@@ -2,6 +2,8 @@ import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
 
+import '../data/types/challenges/putting_challenge.dart';
+
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
   Stats getStatsForSessionRange(
@@ -202,5 +204,49 @@ class StatsService {
       statsMap[session.dateStarted] = getStatsForSession(allSessions, session);
     }
     return statsMap;
+  }
+
+  int getPuttCountFromSessions(List<PuttingSession> sessions, bool puttsMade) {
+    int total = 0;
+    for (var session in sessions) {
+      for (var set in session.sets) {
+        total += puttsMade ? set.puttsMade.toInt() : set.puttsAttempted.toInt();
+      }
+    }
+    return total;
+  }
+
+  int getPuttCountFromChallenges(
+      List<PuttingChallenge> challenges, bool puttsMade) {
+    int total = 0;
+    for (var challenge in challenges) {
+      for (var set in challenge.currentUserSets) {
+        total += puttsMade ? set.puttsMade.toInt() : set.puttsAttempted.toInt();
+      }
+    }
+    return total;
+  }
+
+  double getOverallC1x(
+      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+    double totalMade = 0;
+    double totalAttmpted = 0;
+    for (var session in sessions) {
+      for (var set in session.sets) {
+        if (set.distance > 10) {
+          totalMade += set.puttsMade.toInt();
+          totalAttmpted += set.puttsAttempted.toInt();
+        }
+      }
+    }
+    for (var challenge in challenges) {
+      for (var set in challenge.currentUserSets) {
+        if (set.distance > 10) {
+          totalMade += set.puttsMade.toInt();
+          totalAttmpted += set.puttsAttempted.toInt();
+        }
+      }
+    }
+    return totalMade / totalAttmpted;
   }
 }

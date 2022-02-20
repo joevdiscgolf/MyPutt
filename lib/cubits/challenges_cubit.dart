@@ -48,7 +48,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> reload() async {
-    emit(ChallengesLoading());
+    //emit(ChallengesLoading());
     await _challengesRepository.fetchAllChallenges();
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
@@ -201,7 +201,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   Future<bool> generateAndSendChallengeToUser(
       PuttingSession session, MyPuttUser recipientUser) async {
-    emit(ChallengesLoading());
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       return false;

@@ -79,26 +79,22 @@ class _MainWrapperState extends State<MainWrapper> {
 
   Widget _challengesIcon(
       BuildContext context, List<PuttingChallenge> pendingChallenges) {
-    return SizedBox(
-      height: 40,
-      width: 40,
-      child: Stack(children: [
-        Center(child: const Icon(FlutterRemix.sword_line)),
-        Visibility(
-          visible: pendingChallenges.isNotEmpty,
-          child: Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                  padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                  decoration: const BoxDecoration(
-                      color: Colors.red, shape: BoxShape.circle),
-                  child: Center(
-                      child: Text(pendingChallenges.length.toString(),
-                          style: const TextStyle(
-                              fontSize: 15, color: Colors.white))))),
-        )
-      ]),
-    );
+    return Stack(children: [
+      const Center(child: Icon(FlutterRemix.sword_line)),
+      Visibility(
+        visible: pendingChallenges.isNotEmpty,
+        child: Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+                padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+                decoration: const BoxDecoration(
+                    color: Colors.red, shape: BoxShape.circle),
+                child: Center(
+                    child: Text(pendingChallenges.length.toString(),
+                        style: const TextStyle(
+                            fontSize: 15, color: Colors.white))))),
+      )
+    ]);
   }
 }

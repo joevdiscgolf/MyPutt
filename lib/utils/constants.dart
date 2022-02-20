@@ -28,3 +28,17 @@ enum LoginState { loggedIn, setup, none }
 
 const blueFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutout.png');
 const redFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutoutRed.png');
+const blueFrisbeeImageIcon = SizedBox(
+  height: 20,
+  width: 20,
+  child: Image(
+    image: AssetImage('assets/frisbeeEmojiCutout.png'),
+  ),
+);
+const redFrisbeeImageIcon = SizedBox(
+  height: 20,
+  width: 20,
+  child: Image(
+    image: AssetImage('assets/frisbeeEmojiCutoutRed.png'),
+  ),
+);

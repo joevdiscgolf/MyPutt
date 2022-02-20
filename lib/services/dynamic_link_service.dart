@@ -29,6 +29,7 @@ class DynamicLinkService {
     }
 
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      print('redirected to app');
       _handleDeepLink(dynamicLinkData);
     }).onError((error) {
       print('onLink error: ${error.message}');

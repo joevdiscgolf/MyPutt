@@ -14,7 +14,7 @@ import '../../data/types/challenges/storage_putting_challenge.dart';
 import '../../locator.dart';
 import '../../services/dynamic_link_service.dart';
 import '../../components/buttons/primary_button.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:share/share.dart';
 
 enum LoadingState { static, loading, loaded }
 

@@ -7,7 +7,7 @@ import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 
-import '../../../components/confirm_dialog.dart';
+import '../../../components/dialogs/confirm_dialog.dart';
 import '../../../cubits/challenges_cubit.dart';
 import '../challenge_record_screen.dart';
 import '../challenge_summary_screen.dart';

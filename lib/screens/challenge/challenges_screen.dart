@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
-import 'dart:math' as math;
 
 class ChallengesScreen extends StatefulWidget {
   const ChallengesScreen({Key? key}) : super(key: key);
@@ -19,6 +16,8 @@ class ChallengesScreen extends StatefulWidget {
 }
 
 class _ChallengesState extends State<ChallengesScreen> {
+  bool _loading = false;
+
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ChallengesCubit>(context).reload();
@@ -32,11 +31,40 @@ class _ChallengesState extends State<ChallengesScreen> {
                   style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
                       primary: Colors.transparent),
-                  onPressed: () {
-                    BlocProvider.of<ChallengesCubit>(context).reload();
+                  onPressed: () async {
+                    setState(() {
+                      _loading = true;
+                    });
+                    await BlocProvider.of<ChallengesCubit>(context).reload();
+                    Future.delayed(const Duration(milliseconds: 1000), () {
+                      setState(() {
+                        _loading = false;
+                      });
+                    });
                   },
-                  child: const Center(
-                    child: Icon(IconData(0xe514, fontFamily: 'MaterialIcons')),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: Center(
+                          child: Visibility(
+                              visible: _loading,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              )),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: Center(
+                            child: Icon(
+                                IconData(0xe514, fontFamily: 'MaterialIcons')),
+                          )),
+                    ],
                   ))
             ],
             title: const Text('Challenges'),
@@ -304,10 +332,6 @@ class _ChallengesState extends State<ChallengesScreen> {
                             challenges:
                                 List.from(state.completedChallenges.reversed)),
                       ]);
-                    } else if (state is ChallengesLoading) {
-                      return Container(
-                          child:
-                              const Center(child: CircularProgressIndicator()));
                     } else {
                       return Container();
                     }
