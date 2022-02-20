@@ -7,14 +7,14 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/theme/theme_data.dart';
-import 'package:share/share.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/utils/constants.dart';
-import '../data/types/challenges/storage_putting_challenge.dart';
-import '../locator.dart';
-import '../services/dynamic_link_service.dart';
-import 'buttons/primary_button.dart';
+import '../../data/types/challenges/storage_putting_challenge.dart';
+import '../../locator.dart';
+import '../../services/dynamic_link_service.dart';
+import '../../components/buttons/primary_button.dart';
+import 'package:share/share.dart';
 
 enum LoadingState { static, loading, loaded }
 
@@ -35,70 +35,77 @@ class _ShareSheetState extends State<ShareSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.height * 0.75,
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: Colors.grey[100], borderRadius: BorderRadius.circular(5)),
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          color: Colors.grey[100],
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
             Text(
               'Challenge a friend',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 10),
             PrimaryButton(
               width: double.infinity,
-              label: 'Share with anyone',
+              label: 'Share with link',
               onPressed: () => _share(),
               icon: FlutterRemix.share_box_line,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
             Text(
-              'or\n Find a MyPutt user',
-              style: Theme.of(context).textTheme.headlineSmall,
+              'Find a MyPutt user',
+              style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
-            TextFormField(
-              controller: _searchTextController,
-              autocorrect: false,
-              maxLines: 1,
-              maxLength: 24,
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle1!
-                  .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                hintText: 'Enter username',
-                contentPadding: const EdgeInsets.only(
-                    left: 12, right: 12, top: 18, bottom: 18),
-                isDense: true,
-                hintStyle: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-                enabledBorder: Theme.of(context).inputDecorationTheme.border,
-                focusedBorder: Theme.of(context).inputDecorationTheme.border,
-                prefixIcon: const Icon(
-                  FlutterRemix.user_line,
-                  color: TWUIColors.gray,
-                  size: 22,
-                ),
-                counter: const Offstage(),
-              ),
-              onChanged: (String username) async {
-                if (DateTime.now().millisecondsSinceEpoch - lastUpdated >
-                    200) {}
-                setState(() {
-                  lastUpdated = DateTime.now().millisecondsSinceEpoch;
-                });
-                await BlocProvider.of<SearchUserCubit>(context)
-                    .searchUsersByUsername(username);
-              },
-            ),
+            _usernameField(context),
             Expanded(child: UserListView(session: widget.session))
           ],
         ));
+  }
+
+  Widget _usernameField(BuildContext context) {
+    return TextFormField(
+      controller: _searchTextController,
+      autocorrect: false,
+      maxLines: 1,
+      maxLength: 24,
+      style: Theme.of(context)
+          .textTheme
+          .subtitle1!
+          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        hintText: 'Enter username',
+        contentPadding:
+            const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+        isDense: true,
+        hintStyle: Theme.of(context)
+            .textTheme
+            .subtitle1!
+            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+        enabledBorder: Theme.of(context).inputDecorationTheme.border,
+        focusedBorder: Theme.of(context).inputDecorationTheme.border,
+        prefixIcon: const Icon(
+          FlutterRemix.user_line,
+          color: TWUIColors.gray,
+          size: 22,
+        ),
+        counter: const Offstage(),
+      ),
+      onChanged: (String username) async {
+        if (DateTime.now().millisecondsSinceEpoch - lastUpdated > 200) {}
+        setState(() {
+          lastUpdated = DateTime.now().millisecondsSinceEpoch;
+        });
+        await BlocProvider.of<SearchUserCubit>(context)
+            .searchUsersByUsername(username);
+      },
+    );
   }
 
   Future<void> _share() async {
@@ -113,6 +120,9 @@ class _ShareSheetState extends State<ShareSheet> {
           .get<DynamicLinkService>()
           .generateDynamicLinkFromId(newChallenge.id);
       print(uri.toString());
+      await Share.share(
+        "${currentUser.displayName} thinks they can beat you in a putting challenge. Let's find out!\n${uri.toString()}",
+      );
     }
   }
 }
@@ -168,6 +178,7 @@ class UserListItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
             border: Border.all(width: 2, color: Colors.grey[400]!)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

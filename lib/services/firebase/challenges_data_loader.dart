@@ -62,4 +62,18 @@ class FBChallengesDataLoader {
       return null;
     }
   }
+
+  Future<StoragePuttingChallenge?> getChallengeByUid(
+      String uid, String challengeId) async {
+    final DocumentSnapshot<dynamic> snapshot = await firestore
+        .doc('$challengesCollection/$uid/$challengesCollection/$challengeId')
+        .get();
+    if (snapshot.exists &&
+        isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
+      return StoragePuttingChallenge.fromJson(
+          snapshot.data() as Map<String, dynamic>);
+    } else {
+      return null;
+    }
+  }
 }

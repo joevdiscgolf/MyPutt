@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/home/components/enums.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/services/signin_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -78,42 +76,43 @@ class HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
       ),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: _sessionRangeLabels
               .asMap()
               .entries
-              .map((entry) => Builder(builder: (context) {
-                    if (_sessionRangeIndex == entry.key) {
+              .map((entry) => Expanded(
+                    child: Builder(builder: (context) {
+                      if (_sessionRangeIndex == entry.key) {
+                        return ElevatedButton(
+                            child: Text(entry.value,
+                                style: const TextStyle(color: Colors.black)),
+                            style: ElevatedButton.styleFrom(
+                                side: const BorderSide(
+                                    width: 2.0, color: Colors.blue),
+                                primary: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                _sessionRangeIndex = entry.key;
+                              });
+
+                              BlocProvider.of<HomeScreenCubit>(context)
+                                  .updateSessionRange(_sessionRangeIndex);
+                              BlocProvider.of<HomeScreenCubit>(context)
+                                  .reloadStats();
+                            });
+                      }
                       return ElevatedButton(
-                          child: Text(entry.value,
-                              style: const TextStyle(color: Colors.black)),
-                          style: ElevatedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 2.0, color: Colors.blue),
-                              primary: Colors.white),
+                          child: Text(entry.value),
                           onPressed: () {
                             setState(() {
                               _sessionRangeIndex = entry.key;
                             });
-
                             BlocProvider.of<HomeScreenCubit>(context)
                                 .updateSessionRange(_sessionRangeIndex);
                             BlocProvider.of<HomeScreenCubit>(context)
                                 .reloadStats();
                           });
-                    }
-                    return ElevatedButton(
-                        child: Text(entry.value),
-                        onPressed: () {
-                          setState(() {
-                            _sessionRangeIndex = entry.key;
-                          });
-                          BlocProvider.of<HomeScreenCubit>(context)
-                              .updateSessionRange(_sessionRangeIndex);
-                          BlocProvider.of<HomeScreenCubit>(context)
-                              .reloadStats();
-                        });
-                  }))
+                    }),
+                  ))
               .toList()),
     );
   }

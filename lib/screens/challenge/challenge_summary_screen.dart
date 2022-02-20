@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/components/previous_sets_list.dart';
+import 'package:myputt/components/misc/previous_sets_list.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';

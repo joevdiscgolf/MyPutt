@@ -6,8 +6,6 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
-import '../../components/share_sheet.dart';
-import '../../cubits/challenges_cubit.dart';
 import 'session_summary_screen.dart';
 
 class SessionsScreen extends StatefulWidget {

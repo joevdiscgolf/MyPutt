@@ -20,6 +20,13 @@ class ChallengesRepository {
   List<PuttingChallenge> completedChallenges = [];
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
+  void clearData() {
+    currentChallenge = null;
+    pendingChallenges = [];
+    activeChallenges = [];
+    completedChallenges = [];
+  }
+
   Future<bool> addSet(PuttingSet set) async {
     final String? uid = _authService.getCurrentUserId();
     if (currentChallenge != null && uid != null) {
@@ -116,17 +123,29 @@ class ChallengesRepository {
   }
 
   Future<void> addDeepLinkChallenges() async {
-    print('adding deep link challenges. Challenges: ${deepLinkChallenges}');
+    print('adding deep link challenges. Challenges: $deepLinkChallenges');
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser != null) {
       for (var storageChallenge in deepLinkChallenges) {
-        final PuttingChallenge challenge =
-            PuttingChallenge.fromStorageChallenge(
-                storageChallenge, currentUser);
-        challenge.status = ChallengeStatus.active;
-        activeChallenges.add(challenge);
-        await _databaseService.setPuttingChallenge(challenge);
+        if (storageChallenge.challengerUser.uid != currentUser.uid) {
+          final StoragePuttingChallenge? existingChallenge =
+              await _databaseService.getChallengeByUid(
+                  currentUser.uid, storageChallenge.id);
+          if (existingChallenge == null) {
+            final PuttingChallenge challenge =
+                PuttingChallenge.fromStorageChallenge(
+                    storageChallenge, currentUser);
+            challenge.status = ChallengeStatus.active;
+            print(challenge.toJson());
+            activeChallenges.add(challenge);
+            await _databaseService.setPuttingChallenge(challenge);
+            await _databaseService.removeUnclaimedChallenge(challenge.id);
+          }
+        } else {
+          print("can't accept your own challenge");
+        }
       }
+      deepLinkChallenges = [];
     }
   }
 }

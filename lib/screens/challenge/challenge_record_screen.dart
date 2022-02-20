@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/previous_sets_list.dart';
+import 'package:myputt/components/misc/previous_sets_list.dart';
 import 'package:myputt/screens/challenge/components/challenge_director_panel.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/components/putts_made_picker.dart';
+import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
 
-import '../../components/confirm_dialog.dart';
+import '../../components/dialogs/confirm_dialog.dart';
 import '../../theme/theme_data.dart';
 import '../../utils/calculators.dart';
 

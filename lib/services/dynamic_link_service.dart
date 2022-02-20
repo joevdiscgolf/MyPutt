@@ -1,7 +1,6 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
-import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';
@@ -22,14 +21,6 @@ class DynamicLinkService {
   }
 
   Future handleDynamicLinks() async {
-    /*final DynamicLinkParameters parameters = DynamicLinkParameters(
-        link: Uri.parse(
-            'https://www.myputt.com/challenge?challengeId=ThisIsATest'),
-        uriPrefix: 'https://myputt.page.link',
-        iosParameters: const IOSParameters(
-            bundleId: 'com.joev.myputtapp', minimumVersion: '1'));
-    print(await FirebaseDynamicLinks.instance.buildLink(parameters));*/
-
     final PendingDynamicLinkData? initialLink =
         await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink != null) {
@@ -38,6 +29,7 @@ class DynamicLinkService {
     }
 
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      print('redirected to app');
       _handleDeepLink(dynamicLinkData);
     }).onError((error) {
       print('onLink error: ${error.message}');
@@ -47,19 +39,26 @@ class DynamicLinkService {
   void _handleDeepLink(PendingDynamicLinkData? data) async {
     final Uri? deepLink = data?.link;
     if (deepLink != null) {
-      print('_handleDeepLink | deepLink: $deepLink');
       final String challengeId =
           deepLink.toString().split('/').last.split('=').last;
-      print('_handleDeepLink | challengeId: $challengeId');
       final StoragePuttingChallenge? challenge =
           await _databaseService.retrieveUnclaimedChallenge(challengeId);
-      if (challenge != null) {
+      if (challenge != null &&
+          !listContainsChallenge(
+              _challengesRepository.deepLinkChallenges, challenge)) {
         _challengesRepository.deepLinkChallenges.add(challenge);
-        if (_authService.getCurrentUserId() != null) {
-          _challengesRepository.addDeepLinkChallenges();
-        }
-        print('Added: ${challenge.toJson()}');
+        _challengesRepository.addDeepLinkChallenges();
       }
     }
+  }
+
+  bool listContainsChallenge(List<StoragePuttingChallenge> challenges,
+      StoragePuttingChallenge specifiedChallenge) {
+    for (var challenge in challenges) {
+      if (challenge.id == specifiedChallenge.id) {
+        return true;
+      }
+    }
+    return false;
   }
 }

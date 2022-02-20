@@ -9,8 +9,7 @@ class SigninService {
   late StreamController<LoginState> controller;
   late Stream<LoginState> siginStream;
   final _authService = locator.get<AuthService>();
-  final ChallengesRepository _challengesRepository =
-      locator.get<ChallengesRepository>();
+  LoginState currentLoginState = LoginState.none;
   SigninService() {
     controller = StreamController<LoginState>();
     siginStream = controller.stream;
@@ -20,12 +19,15 @@ class SigninService {
     if (_authService.getCurrentUserId() != null) {
       if (!(await _authService.userIsSetup())) {
         controller.add(LoginState.setup);
+        currentLoginState = LoginState.setup;
       } else {
         await fetchRepositoryData();
         controller.add(LoginState.loggedIn);
+        currentLoginState = LoginState.loggedIn;
       }
     } else {
       controller.add(LoginState.none);
+      currentLoginState = LoginState.none;
     }
   }
 
@@ -41,6 +43,7 @@ class SigninService {
     }
     await fetchRepositoryData();
     controller.add(LoginState.setup);
+    currentLoginState = LoginState.setup;
     return true;
   }
 
@@ -56,6 +59,7 @@ class SigninService {
     }
     await fetchRepositoryData();
     controller.add(LoginState.loggedIn);
+    currentLoginState = LoginState.loggedIn;
     return true;
   }
 
@@ -65,6 +69,7 @@ class SigninService {
         await _authService.setupNewUser(username, displayName, pdgaNumber);
     if (await _authService.userIsSetup()) {
       controller.add(LoginState.loggedIn);
+      currentLoginState = LoginState.loggedIn;
     }
     return setupNewUserSuccess;
   }
@@ -73,5 +78,6 @@ class SigninService {
     clearRepositoryData();
     _authService.logOut();
     controller.add(LoginState.none);
+    currentLoginState = LoginState.none;
   }
 }

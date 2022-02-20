@@ -8,6 +8,10 @@ class UserRepository {
   final AuthService _authService = locator.get<AuthService>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
 
+  void clearData() {
+    currentUser = null;
+  }
+
   void setCurrentUser(MyPuttUser newUser) {
     currentUser = newUser;
   }
