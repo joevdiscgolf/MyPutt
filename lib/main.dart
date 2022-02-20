@@ -14,6 +14,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -27,7 +28,6 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<SigninService>().init();
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());

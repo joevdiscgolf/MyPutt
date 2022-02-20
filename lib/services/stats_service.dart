@@ -3,6 +3,8 @@ import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
 
 import '../data/types/challenges/putting_challenge.dart';
+import '../utils/calculators.dart';
+import '../utils/constants.dart';
 
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
@@ -248,5 +250,31 @@ class StatsService {
       }
     }
     return totalAttmpted == 0 ? null : (totalMade / totalAttmpted);
+  }
+
+  int getNumChallengesWithResult(
+      List<PuttingChallenge> challenges, ChallengeResult result) {
+    int total = 0;
+    for (var challenge in challenges) {
+      final int currentUserPuttsMade =
+          totalMadeFromSets(challenge.currentUserSets);
+      final int opponentPuttsMade = totalMadeFromSubset(
+          challenge.opponentSets, challenge.currentUserSets.length);
+      final int puttsMadeDifference = currentUserPuttsMade - opponentPuttsMade;
+      if (result == ChallengeResult.win) {
+        if (puttsMadeDifference > 0) {
+          total += 1;
+        }
+      } else if (result == ChallengeResult.loss) {
+        if (puttsMadeDifference < 0) {
+          total += 1;
+        }
+      } else if (result == ChallengeResult.draw) {
+        if (puttsMadeDifference == 0) {
+          total += 1;
+        }
+      }
+    }
+    return total;
   }
 }

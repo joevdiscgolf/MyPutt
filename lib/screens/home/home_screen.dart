@@ -84,7 +84,8 @@ class HomeScreenState extends State<HomeScreen> {
                       if (_sessionRangeIndex == entry.key) {
                         return ElevatedButton(
                             child: Text(entry.value,
-                                style: const TextStyle(color: Colors.black)),
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 15)),
                             style: ElevatedButton.styleFrom(
                                 side: const BorderSide(
                                     width: 2.0, color: Colors.blue),
@@ -101,7 +102,8 @@ class HomeScreenState extends State<HomeScreen> {
                             });
                       }
                       return ElevatedButton(
-                          child: Text(entry.value),
+                          child: Text(entry.value,
+                              style: const TextStyle(fontSize: 15)),
                           onPressed: () {
                             setState(() {
                               _sessionRangeIndex = entry.key;
