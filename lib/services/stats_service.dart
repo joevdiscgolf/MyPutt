@@ -285,49 +285,55 @@ class StatsService {
     List<ChartPoint> finalPoints = [];
     for (var session in sessions) {
       int index = 0;
-      for (var set in session.sets) {
-        if (set.distance == distance) {
-          final double decimal = set.puttsAttempted == 0
-              ? 0
-              : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
-          points.add(ChartPoint(
-              index: index,
-              timeStamp: set.timeStamp ?? session.timeStamp,
-              distance: set.distance.toInt(),
-              decimal: decimal));
-          index += 1;
-        }
-      }
+      session.sets
+          .where((oldset) => oldset.distance == distance)
+          .forEach((set) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : roundDouble(
+                set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? session.timeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      });
     }
     for (var challenge in challenges) {
       int index = 0;
-      for (var set in challenge.currentUserSets) {
-        if (set.distance == distance) {
-          final double decimal = set.puttsAttempted == 0
-              ? 0
-              : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
-          points.add(ChartPoint(
-              index: index,
-              timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
-              distance: set.distance.toInt(),
-              decimal: decimal));
-          index += 1;
+      challenge.currentUserSets
+          .where((oldset) => oldset.distance == distance)
+          .forEach((set) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : roundDouble(
+                set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
+        if (decimal > 1) {
+          print(decimal);
+          print(set.puttsMade);
+          print(set.puttsAttempted);
         }
-      }
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      });
     }
-
     points.sort((p1, p2) {
       final int timeStampDifference = p1.timeStamp.compareTo(p2.timeStamp);
       return timeStampDifference != 0
           ? timeStampDifference
           : p1.index.compareTo(p2.index);
     });
-    final List<ChartPoint> pointsReversed = List.from(points.reversed);
+    //final List<ChartPoint> pointsReversed = List.from(points.reversed);
     for (var index = 0; index < limit; index++) {
-      if (index >= pointsReversed.length) {
+      if (index >= points.length) {
         break;
       }
-      finalPoints.add(pointsReversed[index]);
+      finalPoints.add(points[index]);
     }
     return finalPoints;
   }

@@ -60,18 +60,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   const SizedBox(height: 10),
                   _lifetimeStatsPanel(context),
                   const SizedBox(height: 10),
-                  _chartOptionsPanel(context),
-                  Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: PerformanceChart(
-                        data: PerformanceChartData(
-                            points: _statsService.getPointsWithDistanceAndLimit(
-                                _sessionRepository.allSessions,
-                                _challengesRepository.completedChallenges,
-                                20,
-                                _numSets))),
-                  ),
+                  _chartPanel(context),
                   const SizedBox(height: 10),
                   const PDGAInfoPanel(),
                 ]),
@@ -85,14 +74,40 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         ));
   }
 
+  Widget _chartPanel(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Text(
+            'Performance over time',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          PerformanceChart(
+              data: PerformanceChartData(
+                  points: _statsService.getPointsWithDistanceAndLimit(
+                      _sessionRepository.allSessions,
+                      _challengesRepository.completedChallenges,
+                      20,
+                      _numSets))),
+          _chartOptionsPanel(context),
+        ],
+      ),
+      color: Colors.white,
+    );
+  }
+
   Widget _chartOptionsPanel(BuildContext context) {
     return Container(
+      color: Colors.white,
       padding: const EdgeInsets.all(4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            '$_numSets Sets',
+            'Last $_numSets ${_numSets == 1 ? 'Set' : 'Sets'}',
             style: Theme.of(context).textTheme.headline6,
           ),
           Row(
@@ -102,7 +117,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   label: _numSets.toString(),
                   onChanged: (double newValue) {
                     setState(() {
-                      _numSets = (newValue * totalSets).toInt();
+                      _numSets = (newValue * totalSets).toInt() == 0
+                          ? 1
+                          : (newValue * totalSets).toInt();
                       _sliderValue = newValue;
                     });
                   },

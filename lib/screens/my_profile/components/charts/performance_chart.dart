@@ -9,7 +9,11 @@ class PerformanceChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height: 200, child: LineChart(mainData(data)));
+    return Container(
+        padding: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(10),
+        height: 150,
+        child: LineChart(mainData(data)));
   }
 
   LineChartData mainData(PerformanceChartData chartData) {
@@ -35,7 +39,7 @@ class PerformanceChart extends StatelessWidget {
               .map((entry) =>
                   FlSpot(entry.key.toDouble(), entry.value.decimal * 100))
               .toList(),
-          isCurved: true,
+          isCurved: false,
           colors: [Colors.blue],
           barWidth: 2,
           isStrokeCapRound: true,
