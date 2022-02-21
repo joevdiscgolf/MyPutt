@@ -1,3 +1,4 @@
+import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
@@ -276,5 +277,54 @@ class StatsService {
       }
     }
     return total;
+  }
+
+  List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
+      List<PuttingChallenge> challenges, int distance, int limit) {
+    List<ChartPoint> points = [];
+    List<ChartPoint> finalPoints = [];
+    for (var session in sessions) {
+      int index = 0;
+      for (var set in session.sets) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? session.timeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      }
+    }
+    for (var challenge in challenges) {
+      int index = 0;
+      for (var set in challenge.currentUserSets) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      }
+    }
+
+    points.sort((p1, p2) {
+      final int timeStampDifference = p1.timeStamp.compareTo(p2.timeStamp);
+      return timeStampDifference != 0
+          ? timeStampDifference
+          : p1.index.compareTo(p2.index);
+    });
+    final List<ChartPoint> pointsReversed = List.from(points.reversed);
+    for (var index = 0; index < limit; index++) {
+      finalPoints.add(pointsReversed[index]);
+    }
+    for (var point in finalPoints) {
+      print(point.decimal);
+    }
+    return points;
   }
 }

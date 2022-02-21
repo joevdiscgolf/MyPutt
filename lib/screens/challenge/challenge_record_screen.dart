@@ -485,6 +485,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 ),
                 onPressed: () {
                   BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                      timeStamp: DateTime.now().millisecondsSinceEpoch,
                       distance: state
                           .currentChallenge
                           .opponentSets[

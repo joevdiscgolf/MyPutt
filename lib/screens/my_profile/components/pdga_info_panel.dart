@@ -26,7 +26,7 @@ class PDGAInfoPanel extends StatelessWidget {
                         state.pdgaPlayerInfo?.pdgaNum != null &&
                         state.pdgaPlayerInfo?.name != null) {
                       return Text(
-                        '${state.pdgaPlayerInfo?.name} # ${state.pdgaPlayerInfo?.pdgaNum}',
+                        '${state.pdgaPlayerInfo?.name} #${state.pdgaPlayerInfo?.pdgaNum}',
                         style: Theme.of(context).textTheme.headline6,
                       );
                     }

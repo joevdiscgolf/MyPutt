@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
-import 'package:myputt/data/types/pdga_player_info.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
@@ -10,7 +9,6 @@ import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
-
 import 'components/pdga_info_panel.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -40,6 +38,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             if (state is MyProfileLoaded) {
               return RefreshIndicator(
                 onRefresh: () async {
+                  _statsService.getPointsWithDistanceAndLimit(
+                      _sessionRepository.allSessions,
+                      _challengesRepository.completedChallenges,
+                      20,
+                      10);
                   await BlocProvider.of<MyProfileCubit>(context).reload();
                 },
                 child: ListView(children: [
@@ -186,7 +189,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             size: 15,
           ),
           SizedBox(width: 5),
-          Text('Logout'),
+          Text('Log out'),
         ],
       ),
     );
@@ -500,17 +503,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           child: Row(
             children: [
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Wins',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      numWins.toString(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    )
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Wins',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numWins.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
               VerticalDivider(
@@ -519,17 +525,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 color: Colors.grey[400]!,
               ),
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Losses',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      numLosses.toString(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    )
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Losses',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numLosses.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
               VerticalDivider(
@@ -538,17 +547,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 color: Colors.grey[400]!,
               ),
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Draws',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      numDraws.toString(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    )
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Draws',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numDraws.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
               VerticalDivider(
@@ -557,19 +569,22 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 color: Colors.grey[400]!,
               ),
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Win rate',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      '${(winRate * 100).toStringAsFixed(2)} %',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color:
-                              winRate > 0.5 ? ThemeColors.green : Colors.red),
-                    )
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Win rate',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        '${(winRate * 100).toStringAsFixed(2)} %',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color:
+                                winRate > 0.5 ? ThemeColors.green : Colors.red),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],

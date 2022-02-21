@@ -42,9 +42,7 @@ class WebScraperService {
         for (var item in nameHTML) {
           if (item['title'] != null) {
             final List<String> split = item['title'].split('#');
-            print(split.first.split('\n').last);
             name = split.first.split('\n').last;
-            print(split.last);
             if (int.tryParse(split.last) != null) {
               pdgaNum = int.parse(split.last);
             }
@@ -52,7 +50,6 @@ class WebScraperService {
           for (var item in locationHTML) {
             if (item['title'] != null) {
               final List<String> split = item['title'].split('Location: ');
-              print(split.last);
               location = split.last;
             }
           }
@@ -60,14 +57,12 @@ class WebScraperService {
             if (item['title'] != null) {
               final List<String> split =
                   item['title'].split('Classification:  ');
-              print(split.last);
               classification = split.last;
             }
           }
           for (var item in memberSinceHTML) {
             if (item['title'] != null) {
               final List<String> split = item['title'].split('Member Since: ');
-              print(split.last);
               memberSince = split.last;
             }
           }
@@ -75,7 +70,6 @@ class WebScraperService {
             if (item['title'] != null) {
               final List<String> split =
                   item['title'].split('Current Rating: ');
-              print(split.last.split(' ').first);
               if (int.tryParse(split.last.split(' ').first) != null) {
                 rating = int.parse(split.last.split(' ').first);
               }
@@ -84,14 +78,12 @@ class WebScraperService {
           for (var item in careerEventsHTML) {
             if (item['title'] != null) {
               final List<String> split = item['title'].split('Career Events: ');
-              print(split.last);
               careerEvents = int.parse(split.last);
             }
           }
           for (var item in careerWinsHTML) {
             if (item['title'] != null) {
               final List<String> split = item['title'].split('Career Wins: ');
-              print(split.last);
               if (int.tryParse(split.last) != null) {
                 careerWins = int.parse(split.last);
               }
@@ -108,7 +100,6 @@ class WebScraperService {
                   commasRemoved += ch;
                 }
               });
-              print(commasRemoved);
               if (double.tryParse(commasRemoved) != null) {
                 careerEarnings = double.parse(commasRemoved);
               }
@@ -117,7 +108,6 @@ class WebScraperService {
           for (var item in nextEventHTML) {
             if (item['title'] != null) {
               final List<String> split = item['title'].split('Next Event: ');
-              print(split.last);
               nextEvent = split.last;
             }
           }

@@ -10,6 +10,7 @@ PuttingSet _$PuttingSetFromJson(Map json) => PuttingSet(
       puttsMade: json['puttsMade'] as num,
       puttsAttempted: json['puttsAttempted'] as num,
       distance: json['distance'] as num,
+      timeStamp: json['timeStamp'] as int?,
     )..conditions = json['conditions'] == null
         ? null
         : Conditions.fromJson(
@@ -17,6 +18,7 @@ PuttingSet _$PuttingSetFromJson(Map json) => PuttingSet(
 
 Map<String, dynamic> _$PuttingSetToJson(PuttingSet instance) =>
     <String, dynamic>{
+      'timeStamp': instance.timeStamp,
       'puttsMade': instance.puttsMade,
       'puttsAttempted': instance.puttsAttempted,
       'distance': instance.distance,
