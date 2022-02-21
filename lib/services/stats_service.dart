@@ -286,29 +286,33 @@ class StatsService {
     for (var session in sessions) {
       int index = 0;
       for (var set in session.sets) {
-        final double decimal = set.puttsAttempted == 0
-            ? 0
-            : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
-        points.add(ChartPoint(
-            index: index,
-            timeStamp: set.timeStamp ?? session.timeStamp,
-            distance: set.distance.toInt(),
-            decimal: decimal));
-        index += 1;
+        if (set.distance == distance) {
+          final double decimal = set.puttsAttempted == 0
+              ? 0
+              : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
+          points.add(ChartPoint(
+              index: index,
+              timeStamp: set.timeStamp ?? session.timeStamp,
+              distance: set.distance.toInt(),
+              decimal: decimal));
+          index += 1;
+        }
       }
     }
     for (var challenge in challenges) {
       int index = 0;
       for (var set in challenge.currentUserSets) {
-        final double decimal = set.puttsAttempted == 0
-            ? 0
-            : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
-        points.add(ChartPoint(
-            index: index,
-            timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
-            distance: set.distance.toInt(),
-            decimal: decimal));
-        index += 1;
+        if (set.distance == distance) {
+          final double decimal = set.puttsAttempted == 0
+              ? 0
+              : set.puttsMade.toDouble() / set.puttsAttempted.toDouble();
+          points.add(ChartPoint(
+              index: index,
+              timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
+              distance: set.distance.toInt(),
+              decimal: decimal));
+          index += 1;
+        }
       }
     }
 
@@ -320,11 +324,23 @@ class StatsService {
     });
     final List<ChartPoint> pointsReversed = List.from(points.reversed);
     for (var index = 0; index < limit; index++) {
+      if (index >= pointsReversed.length) {
+        break;
+      }
       finalPoints.add(pointsReversed[index]);
     }
-    for (var point in finalPoints) {
-      print(point.decimal);
+    return finalPoints;
+  }
+
+  int getTotalPuttingSets(
+      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+    int totalSets = 0;
+    for (var session in sessions) {
+      totalSets += session.sets.length;
     }
-    return points;
+    for (var challenge in challenges) {
+      totalSets += challenge.currentUserSets.length;
+    }
+    return totalSets;
   }
 }

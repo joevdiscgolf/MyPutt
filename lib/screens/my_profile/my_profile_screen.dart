@@ -9,6 +9,8 @@ import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
+import '../../data/types/chart/chart_point.dart';
+import 'components/charts/performance_chart.dart';
 import 'components/pdga_info_panel.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -23,6 +25,19 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
+  double _sliderValue = 1;
+  late int _numSets;
+  late final int totalSets;
+  @override
+  void initState() {
+    super.initState();
+    totalSets = _statsService.getTotalPuttingSets(
+      _sessionRepository.allSessions,
+      _challengesRepository.completedChallenges,
+    );
+    _numSets = totalSets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,17 +53,25 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             if (state is MyProfileLoaded) {
               return RefreshIndicator(
                 onRefresh: () async {
-                  _statsService.getPointsWithDistanceAndLimit(
-                      _sessionRepository.allSessions,
-                      _challengesRepository.completedChallenges,
-                      20,
-                      10);
                   await BlocProvider.of<MyProfileCubit>(context).reload();
                 },
                 child: ListView(children: [
                   _basicInfoPanel(context),
                   const SizedBox(height: 10),
                   _lifetimeStatsPanel(context),
+                  const SizedBox(height: 10),
+                  _chartOptionsPanel(context),
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: PerformanceChart(
+                        data: PerformanceChartData(
+                            points: _statsService.getPointsWithDistanceAndLimit(
+                                _sessionRepository.allSessions,
+                                _challengesRepository.completedChallenges,
+                                20,
+                                _numSets))),
+                  ),
                   const SizedBox(height: 10),
                   const PDGAInfoPanel(),
                 ]),
@@ -61,106 +84,37 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           },
         ));
   }
-  //
-  // Widget _pdgaStatsPanel(BuildContext context) {
-  //   return BlocBuilder<MyProfileCubit, MyProfileState>(
-  //     builder: (context, state) {
-  //       if (state is MyProfileLoaded && state.pdgaPlayerInfo != null) {
-  //         final PDGAPlayerInfo playerInfo = state.pdgaPlayerInfo!;
-  //         return Container(
-  //             padding: const EdgeInsets.all(8),
-  //             color: Colors.white,
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   'PDGA player info',
-  //                   style: Theme.of(context).textTheme.headline5,
-  //                 ),
-  //                 const SizedBox(height: 10),
-  //                 Row(
-  //                   children: [
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Class',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text('${state.pdgaPlayerInfo?.classification}')
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Rating',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text('${playerInfo.rating}')
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Since',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text(playerInfo.memberSince)
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 5,
-  //                 ),
-  //                 Row(
-  //                   children: [
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Events',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text('${playerInfo.careerEvents}')
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Wins',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text('${playerInfo.careerWins}')
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Column(
-  //                         children: [
-  //                           Text('Earnings',
-  //                               style: Theme.of(context).textTheme.headline6),
-  //                           Text('${playerInfo.careerEvents}')
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 5,
-  //                 ),
-  //                 Row(
-  //                   children: [
-  //                     Text('Next event: ',
-  //                         style: Theme.of(context).textTheme.headline6),
-  //                     Text(playerInfo.nextEvent)
-  //                   ],
-  //                 )
-  //               ],
-  //             ));
-  //       } else {
-  //         return Container();
-  //       }
-  //     },
-  //   );
-  // }
+
+  Widget _chartOptionsPanel(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            '$_numSets Sets',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  label: _numSets.toString(),
+                  onChanged: (double newValue) {
+                    setState(() {
+                      _numSets = (newValue * totalSets).toInt();
+                      _sliderValue = newValue;
+                    });
+                  },
+                  value: _sliderValue,
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _title(BuildContext context) {
     return BlocBuilder<MyProfileCubit, MyProfileState>(

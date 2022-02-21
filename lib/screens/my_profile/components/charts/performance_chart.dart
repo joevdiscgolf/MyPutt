@@ -1,92 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:myputt/data/types/chart/chart_point.dart';
 
 class PerformanceChart extends StatelessWidget {
-  const PerformanceChart({Key? key}) : super(key: key);
+  const PerformanceChart({Key? key, required this.data}) : super(key: key);
+
+  final PerformanceChartData data;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SizedBox(height: 200, child: LineChart(mainData(data)));
   }
 
-  LineChartData mainData(PerformanceChart chart, double percentageChange) {
+  LineChartData mainData(PerformanceChartData chartData) {
     return LineChartData(
+      axisTitleData: FlAxisTitleData(
+          leftTitle: AxisTitle(
+              margin: 5,
+              textAlign: TextAlign.center,
+              showTitle: true,
+              titleText: '%')),
       gridData: FlGridData(show: false),
       titlesData: FlTitlesData(show: false),
       borderData: FlBorderData(show: false),
       minX: 0,
-      maxX: chart.points.length.toDouble() - 1,
-      minY: chart.points.map((point) => point.value).reduce(min),
-      maxY: chart.points.map((point) => point.value).reduce(max),
-      lineTouchData: LineTouchData(
-        enabled: true,
-        handleBuiltInTouches: true,
-        getTouchedSpotIndicator:
-            (LineChartBarData barData, List<int> indicators) {
-          return indicators.map((int index) {
-            final flLine = FlLine(color: Colors.transparent, strokeWidth: 0);
-            final dotData = FlDotData(
-              getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-                radius: 5,
-                color: RoiColors.black,
-                strokeWidth: 24,
-                strokeColor: RoiColors.black.withOpacity(0.03),
-              ),
-            );
-            return TouchedSpotIndicatorData(flLine, dotData);
-          }).toList();
-        },
-        touchCallback: (FlTouchEvent event, LineTouchResponse? lineTouch) {
-          if (lineTouch?.lineBarSpots?[0].y != null) {
-            setState(() {
-              _currentPrice = lineTouch!.lineBarSpots![0].y;
-              _currentDate = null;
-            });
-          } else {
-            Vibrate.feedback(FeedbackType.selection);
-            setState(() {
-              _currentPrice = widget.latestPrice;
-              _currentDate =
-                  getRangeLongLabelFromChartRange(_selectedChartRange);
-            });
-          }
-        },
-        touchTooltipData: LineTouchTooltipData(
-          tooltipRoundedRadius: 16,
-          fitInsideHorizontally: true,
-          fitInsideVertically: true,
-          showOnTopOfTheChartBoxArea: true,
-          tooltipBgColor: RoiColors.gray[50],
-          getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-            return touchedBarSpots.map((barSpot) {
-              final flSpot = barSpot;
-              final Point point = chart.points[flSpot.x.toInt()];
-              return LineTooltipItem(
-                point.date,
-                Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-              );
-            }).toList();
-          },
-        ),
-      ),
+      maxX: chartData.points.length.toDouble() - 1,
+      minY: 0,
+      maxY: 100,
       lineBarsData: [
         LineChartBarData(
-          spots: chart.points
+          spots: chartData.points
               .asMap()
               .entries
-              .map((entry) => FlSpot(entry.key.toDouble(), entry.value.value))
+              .map((entry) =>
+                  FlSpot(entry.key.toDouble(), entry.value.decimal * 100))
               .toList(),
           isCurved: true,
-          colors: [RoiColors.black],
-          barWidth: 3,
+          colors: [Colors.blue],
+          barWidth: 2,
           isStrokeCapRound: true,
           dotData: FlDotData(show: false),
           belowBarData: BarAreaData(
             show: false,
-            colors:
-                [RoiColors.black].map((color) => color.withOpacity(1)).toList(),
+            colors: [Colors.blue].map((color) => color.withOpacity(1)).toList(),
           ),
         ),
       ],
