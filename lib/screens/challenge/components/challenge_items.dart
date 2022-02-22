@@ -247,32 +247,50 @@ class CompletedChallengeItem extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.grey[300]!),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300]!,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: Text(resultText,
-                            style: Theme.of(context).textTheme.headline5?.copyWith(
-                                /*shadows: [
-                                  const Shadow(
-                                      color: Colors.black,
-                                      offset: (Offset(0.3, 0.3))),
-                                  const Shadow(
-                                      color: Colors.black,
-                                      offset: (Offset(-0.3, 0.3))),
-                                  const Shadow(
-                                      color: Colors.black,
-                                      offset: (Offset(0.3, -0.3))),
-                                  const Shadow(
-                                      color: Colors.black,
-                                      offset: (Offset(-0.3, -0.3)))
-                                ]*/
-                                color: difference == 0
-                                    ? Colors.white
-                                    : (difference > 0)
-                                        ? ThemeColors.lightBlue
-                                        : Colors.red)),
+                        child: Builder(builder: (context) {
+                          if (resultText == 'DRAW') {
+                            return Text(resultText,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    ?.copyWith(
+                                  color: Colors.white,
+                                  shadows: [
+                                    const Shadow(
+                                        color: Colors.black,
+                                        offset: (Offset(0.3, 0.3))),
+                                    const Shadow(
+                                        color: Colors.black,
+                                        offset: (Offset(-0.3, 0.3))),
+                                    const Shadow(
+                                        color: Colors.black,
+                                        offset: (Offset(0.3, -0.3))),
+                                    const Shadow(
+                                        color: Colors.black,
+                                        offset: (Offset(-0.3, -0.3)))
+                                  ],
+                                ));
+                          } else {
+                            return Text(resultText,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5
+                                    ?.copyWith(
+                                        color: difference == 0
+                                            ? Colors.white
+                                            : (difference > 0)
+                                                ? ThemeColors.lightBlue
+                                                : Colors.red));
+                          }
+                        }),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -301,8 +319,11 @@ class CompletedChallengeItem extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  color: Colors.white,
                   padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
                   child: IntrinsicHeight(
                     child: Column(
                       children: [
@@ -417,28 +438,19 @@ class NewActiveChallengeItem extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.grey[300]!),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300]!,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Text('ACTIVE',
-                            style: Theme.of(context).textTheme.headline5?.copyWith(
-                                /*shadows: [
-                              const Shadow(
-                                  color: Colors.black,
-                                  offset: (Offset(0.3, 0.3))),
-                              const Shadow(
-                                  color: Colors.black,
-                                  offset: (Offset(-0.3, 0.3))),
-                              const Shadow(
-                                  color: Colors.black,
-                                  offset: (Offset(0.3, -0.3))),
-                              const Shadow(
-                                  color: Colors.black,
-                                  offset: (Offset(-0.3, -0.3)))
-                            ]*/
-                                color: ThemeColors.green)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5
+                                ?.copyWith(color: ThemeColors.green)),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -477,8 +489,11 @@ class NewActiveChallengeItem extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  color: Colors.white,
                   padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
                   child: IntrinsicHeight(
                     child: Column(
                       children: [
@@ -583,23 +598,18 @@ class NewPendingChallengeItem extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(color: Colors.grey[300]!),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300]!,
+                  borderRadius: BorderRadius.circular(5),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('PENDING',
-                        style: Theme.of(context).textTheme.headline5?.copyWith(
-                            /*shadows: [
-                          const Shadow(
-                              color: Colors.black, offset: (Offset(0.3, 0.3))),
-                          const Shadow(
-                              color: Colors.black, offset: (Offset(-0.3, 0.3))),
-                          const Shadow(
-                              color: Colors.black, offset: (Offset(0.3, -0.3))),
-                          const Shadow(
-                              color: Colors.black, offset: (Offset(-0.3, -0.3)))
-                        ]*/
-                            color: ThemeColors.lightBlue)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            ?.copyWith(color: ThemeColors.lightBlue)),
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -628,6 +638,8 @@ class NewPendingChallengeItem extends StatelessWidget {
               Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(8),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
                 child: IntrinsicHeight(
                   child: Column(children: [
                     Row(children: [
