@@ -5,12 +5,11 @@ import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/my_profile/components/charts/performance_chart_panel.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
-import '../../data/types/chart/chart_point.dart';
-import 'components/charts/performance_chart.dart';
 import 'components/pdga_info_panel.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -25,18 +24,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
-  double _sliderValue = 1;
-  late int _numSets;
-  late final int totalSets;
-  @override
-  void initState() {
-    super.initState();
-    totalSets = _statsService.getTotalPuttingSets(
-      _sessionRepository.allSessions,
-      _challengesRepository.completedChallenges,
-    );
-    _numSets = totalSets;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +47,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   const SizedBox(height: 10),
                   _lifetimeStatsPanel(context),
                   const SizedBox(height: 10),
-                  _chartPanel(context),
+                  const PerformanceChartPanel(),
                   const SizedBox(height: 10),
                   const PDGAInfoPanel(),
                 ]),
@@ -72,65 +59,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             }
           },
         ));
-  }
-
-  Widget _chartPanel(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-            'Performance over time',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          PerformanceChart(
-              data: PerformanceChartData(
-                  points: _statsService.getPointsWithDistanceAndLimit(
-                      _sessionRepository.allSessions,
-                      _challengesRepository.completedChallenges,
-                      20,
-                      _numSets))),
-          _chartOptionsPanel(context),
-        ],
-      ),
-      color: Colors.white,
-    );
-  }
-
-  Widget _chartOptionsPanel(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Last $_numSets ${_numSets == 1 ? 'Set' : 'Sets'}',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Slider(
-                  label: _numSets.toString(),
-                  onChanged: (double newValue) {
-                    setState(() {
-                      _numSets = (newValue * totalSets).toInt() == 0
-                          ? 1
-                          : (newValue * totalSets).toInt();
-                      _sliderValue = newValue;
-                    });
-                  },
-                  value: _sliderValue,
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _title(BuildContext context) {
@@ -182,7 +110,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'MyPutt info',
+                            'Info',
                             style: Theme.of(context).textTheme.headline5,
                           )
                         ],

@@ -2,10 +2,10 @@ import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
-
-import '../data/types/challenges/putting_challenge.dart';
-import '../utils/calculators.dart';
-import '../utils/constants.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/constants.dart';
 
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
@@ -310,9 +310,9 @@ class StatsService {
             : roundDouble(
                 set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
         if (decimal > 1) {
-          print(decimal);
-          print(set.puttsMade);
-          print(set.puttsAttempted);
+          // print(decimal);
+          // print(set.puttsMade);
+          // print(set.puttsAttempted);
         }
         points.add(ChartPoint(
             index: index,
@@ -328,7 +328,6 @@ class StatsService {
           ? timeStampDifference
           : p1.index.compareTo(p2.index);
     });
-    //final List<ChartPoint> pointsReversed = List.from(points.reversed);
     for (var index = 0; index < limit; index++) {
       if (index >= points.length) {
         break;
@@ -338,14 +337,19 @@ class StatsService {
     return finalPoints;
   }
 
-  int getTotalPuttingSets(
-      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+  int getTotalPuttingSets(List<PuttingSession> sessions,
+      List<PuttingChallenge> challenges, int distance) {
     int totalSets = 0;
     for (var session in sessions) {
-      totalSets += session.sets.length;
+      List<PuttingSet> setsWithDistance =
+          session.sets.where((set) => set.distance == distance).toList();
+      totalSets += setsWithDistance.length;
     }
     for (var challenge in challenges) {
-      totalSets += challenge.currentUserSets.length;
+      List<PuttingSet> setsWithDistance = challenge.currentUserSets
+          .where((set) => set.distance == distance)
+          .toList();
+      totalSets += setsWithDistance.length;
     }
     return totalSets;
   }

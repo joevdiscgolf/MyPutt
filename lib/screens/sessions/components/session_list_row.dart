@@ -61,7 +61,10 @@ class SessionListRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(session.dateStarted,
-                        style: Theme.of(context).textTheme.headline6),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontSize: 15)),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -94,7 +97,7 @@ class SessionListRow extends StatelessWidget {
                       shadowColor: Colors.transparent,
                     ),
                     child: const Icon(
-                      FlutterRemix.sword_line,
+                      FlutterRemix.sword_fill,
                       color: Colors.blue,
                     ),
                     onPressed: () async {

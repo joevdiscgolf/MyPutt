@@ -48,9 +48,7 @@ class _SessionsState extends State<SessionsScreen> {
                               padding: const EdgeInsets.all(8),
                               child: Text(
                                   '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium),
+                                  style: Theme.of(context).textTheme.headline4),
                             ),
                           ),
                           _continueSessionCard(context),

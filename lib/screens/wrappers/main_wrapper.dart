@@ -42,11 +42,11 @@ class _MainWrapperState extends State<MainWrapper> {
         },
         items: [
           const BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.home_2_line),
+            icon: Icon(FlutterRemix.home_2_fill),
             label: 'Home',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.record_circle_line),
+            icon: Icon(FlutterRemix.record_circle_fill),
             label: 'Record',
           ),
           BottomNavigationBarItem(
@@ -61,14 +61,14 @@ class _MainWrapperState extends State<MainWrapper> {
                 if (state is NoCurrentChallenge) {
                   return _challengesIcon(context, state.pendingChallenges);
                 } else {
-                  return const Icon(FlutterRemix.sword_line);
+                  return const Icon(FlutterRemix.sword_fill);
                 }
               },
             ),
             label: 'Challenges',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.user_line),
+            icon: Icon(FlutterRemix.user_fill),
             label: 'Profile',
           ),
         ],
@@ -79,7 +79,7 @@ class _MainWrapperState extends State<MainWrapper> {
   Widget _challengesIcon(
       BuildContext context, List<PuttingChallenge> pendingChallenges) {
     return Stack(children: [
-      const Center(child: Icon(FlutterRemix.sword_line)),
+      const Center(child: Icon(FlutterRemix.sword_fill)),
       Visibility(
         visible: pendingChallenges.isNotEmpty,
         child: Positioned(

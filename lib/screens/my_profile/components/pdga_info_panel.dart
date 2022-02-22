@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/data/types/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/submit_text_dialog.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
 
 class PDGAInfoPanel extends StatelessWidget {
   const PDGAInfoPanel({Key? key}) : super(key: key);

@@ -6,11 +6,10 @@ import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
-
-import '../../../components/dialogs/confirm_dialog.dart';
-import '../../../cubits/challenges_cubit.dart';
-import '../challenge_record_screen.dart';
-import '../challenge_summary_screen.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/screens/challenge/challenge_record_screen.dart';
+import 'package:myputt/screens/challenge/challenge_summary_screen.dart';
 
 class ActiveChallengeItem extends StatelessWidget {
   const ActiveChallengeItem(
@@ -254,9 +253,8 @@ class CompletedChallengeItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(resultText,
-                            style:
-                                Theme.of(context).textTheme.headline5?.copyWith(
-                                    shadows: [
+                            style: Theme.of(context).textTheme.headline5?.copyWith(
+                                /*shadows: [
                                   const Shadow(
                                       color: Colors.black,
                                       offset: (Offset(0.3, 0.3))),
@@ -269,12 +267,12 @@ class CompletedChallengeItem extends StatelessWidget {
                                   const Shadow(
                                       color: Colors.black,
                                       offset: (Offset(-0.3, -0.3)))
-                                ],
-                                    color: difference == 0
-                                        ? Colors.white
-                                        : (difference > 0)
-                                            ? ThemeColors.lightBlue
-                                            : Colors.red)),
+                                ]*/
+                                color: difference == 0
+                                    ? Colors.white
+                                    : (difference > 0)
+                                        ? ThemeColors.lightBlue
+                                        : Colors.red)),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -425,10 +423,8 @@ class NewActiveChallengeItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text('ACTIVE',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5
-                                ?.copyWith(shadows: [
+                            style: Theme.of(context).textTheme.headline5?.copyWith(
+                                /*shadows: [
                               const Shadow(
                                   color: Colors.black,
                                   offset: (Offset(0.3, 0.3))),
@@ -441,7 +437,8 @@ class NewActiveChallengeItem extends StatelessWidget {
                               const Shadow(
                                   color: Colors.black,
                                   offset: (Offset(-0.3, -0.3)))
-                            ], color: ThemeColors.green)),
+                            ]*/
+                                color: ThemeColors.green)),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -591,10 +588,8 @@ class NewPendingChallengeItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('PENDING',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.copyWith(shadows: [
+                        style: Theme.of(context).textTheme.headline5?.copyWith(
+                            /*shadows: [
                           const Shadow(
                               color: Colors.black, offset: (Offset(0.3, 0.3))),
                           const Shadow(
@@ -603,7 +598,8 @@ class NewPendingChallengeItem extends StatelessWidget {
                               color: Colors.black, offset: (Offset(0.3, -0.3))),
                           const Shadow(
                               color: Colors.black, offset: (Offset(-0.3, -0.3)))
-                        ], color: ThemeColors.lightBlue)),
+                        ]*/
+                            color: ThemeColors.lightBlue)),
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
