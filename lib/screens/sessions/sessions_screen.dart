@@ -69,9 +69,8 @@ class _SessionsState extends State<SessionsScreen> {
                                 padding: const EdgeInsets.all(8),
                                 child: Text(
                                     '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineLarge),
+                                    style:
+                                        Theme.of(context).textTheme.headline4),
                               ),
                             ),
                           ),
@@ -86,9 +85,8 @@ class _SessionsState extends State<SessionsScreen> {
                       return Column(
                         children: [
                           Text(
-                            '${state.sessions.length} sessions',
-                            style: Theme.of(context).textTheme.headlineLarge,
-                          ),
+                              '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
+                              style: Theme.of(context).textTheme.headline4),
                           _sessionsListView(context),
                         ],
                       );
