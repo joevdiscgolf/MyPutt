@@ -5,6 +5,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/theme/theme_data.dart';
 
 class PerformanceChartPanel extends StatefulWidget {
   const PerformanceChartPanel({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
-  double _sliderValue = 1;
+  double _sliderValue = 0;
   late int _numSets;
   late int _totalSets;
   List<int> distances = [];
@@ -102,10 +103,13 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
             children: [
               Expanded(
                 child: Slider(
+                  inactiveColor: Colors.blue,
+                  activeColor: Colors.grey[400]!,
+                  thumbColor: Colors.blue,
                   label: _numSets.toString(),
                   onChanged: (double newValue) {
                     setState(() {
-                      _numSets = (newValue * _totalSets).toInt();
+                      _numSets = ((1 - newValue) * _totalSets).toInt();
                       _sliderValue = newValue;
                     });
                   },
@@ -137,7 +141,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
                   _sessionRepository.allSessions,
                   _challengesRepository.completedChallenges,
                   distance);
-              _numSets = (_sliderValue * _totalSets).toInt();
+              _numSets = ((1 - _sliderValue) * _totalSets).toInt();
             });
           },
           child: Text(

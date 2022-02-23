@@ -309,11 +309,6 @@ class StatsService {
             ? 0
             : roundDouble(
                 set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
-        if (decimal > 1) {
-          // print(decimal);
-          // print(set.puttsMade);
-          // print(set.puttsAttempted);
-        }
         points.add(ChartPoint(
             index: index,
             timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
@@ -328,13 +323,14 @@ class StatsService {
           ? timeStampDifference
           : p1.index.compareTo(p2.index);
     });
+    List<ChartPoint> reversedPoints = List.from(points.reversed);
     for (var index = 0; index < limit; index++) {
-      if (index >= points.length) {
+      if (index >= reversedPoints.length) {
         break;
       }
-      finalPoints.add(points[index]);
+      finalPoints.add(reversedPoints[index]);
     }
-    return finalPoints;
+    return List.from(finalPoints.reversed);
   }
 
   int getTotalPuttingSets(List<PuttingSession> sessions,
