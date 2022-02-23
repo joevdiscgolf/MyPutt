@@ -290,7 +290,9 @@ class StatsService {
           .forEach((set) {
         final double decimal = set.puttsAttempted == 0
             ? 0
-            : dp((set.puttsMade.toDouble() / set.puttsAttempted.toDouble()), 4);
+            : double.parse(
+                (set.puttsMade.toDouble() / set.puttsAttempted.toDouble())
+                    .toStringAsFixed(4));
         points.add(ChartPoint(
             index: index,
             timeStamp: set.timeStamp ?? session.timeStamp,
@@ -306,7 +308,9 @@ class StatsService {
           .forEach((set) {
         final double decimal = set.puttsAttempted == 0
             ? 0
-            : dp((set.puttsMade.toDouble() / set.puttsAttempted.toDouble()), 4);
+            : double.parse(
+                (set.puttsMade.toDouble() / set.puttsAttempted.toDouble())
+                    .toStringAsFixed(4));
         points.add(ChartPoint(
             index: index,
             timeStamp: set.timeStamp ?? challenge.creationTimeStamp,

@@ -24,7 +24,8 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
   double _smoothnessSliderValue = 0.5;
   late int _numSets;
   late int _totalSets;
-  List<int> distances = [];
+  List<int> distancesRow1 = [];
+  List<int> distancesRow2 = [];
   int _selectedDistance = 20;
   int _smoothRange = 4;
 
@@ -36,8 +37,15 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
         _challengesRepository.completedChallenges,
         _selectedDistance);
     _numSets = _totalSets;
-    for (var distance = 10; distance <= 60; distance += 10) {
-      distances.add(distance);
+    for (var distance = 10; distance <= 30; distance += 5) {
+      if (distance <= 25) {
+        distancesRow1.add(distance);
+      } else {
+        distancesRow2.add(distance);
+      }
+    }
+    for (var distance = 40; distance <= 60; distance += 10) {
+      distancesRow2.add(distance);
     }
   }
 
@@ -61,7 +69,13 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
             style: Theme.of(context).textTheme.headline6,
           ),
           Row(
-            children: distances
+            children: distancesRow1
+                .map((distance) =>
+                    Expanded(child: _chooseDistanceButton(context, distance)))
+                .toList(),
+          ),
+          Row(
+            children: distancesRow2
                 .map((distance) =>
                     Expanded(child: _chooseDistanceButton(context, distance)))
                 .toList(),
@@ -148,58 +162,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
         ],
       ),
     );
-  }
-
-  PerformanceChartData smoothChart(
-      PerformanceChartData data, int comparisonRange) {
-    final List<ChartPoint> points = data.points;
-    final List<ChartPoint> newPoints = [];
-    for (int index = 0; index < points.length; index++) {
-      if (index == 0 || index == points.length - 1) {
-        newPoints.add(points[index]);
-      } else {
-        final double avgAdjacent =
-            weightedAverageOfAdjacent(points, comparisonRange, index);
-        newPoints.add(comparisonRange == 0
-            ? points[index]
-            : ChartPoint(
-                distance: points[index].distance,
-                decimal: avgAdjacent,
-                timeStamp: points[index].timeStamp,
-                index: index));
-      }
-    }
-    return PerformanceChartData(points: newPoints);
-  }
-
-  double weightedAverageOfAdjacent(
-      List<ChartPoint> points, int range, int focusIndex) {
-    double sumOfWeightings = 0;
-    double weightedTotal = 0;
-    sumOfWeightings *= 2;
-    for (var index = 1; index < range + 1; index++) {
-      if (focusIndex - index < 0) {
-        break;
-      } else {
-        num weighting = range - (index - 1);
-        sumOfWeightings += weighting;
-        weightedTotal += weighting * points[focusIndex - index].decimal;
-      }
-    }
-
-    for (var index = 1; index < range + 1; index++) {
-      if (focusIndex + index > points.length - 1) {
-        break;
-      } else {
-        num weighting = range - (index - 1);
-        sumOfWeightings += weighting;
-        weightedTotal += weighting * points[focusIndex + index].decimal;
-      }
-    }
-
-    return sumOfWeightings.toDouble() == 0
-        ? 1
-        : dp((weightedTotal.toDouble() / sumOfWeightings.toDouble()), 4);
   }
 
   Widget _chooseDistanceButton(BuildContext context, int distance) {
