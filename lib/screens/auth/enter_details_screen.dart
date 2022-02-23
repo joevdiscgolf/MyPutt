@@ -212,7 +212,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
           .textTheme
           .subtitle1!
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      keyboardType: TextInputType.numberWithOptions(),
+      keyboardType: const TextInputType.numberWithOptions(),
       decoration: InputDecoration(
         hintText: 'PDGA number',
         contentPadding:

@@ -11,10 +11,10 @@ import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
-
-import '../../components/dialogs/confirm_dialog.dart';
-import '../../theme/theme_data.dart';
-import '../../utils/calculators.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/components/misc/putting_set_row.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
@@ -60,9 +60,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
   Widget _mainBody(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
+      child: ListView(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // mainAxisSize: MainAxisSize.max,
         children: [
           _challengeListContainer(context),
           const SizedBox(height: 10),
@@ -87,23 +87,53 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           BlocBuilder<ChallengesCubit, ChallengesState>(
             builder: (context, state) {
               if (state is ChallengeInProgress) {
-                return PreviousSetsList(
-                  static: false,
-                  deletable: false,
-                  sets: state.currentChallenge.currentUserSets,
-                  deleteSet: (PuttingSet set) {
-                    BlocProvider.of<ChallengesCubit>(context).undo();
-                  },
+                return SizedBox(
+                  height: 250,
+                  child: PreviousSetsList(
+                    static: false,
+                    deletable: false,
+                    sets: state.currentChallenge.currentUserSets,
+                    deleteSet: (PuttingSet set) {
+                      BlocProvider.of<ChallengesCubit>(context).undo();
+                    },
+                  ),
+                );
+                return Column(
+                  children: state.currentChallenge.currentUserSets
+                      .asMap()
+                      .entries
+                      .map((entry) => PuttingSetRow(
+                            index: entry.key,
+                            deletable: false,
+                            delete: () {},
+                            set: entry.value,
+                          ))
+                      .toList(),
                 );
               } else if (state is ChallengeComplete) {
-                return PreviousSetsList(
-                  static: false,
-                  deletable: false,
-                  sets: state.currentChallenge.currentUserSets,
-                  deleteSet: (PuttingSet set) {
-                    BlocProvider.of<ChallengesCubit>(context).undo();
-                  },
+                return SizedBox(
+                  height: 250,
+                  child: PreviousSetsList(
+                    static: false,
+                    deletable: false,
+                    sets: state.currentChallenge.currentUserSets,
+                    deleteSet: (PuttingSet set) {
+                      BlocProvider.of<ChallengesCubit>(context).undo();
+                    },
+                  ),
                 );
+                // return Column(
+                //   children: state.currentChallenge.currentUserSets
+                //       .asMap()
+                //       .entries
+                //       .map((entry) => PuttingSetRow(
+                //             index: entry.key,
+                //             deletable: false,
+                //             delete: () {},
+                //             set: entry.value,
+                //           ))
+                //       .toList(),
+                // );
               } else {
                 return const Center(
                   child: Text('Something went wrong'),
@@ -259,7 +289,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       percent: value,
                                       progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
-                                      barRadius: Radius.circular(10),
+                                      barRadius: const Radius.circular(10),
                                     ),
                                   ),
                                   Flexible(
@@ -408,7 +438,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                       percent: value,
                                       progressColor: colorFromDecimal(value),
                                       backgroundColor: Colors.grey[200],
-                                      barRadius: Radius.circular(10),
+                                      barRadius: const Radius.circular(10),
                                     ),
                                   ),
                                   Flexible(
@@ -485,6 +515,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                 ),
                 onPressed: () {
                   BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                      timeStamp: DateTime.now().millisecondsSinceEpoch,
                       distance: state
                           .currentChallenge
                           .opponentSets[

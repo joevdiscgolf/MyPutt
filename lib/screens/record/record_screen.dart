@@ -123,6 +123,7 @@ class _RecordScreenState extends State<RecordScreen> {
                   icon: FlutterRemix.add_line,
                   onPressed: () {
                     BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
+                        timeStamp: DateTime.now().millisecondsSinceEpoch,
                         puttsMade: _focusedIndex,
                         puttsAttempted: _setLength,
                         distance: _distances[_distancesIndex]));

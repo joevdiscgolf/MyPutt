@@ -10,10 +10,10 @@ import 'package:myputt/theme/theme_data.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/utils/constants.dart';
-import '../../data/types/challenges/storage_putting_challenge.dart';
-import '../../locator.dart';
-import '../../services/dynamic_link_service.dart';
-import '../../components/buttons/primary_button.dart';
+import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:share/share.dart';
 
 enum LoadingState { static, loading, loaded }
@@ -47,19 +47,22 @@ class _ShareSheetState extends State<ShareSheet> {
             const SizedBox(height: 10),
             Text(
               'Challenge a friend',
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(height: 10),
             PrimaryButton(
+              backgroundColor: Colors.transparent,
+              labelColor: Colors.blue,
               width: double.infinity,
               label: 'Share with link',
               onPressed: () => _share(),
+              iconColor: Colors.blue,
               icon: FlutterRemix.share_box_line,
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
             Text(
               'Find a MyPutt user',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.headline5,
               textAlign: TextAlign.center,
             ),
             _usernameField(context),

@@ -1,8 +1,11 @@
+import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/data/types/stats.dart';
 import 'package:myputt/data/types/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
-
-import '../data/types/challenges/putting_challenge.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/constants.dart';
 
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
@@ -35,7 +38,7 @@ class StatsService {
     num sessionIndex = 0;
 
     final sessionsInOrder = List.from(sessions).reversed;
-    sessionsInOrder.forEach((session) {
+    for (var session in sessionsInOrder) {
       final sets = session.sets;
       sets.forEach((set) {
         final distance = set.distance;
@@ -64,9 +67,9 @@ class StatsService {
         }
       });
       sessionIndex += 1;
-    });
+    }
 
-    sessionRangePuttsAttempted.entries.forEach((entry) {
+    for (var entry in sessionRangePuttsAttempted.entries) {
       if (sessionRangePuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneSessionRangeFractions[entry.key] =
@@ -76,9 +79,9 @@ class StatsService {
               sessionRangePuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
-    overallPuttsAttempted.entries.forEach((entry) {
+    for (var entry in overallPuttsAttempted.entries) {
       if (overallPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneOverallFractions[entry.key] =
@@ -88,7 +91,7 @@ class StatsService {
               overallPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
     return Stats(
         circleOnePercentages: circleOneSessionRangeFractions,
@@ -130,7 +133,7 @@ class StatsService {
     num sessionIndex = 0;
 
     final sessionsInOrder = List.from(sessions).reversed;
-    sessionsInOrder.forEach((session) {
+    for (var session in sessionsInOrder) {
       final sets = session.sets;
       sets.forEach((set) {
         final distance = set.distance;
@@ -144,10 +147,10 @@ class StatsService {
             : overallPuttsMade[distance]! + set.puttsMade;
       });
       sessionIndex += 1;
-    });
+    }
 
     final focusSessionSets = focusSession.sets;
-    focusSessionSets.forEach((set) {
+    for (var set in focusSessionSets) {
       final distance = set.distance as int;
       totalAttempts += set.puttsAttempted as int;
       totalMade += set.puttsMade as int;
@@ -159,9 +162,9 @@ class StatsService {
       focusSessionPuttsMade[distance] = focusSessionPuttsMade[distance] == null
           ? set.puttsMade
           : focusSessionPuttsMade[distance]! + set.puttsMade;
-    });
+    }
 
-    focusSessionPuttsAttempted.entries.forEach((entry) {
+    for (var entry in focusSessionPuttsAttempted.entries) {
       if (focusSessionPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneFocusFractions[entry.key] =
@@ -171,9 +174,9 @@ class StatsService {
               focusSessionPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
-    overallPuttsAttempted.entries.forEach((entry) {
+    for (var entry in overallPuttsAttempted.entries) {
       if (overallPuttsMade[entry.key] != null) {
         if (entry.key < 40) {
           circleOneOverallFractions[entry.key] =
@@ -183,7 +186,7 @@ class StatsService {
               overallPuttsMade[entry.key]! / entry.value;
         }
       }
-    });
+    }
 
     return Stats(
         circleOnePercentages: circleOneFocusFractions,
@@ -248,5 +251,102 @@ class StatsService {
       }
     }
     return totalAttmpted == 0 ? null : (totalMade / totalAttmpted);
+  }
+
+  int getNumChallengesWithResult(
+      List<PuttingChallenge> challenges, ChallengeResult result) {
+    int total = 0;
+    for (var challenge in challenges) {
+      final int currentUserPuttsMade =
+          totalMadeFromSets(challenge.currentUserSets);
+      final int opponentPuttsMade = totalMadeFromSubset(
+          challenge.opponentSets, challenge.currentUserSets.length);
+      final int puttsMadeDifference = currentUserPuttsMade - opponentPuttsMade;
+      if (result == ChallengeResult.win) {
+        if (puttsMadeDifference > 0) {
+          total += 1;
+        }
+      } else if (result == ChallengeResult.loss) {
+        if (puttsMadeDifference < 0) {
+          total += 1;
+        }
+      } else if (result == ChallengeResult.draw) {
+        if (puttsMadeDifference == 0) {
+          total += 1;
+        }
+      }
+    }
+    return total;
+  }
+
+  List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
+      List<PuttingChallenge> challenges, int distance, int limit) {
+    List<ChartPoint> points = [];
+    List<ChartPoint> finalPoints = [];
+    for (var session in sessions) {
+      int index = 0;
+      session.sets
+          .where((oldset) => oldset.distance == distance)
+          .forEach((set) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : roundDouble(
+                set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? session.timeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      });
+    }
+    for (var challenge in challenges) {
+      int index = 0;
+      challenge.currentUserSets
+          .where((oldset) => oldset.distance == distance)
+          .forEach((set) {
+        final double decimal = set.puttsAttempted == 0
+            ? 0
+            : roundDouble(
+                set.puttsMade.toDouble() / set.puttsAttempted.toDouble(), 4);
+        points.add(ChartPoint(
+            index: index,
+            timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
+            distance: set.distance.toInt(),
+            decimal: decimal));
+        index += 1;
+      });
+    }
+    points.sort((p1, p2) {
+      final int timeStampDifference = p1.timeStamp.compareTo(p2.timeStamp);
+      return timeStampDifference != 0
+          ? timeStampDifference
+          : p1.index.compareTo(p2.index);
+    });
+    List<ChartPoint> reversedPoints = List.from(points.reversed);
+    for (var index = 0; index < limit; index++) {
+      if (index >= reversedPoints.length) {
+        break;
+      }
+      finalPoints.add(reversedPoints[index]);
+    }
+    return List.from(finalPoints.reversed);
+  }
+
+  int getTotalPuttingSets(List<PuttingSession> sessions,
+      List<PuttingChallenge> challenges, int distance) {
+    int totalSets = 0;
+    for (var session in sessions) {
+      List<PuttingSet> setsWithDistance =
+          session.sets.where((set) => set.distance == distance).toList();
+      totalSets += setsWithDistance.length;
+    }
+    for (var challenge in challenges) {
+      List<PuttingSet> setsWithDistance = challenge.currentUserSets
+          .where((set) => set.distance == distance)
+          .toList();
+      totalSets += setsWithDistance.length;
+    }
+    return totalSets;
   }
 }

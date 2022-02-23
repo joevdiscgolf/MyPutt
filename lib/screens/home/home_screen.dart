@@ -84,11 +84,16 @@ class HomeScreenState extends State<HomeScreen> {
                       if (_sessionRangeIndex == entry.key) {
                         return ElevatedButton(
                             child: Text(entry.value,
-                                style: const TextStyle(color: Colors.black)),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15)),
                             style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                                 side: const BorderSide(
                                     width: 2.0, color: Colors.blue),
-                                primary: Colors.white),
+                                primary: Colors.blue,
+                                shadowColor: Colors.transparent),
                             onPressed: () {
                               setState(() {
                                 _sessionRangeIndex = entry.key;
@@ -101,7 +106,15 @@ class HomeScreenState extends State<HomeScreen> {
                             });
                       }
                       return ElevatedButton(
-                          child: Text(entry.value),
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              primary: Colors.transparent,
+                              shadowColor: Colors.transparent),
+                          child: Text(entry.value,
+                              style: const TextStyle(
+                                  fontSize: 15, color: Colors.blue)),
                           onPressed: () {
                             setState(() {
                               _sessionRangeIndex = entry.key;

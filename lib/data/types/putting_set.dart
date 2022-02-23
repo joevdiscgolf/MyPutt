@@ -8,7 +8,9 @@ class PuttingSet {
   PuttingSet(
       {required this.puttsMade,
       required this.puttsAttempted,
-      required this.distance});
+      required this.distance,
+      this.timeStamp});
+  final int? timeStamp;
   final num puttsMade;
   final num puttsAttempted;
   final num distance;

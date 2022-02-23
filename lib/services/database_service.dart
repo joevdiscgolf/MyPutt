@@ -9,6 +9,7 @@ import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
+import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -17,6 +18,7 @@ class DatabaseService {
   final FBChallengesDataWriter _challengesDataWriter = FBChallengesDataWriter();
   final FBChallengesDataLoader _challengesDataLoader = FBChallengesDataLoader();
   final FBUserDataLoader _userDataLoader = FBUserDataLoader();
+  final FBUserDataWriter _userDataWriter = FBUserDataWriter();
 
   final AuthService _authService = locator.get<AuthService>();
 
@@ -150,6 +152,10 @@ class DatabaseService {
   Future<MyPuttUser?> getCurrentUser() {
     final uid = _authService.getCurrentUserId();
     return _userDataLoader.getUser(uid!);
+  }
+
+  Future<bool> setUserWithPayload(MyPuttUser user) {
+    return _userDataWriter.setUserWithPayload(user);
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

@@ -5,10 +5,12 @@ import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/my_profile/components/charts/performance_chart_panel.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
+import 'components/pdga_info_panel.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -22,25 +24,41 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: _title(context),
-        actions: [
-          _logoutButton(context),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _basicInfoPanel(context),
-          const SizedBox(height: 10),
-          _careerStatsPanel(context)
-        ],
-      ),
-    );
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          title: _title(context),
+          actions: [
+            _logoutButton(context),
+          ],
+        ),
+        body: BlocBuilder<MyProfileCubit, MyProfileState>(
+          builder: (context, state) {
+            if (state is MyProfileLoaded) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await BlocProvider.of<MyProfileCubit>(context).reload();
+                },
+                child: ListView(children: [
+                  _basicInfoPanel(context),
+                  const SizedBox(height: 10),
+                  _lifetimeStatsPanel(context),
+                  const SizedBox(height: 10),
+                  const PerformanceChartPanel(),
+                  const SizedBox(height: 10),
+                  const PDGAInfoPanel(),
+                ]),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ));
   }
 
   Widget _title(BuildContext context) {
@@ -49,7 +67,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         if (state is MyProfileLoaded) {
           return Text(state.myUser.displayName);
         } else {
-          return const Text('Loading');
+          return const Text('');
         }
       },
     );
@@ -70,7 +88,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             size: 15,
           ),
           SizedBox(width: 5),
-          Text('Logout'),
+          Text('Log out'),
         ],
       ),
     );
@@ -84,27 +102,43 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           children: [
             Expanded(
               child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(10),
                   decoration: const BoxDecoration(color: Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Column(
                     children: [
-                      const DefaultProfileCircle(),
-                      Text(
-                        'Username \n${state.myUser.username}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Info',
+                            style: Theme.of(context).textTheme.headline5,
+                          )
+                        ],
                       ),
-                      Text(
-                        'Sessions \n${_sessionRepository.allSessions.length}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
+                      const SizedBox(
+                        height: 5,
                       ),
-                      Text(
-                        'Challenges \n ${_challengesRepository.completedChallenges.length}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
-                      )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const DefaultProfileCircle(),
+                          Text(
+                            'Username \n${state.myUser.username}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            'Sessions \n${_sessionRepository.allSessions.length}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            'Challenges \n ${_challengesRepository.completedChallenges.length}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          )
+                        ],
+                      ),
                     ],
                   )),
             ),
@@ -124,7 +158,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     });
   }
 
-  Widget _careerStatsPanel(BuildContext context) {
+  Widget _lifetimeStatsPanel(BuildContext context) {
     return BlocBuilder<MyProfileCubit, MyProfileState>(
       builder: (context, state) {
         if (state is MyProfileLoaded) {
@@ -135,22 +169,50 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Lifetime stats',
-                              style: Theme.of(context).textTheme.headline5,
-                            )
-                          ],
+                        Text(
+                          'Lifetime stats',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Putts made',
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                         const SizedBox(height: 5),
                         _puttsMadeRow(context),
-                        const SizedBox(
-                          height: 10,
+                        Divider(
+                          height: 20,
+                          thickness: 1,
+                          color: Colors.grey[300],
                         ),
-                        _circleStatsRow(context)
+                        Text(
+                          'Percentages',
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        _circleStatsRow(context),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Divider(
+                          height: 20,
+                          thickness: 1,
+                          color: Colors.grey[300],
+                        ),
+                        Text(
+                          'Challenges',
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        _challengeStatsRow(context)
                       ],
                     )),
               ),
@@ -164,75 +226,101 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
 
   Widget _puttsMadeRow(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(width: 2, color: Colors.grey[400]!),
+          borderRadius: BorderRadius.circular(5)),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  blueFrisbeeImageIcon,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      blueFrisbeeImageIcon,
+                      Text(
+                        'Total',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontSize: 15),
+                      ),
+                    ],
+                  ),
                   Text(
-                    'Total',
-                    style: Theme.of(context).textTheme.headline6,
+                    '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              Text(
-                '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            VerticalDivider(
+              width: 1,
+              thickness: 2,
+              color: Colors.grey[400]!,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  blueFrisbeeImageIcon,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      blueFrisbeeImageIcon,
+                      Text(
+                        'Sessions',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontSize: 15),
+                      ),
+                    ],
+                  ),
                   Text(
-                    'Sessions',
-                    style: Theme.of(context).textTheme.headline6,
+                    '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              Text(
-                '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            VerticalDivider(
+              width: 1,
+              thickness: 2,
+              color: Colors.grey[400]!,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  blueFrisbeeImageIcon,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      blueFrisbeeImageIcon,
+                      Text(
+                        'Challenges',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontSize: 15),
+                      ),
+                    ],
+                  ),
                   Text(
-                    'Challenges',
-                    style: Theme.of(context).textTheme.headline6,
+                    '${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              Text(
-                '${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -250,7 +338,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         _sessionRepository.allSessions,
                         _challengesRepository.completedChallenges,
                         Cutoffs.c1x);
-                return _percentageCircle(c1XPercentage, 60);
+                return PercentageCircle(decimal: c1XPercentage, diameter: 60);
               })
             ],
           ),
@@ -267,7 +355,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           _sessionRepository.allSessions,
                           _challengesRepository.completedChallenges,
                           Cutoffs.c2);
-                  return _percentageCircle(c2Percentage, 60);
+                  return PercentageCircle(decimal: c2Percentage, diameter: 60);
                 })
               ],
             );
@@ -286,7 +374,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           _sessionRepository.allSessions,
                           _challengesRepository.completedChallenges,
                           Cutoffs.none);
-                  return _percentageCircle(c2Percentage, 60);
+                  return PercentageCircle(decimal: c2Percentage, diameter: 60);
                 })
               ],
             );
@@ -296,7 +384,126 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  Widget _percentageCircle(double? decimal, double diameter) {
+  Widget _challengeStatsRow(BuildContext context) {
+    return Builder(builder: (context) {
+      final int numWins = _statsService.getNumChallengesWithResult(
+          _challengesRepository.completedChallenges, ChallengeResult.win);
+      final int numLosses = _statsService.getNumChallengesWithResult(
+          _challengesRepository.completedChallenges, ChallengeResult.loss);
+      final int numDraws = _statsService.getNumChallengesWithResult(
+          _challengesRepository.completedChallenges, ChallengeResult.draw);
+      final double winRate =
+          numWins.toDouble() / (numWins + numLosses + numDraws).toDouble();
+      return Container(
+        decoration: BoxDecoration(
+            border: Border.all(width: 2, color: Colors.grey[400]!),
+            borderRadius: BorderRadius.circular(5)),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Wins',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numWins.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              VerticalDivider(
+                thickness: 2,
+                width: 1,
+                color: Colors.grey[400]!,
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Losses',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numLosses.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              VerticalDivider(
+                thickness: 2,
+                width: 1,
+                color: Colors.grey[400]!,
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Draws',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        numDraws.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              VerticalDivider(
+                thickness: 2,
+                width: 1,
+                color: Colors.grey[400]!,
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Win rate',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text(
+                        '${(winRate * 100).toStringAsFixed(2)} %',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color:
+                                winRate > 0.5 ? ThemeColors.green : Colors.red),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+}
+
+class PercentageCircle extends StatelessWidget {
+  const PercentageCircle(
+      {Key? key, required this.diameter, required this.decimal})
+      : super(key: key);
+
+  final double? decimal;
+  final double diameter;
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(children: <Widget>[
       Builder(builder: (context) {
         if (decimal != null) {
@@ -341,7 +548,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           return SizedBox(
               height: diameter,
               width: diameter,
-              child: Center(child: const Text('- %')));
+              child: const Center(child: Text('- %')));
         }
       })
     ]);

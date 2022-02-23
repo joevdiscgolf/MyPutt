@@ -1,76 +1,132 @@
+import 'package:myputt/data/types/pdga_player_info.dart';
 import 'package:web_scraper/web_scraper.dart';
 
 class WebScraperService {
-  void getPDGAData(int pdgaNumber) async {
-    final webScraper = WebScraper('https://www.pdga.com/');
-    if (await webScraper.loadWebPage('player/$pdgaNumber').catchError((e) {
-      print(e);
-    })) {
-      List<Map<String, dynamic>> elements =
-          webScraper.getElement('div.page clearfix', []);
-      print(elements);
-      print(webScraper.getPageContent());
+  Future<PDGAPlayerInfo?> getPDGAData(int? pdgaNumber) async {
+    if (pdgaNumber != null) {
+      final webScraper = WebScraper('https://www.pdga.com/');
+      if (await webScraper.loadWebPage('player/$pdgaNumber').catchError((e) {
+        print(e);
+      })) {
+        List<Map<String, dynamic>> nameHTML = webScraper
+            .getElement('div.inside > div.panel-pane > div.pane-content', []);
+        List<Map<String, dynamic>> locationHTML =
+            webScraper.getElement('li.location', []);
+        List<Map<String, dynamic>> classificationHTML =
+            webScraper.getElement('li.classification', []);
+        List<Map<String, dynamic>> memberSinceHTML =
+            webScraper.getElement('li.join-date', []);
+        List<Map<String, dynamic>> ratingHTML =
+            webScraper.getElement('li.current-rating', []);
+        List<Map<String, dynamic>> careerEventsHTML =
+            webScraper.getElement('li.career-events', []);
+        List<Map<String, dynamic>> careerWinsHTML =
+            webScraper.getElement('li.career-wins', []);
+        List<Map<String, dynamic>> careerEarningsHTML =
+            webScraper.getElement('li.career-earnings', []);
+        List<Map<String, dynamic>> nextEventHTML =
+            webScraper.getElement('li.next-event', []);
+
+        // print('getPDGAData | $location\n');
+        int? pdgaNum;
+        String? name;
+        String? location;
+        String? classification;
+        String? memberSince;
+        int? rating;
+        int? careerEvents;
+        int? careerWins;
+        double? careerEarnings;
+        String? nextEvent;
+
+        for (var item in nameHTML) {
+          if (item['title'] != null) {
+            final List<String> split = item['title'].split('#');
+            name = split.first.split('\n').last;
+            if (int.tryParse(split.last) != null) {
+              pdgaNum = int.parse(split.last);
+            }
+          }
+          for (var item in locationHTML) {
+            if (item['title'] != null) {
+              final List<String> split = item['title'].split('Location: ');
+              location = split.last;
+            }
+          }
+          for (var item in classificationHTML) {
+            if (item['title'] != null) {
+              final List<String> split =
+                  item['title'].split('Classification:  ');
+              classification = split.last;
+            }
+          }
+          for (var item in memberSinceHTML) {
+            if (item['title'] != null) {
+              final List<String> split = item['title'].split('Member Since: ');
+              memberSince = split.last;
+            }
+          }
+          for (var item in ratingHTML) {
+            if (item['title'] != null) {
+              final List<String> split =
+                  item['title'].split('Current Rating: ');
+              if (int.tryParse(split.last.split(' ').first) != null) {
+                rating = int.parse(split.last.split(' ').first);
+              }
+            }
+          }
+          for (var item in careerEventsHTML) {
+            if (item['title'] != null) {
+              final List<String> split = item['title'].split('Career Events: ');
+              careerEvents = int.parse(split.last);
+            }
+          }
+          for (var item in careerWinsHTML) {
+            if (item['title'] != null) {
+              final List<String> split = item['title'].split('Career Wins: ');
+              if (int.tryParse(split.last) != null) {
+                careerWins = int.parse(split.last);
+              }
+            }
+          }
+          for (var item in careerEarningsHTML) {
+            if (item['title'] != null) {
+              final List<String> split =
+                  item['title'].split('Career Earnings: ');
+              final String rawString = split.last.split('\$').last;
+              String commasRemoved = '';
+              rawString.split('').forEach((ch) {
+                if (ch != ',') {
+                  commasRemoved += ch;
+                }
+              });
+              if (double.tryParse(commasRemoved) != null) {
+                careerEarnings = double.parse(commasRemoved);
+              }
+            }
+          }
+          for (var item in nextEventHTML) {
+            if (item['title'] != null) {
+              final List<String> split = item['title'].split('Next Event: ');
+              nextEvent = split.last;
+            }
+          }
+          return PDGAPlayerInfo(
+              pdgaNum: pdgaNum,
+              name: name,
+              careerWins: careerWins,
+              location: location,
+              classification: classification,
+              memberSince: memberSince,
+              rating: rating,
+              careerEarnings: careerEarnings,
+              careerEvents: careerEvents,
+              nextEvent: nextEvent);
+        }
+      } else {
+        print('pdga num is null');
+        return null;
+      }
     }
   }
 }
-/*
-<div id="zone-branding-wrapper" class="zone-wrapper zone-branding-wrapper clearfix">
-<div id="zone-branding" class="zone zone-branding clearfix container-16">
-<div class="grid-11 region region-branding" id="region-branding">
-<div class="region-inner region-branding-inner">
-<div class="branding-data clearfix">
-<div class="logo-img">
-<a href="/" rel="home" title=""><img src="https://www.pdga.com/sites/all/themes/pdga/logo.png" alt="" id="logo"></a> </div>
-</div>
-</div>
-</div><div class="grid-5 region region-user-bar" id="region-user-bar">
-<div class="region-inner region-user-bar-inner">
-<div class="block block-panels-mini block-header-user-bar block-panels-mini-header-user-bar odd block-without-title" id="block-panels-mini-header-user-bar">
-<div class="block-inner clearfix">
-<div class="content clearfix">
-<div class="panel-display panel-1col clearfix" id="mini-panel-header_user_bar">
-<div class="panel-panel panel-col">
-<div><div class="panel-pane pane-custom pane-1 pane-social-links inline clearfix">
-<div class="pane-content">
-<ul class="menu social-links"><li><a class="twitter" href="https://twitter.com/pdga" target="_blank" title="PDGA on Twitter" rel="noopener noreferrer">Twitter</a></li>
-<li><a class="instagram" href="https://instagram.com/pdga" target="_blank" title="PDGA on Instagram" rel="noopener noreferrer">Instagram</a></li>
-<li><a class="facebook" href="https://www.facebook.com/pdga" target="_blank" title="PDGA on Facebook" rel="noopener noreferrer">Facebook</a></li>
-<li><a class="flickr" href="https://www.flickr.com/photos/pdga/" target="_blank" title="PDGA on Flickr" rel="noopener noreferrer">Flickr</a></li>
-<li><a class="youtube" href="https://www.youtube.com/user/pdgamedia" target="_blank" title="PDGA on YouTube" rel="noopener noreferrer">YouTube</a></li>
-<li><a class="linkedin" href="https://www.linkedin.com/groups?gid=31030" target="_blank" title="PDGA on LinkedIn" rel="noopener noreferrer">LinkedIn</a></li>
-</ul> </div>
-</div>
-<div class="panel-separator"></div><div class="panel-pane pane-pdga-search-searchapi-block pane-search-form">
-<h2 class="pane-title">
-Search </h2>
-<div class="pane-content">
-<div class="container-inline">
-<form class="search-form" action="/search" method="get" id="search-form" accept-charset="UTF-8">
-<div>
-<div class="form-item form-type-textfield form-item-keywords">
-<input type="text" name="keywords" autocorrect="off" value="" size="15" maxlength="128" class="form-text">
-</div>
-</div>
-<div class="form-actions">
-<input type="submit" value="Search" class="form-submit">
-</div>
-</form>
-</div>
-</div>
-</div>
-<div class="panel-separator"></div><div class="panel-pane pane-block pane-system-user-menu inline">
-<div class="pane-content">
-<ul class="menu"><li class="first leaf"><a href="/user/login?destination=player/132408" title="">Login</a></li>
-<li class="leaf"><a href="/membership" title="">Join &amp; Renew</a></li>
-<li class="last leaf"><a href="/contact" title="">Contact</a></li>
-</ul> </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div> </div>
-</div> </div>
-</div>
-*/

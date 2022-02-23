@@ -35,6 +35,8 @@ class Cutoffs {
   static const int none = 0;
 }
 
+enum ChallengeResult { win, loss, draw }
+
 const blueFrisbeeImageIcon = SizedBox(
   height: 20,
   width: 20,
