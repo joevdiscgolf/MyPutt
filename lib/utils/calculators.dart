@@ -1,11 +1,11 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'dart:math';
 
-double roundDouble(double value, int places) {
+double dp(double val, int places) {
   num mod = pow(10.0, places);
-  return ((value * mod).round().toDouble() / mod);
+  return ((val * mod).round().toDouble() / mod);
 }
 
 Color colorFromDecimal(double decimal) {

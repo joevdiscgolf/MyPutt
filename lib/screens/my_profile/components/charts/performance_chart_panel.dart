@@ -5,7 +5,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/services/stats_service.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/calculators.dart';
 
 class PerformanceChartPanel extends StatefulWidget {
   const PerformanceChartPanel({Key? key}) : super(key: key);
@@ -21,10 +21,12 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
   final StatsService _statsService = locator.get<StatsService>();
 
   double _sliderValue = 0;
+  double _smoothnessSliderValue = 0.5;
   late int _numSets;
   late int _totalSets;
   List<int> distances = [];
   int _selectedDistance = 20;
+  int _smoothRange = 4;
 
   @override
   void initState() {
@@ -41,6 +43,14 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
 
   @override
   Widget build(BuildContext context) {
+    PerformanceChartData smoothData = smoothChart(
+        PerformanceChartData(
+            points: _statsService.getPointsWithDistanceAndLimit(
+                _sessionRepository.allSessions,
+                _challengesRepository.completedChallenges,
+                _selectedDistance,
+                _numSets)),
+        _smoothRange);
     return Container(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -56,13 +66,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
                     Expanded(child: _chooseDistanceButton(context, distance)))
                 .toList(),
           ),
-          PerformanceChart(
-              data: PerformanceChartData(
-                  points: _statsService.getPointsWithDistanceAndLimit(
-                      _sessionRepository.allSessions,
-                      _challengesRepository.completedChallenges,
-                      _selectedDistance,
-                      _numSets))),
+          PerformanceChart(data: smoothData),
           _chartOptionsPanel(context),
         ],
       ),
@@ -118,9 +122,84 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel> {
               )
             ],
           ),
+          Text(
+            'Smoothness',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  inactiveColor: Colors.grey[400]!,
+                  activeColor: Colors.blue,
+                  thumbColor: Colors.blue,
+                  label: _numSets.toString(),
+                  onChanged: (double newValue) {
+                    setState(() {
+                      _smoothRange = (newValue * 8).toInt();
+                      _smoothnessSliderValue = newValue;
+                    });
+                  },
+                  value: _smoothnessSliderValue,
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  PerformanceChartData smoothChart(
+      PerformanceChartData data, int comparisonRange) {
+    final List<ChartPoint> points = data.points;
+    final List<ChartPoint> newPoints = [];
+    for (int index = 0; index < points.length; index++) {
+      if (index == 0 || index == points.length - 1) {
+        newPoints.add(points[index]);
+      } else {
+        final double avgAdjacent =
+            weightedAverageOfAdjacent(points, comparisonRange, index);
+        newPoints.add(comparisonRange == 0
+            ? points[index]
+            : ChartPoint(
+                distance: points[index].distance,
+                decimal: avgAdjacent,
+                timeStamp: points[index].timeStamp,
+                index: index));
+      }
+    }
+    return PerformanceChartData(points: newPoints);
+  }
+
+  double weightedAverageOfAdjacent(
+      List<ChartPoint> points, int range, int focusIndex) {
+    double sumOfWeightings = 0;
+    double weightedTotal = 0;
+    sumOfWeightings *= 2;
+    for (var index = 1; index < range + 1; index++) {
+      if (focusIndex - index < 0) {
+        break;
+      } else {
+        num weighting = range - (index - 1);
+        sumOfWeightings += weighting;
+        weightedTotal += weighting * points[focusIndex - index].decimal;
+      }
+    }
+
+    for (var index = 1; index < range + 1; index++) {
+      if (focusIndex + index > points.length - 1) {
+        break;
+      } else {
+        num weighting = range - (index - 1);
+        sumOfWeightings += weighting;
+        weightedTotal += weighting * points[focusIndex + index].decimal;
+      }
+    }
+
+    return sumOfWeightings.toDouble() == 0
+        ? 1
+        : dp((weightedTotal.toDouble() / sumOfWeightings.toDouble()), 4);
   }
 
   Widget _chooseDistanceButton(BuildContext context, int distance) {

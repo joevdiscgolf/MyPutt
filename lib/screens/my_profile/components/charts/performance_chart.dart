@@ -17,6 +17,7 @@ class PerformanceChart extends StatelessWidget {
 
   LineChartData mainData(BuildContext context, PerformanceChartData chartData) {
     return LineChartData(
+      lineTouchData: LineTouchData(enabled: true),
       clipData: FlClipData(bottom: true, left: true, top: true, right: true),
       axisTitleData: FlAxisTitleData(
           leftTitle: AxisTitle(
