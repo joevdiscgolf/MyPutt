@@ -6,8 +6,7 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/locator.dart';
-
-import '../utils/constants.dart';
+import 'package:myputt/utils/constants.dart';
 
 class ChallengesRepository {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
@@ -123,7 +122,6 @@ class ChallengesRepository {
   }
 
   Future<void> addDeepLinkChallenges() async {
-    print('adding deep link challenges. Challenges: $deepLinkChallenges');
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser != null) {
       for (var storageChallenge in deepLinkChallenges) {
@@ -136,13 +134,10 @@ class ChallengesRepository {
                 PuttingChallenge.fromStorageChallenge(
                     storageChallenge, currentUser);
             challenge.status = ChallengeStatus.active;
-            print(challenge.toJson());
             activeChallenges.add(challenge);
             await _databaseService.setPuttingChallenge(challenge);
             await _databaseService.removeUnclaimedChallenge(challenge.id);
           }
-        } else {
-          print("can't accept your own challenge");
         }
       }
       deepLinkChallenges = [];

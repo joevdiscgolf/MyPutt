@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/firebase/app_info_data_loader.dart';
+import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SigninService {
   late StreamController<LoginState> controller;
   late Stream<LoginState> siginStream;
   final _authService = locator.get<AuthService>();
+  late final String _version;
   LoginState currentLoginState = LoginState.none;
   SigninService() {
     controller = StreamController<LoginState>();
@@ -15,11 +19,22 @@ class SigninService {
   }
 
   Future<void> init() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    _version = packageInfo.version;
     if (_authService.getCurrentUserId() != null) {
       if (!(await _authService.userIsSetup())) {
         controller.add(LoginState.setup);
         currentLoginState = LoginState.setup;
       } else {
+        final String? minimumVersion = await getMinimumAppVersion();
+        if (minimumVersion == null) {
+          controller.add(LoginState.loggedIn);
+          return;
+        }
+        if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+          controller.add(LoginState.forceUpgrade);
+          return;
+        }
         await fetchRepositoryData();
         controller.add(LoginState.loggedIn);
         currentLoginState = LoginState.loggedIn;
@@ -40,6 +55,13 @@ class SigninService {
         _authService.getCurrentUserId() == null) {
       return false;
     }
+    final String? minimumVersion = await getMinimumAppVersion();
+    if (minimumVersion != null) {
+      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+        controller.add(LoginState.forceUpgrade);
+        return true;
+      }
+    }
     await fetchRepositoryData();
     controller.add(LoginState.setup);
     currentLoginState = LoginState.setup;
@@ -55,6 +77,13 @@ class SigninService {
         !signInSuccess ||
         _authService.getCurrentUserId() == null) {
       return false;
+    }
+    final String? minimumVersion = await getMinimumAppVersion();
+    if (minimumVersion != null) {
+      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+        controller.add(LoginState.forceUpgrade);
+        return true;
+      }
     }
     await fetchRepositoryData();
     controller.add(LoginState.loggedIn);

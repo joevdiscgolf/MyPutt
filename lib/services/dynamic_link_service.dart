@@ -22,12 +22,10 @@ class DynamicLinkService {
     final PendingDynamicLinkData? initialLink =
         await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink != null) {
-      print('initial link');
       _handleDeepLink(initialLink);
     }
 
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      print('redirected to app');
       _handleDeepLink(dynamicLinkData);
     }).onError((error) {
       print('onLink error: ${error.message}');

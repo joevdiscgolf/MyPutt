@@ -6,7 +6,7 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBUserDataWriter {
   Future<bool> setUserWithPayload(MyPuttUser user) {
-    return FirebaseFirestore.instance
+    return firestore
         .doc('$usersCollection/${user.uid}')
         .set((user.toJson()), SetOptions(merge: true))
         .then((result) => true)
