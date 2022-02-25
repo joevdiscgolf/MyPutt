@@ -11,6 +11,11 @@ class MyProfileLoaded extends MyProfileState {
   final PDGAPlayerInfo? pdgaPlayerInfo;
 }
 
+class MyProfileLoading extends MyProfileState {
+  MyProfileLoading({required this.myUser});
+  final MyPuttUser myUser;
+}
+
 class NoProfileLoaded extends MyProfileState {
   NoProfileLoaded();
 }

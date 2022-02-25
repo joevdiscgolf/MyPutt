@@ -52,9 +52,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   const PDGAInfoPanel(),
                 ]),
               );
-            } else {
+            } else if (state is MyProfileLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
+              );
+            } else {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [Text('Failed to load. Please try again')],
               );
             }
           },
@@ -65,6 +70,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return BlocBuilder<MyProfileCubit, MyProfileState>(
       builder: (context, state) {
         if (state is MyProfileLoaded) {
+          return Text(state.myUser.displayName);
+        } else if (state is MyProfileLoading) {
           return Text(state.myUser.displayName);
         } else {
           return const Text('');

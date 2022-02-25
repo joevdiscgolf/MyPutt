@@ -9,7 +9,7 @@ class ChallengeStatus {
 
 enum ChallengeCategory { pending, active, complete, none }
 
-enum LoginState { loggedIn, setup, none }
+enum LoginState { loggedIn, setup, none, forceUpgrade, error }
 
 class DefaultProfileCircle extends StatelessWidget {
   const DefaultProfileCircle({Key? key}) : super(key: key);
