@@ -392,8 +392,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           _challengesRepository.completedChallenges, ChallengeResult.loss);
       final int numDraws = _statsService.getNumChallengesWithResult(
           _challengesRepository.completedChallenges, ChallengeResult.draw);
-      final double winRate =
-          numWins.toDouble() / (numWins + numLosses + numDraws).toDouble();
+      final int numChallenges = numWins + numLosses + numDraws;
+      final double winRate = numWins.toDouble() / numChallenges.toDouble();
       return Container(
         decoration: BoxDecoration(
             border: Border.all(width: 2, color: Colors.grey[400]!),
@@ -477,7 +477,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                       Text(
-                        '${(winRate * 100).toStringAsFixed(2)} %',
+                        '${numChallenges == 0 ? '-' : (winRate * 100).toStringAsFixed(2)} %',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color:
                                 winRate > 0.5 ? ThemeColors.green : Colors.red),
