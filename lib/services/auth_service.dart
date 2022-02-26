@@ -95,8 +95,8 @@ class AuthService {
     }
   }
 
-  Future<bool> setupNewUser(
-      String username, String displayName, int? pdgaNumber) async {
+  Future<bool> setupNewUser(String username, String displayName,
+      {int? pdgaNumber}) async {
     final User? user = await getUser();
     if (user == null) {
       return false;
@@ -108,13 +108,21 @@ class AuthService {
         FirebaseFirestore.instance.collection('Usernames').doc(username);
     batch.set(
         userDoc,
-        MyPuttUser(
-                keywords: getPrefixes(username),
-                username: username,
-                displayName: displayName,
-                uid: user.uid,
-                pdgaNum: pdgaNumber)
-            .toJson());
+        pdgaNumber != null
+            ? MyPuttUser(
+                    keywords: getPrefixes(username),
+                    username: username,
+                    displayName: displayName,
+                    uid: user.uid,
+                    pdgaNum: pdgaNumber)
+                .toJson()
+            : MyPuttUser(
+                    keywords: getPrefixes(username),
+                    username: username,
+                    displayName: displayName,
+                    uid: user.uid,
+                    pdgaNum: pdgaNumber)
+                .toJson());
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
     await batch.commit().catchError((e) {

@@ -305,10 +305,15 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
       width: double.infinity,
       onPressed: () async {
         setState(() => _loading = true);
-        final bool success = await _signinService.setupNewUser(
-            usernameController.value.text,
-            displayNameController.value.text,
-            int.parse(pdgaNumberController.value.text));
+        bool success = false;
+        if (int.tryParse(pdgaNumberController.value.text) != null) {
+          success = await _signinService.setupNewUser(
+              usernameController.value.text, displayNameController.value.text,
+              pdgaNumber: int.parse(pdgaNumberController.value.text));
+        } else {
+          success = await _signinService.setupNewUser(
+              usernameController.value.text, displayNameController.value.text);
+        }
         if (success) {
           print('success');
         }

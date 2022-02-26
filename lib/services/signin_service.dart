@@ -91,10 +91,10 @@ class SigninService {
     return true;
   }
 
-  Future<bool> setupNewUser(
-      String username, String displayName, int? pdgaNumber) async {
-    final bool setupNewUserSuccess =
-        await _authService.setupNewUser(username, displayName, pdgaNumber);
+  Future<bool> setupNewUser(String username, String displayName,
+      {int? pdgaNumber}) async {
+    final bool setupNewUserSuccess = await _authService
+        .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
     if (await _authService.userIsSetup()) {
       controller.add(LoginState.loggedIn);
       currentLoginState = LoginState.loggedIn;

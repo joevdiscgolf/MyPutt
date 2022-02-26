@@ -27,6 +27,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<MyProfileCubit>(context).reload();
     return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
