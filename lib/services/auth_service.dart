@@ -155,7 +155,8 @@ class AuthService {
         .collection('Users')
         .doc(_auth.currentUser!.uid)
         .get();
-    if (!userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
+    if (userDoc.data() == null ||
+        !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       return false;
     } else {
       currentMyPuttUser =
