@@ -106,7 +106,7 @@ class _ShareSheetState extends State<ShareSheet> {
           lastUpdated = DateTime.now().millisecondsSinceEpoch;
         });
         await BlocProvider.of<SearchUserCubit>(context)
-            .searchUsersByUsername(username);
+            .searchUsersByUsername(username.toLowerCase());
       },
     );
   }

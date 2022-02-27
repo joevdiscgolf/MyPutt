@@ -30,16 +30,3 @@ List<ChallengeStructureItem> challengeStructureFromSession(
           setLength: set.puttsAttempted.toInt()))
       .toList();
 }
-
-List<String> getPrefixes(String str) {
-  final List<String> result = <String>[];
-
-  if (str.isEmpty) {
-    return result;
-  }
-
-  for (int i = 1; i <= str.length; i++) {
-    result.add(str.substring(0, i));
-  }
-  return result;
-}

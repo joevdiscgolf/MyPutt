@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
@@ -10,7 +12,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 class SigninService {
   late StreamController<LoginState> controller;
   late Stream<LoginState> siginStream;
-  final _authService = locator.get<AuthService>();
+  final AuthService _authService = locator.get<AuthService>();
+  final UserRepository _userRepository = locator.get<UserRepository>();
   late final String _version;
   LoginState currentLoginState = LoginState.none;
   SigninService() {
@@ -62,6 +65,10 @@ class SigninService {
         return true;
       }
     }
+    final bool fetchUserSuccess = await _userRepository.fetchCurrentUser();
+    if (fetchUserSuccess) {
+      return false;
+    }
     await fetchRepositoryData();
     controller.add(LoginState.setup);
     currentLoginState = LoginState.setup;
@@ -93,13 +100,16 @@ class SigninService {
 
   Future<bool> setupNewUser(String username, String displayName,
       {int? pdgaNumber}) async {
-    final bool setupNewUserSuccess = await _authService
+    final MyPuttUser? newUser = await _authService
         .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
-    if (await _authService.userIsSetup()) {
+    if (await _authService.userIsSetup() && newUser != null) {
+      _userRepository.currentUser = newUser;
       controller.add(LoginState.loggedIn);
       currentLoginState = LoginState.loggedIn;
+      return true;
+    } else {
+      return false;
     }
-    return setupNewUserSuccess;
   }
 
   void signOut() {

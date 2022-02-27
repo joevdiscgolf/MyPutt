@@ -636,10 +636,10 @@ class NewPendingChallengeItem extends StatelessWidget {
                 ),
               ),
               Container(
-                color: Colors.white,
                 padding: const EdgeInsets.all(8),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5)),
                 child: IntrinsicHeight(
                   child: Column(children: [
                     Row(children: [

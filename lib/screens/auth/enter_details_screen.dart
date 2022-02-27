@@ -48,6 +48,25 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          title: Text(
+            'Finish setup',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          leading: IconButton(
+            color: Colors.transparent,
+            icon: const Icon(
+              FlutterRemix.arrow_left_s_line,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              _signinService.signOut();
+            },
+          ),
+        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
@@ -56,11 +75,6 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Text(
-                    'Finish setup',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
                   const SizedBox(
                     height: 10,
                   ),
