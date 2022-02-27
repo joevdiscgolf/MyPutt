@@ -5,6 +5,7 @@ import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/my_profile/components/charts/performance_chart_panel.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
@@ -24,10 +25,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
+  final UserRepository _userRepository = locator.get<UserRepository>();
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<MyProfileCubit>(context).reload();
+    if (_userRepository.currentUser == null) {
+      BlocProvider.of<MyProfileCubit>(context).reload();
+    }
     return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
@@ -60,6 +64,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             } else {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [Text('Failed to load. Please try again')],
               );
             }

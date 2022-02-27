@@ -2,3 +2,17 @@ int versionToNumber(String version) {
   final withoutDots = version.replaceAll(RegExp('\\.'), ''); // abc
   return int.parse(withoutDots);
 }
+
+List<String> getPrefixes(String str) {
+  final String lowerCase = str.toLowerCase();
+  final List<String> result = <String>[];
+
+  if (lowerCase.isEmpty) {
+    return result;
+  }
+
+  for (int i = 1; i <= lowerCase.length; i++) {
+    result.add(lowerCase.substring(0, i));
+  }
+  return result;
+}

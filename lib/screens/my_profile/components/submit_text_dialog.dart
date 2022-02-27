@@ -104,7 +104,7 @@ class _SubmitTextDialogState extends State<SubmitTextDialog> {
           .textTheme
           .subtitle1!
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Enter PDGA number',
         contentPadding:

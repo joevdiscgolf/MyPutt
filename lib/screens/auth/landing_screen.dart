@@ -34,7 +34,7 @@ class _LandingScreenState extends State<LandingScreen> {
           child: SizedBox(
             width: double.infinity,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
@@ -56,10 +56,10 @@ class _LandingScreenState extends State<LandingScreen> {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _loginButton(context, true),
-                          const SizedBox(height: 10),
+                          const SizedBox(width: 20),
                           _loginButton(context, false)
                         ],
                       ),

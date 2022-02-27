@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/data/types/username_doc.dart';
-import 'package:myputt/utils/utils.dart';
-
-import '../data/types/myputt_user.dart';
+import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/utils/string_helpers.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -95,41 +94,38 @@ class AuthService {
     }
   }
 
-  Future<bool> setupNewUser(String username, String displayName,
+  Future<MyPuttUser?> setupNewUser(String username, String displayName,
       {int? pdgaNumber}) async {
     final User? user = await getUser();
     if (user == null) {
-      return false;
+      return null;
     }
     final userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
     WriteBatch batch = FirebaseFirestore.instance.batch();
     final usernameDoc =
         FirebaseFirestore.instance.collection('Usernames').doc(username);
-    batch.set(
-        userDoc,
-        pdgaNumber != null
-            ? MyPuttUser(
-                    keywords: getPrefixes(username),
-                    username: username,
-                    displayName: displayName,
-                    uid: user.uid,
-                    pdgaNum: pdgaNumber)
-                .toJson()
-            : MyPuttUser(
-                    keywords: getPrefixes(username),
-                    username: username,
-                    displayName: displayName,
-                    uid: user.uid,
-                    pdgaNum: pdgaNumber)
-                .toJson());
+    final MyPuttUser newUser = pdgaNumber != null
+        ? MyPuttUser(
+            keywords: getPrefixes(username),
+            username: username,
+            displayName: displayName,
+            uid: user.uid,
+            pdgaNum: pdgaNumber)
+        : MyPuttUser(
+            keywords: getPrefixes(username),
+            username: username,
+            displayName: displayName,
+            uid: user.uid,
+            pdgaNum: pdgaNumber);
+    batch.set(userDoc, newUser.toJson());
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
     await batch.commit().catchError((e) {
       print(e);
-      return false;
+      return null;
     });
-    return true;
+    return newUser;
   }
 
   Future<void> saveUserInfo(String name, String? bio) async {
