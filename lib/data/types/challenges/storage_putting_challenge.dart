@@ -2,11 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/myputt_user.dart';
-
-import '../../../utils/constants.dart';
-import '../../../utils/utils.dart';
-import '../putting_session.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/utils.dart';
+import 'package:myputt/data/types/putting_session.dart';
 
 part 'storage_putting_challenge.g.dart';
 
@@ -15,6 +14,7 @@ class StoragePuttingChallenge {
   StoragePuttingChallenge(
       {required this.status,
       required this.creationTimeStamp,
+      this.completionTimeStamp,
       required this.id,
       required this.challengerUser,
       this.recipientUser,
@@ -24,6 +24,7 @@ class StoragePuttingChallenge {
 
   String status;
   final int creationTimeStamp;
+  late final int? completionTimeStamp;
   final String id;
   final MyPuttUser challengerUser;
   final MyPuttUser? recipientUser;
@@ -49,7 +50,8 @@ class StoragePuttingChallenge {
             : challenge.opponentSets,
         recipientSets: challenge.recipientUser.uid == currentUser.uid
             ? challenge.currentUserSets
-            : challenge.opponentSets);
+            : challenge.opponentSets,
+        completionTimeStamp: challenge.completionTimeStamp);
   }
 
   factory StoragePuttingChallenge.fromSession(

@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
@@ -56,7 +56,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> reload() async {
-    //emit(ChallengesLoading());
     await _challengesRepository.fetchAllChallenges();
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==

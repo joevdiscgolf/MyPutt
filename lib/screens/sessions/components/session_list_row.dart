@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/data/types/stats.dart';
-
-import '../../share/share_sheet.dart';
+import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/screens/share/share_sheet.dart';
 
 class SessionListRow extends StatelessWidget {
   const SessionListRow({

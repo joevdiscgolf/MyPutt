@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SigninService {

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/general_stats.dart';
+import 'package:myputt/data/types/stats/general_stats.dart';
 
 part 'stats.g.dart';
 

@@ -10,6 +10,7 @@ import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 import 'package:myputt/screens/challenge/challenge_summary_screen.dart';
+import 'package:myputt/components/misc/default_profile_circle.dart';
 
 class ActiveChallengeItem extends StatelessWidget {
   const ActiveChallengeItem(

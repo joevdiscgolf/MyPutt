@@ -7,25 +7,6 @@ class ChallengeStatus {
   static String complete = 'complete';
 }
 
-enum ChallengeCategory { pending, active, complete, none }
-
-enum LoginState { loggedIn, setup, none, forceUpgrade, error }
-
-class DefaultProfileCircle extends StatelessWidget {
-  const DefaultProfileCircle({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration:
-          BoxDecoration(color: Colors.grey[300]!, shape: BoxShape.circle),
-      child:
-          Center(child: Icon(FlutterRemix.user_fill, color: Colors.grey[600]!)),
-    );
-  }
-}
-
 const blueFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutout.png');
 const redFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutoutRed.png');
 
@@ -34,8 +15,6 @@ class Cutoffs {
   static const int c2 = 33;
   static const int none = 0;
 }
-
-enum ChallengeResult { win, loss, draw }
 
 const blueFrisbeeImageIcon = SizedBox(
   height: 20,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
-import 'package:myputt/data/types/pdga_player_info.dart';
+import 'package:myputt/data/types/users/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/submit_text_dialog.dart';
 
 class PDGAInfoPanel extends StatelessWidget {

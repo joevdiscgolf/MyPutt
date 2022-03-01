@@ -215,10 +215,6 @@ class _SessionsState extends State<SessionsScreen> {
         return Align(
           alignment: Alignment.bottomRight,
           child: FloatingActionButton(
-              /*style: ElevatedButton.styleFrom(
-                         shape: const CircleBorder(),
-                         padding: const EdgeInsets.all(20), // <-- Splash color
-                       ),*/
               child: const Icon(FlutterRemix.add_line),
               onPressed: () {
                 if (state is! SessionInProgressState) {
