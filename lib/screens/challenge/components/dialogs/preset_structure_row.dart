@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/utils/enums.dart';
-import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/constants.dart';
 
 class PresetStructureRow extends StatelessWidget {
   const PresetStructureRow(
@@ -36,7 +35,7 @@ class PresetStructureRow extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(presetType.name),
+            Text(challengePresetToText[presetType] ?? ''),
           ],
         ),
       ),

@@ -77,7 +77,8 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                       Navigator.pop(context);
                     }),
                 PrimaryButton(
-                  label: 'Choose',
+                  disabled: _selectedPreset == ChallengePreset.none,
+                  label: 'Next',
                   fontSize: 18,
                   width: 100,
                   height: 50,

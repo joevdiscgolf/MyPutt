@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_remix/flutter_remix.dart';
+
+import 'enums.dart';
 
 class ChallengeStatus {
   static String pending = 'pending';
@@ -30,3 +31,9 @@ const redFrisbeeImageIcon = SizedBox(
     image: AssetImage('assets/frisbeeEmojiCutoutRed.png'),
   ),
 );
+
+const Map<ChallengePreset, String> challengePresetToText = {
+  ChallengePreset.c1Basics: 'Circle 1 basics',
+  ChallengePreset.stepPuttStation: 'Step putt station',
+  ChallengePreset.twentyFooterClinic: '20-footer clinic'
+};
