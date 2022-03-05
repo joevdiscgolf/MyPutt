@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myputt/data/types/username_doc.dart';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/username_doc.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 class AuthService {

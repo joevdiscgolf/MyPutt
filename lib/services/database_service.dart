@@ -1,4 +1,4 @@
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';

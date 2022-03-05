@@ -16,7 +16,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/theme/theme_data.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'cubits/my_profile_cubit.dart';
 
 void main() async {

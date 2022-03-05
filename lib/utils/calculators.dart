@@ -4,11 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 
-double dp(double val, int places) {
-  num mod = pow(10.0, places);
-  return ((val * mod).round().toDouble() / mod);
-}
-
 PerformanceChartData smoothChart(
     PerformanceChartData data, int comparisonRange) {
   final List<ChartPoint> points = data.points;

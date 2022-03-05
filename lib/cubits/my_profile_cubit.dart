@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:myputt/data/types/pdga_player_info.dart';
+import 'package:myputt/data/types/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/web_scraper.dart';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 
 part 'my_profile_state.dart';

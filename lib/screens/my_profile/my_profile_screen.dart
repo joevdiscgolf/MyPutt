@@ -11,7 +11,9 @@ import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'components/pdga_info_panel.dart';
+import 'package:myputt/components/misc/default_profile_circle.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);

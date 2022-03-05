@@ -5,6 +5,7 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/components/misc/default_profile_circle.dart';
 
 class ChallengeSummaryScreen extends StatefulWidget {
   const ChallengeSummaryScreen({Key? key, required this.challenge})

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/putting_set.dart';
@@ -17,10 +17,12 @@ class PuttingChallenge {
       required this.recipientUser,
       required this.challengeStructure,
       required this.opponentSets,
-      required this.currentUserSets});
+      required this.currentUserSets,
+      this.completionTimeStamp});
 
   String status;
   final int creationTimeStamp;
+  late final int? completionTimeStamp;
   final String id;
   final MyPuttUser opponentUser;
   final MyPuttUser currentUser;
@@ -36,25 +38,25 @@ class PuttingChallenge {
     if (storageChallenge.recipientUser == null) {
       recipientUser = currentUser;
       return PuttingChallenge(
-        status: storageChallenge.status,
-        creationTimeStamp: storageChallenge.creationTimeStamp,
-        id: storageChallenge.id,
-        opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
-            ? recipientUser
-            : storageChallenge.challengerUser,
-        currentUser: recipientUser.uid == currentUser.uid
-            ? recipientUser
-            : storageChallenge.challengerUser,
-        challengeStructure: storageChallenge.challengeStructure,
-        opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
-            ? storageChallenge.recipientSets
-            : storageChallenge.challengerSets,
-        currentUserSets: recipientUser.uid == currentUser.uid
-            ? storageChallenge.recipientSets
-            : storageChallenge.challengerSets,
-        challengerUser: storageChallenge.challengerUser,
-        recipientUser: recipientUser,
-      );
+          status: storageChallenge.status,
+          creationTimeStamp: storageChallenge.creationTimeStamp,
+          id: storageChallenge.id,
+          opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
+              ? recipientUser
+              : storageChallenge.challengerUser,
+          currentUser: recipientUser.uid == currentUser.uid
+              ? recipientUser
+              : storageChallenge.challengerUser,
+          challengeStructure: storageChallenge.challengeStructure,
+          opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
+              ? storageChallenge.recipientSets
+              : storageChallenge.challengerSets,
+          currentUserSets: recipientUser.uid == currentUser.uid
+              ? storageChallenge.recipientSets
+              : storageChallenge.challengerSets,
+          challengerUser: storageChallenge.challengerUser,
+          recipientUser: recipientUser,
+          completionTimeStamp: storageChallenge.completionTimeStamp);
     }
     return PuttingChallenge(
       status: storageChallenge.status,

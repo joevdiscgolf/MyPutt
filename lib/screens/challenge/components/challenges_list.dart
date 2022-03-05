@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/screens/challenge/components/challenge_items.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
 

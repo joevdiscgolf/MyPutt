@@ -1,5 +1,5 @@
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import 'package:myputt/data/types/myputt_user.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
@@ -75,7 +75,7 @@ class ChallengesRepository {
       pendingChallenges.remove(challenge);
       activeChallenges.add(currentChallenge!);
     }
-    //_databaseService.updatePuttingChallenge(currentChallenge!);
+    _databaseService.setPuttingChallenge(currentChallenge!);
   }
 
   Future<bool> completeCurrentChallenge() async {
@@ -83,6 +83,8 @@ class ChallengesRepository {
       return false;
     } else {
       currentChallenge?.status = ChallengeStatus.complete;
+      currentChallenge?.completionTimeStamp =
+          DateTime.now().millisecondsSinceEpoch;
       if (activeChallenges.contains(currentChallenge)) {
         completedChallenges.add(currentChallenge!);
         activeChallenges.remove(currentChallenge);

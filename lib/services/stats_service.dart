@@ -1,11 +1,11 @@
 import 'package:myputt/data/types/chart/chart_point.dart';
-import 'package:myputt/data/types/stats.dart';
-import 'package:myputt/data/types/general_stats.dart';
+import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/data/types/stats/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/utils/calculators.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
