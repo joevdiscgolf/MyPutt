@@ -120,7 +120,7 @@ class ChallengesRepository {
 
   void declineChallenge(PuttingChallenge challenge) {
     pendingChallenges.remove(challenge);
-    _databaseService.deleteChallenge(challenge);
+    _databaseService.deleteSharedChallenge(challenge);
   }
 
   Future<void> addDeepLinkChallenges() async {
@@ -138,7 +138,7 @@ class ChallengesRepository {
             challenge.status = ChallengeStatus.active;
             activeChallenges.add(challenge);
             await _databaseService.setPuttingChallenge(challenge);
-            await _databaseService.removeUnclaimedChallenge(challenge.id);
+            await _databaseService.deleteUnclaimedChallenge(challenge.id);
           }
         }
       }

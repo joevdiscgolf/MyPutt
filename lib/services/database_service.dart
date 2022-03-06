@@ -10,6 +10,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/services/firebase/user_data_writer.dart';
+import 'package:myputt/utils/string_helpers.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -115,24 +116,26 @@ class DatabaseService {
         StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
   }
 
-  Future<bool> sendStorageChallenge(
+  Future<bool> setSharedChallenge(
       StoragePuttingChallenge storageChallenge) async {
+    final String? sharedDocumentId = getSharedChallengeDocId(storageChallenge);
+
+    if (sharedDocumentId == null) {
+      return false;
+    }
+
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       return false;
-    }
-    if (storageChallenge.recipientUser == null) {
-      return false;
     } else {
-      return _challengesDataWriter.sendChallengeToUser(
-          storageChallenge.recipientUser!.uid, currentUser, storageChallenge);
+      return _challengesDataWriter.setSharedChallenge(
+          sharedDocumentId, storageChallenge);
     }
   }
 
-  Future<bool> uploadUnclaimedChallenge(
-      StoragePuttingChallenge storageChallenge) {
-    return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
+  Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {
+    return _challengesDataWriter.setUnclaimedChallenge(storageChallenge);
   }
 
   Future<StoragePuttingChallenge?> retrieveUnclaimedChallenge(
@@ -140,8 +143,8 @@ class DatabaseService {
     return _challengesDataLoader.retrieveUnclaimedChallenge(challengeId);
   }
 
-  Future<bool> removeUnclaimedChallenge(String challengeId) async {
-    return true;
+  Future<bool> deleteUnclaimedChallenge(String challengeId) {
+    return _challengesDataWriter.deleteUnclaimedChallenge(challengeId);
   }
 
   Future<StoragePuttingChallenge?> getChallengeByUid(
@@ -149,9 +152,24 @@ class DatabaseService {
     return _challengesDataLoader.getChallengeByUid(uid, challengeId);
   }
 
+  Future<bool> deleteSharedChallenge(PuttingChallenge challengeToDelete) async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    }
+
+    return _challengesDataWriter.deleteSharedChallenge(
+        currentUser.uid, challengeToDelete);
+  }
+
   Future<MyPuttUser?> getCurrentUser() {
     final uid = _authService.getCurrentUserId();
     return _userDataLoader.getUser(uid!);
+  }
+
+  Future<MyPuttUser?> getUserByUid(String uid) {
+    return _userDataLoader.getUser(uid);
   }
 
   Future<bool> setUserWithPayload(MyPuttUser user) {
@@ -167,15 +185,5 @@ class DatabaseService {
     final List<MyPuttUser> users =
         await _userDataLoader.getUsersByUsername(username);
     return users.where((user) => user.uid != currentUser.uid).toList();
-  }
-
-  Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    }
-    return _challengesDataWriter.deleteChallenge(
-        currentUser.uid, challengeToDelete);
   }
 }

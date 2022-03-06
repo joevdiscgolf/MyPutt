@@ -6,6 +6,7 @@ import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/utils/string_helpers.dart';
 
 part 'storage_putting_challenge.g.dart';
 
@@ -61,7 +62,7 @@ class StoragePuttingChallenge {
     return StoragePuttingChallenge(
       status: ChallengeStatus.pending,
       creationTimeStamp: now,
-      id: currentUser.uid + '~' + now.toString(),
+      id: generateChallengeId(currentUser.uid),
       challengeStructure: challengeStructureFromSession(session),
       recipientSets: [],
       challengerSets: session.sets,

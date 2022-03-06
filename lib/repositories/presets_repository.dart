@@ -6,11 +6,11 @@ class PresetsRepository {
   PresetsRepository() {
     presetStructures = {
       ChallengePreset.c1Basics:
-          getChallengeByPreset(ChallengePreset.c1Basics, 5),
+          getStructureByPreset(ChallengePreset.c1Basics, 5),
       ChallengePreset.stepPuttStation:
-          getChallengeByPreset(ChallengePreset.stepPuttStation, 5),
+          getStructureByPreset(ChallengePreset.stepPuttStation, 5),
       ChallengePreset.twentyFooterClinic:
-          getChallengeByPreset(ChallengePreset.twentyFooterClinic, 5),
+          getStructureByPreset(ChallengePreset.twentyFooterClinic, 5),
     };
   }
 
@@ -34,7 +34,7 @@ class PresetsRepository {
     ]
   };
 
-  List<ChallengeStructureItem> getChallengeByPreset(
+  List<ChallengeStructureItem> getStructureByPreset(
       ChallengePreset preset, int setLength) {
     switch (preset) {
       case ChallengePreset.c1Basics:

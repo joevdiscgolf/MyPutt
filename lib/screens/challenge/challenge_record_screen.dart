@@ -13,7 +13,7 @@ import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/theme/theme_data.dart';
-import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/components/misc/putting_set_row.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {

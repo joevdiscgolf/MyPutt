@@ -104,7 +104,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                         });
 
                         await BlocProvider.of<ChallengesCubit>(context)
-                            .generateAndSendChallengeToUser(
+                            .sendChallengeFromSession(
                                 widget.session, widget.recipientUser);
                         setState(() {
                           _loadingState = LoadingState.loaded;

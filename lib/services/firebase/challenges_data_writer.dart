@@ -32,12 +32,21 @@ class FBChallengesDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> uploadUnclaimedChallenge(
-      StoragePuttingChallenge storageChallenge) {
+  Future<bool> setSharedChallenge(
+      String sharedDocumentId, StoragePuttingChallenge storageChallenge) {
+    final challengeRef = firestore.doc(
+        '$challengesCollection/$sharedDocumentId/$challengesCollection/${storageChallenge.id}');
+    return challengeRef
+        .set(storageChallenge.toJson(), SetOptions(merge: true))
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {
     return firestore
         .collection('Unclaimed_Challenges')
         .doc(storageChallenge.id)
-        .set(storageChallenge.toJson())
+        .set(storageChallenge.toJson(), SetOptions(merge: true))
         .then((value) => true)
         .catchError((e) => false);
   }
@@ -50,7 +59,7 @@ class FBChallengesDataWriter {
         .catchError((error) => false);
   }
 
-  Future<bool> deleteChallenge(
+  Future<bool> deleteSharedChallenge(
       String currentUid, PuttingChallenge challengeToDelete) {
     return firestore
         .doc(
