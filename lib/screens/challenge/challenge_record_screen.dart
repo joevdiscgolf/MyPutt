@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/previous_sets_list.dart';
 import 'package:myputt/screens/challenge/components/challenge_director_panel.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -14,7 +15,6 @@ import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
-import 'package:myputt/components/misc/putting_set_row.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);
@@ -40,7 +40,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   bool sessionInProgress = true;
 
   int puttsPickerFocusedIndex = 0;
-  int challengeFocusedIndex = 0;
+  int opponentFocusedIndex = 0;
+  int currentUserFocusedIndex = 0;
   int challengeSetsCompleted = 0;
   int lastClickTime = 0;
 
@@ -74,16 +75,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           const SizedBox(height: 10),
           _puttsMadeContainer(context),
           const SizedBox(height: 10),
-          Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  Flexible(flex: 4, child: _addSetButton(context)),
-                  Flexible(flex: 1, child: _undoButton(context)),
-                ],
-              )),
-          const SizedBox(height: 10),
-          const SizedBox(height: 10),
+          _addAndUndo(context),
+          const SizedBox(height: 20),
           BlocBuilder<ChallengesCubit, ChallengesState>(
             builder: (context, state) {
               if (state is ChallengeInProgress) {
@@ -98,18 +91,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     },
                   ),
                 );
-                return Column(
-                  children: state.currentChallenge.currentUserSets
-                      .asMap()
-                      .entries
-                      .map((entry) => PuttingSetRow(
-                            index: entry.key,
-                            deletable: false,
-                            delete: () {},
-                            set: entry.value,
-                          ))
-                      .toList(),
-                );
               } else if (state is ChallengeComplete) {
                 return SizedBox(
                   height: 250,
@@ -122,18 +103,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     },
                   ),
                 );
-                // return Column(
-                //   children: state.currentChallenge.currentUserSets
-                //       .asMap()
-                //       .entries
-                //       .map((entry) => PuttingSetRow(
-                //             index: entry.key,
-                //             deletable: false,
-                //             delete: () {},
-                //             set: entry.value,
-                //           ))
-                //       .toList(),
-                // );
               } else {
                 return const Center(
                   child: Text('Something went wrong'),
@@ -146,16 +115,27 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     );
   }
 
+  Widget _addAndUndo(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            Flexible(flex: 4, child: _addSetButton(context)),
+            Flexible(flex: 1, child: _undoButton(context)),
+          ],
+        ));
+  }
+
   Widget _challengeListContainer(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
-      buildWhen: (previous, current) {
-        return current is ChallengeInProgress || current is ChallengeComplete;
-      },
       builder: (context, state) {
         if (state is ChallengeInProgress) {
           final PuttingChallenge challenge = state.currentChallenge;
           final bool currentUserSetsComplete =
-              challenge.currentUserSets.length == challenge.opponentSets.length;
+              challenge.currentUserSets.length ==
+                  challenge.challengeStructure.length;
+          // final bool opponentSetsComplete = challenge.opponentSets.length ==
+          //     challenge.challengeStructure.length;
           final int opponentListItemCount = currentUserSetsComplete
               ? challenge.currentUserSets.length
               : challenge.currentUserSets.length + 1;
@@ -201,7 +181,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                     child: Center(
                                         child: Text(
                                   state.currentChallenge.opponentUser
-                                      .displayName,
+                                          ?.displayName ??
+                                      'Unknown',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -264,6 +245,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TweenAnimationBuilder<double>(
+                          curve: Curves.easeOutQuad,
                           tween: Tween<double>(
                               begin: state.currentChallenge.opponentSets.isEmpty
                                   ? 0
@@ -279,7 +261,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                           .toDouble() /
                                       state.currentChallenge.opponentSets.length
                                           .toDouble()),
-                          duration: const Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 400),
                           builder: (context, value, _) => Row(
                                 children: [
                                   Flexible(
@@ -347,7 +329,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                     child: Center(
                                         child: Text(
                                   state.currentChallenge.opponentUser
-                                      .displayName,
+                                          ?.displayName ??
+                                      'Unknown',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 )))),
                             ChallengeScrollSnapList(
@@ -413,6 +396,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TweenAnimationBuilder<double>(
+                          curve: Curves.easeOutQuad,
                           tween: Tween<double>(
                               begin: state.currentChallenge.opponentSets.isEmpty
                                   ? 0
@@ -428,7 +412,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                           .toDouble() /
                                       state.currentChallenge.opponentSets.length
                                           .toDouble()),
-                          duration: const Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 400),
                           builder: (context, value, _) => Row(
                                 children: [
                                   Flexible(
@@ -462,81 +446,132 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
         if (state is ChallengeComplete) {
-          return SizedBox(
-            height: 50,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(48)),
-                    primary: const Color(0xff00d162),
-                    enableFeedback: true),
-                child: Center(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(FlutterRemix.check_line),
-                    Text('Finish challenge'),
-                  ],
-                )),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (dialogContext) => BlocProvider.value(
-                          value: BlocProvider.of<ChallengesCubit>(context),
-                          child: ConfirmDialog(
-                            actionPressed: () async {
-                              setState(() {
-                                sessionInProgress = false;
-                              });
-                              await BlocProvider.of<ChallengesCubit>(context)
-                                  .completeCurrentChallenge();
-                            },
-                            buttonlabel: 'Finish',
-                            title: 'Finish challenge?',
-                            confirmColor: ThemeColors.green,
-                          ))).then((value) => dialogCallBack());
-                }),
-          );
+          return MyPuttButton(
+              title: 'Finish Challenge',
+              color: ThemeColors.green,
+              iconData: FlutterRemix.check_line,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (dialogContext) => BlocProvider.value(
+                        value: BlocProvider.of<ChallengesCubit>(context),
+                        child: ConfirmDialog(
+                          actionPressed: () async {
+                            setState(() {
+                              sessionInProgress = false;
+                            });
+                            await BlocProvider.of<ChallengesCubit>(context)
+                                .completeCurrentChallenge();
+                          },
+                          buttonlabel: 'Finish',
+                          title: 'Finish challenge?',
+                          confirmColor: ThemeColors.green,
+                        ))).then((value) => dialogCallBack());
+              });
+          // return SizedBox(
+          //   height: 50,
+          //   child: ElevatedButton(
+          //       style: ElevatedButton.styleFrom(
+          //           shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(48)),
+          //           primary: const Color(0xff00d162),
+          //           enableFeedback: true),
+          //       child: Center(
+          //           child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: const [
+          //           Icon(FlutterRemix.check_line),
+          //           Text('Finish challenge'),
+          //         ],
+          //       )),
+          //       onPressed: () {
+          //         showDialog(
+          //             context: context,
+          //             builder: (dialogContext) => BlocProvider.value(
+          //                 value: BlocProvider.of<ChallengesCubit>(context),
+          //                 child: ConfirmDialog(
+          //                   actionPressed: () async {
+          //                     setState(() {
+          //                       sessionInProgress = false;
+          //                     });
+          //                     await BlocProvider.of<ChallengesCubit>(context)
+          //                         .completeCurrentChallenge();
+          //                   },
+          //                   buttonlabel: 'Finish',
+          //                   title: 'Finish challenge?',
+          //                   confirmColor: ThemeColors.green,
+          //                 ))).then((value) => dialogCallBack());
+          //       }),
+          // );
         }
         if (state is ChallengeInProgress) {
-          return SizedBox(
-            height: 50,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(48)),
-                    enableFeedback: true),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(FlutterRemix.add_line),
-                    Text('Add set')
-                  ],
-                ),
-                onPressed: () {
-                  BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                      timeStamp: DateTime.now().millisecondsSinceEpoch,
-                      distance: state
-                          .currentChallenge
-                          .opponentSets[
-                              state.currentChallenge.currentUserSets.length]
-                          .distance,
-                      puttsAttempted: state
-                          .currentChallenge
-                          .opponentSets[
-                              state.currentChallenge.currentUserSets.length]
-                          .puttsAttempted,
-                      puttsMade: puttsPickerFocusedIndex));
-                  Future.delayed(const Duration(milliseconds: 50), () {
-                    opponentKey.currentState?.focusToItem(
-                        state.currentChallenge.currentUserSets.length);
-                    currentUserKey.currentState?.focusToItem(
-                        state.currentChallenge.currentUserSets.length);
-                    numberListKey.currentState?.focusToItem(
-                        state.currentChallenge.currentUserSets.length);
-                  });
-                }),
-          );
+          return MyPuttButton(
+              title: 'Add Set',
+              color: Colors.blue,
+              iconData: FlutterRemix.add_line,
+              onPressed: () {
+                BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                    timeStamp: DateTime.now().millisecondsSinceEpoch,
+                    distance: state
+                        .currentChallenge
+                        .opponentSets[
+                            state.currentChallenge.currentUserSets.length]
+                        .distance,
+                    puttsAttempted: state
+                        .currentChallenge
+                        .challengeStructure[
+                            state.currentChallenge.currentUserSets.length]
+                        .setLength,
+                    puttsMade: puttsPickerFocusedIndex));
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  focusAllToIndex(
+                      state.currentChallenge.currentUserSets.length);
+                  // opponentKey.currentState?.focusToItem(
+                  //     state.currentChallenge.currentUserSets.length);
+                  // currentUserKey.currentState?.focusToItem(
+                  //     state.currentChallenge.currentUserSets.length);
+                  // numberListKey.currentState?.focusToItem(
+                  //     state.currentChallenge.currentUserSets.length);
+                });
+              });
+          // return SizedBox(
+          //   height: 50,
+          //   child: ElevatedButton(
+          //       style: ElevatedButton.styleFrom(
+          //           shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(48)),
+          //           enableFeedback: true),
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: const [
+          //           Icon(FlutterRemix.add_line),
+          //           Text('Add set')
+          //         ],
+          //       ),
+          //       onPressed: () {
+          //         BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+          //             timeStamp: DateTime.now().millisecondsSinceEpoch,
+          //             distance: state
+          //                 .currentChallenge
+          //                 .opponentSets[
+          //                     state.currentChallenge.currentUserSets.length]
+          //                 .distance,
+          //             puttsAttempted: state
+          //                 .currentChallenge
+          //                 .opponentSets[
+          //                     state.currentChallenge.currentUserSets.length]
+          //                 .puttsAttempted,
+          //             puttsMade: puttsPickerFocusedIndex));
+          //         Future.delayed(const Duration(milliseconds: 50), () {
+          //           opponentKey.currentState?.focusToItem(
+          //               state.currentChallenge.currentUserSets.length);
+          //           currentUserKey.currentState?.focusToItem(
+          //               state.currentChallenge.currentUserSets.length);
+          //           numberListKey.currentState?.focusToItem(
+          //               state.currentChallenge.currentUserSets.length);
+          //         });
+          //       }),
+          // );
         } else {
           return const Text('Something went wrong');
         }
@@ -618,10 +653,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
-                /*Align(
-                        alignment: Alignment.centerRight,
-                        child: _putterCountPicker(context),
-                      ),*/
               ],
             ),
           ),

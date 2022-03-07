@@ -39,9 +39,6 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       curve: Curves.easeOutBack,
       key: widget.sslKey,
       updateOnScroll: false,
-      focusToItem: (index) {
-        print('focusing to $index');
-      },
       itemSize: 60,
       itemCount: widget.itemCount,
       duration: 400,
@@ -88,6 +85,17 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           ),
         );
       }
+    }
+    // if the opponent does not have as many sets as the current user.
+    if (index > widget.puttingSets.length - 1) {
+      return Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+        width: 60,
+        height: 40,
+      );
     }
     return Container(
       decoration: BoxDecoration(

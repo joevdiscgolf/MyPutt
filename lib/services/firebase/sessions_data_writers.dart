@@ -6,7 +6,6 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBSessionsDataWriter {
   Future<bool> setCurrentSession(PuttingSession currentSession, uid) async {
-    print('data writer starting current session');
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
     return currentSessionReference

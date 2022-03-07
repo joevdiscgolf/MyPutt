@@ -65,7 +65,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 }
               },
             ),
-            label: 'Challenges',
+            label: 'Challenge',
           ),
           const BottomNavigationBarItem(
             icon: Icon(FlutterRemix.user_fill),

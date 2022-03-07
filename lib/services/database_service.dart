@@ -69,7 +69,7 @@ class DatabaseService {
 
     final completedSessions =
         await _sessionsDataLoader.getCompletedSessions(uid!);
-    return completedSessions?.where((session) => session != null).toList();
+    return completedSessions?.toList();
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
@@ -95,22 +95,26 @@ class DatabaseService {
   Future<bool> setPuttingChallenge(PuttingChallenge challengeToUpdate) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
+    if (currentUser == null || challengeToUpdate.opponentUser == null) {
       return false;
     }
+    final StoragePuttingChallenge storageChallenge =
+        StoragePuttingChallenge.fromPuttingChallenge(
+            challengeToUpdate, currentUser);
+
     return _challengesDataWriter.setPuttingChallenge(
-        currentUser, challengeToUpdate);
+        currentUser.uid, challengeToUpdate.opponentUser!.uid, storageChallenge);
   }
 
   Future<bool> sendCompletedChallenge(PuttingChallenge challenge) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
+    if (currentUser == null || challenge.opponentUser == null) {
       return false;
     }
 
     return _challengesDataWriter.sendChallengeToUser(
-        challenge.opponentUser.uid,
+        challenge.opponentUser!.uid,
         currentUser,
         StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
   }
@@ -130,8 +134,7 @@ class DatabaseService {
     }
   }
 
-  Future<bool> uploadUnclaimedChallenge(
-      StoragePuttingChallenge storageChallenge) {
+  Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {
     return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
   }
 

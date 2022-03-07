@@ -34,23 +34,45 @@ class StoragePuttingChallenge {
 
   factory StoragePuttingChallenge.fromPuttingChallenge(
       PuttingChallenge challenge, MyPuttUser currentUser) {
+    MyPuttUser? recipientUser;
+    MyPuttUser challengerUser;
+    List<PuttingSet> recipientSets;
+
+    if (challenge.recipientUser == null) {
+      recipientUser = null;
+    } else {
+      recipientUser = challenge.recipientUser?.uid == currentUser.uid
+          ? currentUser
+          : challenge.challengerUser;
+    }
+
+    if (challenge.recipientUser == null) {
+      recipientSets = [];
+    } else {
+      recipientSets = challenge.recipientUser?.uid == currentUser.uid
+          ? challenge.currentUserSets
+          : challenge.opponentSets;
+    }
+
+    if (challenge.opponentUser == null) {
+      challengerUser = currentUser;
+    } else {
+      challengerUser = challenge.challengerUser.uid == currentUser.uid
+          ? currentUser
+          : challenge.opponentUser!;
+    }
+
     return StoragePuttingChallenge(
         status: challenge.status,
         creationTimeStamp: challenge.creationTimeStamp,
         id: challenge.id,
-        challengerUser: challenge.challengerUser.uid == currentUser.uid
-            ? currentUser
-            : challenge.opponentUser,
-        recipientUser: challenge.recipientUser.uid == currentUser.uid
-            ? currentUser
-            : challenge.challengerUser,
+        challengerUser: challengerUser,
+        recipientUser: recipientUser,
         challengeStructure: challenge.challengeStructure,
         challengerSets: challenge.challengerUser.uid == currentUser.uid
             ? challenge.currentUserSets
             : challenge.opponentSets,
-        recipientSets: challenge.recipientUser.uid == currentUser.uid
-            ? challenge.currentUserSets
-            : challenge.opponentSets,
+        recipientSets: recipientSets,
         completionTimeStamp: challenge.completionTimeStamp);
   }
 

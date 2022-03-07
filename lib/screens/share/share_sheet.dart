@@ -115,9 +115,7 @@ class _ShareSheetState extends State<ShareSheet> {
     if (currentUser != null) {
       final StoragePuttingChallenge newChallenge =
           StoragePuttingChallenge.fromSession(widget.session, currentUser);
-      await locator
-          .get<DatabaseService>()
-          .uploadUnclaimedChallenge(newChallenge);
+      await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
       final Uri uri = await locator
           .get<DynamicLinkService>()
           .generateDynamicLinkFromId(newChallenge.id);

@@ -10,14 +10,18 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
       status: json['status'] as String,
       creationTimeStamp: json['creationTimeStamp'] as int,
       id: json['id'] as String,
-      opponentUser: MyPuttUser.fromJson(
-          Map<String, dynamic>.from(json['opponentUser'] as Map)),
+      opponentUser: json['opponentUser'] == null
+          ? null
+          : MyPuttUser.fromJson(
+              Map<String, dynamic>.from(json['opponentUser'] as Map)),
       currentUser: MyPuttUser.fromJson(
           Map<String, dynamic>.from(json['currentUser'] as Map)),
       challengerUser: MyPuttUser.fromJson(
           Map<String, dynamic>.from(json['challengerUser'] as Map)),
-      recipientUser: MyPuttUser.fromJson(
-          Map<String, dynamic>.from(json['recipientUser'] as Map)),
+      recipientUser: json['recipientUser'] == null
+          ? null
+          : MyPuttUser.fromJson(
+              Map<String, dynamic>.from(json['recipientUser'] as Map)),
       challengeStructure: (json['challengeStructure'] as List<dynamic>)
           .map((e) => ChallengeStructureItem.fromJson(
               Map<String, dynamic>.from(e as Map)))
@@ -28,17 +32,19 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
       currentUserSets: (json['currentUserSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
+      completionTimeStamp: json['completionTimeStamp'] as int?,
     );
 
 Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
     <String, dynamic>{
       'status': instance.status,
       'creationTimeStamp': instance.creationTimeStamp,
+      'completionTimeStamp': instance.completionTimeStamp,
       'id': instance.id,
-      'opponentUser': instance.opponentUser.toJson(),
+      'opponentUser': instance.opponentUser?.toJson(),
       'currentUser': instance.currentUser.toJson(),
       'challengerUser': instance.challengerUser.toJson(),
-      'recipientUser': instance.recipientUser.toJson(),
+      'recipientUser': instance.recipientUser?.toJson(),
       'challengeStructure':
           instance.challengeStructure.map((e) => e.toJson()).toList(),
       'opponentSets': instance.opponentSets.map((e) => e.toJson()).toList(),

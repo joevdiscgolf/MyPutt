@@ -126,7 +126,8 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                   Center(
                                     child: Text(
                                       state.currentChallenge.opponentUser
-                                          .displayName,
+                                              ?.displayName ??
+                                          'Unknown',
                                       style:
                                           Theme.of(context).textTheme.bodyLarge,
                                     ),
@@ -353,7 +354,8 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 Center(
                                   child: Text(
                                     state.currentChallenge.opponentUser
-                                        .displayName,
+                                            ?.displayName ??
+                                        'Unknown',
                                     style:
                                         Theme.of(context).textTheme.bodyLarge,
                                   ),

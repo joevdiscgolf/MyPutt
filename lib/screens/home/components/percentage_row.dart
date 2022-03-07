@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/theme/theme_data.dart';
 
 class PercentageRow extends StatefulWidget {
@@ -35,57 +37,65 @@ class _PercentageRowState extends State<PercentageRow> {
           ),
         ),
         const SizedBox(width: 20),
-        Builder(builder: (context) {
-          if (widget.allTimePercentage != null && widget.percentage != null) {
-            return SizedBox(
-              child: Stack(children: <Widget>[
-                SizedBox(
+        Bounceable(
+          onTap: () {
+            Vibrate.feedback(FeedbackType.light);
+          },
+          child: Builder(builder: (context) {
+            if (widget.allTimePercentage != null && widget.percentage != null) {
+              return SizedBox(
+                child: Stack(children: <Widget>[
+                  SizedBox(
+                      width: 90,
+                      height: 90,
+                      child: TweenAnimationBuilder<double>(
+                        curve: Curves.easeOutQuad,
+                        tween: Tween<double>(
+                            begin: 0.0, end: widget.percentage! as double),
+                        duration: const Duration(milliseconds: 750),
+                        builder: (context, value, _) =>
+                            CircularProgressIndicator(
+                          color: widget.percentage! < widget.allTimePercentage!
+                              ? Colors.red
+                              : ThemeColors.green,
+                          backgroundColor: Colors.grey[200],
+                          value: value,
+                          strokeWidth: 5,
+                        ),
+                      )),
+                  Center(
+                      child: TweenAnimationBuilder<double>(
+                          curve: Curves.easeInOutQuad,
+                          tween: Tween<double>(
+                              begin: 0.0, end: widget.percentage as double),
+                          duration: const Duration(milliseconds: 750),
+                          builder: (context, value, _) =>
+                              (Text((value * 100).round().toString() + ' %'))))
+                ]),
+                width: 90,
+                height: 90,
+              );
+            } else {
+              return SizedBox(
+                child: Stack(children: <Widget>[
+                  SizedBox(
                     width: 90,
                     height: 90,
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween<double>(
-                          begin: 0.0, end: widget.percentage! as double),
-                      duration: const Duration(milliseconds: 300),
-                      builder: (context, value, _) => CircularProgressIndicator(
-                        color: widget.percentage! < widget.allTimePercentage!
-                            ? Colors.red
-                            : ThemeColors.green,
-                        backgroundColor: Colors.grey[200],
-                        value: value,
-                        strokeWidth: 5,
-                      ),
-                    )),
-                Center(
-                    child: TweenAnimationBuilder<double>(
-                        tween: Tween<double>(
-                            begin: 0.0, end: widget.percentage as double),
-                        duration: const Duration(milliseconds: 300),
-                        builder: (context, value, _) =>
-                            (Text((value * 100).round().toString() + ' %'))))
-              ]),
-              width: 90,
-              height: 90,
-            );
-          } else {
-            return SizedBox(
-              child: Stack(children: <Widget>[
-                SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: CircularProgressIndicator(
-                    color: Colors.grey[400],
-                    backgroundColor: Colors.grey[200],
-                    value: 0,
-                    strokeWidth: 5,
+                    child: CircularProgressIndicator(
+                      color: Colors.grey[400],
+                      backgroundColor: Colors.grey[200],
+                      value: 0,
+                      strokeWidth: 5,
+                    ),
                   ),
-                ),
-                const Center(child: Text('- %')),
-              ]),
-              width: 90,
-              height: 90,
-            );
-          }
-        }),
+                  const Center(child: Text('- %')),
+                ]),
+                width: 90,
+                height: 90,
+              );
+            }
+          }),
+        ),
         const SizedBox(
           width: 30,
         ),

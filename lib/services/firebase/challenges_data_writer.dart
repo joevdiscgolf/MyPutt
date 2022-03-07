@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
@@ -7,19 +8,19 @@ import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataWriter {
-  Future<bool> setPuttingChallenge(
-      MyPuttUser currentUser, PuttingChallenge puttingChallenge) {
-    final currentSessionReference = firestore.doc(
-        '$challengesCollection/${currentUser.uid}/$challengesCollection/${puttingChallenge.id}');
+  Future<bool> setPuttingChallenge(String currentUid, String opponentUid,
+      StoragePuttingChallenge storageChallenge) {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    final currentUserRef = firestore.doc(
+        '$challengesCollection/$currentUid/$challengesCollection/${storageChallenge.id}');
+    final opponentRef = firestore.doc(
+        '$challengesCollection/$opponentUid/$challengesCollection/${storageChallenge.id}');
 
-    return currentSessionReference
-        .set(
-            StoragePuttingChallenge.fromPuttingChallenge(
-                    puttingChallenge, currentUser)
-                .toJson(),
-            SetOptions(merge: true))
-        .then((value) => true)
-        .catchError((error) => false);
+    batch.set(
+        currentUserRef, storageChallenge.toJson(), SetOptions(merge: true));
+    batch.set(opponentRef, storageChallenge.toJson(), SetOptions(merge: true));
+
+    return batch.commit().then((value) => true).catchError((e) => false);
   }
 
   Future<bool> sendChallengeToUser(String recipientUid, MyPuttUser currentUser,
@@ -35,7 +36,7 @@ class FBChallengesDataWriter {
   Future<bool> uploadUnclaimedChallenge(
       StoragePuttingChallenge storageChallenge) {
     return firestore
-        .collection('Unclaimed_Challenges')
+        .collection(unclaimedChallengesCollection)
         .doc(storageChallenge.id)
         .set(storageChallenge.toJson())
         .then((value) => true)

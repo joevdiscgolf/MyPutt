@@ -60,7 +60,6 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
   fl_chart: ^0.45.0
   package_info_plus: ^1.4.0
-  
 
 dev_dependencies:
   flutter_test:

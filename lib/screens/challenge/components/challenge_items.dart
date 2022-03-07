@@ -9,7 +9,7 @@ import 'package:myputt/utils/constants.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/challenge_record_screen.dart';
-import 'package:myputt/screens/challenge/challenge_summary_screen.dart';
+import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
 
 class ActiveChallengeItem extends StatelessWidget {
@@ -41,7 +41,7 @@ class ActiveChallengeItem extends StatelessWidget {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(challenge.opponentUser.displayName,
+                          Text(challenge.opponentUser?.displayName ?? 'Unknown',
                               style: Theme.of(context).textTheme.bodySmall),
                           Text(
                               DateFormat.yMMMMd('en_US')
@@ -136,7 +136,7 @@ class PendingChallengeItem extends StatelessWidget {
             children: [
               const SizedBox(width: 10),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(challenge.opponentUser.displayName,
+                Text(challenge.opponentUser?.displayName ?? 'Unknown',
                     style: Theme.of(context).textTheme.bodyLarge),
                 Text(
                     DateFormat.yMMMMd('en_US')
@@ -368,8 +368,8 @@ class CompletedChallengeItem extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        challenge.opponentUser.displayName
-                                            .toUpperCase(),
+                                        challenge.opponentUser?.displayName ??
+                                            'Unknown'.toUpperCase(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -538,8 +538,8 @@ class NewActiveChallengeItem extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        challenge.opponentUser.displayName
-                                            .toUpperCase(),
+                                        challenge.opponentUser?.displayName ??
+                                            'Unknown'.toUpperCase(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -665,7 +665,8 @@ class NewPendingChallengeItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              challenge.opponentUser.displayName.toUpperCase(),
+                              challenge.opponentUser?.displayName ??
+                                  'Unknown'.toUpperCase(),
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6

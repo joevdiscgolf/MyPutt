@@ -84,17 +84,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> completeCurrentChallenge() async {
-    await _challengesRepository.completeCurrentChallenge();
+    await _challengesRepository.completeChallenge();
     emit(_noCurrentChallenge());
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
     _challengesRepository.deleteChallenge(challenge);
-  }
-
-  void exitChallenge() {
-    _challengesRepository.exitChallenge();
-    emit(_noCurrentChallenge());
   }
 
   void addSet(PuttingSet set) {
@@ -105,12 +100,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
           _challengesRepository.currentChallenge!.currentUserSets.length;
       if (currentUserSetsCount < opponentSetsCount) {
         _challengesRepository.addSet(set);
-        _challengesRepository.storeCurrentChallenge();
         opponentSetsCount =
             _challengesRepository.currentChallenge!.opponentSets.length;
         currentUserSetsCount =
             _challengesRepository.currentChallenge!.currentUserSets.length;
-        if (currentUserSetsCount == opponentSetsCount) {
+        if (currentUserSetsCount ==
+            _challengesRepository.currentChallenge?.challengeStructure.length) {
           emit(_challengeComplete());
         } else {
           emit(_challengeInProgress());
@@ -126,18 +121,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   Future<void> undo() async {
     final List<PuttingSet>? currentUserSets =
         _challengesRepository.currentChallenge?.currentUserSets;
-    if (currentUserSets?.length == 0) {
-      return;
-    }
-    if (currentUserSets == null) {
+    if (currentUserSets == null || currentUserSets.isEmpty) {
       return;
     }
     await _challengesRepository.deleteSet(currentUserSets.last);
-    if (_challengesRepository.currentChallenge != null) {
-      emit(_challengeInProgress());
-    } else {
-      emit(ChallengesErrorState());
-    }
+    emit(_challengeInProgress());
   }
 
   void declineChallenge(PuttingChallenge challenge) {
