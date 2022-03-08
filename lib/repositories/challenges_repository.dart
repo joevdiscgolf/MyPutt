@@ -10,7 +10,6 @@ import 'package:myputt/utils/constants.dart';
 
 class ChallengesRepository {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
-  final AuthService _authService = locator.get<AuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   PuttingChallenge? currentChallenge;
@@ -49,15 +48,20 @@ class ChallengesRepository {
   }
 
   Future<bool> addSet(PuttingSet set) async {
+    print(currentChallenge?.toJson());
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge != null && currentUser != null) {
+      print('opponent sets before: ${currentChallenge?.opponentSets ?? []}');
       currentChallenge!.currentUserSets.add(set);
+      print('opponent sets after: ${currentChallenge?.opponentSets ?? []}');
       if (currentChallenge?.recipientUser != null) {
         _databaseService.setPuttingChallenge(currentChallenge!);
       } else {
-        _databaseService.setUnclaimedChallenge(
+        final StoragePuttingChallenge storageChallenge =
             StoragePuttingChallenge.fromPuttingChallenge(
-                currentChallenge!, currentUser));
+                currentChallenge!, currentUser);
+        print(storageChallenge.toJson());
+        _databaseService.setUnclaimedChallenge(storageChallenge);
       }
       return true;
     } else {

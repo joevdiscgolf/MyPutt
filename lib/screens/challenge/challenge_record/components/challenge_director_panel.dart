@@ -12,11 +12,36 @@ class ChallengeDirectorPanel extends StatelessWidget {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
         if (state is ChallengeInProgress) {
-          final int currentUserPuttsMade =
-              totalMadeFromSets(state.currentChallenge.currentUserSets);
-          final int opponentPuttsMade = totalMadeFromSubset(
+          int currentUserPuttsMade;
+          int currentUserPuttsAttempted;
+          int opponentPuttsMade;
+          int opponentPuttsAttempted;
+
+          final opponentSetsLength = state.currentChallenge.opponentSets.length;
+          final currentUserSetsLength =
+              state.currentChallenge.currentUserSets.length;
+          if (currentUserSetsLength <= opponentSetsLength) {
+            currentUserPuttsMade =
+                totalMadeFromSets(state.currentChallenge.currentUserSets);
+            currentUserPuttsAttempted =
+                totalAttemptsFromSets(state.currentChallenge.currentUserSets);
+            opponentPuttsMade = totalMadeFromSubset(
+                state.currentChallenge.opponentSets,
+                state.currentChallenge.currentUserSets.length);
+            opponentPuttsAttempted = totalAttemptsFromSubset(
+                state.currentChallenge.opponentSets,
+                state.currentChallenge.currentUserSets.length);
+          } else {
+            currentUserPuttsMade = totalMadeFromSubset(
+                state.currentChallenge.currentUserSets, opponentSetsLength);
+            currentUserPuttsAttempted = totalAttemptsFromSubset(
+                state.currentChallenge.currentUserSets, opponentSetsLength);
+            opponentPuttsMade = totalMadeFromSets(
               state.currentChallenge.opponentSets,
-              state.currentChallenge.currentUserSets.length);
+            );
+            opponentPuttsAttempted =
+                totalMadeFromSets(state.currentChallenge.opponentSets);
+          }
           final int puttsMadeDifference =
               currentUserPuttsMade - opponentPuttsMade;
           return Container(
@@ -148,40 +173,30 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      _textAnimation(totalMadeFromSubset(
-                                              state.currentChallenge
-                                                  .opponentSets,
-                                              state.currentChallenge
-                                                  .currentUserSets.length)
-                                          .toDouble()),
+                                      _textAnimation(
+                                          opponentPuttsMade.toDouble()),
                                       Text(
                                         '/',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge,
                                       ),
-                                      _textAnimation(totalAttemptsFromSubset(
-                                              state.currentChallenge
-                                                  .opponentSets,
-                                              state.currentChallenge
-                                                  .currentUserSets.length)
-                                          .toDouble()),
+                                      _textAnimation(
+                                          opponentPuttsAttempted.toDouble()),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      _textAnimation(totalMadeFromSets(state
-                                              .currentChallenge.currentUserSets)
-                                          .toDouble()),
+                                      _textAnimation(
+                                          currentUserPuttsMade.toDouble()),
                                       Text(
                                         '/',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge,
                                       ),
-                                      _textAnimation(totalAttemptsFromSets(state
-                                              .currentChallenge.currentUserSets)
-                                          .toDouble())
+                                      _textAnimation(
+                                          currentUserPuttsAttempted.toDouble())
                                     ],
                                   ),
                                 ],
@@ -198,35 +213,31 @@ class ChallengeDirectorPanel extends StatelessWidget {
                   child: Builder(builder: (context) {
                     final TextStyle? style =
                         Theme.of(context).textTheme.headline6;
-                    final difference = totalMadeFromSets(
-                            state.currentChallenge.currentUserSets) -
-                        totalMadeFromSubset(state.currentChallenge.opponentSets,
-                            state.currentChallenge.currentUserSets.length);
-                    if (difference > 0) {
+                    if (puttsMadeDifference > 0) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("You're ahead by ", style: style),
-                          Text('$difference ',
+                          Text('$puttsMadeDifference ',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6
                                   ?.copyWith(color: ThemeColors.green)),
-                          Text(difference == 1 ? 'putt' : 'putts',
+                          Text(puttsMadeDifference == 1 ? 'putt' : 'putts',
                               style: style),
                         ],
                       );
-                    } else if (difference < 0) {
+                    } else if (puttsMadeDifference < 0) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text("You're behind by ", style: style),
-                          Text('${difference.abs()} ',
+                          Text('${puttsMadeDifference.abs()} ',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6
                                   ?.copyWith(color: Colors.red)),
-                          Text(difference == -1 ? 'putt' : 'putts',
+                          Text(puttsMadeDifference == -1 ? 'putt' : 'putts',
                               style: style),
                         ],
                       );
@@ -243,11 +254,36 @@ class ChallengeDirectorPanel extends StatelessWidget {
           );
         }
         if (state is CurrentUserComplete) {
-          final int currentUserPuttsMade =
-              totalMadeFromSets(state.currentChallenge.currentUserSets);
-          final int opponentPuttsMade = totalMadeFromSubset(
+          int currentUserPuttsMade;
+          int currentUserPuttsAttempted;
+          int opponentPuttsMade;
+          int opponentPuttsAttempted;
+
+          final opponentSetsLength = state.currentChallenge.opponentSets.length;
+          final currentUserSetsLength =
+              state.currentChallenge.currentUserSets.length;
+          if (currentUserSetsLength <= opponentSetsLength) {
+            currentUserPuttsMade =
+                totalMadeFromSets(state.currentChallenge.currentUserSets);
+            currentUserPuttsAttempted =
+                totalAttemptsFromSets(state.currentChallenge.currentUserSets);
+            opponentPuttsMade = totalMadeFromSubset(
+                state.currentChallenge.opponentSets,
+                state.currentChallenge.currentUserSets.length);
+            opponentPuttsAttempted = totalAttemptsFromSubset(
+                state.currentChallenge.opponentSets,
+                state.currentChallenge.currentUserSets.length);
+          } else {
+            currentUserPuttsMade = totalMadeFromSubset(
+                state.currentChallenge.currentUserSets, opponentSetsLength);
+            currentUserPuttsAttempted = totalAttemptsFromSubset(
+                state.currentChallenge.currentUserSets, opponentSetsLength);
+            opponentPuttsMade = totalMadeFromSets(
               state.currentChallenge.opponentSets,
-              state.currentChallenge.currentUserSets.length);
+            );
+            opponentPuttsAttempted =
+                totalMadeFromSets(state.currentChallenge.opponentSets);
+          }
           final int puttsMadeDifference =
               currentUserPuttsMade - opponentPuttsMade;
           return Container(
@@ -376,36 +412,28 @@ class ChallengeDirectorPanel extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    _textAnimation(totalMadeFromSubset(
-                                            state.currentChallenge.opponentSets,
-                                            state.currentChallenge
-                                                .currentUserSets.length)
-                                        .toDouble()),
+                                    _textAnimation(
+                                        opponentPuttsMade.toDouble()),
                                     Text(
                                       '/',
                                       style:
                                           Theme.of(context).textTheme.bodyLarge,
                                     ),
-                                    _textAnimation(totalAttemptsFromSubset(
-                                            state.currentChallenge.opponentSets,
-                                            state.currentChallenge
-                                                .currentUserSets.length)
-                                        .toDouble()),
+                                    _textAnimation(
+                                        opponentPuttsAttempted.toDouble()),
                                   ],
                                 ),
                                 Row(
                                   children: [
-                                    _textAnimation(totalMadeFromSets(state
-                                            .currentChallenge.currentUserSets)
-                                        .toDouble()),
+                                    _textAnimation(
+                                        currentUserPuttsMade.toDouble()),
                                     Text(
                                       '/',
                                       style:
                                           Theme.of(context).textTheme.bodyLarge,
                                     ),
-                                    _textAnimation(totalAttemptsFromSets(state
-                                            .currentChallenge.currentUserSets)
-                                        .toDouble())
+                                    _textAnimation(
+                                        currentUserPuttsAttempted.toDouble())
                                   ],
                                 ),
                               ],

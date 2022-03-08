@@ -33,6 +33,9 @@ class ChallengeScrollSnapList extends StatefulWidget {
 class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
   @override
   Widget build(BuildContext context) {
+    // if (!widget.isCurrentUser) {
+    //   print(widget.puttingSets);
+    // }
     return Expanded(
         child: ScrollSnapList(
       curve: Curves.easeOutBack,
@@ -85,16 +88,17 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         );
       }
     }
-    // if (widget.puttingSets[index]) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.grey[200],
-          border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-      width: 60,
-      height: 40,
-    );
-
+    if (index > widget.puttingSets.length - 1) {
+      return Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+        width: 60,
+        height: 40,
+        child: const Center(child: Text('-')),
+      );
+    }
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),

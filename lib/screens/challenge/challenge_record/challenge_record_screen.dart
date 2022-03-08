@@ -11,10 +11,10 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/screens/challenge/components/challenge_scroll_snap_lists.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'components/challenge_scroll_snap_lists.dart';
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key}) : super(key: key);

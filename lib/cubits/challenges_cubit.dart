@@ -115,6 +115,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         if (currentUserSetsCount == challengeStructureLength) {
           emit(_currentUserComplete());
         } else {
+          // print(_challengesRepository.currentChallenge?.opponentSets);
           emit(_challengeInProgress());
         }
       } else {

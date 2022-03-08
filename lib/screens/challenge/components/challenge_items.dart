@@ -83,7 +83,7 @@ class ActiveChallengeItem extends StatelessWidget {
                         children: [
                           const Text('You'),
                           Text(
-                            '${totalMadeFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}/${totalAttemptsFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}',
+                            '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}',
                           ),
                         ]),
                   ),
@@ -426,8 +426,7 @@ class NewActiveChallengeItem extends StatelessWidget {
       child: Builder(builder: (context) {
         final int currentUserPuttsMade =
             totalMadeFromSets(challenge.currentUserSets);
-        final int opponentPuttsMade = totalMadeFromSubset(
-            challenge.opponentSets, challenge.currentUserSets.length);
+        final int opponentPuttsMade = totalMadeFromSets(challenge.opponentSets);
         return Container(
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
@@ -546,7 +545,7 @@ class NewActiveChallengeItem extends StatelessWidget {
                                             ?.copyWith(color: Colors.red),
                                       ),
                                       Text(
-                                          '${totalMadeFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}/${totalAttemptsFromSubset(challenge.opponentSets, challenge.currentUserSets.length)}')
+                                          '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}')
                                     ]),
                                 const SizedBox(
                                   width: 10,
