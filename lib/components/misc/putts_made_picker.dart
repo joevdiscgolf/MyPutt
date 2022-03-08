@@ -38,11 +38,11 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
         builder: (context, state) {
           if (state is ChallengeInProgress) {
             final int index = state.currentChallenge.currentUserSets.length ==
-                    state.currentChallenge.opponentSets.length
+                    state.currentChallenge.challengeStructure.length
                 ? state.currentChallenge.currentUserSets.length - 1
                 : state.currentChallenge.currentUserSets.length;
-            final int newSetLength = state
-                .currentChallenge.opponentSets[index].puttsAttempted as int;
+            final int newSetLength =
+                state.currentChallenge.challengeStructure[index].setLength;
             return Container(
                 height: 80,
                 decoration: const BoxDecoration(
@@ -72,13 +72,13 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
                     }
                   }, // dynamicSizeEquation: customEquation, //optional
                 ));
-          } else if (state is ChallengeComplete) {
+          } else if (state is CurrentUserComplete) {
             final int index = state.currentChallenge.currentUserSets.length ==
-                    state.currentChallenge.opponentSets.length
+                    state.currentChallenge.challengeStructure.length
                 ? state.currentChallenge.currentUserSets.length - 1
                 : state.currentChallenge.currentUserSets.length;
-            final int newSetLength = state
-                .currentChallenge.opponentSets[index].puttsAttempted as int;
+            final int newSetLength =
+                state.currentChallenge.challengeStructure[index].setLength;
             return Container(
                 height: 80,
                 decoration: const BoxDecoration(

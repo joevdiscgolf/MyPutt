@@ -23,8 +23,8 @@ class ChallengeInProgress extends ChallengesState {
   final List<PuttingChallenge> completedChallenges;
 }
 
-class ChallengeComplete extends ChallengesState {
-  ChallengeComplete({
+class CurrentUserComplete extends ChallengesState {
+  CurrentUserComplete({
     required this.currentChallenge,
     required this.activeChallenges,
     required this.pendingChallenges,

@@ -8,7 +8,7 @@ import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/screens/challenge/challenge_record_screen.dart';
+import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
 

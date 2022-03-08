@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/screens/challenge/components/dialogs/preset_structure_row.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -78,13 +80,14 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                     }),
                 PrimaryButton(
                   disabled: _selectedPreset == ChallengePreset.none,
-                  label: 'Next',
+                  label: 'Share',
                   fontSize: 18,
                   width: 100,
                   height: 50,
                   backgroundColor: ThemeColors.green,
                   onPressed: () {
-                    Navigator.pop(context);
+                    BlocProvider.of<ChallengesCubit>(context)
+                        .getShareMessageFromPreset(_selectedPreset);
                   },
                 )
               ],

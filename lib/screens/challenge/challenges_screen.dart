@@ -45,7 +45,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                         return _tabBar(context);
                       } else if (state is NoCurrentChallenge) {
                         return _tabBar(context);
-                      } else if (state is ChallengeComplete) {
+                      } else if (state is CurrentUserComplete) {
                         return _tabBar(context);
                       } else if (state is NoCurrentChallenge) {
                         return _tabBar(context);
@@ -90,7 +90,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                             challenges:
                                 List.from(state.completedChallenges.reversed)),
                       ]);
-                    } else if (state is ChallengeComplete) {
+                    } else if (state is CurrentUserComplete) {
                       return TabBarView(children: [
                         ChallengesList(
                             category: ChallengeCategory.active,

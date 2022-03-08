@@ -242,7 +242,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
             ),
           );
         }
-        if (state is ChallengeComplete) {
+        if (state is CurrentUserComplete) {
           final int currentUserPuttsMade =
               totalMadeFromSets(state.currentChallenge.currentUserSets);
           final int opponentPuttsMade = totalMadeFromSubset(

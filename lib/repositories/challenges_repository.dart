@@ -134,11 +134,13 @@ class ChallengesRepository {
               await _databaseService.getChallengeByUid(
                   currentUser.uid, storageChallenge.id);
           if (existingChallenge == null) {
+            print(storageChallenge.toJson());
             final PuttingChallenge challenge =
                 PuttingChallenge.fromStorageChallenge(
                     storageChallenge, currentUser);
             challenge.status = ChallengeStatus.active;
             activeChallenges.add(challenge);
+            print(challenge.toJson());
             await _databaseService.setPuttingChallenge(challenge);
             await _databaseService.removeUnclaimedChallenge(challenge.id);
           }

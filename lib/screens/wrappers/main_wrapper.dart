@@ -55,7 +55,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 if (state is ChallengeInProgress) {
                   return _challengesIcon(context, state.pendingChallenges);
                 }
-                if (state is ChallengeComplete) {
+                if (state is CurrentUserComplete) {
                   return _challengesIcon(context, state.pendingChallenges);
                 }
                 if (state is NoCurrentChallenge) {

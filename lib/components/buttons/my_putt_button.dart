@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/theme/theme_data.dart';
 
 class MyPuttButton extends StatelessWidget {
   const MyPuttButton(
@@ -8,7 +7,7 @@ class MyPuttButton extends StatelessWidget {
       required this.onPressed,
       this.iconData,
       this.height = 50,
-      this.color})
+      this.color = Colors.blue})
       : super(key: key);
 
   final String title;
@@ -25,7 +24,7 @@ class MyPuttButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(48)),
-              primary: color ?? ThemeColors.green,
+              primary: color,
               shadowColor: Colors.transparent,
               enableFeedback: true),
           child: Center(
@@ -39,9 +38,7 @@ class MyPuttButton extends StatelessWidget {
               Text(title),
             ],
           )),
-          onPressed: () {
-            onPressed();
-          }),
+          onPressed: () => onPressed()),
     );
   }
 }

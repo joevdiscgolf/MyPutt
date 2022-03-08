@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/database_service.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
-import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:share/share.dart';
 
@@ -111,17 +106,13 @@ class _ShareSheetState extends State<ShareSheet> {
   }
 
   Future<void> _share() async {
-    final MyPuttUser? currentUser = locator.get<UserRepository>().currentUser;
-    if (currentUser != null) {
-      final StoragePuttingChallenge newChallenge =
-          StoragePuttingChallenge.fromSession(widget.session, currentUser);
-      await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
-      final Uri uri = await locator
-          .get<DynamicLinkService>()
-          .generateDynamicLinkFromId(newChallenge.id);
-      await Share.share(
-        "${currentUser.displayName} thinks they can beat you in a putting challenge. Let's find out!\n${uri.toString()}",
-      );
+    final String? shareMessage = await BlocProvider.of<ChallengesCubit>(context)
+        .getShareMessageFromSession(widget.session);
+    if (shareMessage == null) {
+      return;
     }
+    await Share.share(
+      shareMessage,
+    );
   }
 }

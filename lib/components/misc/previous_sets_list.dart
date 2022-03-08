@@ -69,7 +69,7 @@ class _PreviousSetsListState extends State<PreviousSetsList> {
                           .toList()
                           .reversed),
                     );
-            } else if (state is ChallengeComplete) {
+            } else if (state is CurrentUserComplete) {
               return widget.sets.isEmpty
                   ? const Center(child: Text('No sets yet'))
                   : ListView(

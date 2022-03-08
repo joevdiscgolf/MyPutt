@@ -1,13 +1,18 @@
 import 'package:bloc/bloc.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
+import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/utils/enums.dart';
+import 'package:myputt/utils/constants.dart';
 
 part 'challenges_state.dart';
 
@@ -16,9 +21,25 @@ class ChallengesCubit extends Cubit<ChallengesState> {
       locator.get<ChallengesRepository>();
   final UserRepository _userRepository = locator.get<UserRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
+  final DynamicLinkService _dynamicLinkService =
+      locator.get<DynamicLinkService>();
+  final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
 
-  ChallengeComplete _challengeComplete() {
-    return ChallengeComplete(
+  ChallengesCubit() : super(ChallengesInitial()) {
+    if (_challengesRepository.currentChallenge != null) {
+      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
+          _challengesRepository.currentChallenge?.challengeStructure.length) {
+        emit(_currentUserComplete());
+      } else {
+        emit(_challengeInProgress());
+      }
+    } else {
+      emit(_noCurrentChallenge());
+    }
+  }
+
+  CurrentUserComplete _currentUserComplete() {
+    return CurrentUserComplete(
       currentChallenge: _challengesRepository.currentChallenge!,
       activeChallenges: _challengesRepository.activeChallenges,
       pendingChallenges: _challengesRepository.pendingChallenges,
@@ -42,25 +63,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         completedChallenges: _challengesRepository.completedChallenges);
   }
 
-  ChallengesCubit() : super(ChallengesInitial()) {
-    if (_challengesRepository.currentChallenge != null) {
-      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.opponentSets.length) {
-        emit(_challengeComplete());
-      } else {
-        emit(_challengeInProgress());
-      }
-    } else {
-      emit(_noCurrentChallenge());
-    }
-  }
-
   Future<void> reload() async {
     await _challengesRepository.fetchAllChallenges();
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.opponentSets.length) {
-        emit(_challengeComplete());
+          _challengesRepository.currentChallenge?.challengeStructure.length) {
+        emit(_currentUserComplete());
       } else {
         emit(_challengeInProgress());
       }
@@ -73,8 +81,8 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
       if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.opponentSets.length) {
-        emit(_challengeComplete());
+          _challengesRepository.currentChallenge?.challengeStructure.length) {
+        emit(_currentUserComplete());
       } else {
         emit(_challengeInProgress());
       }
@@ -94,24 +102,23 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   void addSet(PuttingSet set) {
     if (_challengesRepository.currentChallenge != null) {
-      var opponentSetsCount =
-          _challengesRepository.currentChallenge!.opponentSets.length;
+      var challengeStructureLength =
+          _challengesRepository.currentChallenge!.challengeStructure.length;
       var currentUserSetsCount =
           _challengesRepository.currentChallenge!.currentUserSets.length;
-      if (currentUserSetsCount < opponentSetsCount) {
+      if (currentUserSetsCount < challengeStructureLength) {
         _challengesRepository.addSet(set);
-        opponentSetsCount =
-            _challengesRepository.currentChallenge!.opponentSets.length;
-        currentUserSetsCount =
+        var challengeStructureLength =
+            _challengesRepository.currentChallenge!.challengeStructure.length;
+        var currentUserSetsCount =
             _challengesRepository.currentChallenge!.currentUserSets.length;
-        if (currentUserSetsCount ==
-            _challengesRepository.currentChallenge?.challengeStructure.length) {
-          emit(_challengeComplete());
+        if (currentUserSetsCount == challengeStructureLength) {
+          emit(_currentUserComplete());
         } else {
           emit(_challengeInProgress());
         }
       } else {
-        emit(_challengeComplete());
+        emit(_currentUserComplete());
       }
     } else {
       emit(ChallengesErrorState());
@@ -150,5 +157,45 @@ class ChallengesCubit extends Cubit<ChallengesState> {
       );
       return _databaseService.sendStorageChallenge(generatedChallenge);
     }
+  }
+
+  Future<String?> getShareMessageFromSession(PuttingSession session) async {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return null;
+    }
+    final StoragePuttingChallenge newChallenge =
+        StoragePuttingChallenge.fromSession(session, currentUser);
+    await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
+    final Uri uri =
+        await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
+    print(uri);
+    return '${currentUser.displayName} is challenging you to a putting competition! $uri';
+  }
+
+  Future<String?> getShareMessageFromPreset(ChallengePreset preset) async {
+    final List<ChallengeStructureItem>? challengeStructure =
+        _presetsRepository.presetStructures[preset];
+    if (challengeStructure == null) {
+      return null;
+    }
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return null;
+    }
+    final int timeStamp = DateTime.now().millisecondsSinceEpoch;
+    final StoragePuttingChallenge newChallenge = StoragePuttingChallenge(
+        status: ChallengeStatus.pending,
+        creationTimeStamp: timeStamp,
+        id: '${currentUser.uid}~$timeStamp',
+        challengerUser: currentUser,
+        challengeStructure: challengeStructure,
+        challengerSets: [],
+        recipientSets: []);
+    await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
+    final Uri uri =
+        await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
+    print(uri);
+    return '${currentUser.displayName} is challenging you to a putting competition! $uri';
   }
 }

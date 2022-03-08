@@ -22,7 +22,6 @@ class ChallengeScrollSnapList extends StatefulWidget {
   final bool isCurrentUser;
   final int itemCount;
   final int maxSets;
-
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> puttingSets;
 
@@ -86,17 +85,16 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         );
       }
     }
-    // if the opponent does not have as many sets as the current user.
-    if (index > widget.puttingSets.length - 1) {
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.grey[200],
-            border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-        width: 60,
-        height: 40,
-      );
-    }
+    // if (widget.puttingSets[index]) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.grey[200],
+          border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+      width: 60,
+      height: 40,
+    );
+
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
