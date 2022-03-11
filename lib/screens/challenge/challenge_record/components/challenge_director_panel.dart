@@ -11,19 +11,26 @@ class ChallengeDirectorPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
-      builder: (context, state) {
-        if (state is! ChallengesErrorState && state.currentChallenge != null) {
-          return _mainBody(context, state.currentChallenge!);
+        builder: (context, state) {
+      if (state.currentChallenge != null) {
+        if (state is ChallengeInProgress || state is OpponentUserComplete) {
+          int index = state.currentChallenge!.currentUserSets.length ==
+                  state.currentChallenge!.challengeStructure.length
+              ? state.currentChallenge!.currentUserSets.length - 1
+              : state.currentChallenge!.currentUserSets.length;
+          return _mainBody(context, state.currentChallenge!, index);
         } else {
-          return Container(
-            child: Center(child: Text('Something went wrong')),
-          );
+          return _mainBody(context, state.currentChallenge!,
+              state.currentChallenge!.currentUserSets.length - 1);
         }
-      },
-    );
+      } else {
+        return const Center(child: Text('Something went wrong'));
+      }
+    });
   }
 
-  Widget _mainBody(BuildContext context, PuttingChallenge currentChallenge) {
+  Widget _mainBody(
+      BuildContext context, PuttingChallenge currentChallenge, int index) {
     final int puttsMadeDifference =
         getDifferenceFromChallenge(currentChallenge);
     final int currentUserPuttsMade = getPuttsMadeFromChallenge(
@@ -79,9 +86,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 tween: Tween<double>(
                                     begin: 0.0,
                                     end: currentChallenge
-                                        .challengeStructure[currentChallenge
-                                            .currentUserSets.length]
-                                        .distance
+                                        .challengeStructure[index].distance
                                         .toDouble()),
                                 duration: const Duration(milliseconds: 300),
                                 builder: (context, value, _) => Text(
@@ -95,9 +100,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                                 tween: Tween<double>(
                                     begin: 0.0,
                                     end: currentChallenge
-                                        .challengeStructure[currentChallenge
-                                            .currentUserSets.length]
-                                        .setLength
+                                        .challengeStructure[index].setLength
                                         .toDouble()),
                                 duration: const Duration(milliseconds: 300),
                                 builder: (context, value, _) => Text(

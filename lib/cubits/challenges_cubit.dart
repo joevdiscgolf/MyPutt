@@ -94,7 +94,9 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         _challengesRepository.currentChallenge!.currentUserSets.length;
     final opponentUserSetsCount =
         _challengesRepository.currentChallenge!.opponentSets.length;
-    if (challenge.status == ChallengeStatus.complete) {
+    if (challenge.status == ChallengeStatus.complete ||
+        (currentUserSetsCount == opponentUserSetsCount &&
+            currentUserSetsCount == structureLength)) {
       return _bothUsersComplete();
     } else if (currentUserSetsCount == structureLength &&
         opponentUserSetsCount < structureLength) {
@@ -156,19 +158,9 @@ class ChallengesCubit extends Cubit<ChallengesState> {
           _challengesRepository.currentChallenge!.currentUserSets.length;
       if (currentUserSetsCount < challengeStructureLength) {
         _challengesRepository.addSet(set);
-        var challengeStructureLength =
-            _challengesRepository.currentChallenge!.challengeStructure.length;
-        var currentUserSetsCount =
-            _challengesRepository.currentChallenge!.currentUserSets.length;
-        if (currentUserSetsCount == challengeStructureLength) {
-          emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-          await _challengesRepository.resyncCurrentChallenge();
-          emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-        } else {
-          emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-          await _challengesRepository.resyncCurrentChallenge();
-          emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-        }
+        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+        await _challengesRepository.resyncCurrentChallenge();
+        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
       } else {
         emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
         await _challengesRepository.resyncCurrentChallenge();

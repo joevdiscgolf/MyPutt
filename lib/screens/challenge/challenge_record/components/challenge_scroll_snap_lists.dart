@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -16,6 +17,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
     required this.challengeStructure,
     required this.puttingSets,
     required this.maxSets,
+    required this.challenge,
   }) : super(key: key);
 
   final double initialIndex;
@@ -26,6 +28,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
   final int maxSets;
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> puttingSets;
+  final PuttingChallenge challenge;
 
   @override
   _ChallengeScrollSnapListState createState() =>
@@ -99,6 +102,17 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         child: const Center(child: Text('-')),
       );
     }
+    // } else if (index > widget.challenge.currentUserSets.length) {
+    //   return Container(
+    //     decoration: BoxDecoration(
+    //         borderRadius: BorderRadius.circular(5),
+    //         color: Colors.grey[200],
+    //         border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+    //     width: 60,
+    //     height: 40,
+    //     child: const Center(child: Text('?')),
+    //   );
+    // }
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
