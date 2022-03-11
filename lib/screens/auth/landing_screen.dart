@@ -212,7 +212,6 @@ class _LandingScreenState extends State<LandingScreen> {
                     _signUpLoading = true;
                   }
                 });
-                print("signInLoading: $_signInLoading");
                 final authSuccess = signIn
                     ? await locator
                         .get<SigninService>()

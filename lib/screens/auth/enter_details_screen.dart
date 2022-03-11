@@ -328,9 +328,6 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
           success = await _signinService.setupNewUser(
               usernameController.value.text, displayNameController.value.text);
         }
-        if (success) {
-          print('success');
-        }
         setState(() => _loading = false);
       },
     );

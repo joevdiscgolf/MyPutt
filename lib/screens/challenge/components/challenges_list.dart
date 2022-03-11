@@ -25,7 +25,7 @@ class ChallengesList extends StatelessWidget {
                     .map(
                       (challenge) => Builder(builder: (context) {
                         if (category == ChallengeCategory.pending) {
-                          return NewPendingChallengeItem(
+                          return PendingChallengeItem(
                             accept: () {
                               BlocProvider.of<ChallengesCubit>(context)
                                   .openChallenge(challenge);
@@ -41,21 +41,7 @@ class ChallengesList extends StatelessWidget {
                             challenge: challenge,
                           );
                         } else if (category == ChallengeCategory.active) {
-                          return NewActiveChallengeItem(
-                              challenge:
-                                  challenge); /*ActiveChallengeItem(
-                              accept: () {
-                                BlocProvider.of<ChallengesCubit>(context)
-                                    .openChallenge(challenge);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        BlocProvider.value(
-                                            value: BlocProvider.of<
-                                                ChallengesCubit>(context),
-                                            child:
-                                                const ChallengeRecordScreen())));
-                              },
-                              challenge: challenge);*/
+                          return ActiveChallengeItem(challenge: challenge);
                         } else {
                           return CompletedChallengeItem(
                             challenge: challenge,

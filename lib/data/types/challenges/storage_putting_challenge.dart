@@ -40,15 +40,11 @@ class StoragePuttingChallenge {
 
     if (challenge.recipientUser == null) {
       recipientUser = null;
+      recipientSets = [];
     } else {
       recipientUser = challenge.recipientUser?.uid == currentUser.uid
           ? currentUser
-          : challenge.challengerUser;
-    }
-
-    if (challenge.recipientUser == null) {
-      recipientSets = [];
-    } else {
+          : challenge.opponentUser;
       recipientSets = challenge.recipientUser?.uid == currentUser.uid
           ? challenge.currentUserSets
           : challenge.opponentSets;

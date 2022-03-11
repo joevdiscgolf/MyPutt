@@ -2,7 +2,6 @@ import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/locator.dart';
@@ -23,7 +22,6 @@ class ChallengesRepository {
       _databaseService.getChallengesWithStatus(ChallengeStatus.pending),
       _databaseService.getChallengesWithStatus(ChallengeStatus.active),
       _databaseService.getChallengesWithStatus(ChallengeStatus.complete),
-      _databaseService.getCurrentPuttingChallenge(),
     ]);
 
     if (result[0] != null && result[0] is List<PuttingChallenge>) {
@@ -35,9 +33,6 @@ class ChallengesRepository {
     if (result[2] != null && result[2] is List<PuttingChallenge>) {
       completedChallenges = result[2] as List<PuttingChallenge>;
     }
-    if (result[3] != null && result[3] is PuttingChallenge) {
-      currentChallenge = result[3];
-    }
   }
 
   void clearData() {
@@ -47,25 +42,30 @@ class ChallengesRepository {
     completedChallenges = [];
   }
 
-  Future<bool> addSet(PuttingSet set) async {
-    print(currentChallenge?.toJson());
+  Future<void> addSet(PuttingSet set) async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge != null && currentUser != null) {
-      print('opponent sets before: ${currentChallenge?.opponentSets ?? []}');
       currentChallenge!.currentUserSets.add(set);
-      print('opponent sets after: ${currentChallenge?.opponentSets ?? []}');
-      if (currentChallenge?.recipientUser != null) {
-        _databaseService.setPuttingChallenge(currentChallenge!);
-      } else {
-        final StoragePuttingChallenge storageChallenge =
-            StoragePuttingChallenge.fromPuttingChallenge(
-                currentChallenge!, currentUser);
-        print(storageChallenge.toJson());
-        _databaseService.setUnclaimedChallenge(storageChallenge);
+    }
+  }
+
+  Future<void> resyncCurrentChallenge() async {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentChallenge != null && currentUser != null) {
+      final PuttingChallenge? updatedChallenge =
+          await _databaseService.getPuttingChallengeById(currentChallenge!.id);
+      if (updatedChallenge != null) {
+        currentChallenge!.opponentSets = updatedChallenge.opponentSets;
+        if (currentChallenge?.recipientUser != null) {
+          await _databaseService.setStorageChallenge(
+              StoragePuttingChallenge.fromPuttingChallenge(
+                  currentChallenge!, currentUser));
+        } else {
+          await _databaseService.setUnclaimedChallenge(
+              StoragePuttingChallenge.fromPuttingChallenge(
+                  currentChallenge!, currentUser));
+        }
       }
-      return true;
-    } else {
-      return false;
     }
   }
 
@@ -74,7 +74,9 @@ class ChallengesRepository {
     if (currentChallenge != null && currentUser != null) {
       currentChallenge!.currentUserSets.remove(set);
       if (currentChallenge?.recipientUser != null) {
-        _databaseService.setPuttingChallenge(currentChallenge!);
+        _databaseService.setStorageChallenge(
+            StoragePuttingChallenge.fromPuttingChallenge(
+                currentChallenge!, currentUser));
       } else {
         _databaseService.setUnclaimedChallenge(
             StoragePuttingChallenge.fromPuttingChallenge(
@@ -84,6 +86,10 @@ class ChallengesRepository {
   }
 
   void openChallenge(PuttingChallenge challenge) {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return;
+    }
     currentChallenge = challenge;
     if (currentChallenge?.status == ChallengeStatus.pending) {
       currentChallenge?.status = ChallengeStatus.active;
@@ -91,12 +97,15 @@ class ChallengesRepository {
     if (pendingChallenges.contains(challenge)) {
       pendingChallenges.remove(challenge);
       activeChallenges.add(currentChallenge!);
-      _databaseService.setPuttingChallenge(currentChallenge!);
+      _databaseService.setStorageChallenge(
+          StoragePuttingChallenge.fromPuttingChallenge(
+              currentChallenge!, currentUser));
     }
   }
 
   Future<bool> completeChallenge() async {
-    if (currentChallenge == null) {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentChallenge == null || currentUser == null) {
       return false;
     } else {
       currentChallenge?.status = ChallengeStatus.complete;
@@ -107,8 +116,9 @@ class ChallengesRepository {
         activeChallenges.remove(currentChallenge);
       }
 
-      await _databaseService.setPuttingChallenge(currentChallenge!);
-      await _databaseService.sendCompletedChallenge(currentChallenge!);
+      await _databaseService.setStorageChallenge(
+          StoragePuttingChallenge.fromPuttingChallenge(
+              currentChallenge!, currentUser));
       currentChallenge = null;
       return true;
     }
@@ -138,14 +148,14 @@ class ChallengesRepository {
               await _databaseService.getChallengeByUid(
                   currentUser.uid, storageChallenge.id);
           if (existingChallenge == null) {
-            print(storageChallenge.toJson());
             final PuttingChallenge challenge =
                 PuttingChallenge.fromStorageChallenge(
                     storageChallenge, currentUser);
             challenge.status = ChallengeStatus.active;
             activeChallenges.add(challenge);
-            print(challenge.toJson());
-            await _databaseService.setPuttingChallenge(challenge);
+            await _databaseService.setStorageChallenge(
+                StoragePuttingChallenge.fromPuttingChallenge(
+                    challenge, currentUser));
             await _databaseService.removeUnclaimedChallenge(challenge.id);
           }
         }

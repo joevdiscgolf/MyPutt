@@ -79,59 +79,30 @@ class DatabaseService {
       return [];
     }
 
-    return _challengesDataLoader.getPuttingChallengesWithStatus(
+    return _challengesDataLoader.getPuttingChallengesByStatus(
         currentUser, status);
   }
 
-  Future<PuttingChallenge?> getCurrentPuttingChallenge() async {
+  Future<PuttingChallenge?> getPuttingChallengeById(String challengeId) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       return null;
     }
-    return _challengesDataLoader.getCurrentPuttingChallenge(currentUser);
+    return _challengesDataLoader.getPuttingChallengeByid(
+        currentUser, challengeId);
   }
 
-  Future<bool> setPuttingChallenge(PuttingChallenge challengeToUpdate) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null || challengeToUpdate.opponentUser == null) {
+  Future<bool> setStorageChallenge(
+      StoragePuttingChallenge storageChallenge) async {
+    final MyPuttUser? recipientUser = storageChallenge.recipientUser;
+    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
+    if (recipientUser == null || challengerUser == null) {
       return false;
     }
-    final StoragePuttingChallenge storageChallenge =
-        StoragePuttingChallenge.fromPuttingChallenge(
-            challengeToUpdate, currentUser);
 
     return _challengesDataWriter.setPuttingChallenge(
-        currentUser.uid, challengeToUpdate.opponentUser!.uid, storageChallenge);
-  }
-
-  Future<bool> sendCompletedChallenge(PuttingChallenge challenge) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null || challenge.opponentUser == null) {
-      return false;
-    }
-
-    return _challengesDataWriter.sendChallengeToUser(
-        challenge.opponentUser!.uid,
-        currentUser,
-        StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUser));
-  }
-
-  Future<bool> sendStorageChallenge(
-      StoragePuttingChallenge storageChallenge) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    }
-    if (storageChallenge.recipientUser == null) {
-      return false;
-    } else {
-      return _challengesDataWriter.sendChallengeToUser(
-          storageChallenge.recipientUser!.uid, currentUser, storageChallenge);
-    }
+        recipientUser.uid, challengerUser.uid, storageChallenge);
   }
 
   Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {

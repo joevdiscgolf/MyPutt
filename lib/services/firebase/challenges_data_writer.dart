@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
@@ -8,17 +7,17 @@ import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataWriter {
-  Future<bool> setPuttingChallenge(String currentUid, String opponentUid,
+  Future<bool> setPuttingChallenge(String recipientUid, String challengerUid,
       StoragePuttingChallenge storageChallenge) {
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    final currentUserRef = firestore.doc(
-        '$challengesCollection/$currentUid/$challengesCollection/${storageChallenge.id}');
-    final opponentRef = firestore.doc(
-        '$challengesCollection/$opponentUid/$challengesCollection/${storageChallenge.id}');
+    final recipientRef = firestore.doc(
+        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
+    final challengerRef = firestore.doc(
+        '$challengesCollection/$challengerUid/$challengesCollection/${storageChallenge.id}');
 
+    batch.set(recipientRef, storageChallenge.toJson(), SetOptions(merge: true));
     batch.set(
-        currentUserRef, storageChallenge.toJson(), SetOptions(merge: true));
-    batch.set(opponentRef, storageChallenge.toJson(), SetOptions(merge: true));
+        challengerRef, storageChallenge.toJson(), SetOptions(merge: true));
 
     return batch.commit().then((value) => true).catchError((e) => false);
   }

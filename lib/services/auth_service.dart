@@ -151,7 +151,6 @@ class AuthService {
   }
 
   Future<bool> userIsSetup() async {
-    MyPuttUser currentMyPuttUser;
     if (_auth.currentUser?.uid == null) {
       return false;
     }
@@ -163,14 +162,9 @@ class AuthService {
         !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       return false;
     } else {
-      currentMyPuttUser =
-          MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
-      if (currentMyPuttUser.username != null &&
-          currentMyPuttUser.displayName != null) {
-        return true;
-      } else {
-        return false;
-      }
+      // final MyPuttUser currentMyPuttUser =
+      //     MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
+      return true;
     }
   }
 

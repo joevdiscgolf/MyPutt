@@ -8,7 +8,7 @@ import 'package:myputt/services/firebase/fb_constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
-  Future<List<PuttingChallenge>> getPuttingChallengesWithStatus(
+  Future<List<PuttingChallenge>> getPuttingChallengesByStatus(
       MyPuttUser currentUser, String status) async {
     QuerySnapshot querySnapshot = await firestore
         .collection(
@@ -28,10 +28,12 @@ class FBChallengesDataLoader {
     }).toList();
   }
 
-  Future<PuttingChallenge?> getCurrentPuttingChallenge(
-      MyPuttUser currentUser) async {
-    final DocumentSnapshot<dynamic> snapshot =
-        await firestore.doc('$challengesCollection/${currentUser.uid}').get();
+  Future<PuttingChallenge?> getPuttingChallengeByid(
+      MyPuttUser currentUser, String challengeId) async {
+    final DocumentSnapshot<dynamic> snapshot = await firestore
+        .doc(
+            '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId')
+        .get();
 
     if (snapshot.exists &&
         isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {

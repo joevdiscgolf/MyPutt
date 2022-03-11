@@ -8,6 +8,7 @@ import 'package:myputt/theme/theme_data.dart';
 class ChallengeScrollSnapList extends StatefulWidget {
   const ChallengeScrollSnapList({
     Key? key,
+    this.initialIndex = 0,
     required this.sslKey,
     required this.onUpdate,
     required this.isCurrentUser,
@@ -17,6 +18,7 @@ class ChallengeScrollSnapList extends StatefulWidget {
     required this.maxSets,
   }) : super(key: key);
 
+  final double initialIndex;
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final bool isCurrentUser;
@@ -33,11 +35,9 @@ class ChallengeScrollSnapList extends StatefulWidget {
 class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
   @override
   Widget build(BuildContext context) {
-    // if (!widget.isCurrentUser) {
-    //   print(widget.puttingSets);
-    // }
     return Expanded(
         child: ScrollSnapList(
+      initialIndex: widget.initialIndex,
       curve: Curves.easeOutBack,
       key: widget.sslKey,
       updateOnScroll: false,
@@ -125,11 +125,13 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
 class CounterScrollSnapList extends StatefulWidget {
   const CounterScrollSnapList(
       {Key? key,
+      this.initialIndex = 0,
       required this.sslKey,
       required this.onUpdate,
       required this.itemCount})
       : super(key: key);
 
+  final double initialIndex;
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final int itemCount;
@@ -143,6 +145,7 @@ class _CounterScrollSnapListState extends State<CounterScrollSnapList> {
   Widget build(BuildContext context) {
     return Expanded(
         child: ScrollSnapList(
+      initialIndex: widget.initialIndex,
       curve: Curves.easeOutBack,
       key: widget.sslKey,
       updateOnScroll: false,

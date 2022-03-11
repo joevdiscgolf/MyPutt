@@ -31,7 +31,7 @@ class PuttingChallenge {
   final MyPuttUser challengerUser;
   final MyPuttUser? recipientUser;
   final List<ChallengeStructureItem> challengeStructure;
-  final List<PuttingSet> opponentSets;
+  List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
 
   factory PuttingChallenge.fromStorageChallenge(

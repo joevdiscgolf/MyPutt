@@ -12,197 +12,6 @@ import 'package:myputt/screens/challenge/challenge_record/challenge_record_scree
 import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
 
-class ActiveChallengeItem extends StatelessWidget {
-  const ActiveChallengeItem(
-      {Key? key, required this.challenge, required this.accept})
-      : super(key: key);
-
-  final PuttingChallenge challenge;
-  final Function accept;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1, color: Colors.grey[300]!),
-        ),
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            IntrinsicHeight(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                  const SizedBox(width: 10),
-                  Flexible(
-                    flex: 3,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(challenge.opponentUser?.displayName ?? 'Unknown',
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                              DateFormat.yMMMMd('en_US')
-                                  .format(DateTime.fromMillisecondsSinceEpoch(
-                                      challenge.creationTimeStamp))
-                                  .toString(),
-                              style: Theme.of(context).textTheme.bodySmall),
-                          Text(
-                              DateFormat.jm().format(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      challenge.creationTimeStamp)),
-                              style: Theme.of(context).textTheme.bodySmall),
-                        ]),
-                  ),
-                  VerticalDivider(
-                    thickness: 1,
-                    color: Colors.grey[400]!,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('You'),
-                        Text(
-                            '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
-                      ],
-                    ),
-                  ),
-                  VerticalDivider(
-                    thickness: 1,
-                    color: Colors.grey[400]!,
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('You'),
-                          Text(
-                            '${totalMadeFromSets(challenge.opponentSets)}/${totalAttemptsFromSets(challenge.opponentSets)}',
-                          ),
-                        ]),
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent),
-                      onPressed: () {
-                        BlocProvider.of<ChallengesCubit>(context)
-                            .openChallenge(challenge);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                BlocProvider.value(
-                                    value: BlocProvider.of<ChallengesCubit>(
-                                        context),
-                                    child: const ChallengeRecordScreen())));
-                      },
-                      child: Center(
-                        child: Icon(
-                          FlutterRemix.play_mini_line,
-                          color: ThemeColors.green,
-                        ),
-                      ))
-                ])),
-          ],
-        ));
-  }
-}
-
-class PendingChallengeItem extends StatelessWidget {
-  const PendingChallengeItem(
-      {Key? key, required this.challenge, required this.accept})
-      : super(key: key);
-
-  final PuttingChallenge challenge;
-  final Function accept;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1, color: Colors.grey[400]!),
-        ),
-        padding: const EdgeInsets.all(8),
-        child: IntrinsicHeight(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const SizedBox(width: 10),
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(challenge.opponentUser?.displayName ?? 'Unknown',
-                    style: Theme.of(context).textTheme.bodyLarge),
-                Text(
-                    DateFormat.yMMMMd('en_US')
-                        .format(DateTime.fromMillisecondsSinceEpoch(
-                            challenge.creationTimeStamp))
-                        .toString(),
-                    style: Theme.of(context).textTheme.bodyLarge),
-                Text(
-                    DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(
-                        challenge.creationTimeStamp)),
-                    style: Theme.of(context).textTheme.bodyLarge),
-              ]),
-              VerticalDivider(
-                thickness: 1,
-                color: Colors.grey[400]!,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: ThemeColors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(48),
-                        ),
-                        enableFeedback: true),
-                    onPressed: () {
-                      accept();
-                    },
-                    child: const Center(
-                      child: Text('Accept'),
-                    )),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(48),
-                            ),
-                            enableFeedback: true),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => ConfirmDialog(
-                                    title: 'Decline Challenge',
-                                    actionPressed: () {
-                                      BlocProvider.of<ChallengesCubit>(context)
-                                          .declineChallenge(challenge);
-                                    },
-                                    confirmColor: Colors.red,
-                                    buttonlabel: 'Decline',
-                                  ));
-                        },
-                        child: const Center(child: Text('Decline'))),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ));
-  }
-}
-
 class CompletedChallengeItem extends StatelessWidget {
   const CompletedChallengeItem({Key? key, required this.challenge})
       : super(key: key);
@@ -407,8 +216,8 @@ class CompletedChallengeItem extends StatelessWidget {
   }
 }
 
-class NewActiveChallengeItem extends StatelessWidget {
-  const NewActiveChallengeItem({Key? key, required this.challenge})
+class ActiveChallengeItem extends StatelessWidget {
+  const ActiveChallengeItem({Key? key, required this.challenge})
       : super(key: key);
 
   final PuttingChallenge challenge;
@@ -537,8 +346,9 @@ class NewActiveChallengeItem extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        challenge.opponentUser?.displayName ??
-                                            'Unknown'.toUpperCase(),
+                                        (challenge.opponentUser?.displayName ??
+                                                'Unknown')
+                                            .toUpperCase(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -576,8 +386,8 @@ class NewActiveChallengeItem extends StatelessWidget {
   }
 }
 
-class NewPendingChallengeItem extends StatelessWidget {
-  const NewPendingChallengeItem(
+class PendingChallengeItem extends StatelessWidget {
+  const PendingChallengeItem(
       {Key? key, required this.challenge, required this.accept})
       : super(key: key);
 
