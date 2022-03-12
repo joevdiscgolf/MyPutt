@@ -30,23 +30,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
             completedChallenges: [],
             activeChallenges: [],
             currentChallenge: null,
-            pendingChallenges: [])) {
-    if (_challengesRepository.currentChallenge != null) {
-      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.challengeStructure.length) {
-        emit(_currentUserComplete());
-      } else {
-        emit(_challengeInProgress());
-      }
-    } else {
-      emit(_noCurrentChallenge());
-    }
-  }
-
-  @override
-  Future<void> close() async {
-    super.close();
-  }
+            pendingChallenges: []));
 
   CurrentUserComplete _currentUserComplete() {
     return CurrentUserComplete(
@@ -93,6 +77,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   ChallengesState getStateFromChallenge(PuttingChallenge challenge) {
+    ChallengesState state;
     final structureLength =
         _challengesRepository.currentChallenge!.challengeStructure.length;
     final currentUserSetsCount =
@@ -102,16 +87,18 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     if (challenge.status == ChallengeStatus.complete ||
         (currentUserSetsCount == opponentUserSetsCount &&
             currentUserSetsCount == structureLength)) {
-      return _bothUsersComplete();
+      state = _bothUsersComplete();
     } else if (currentUserSetsCount == structureLength &&
         opponentUserSetsCount < structureLength) {
-      return _currentUserComplete();
+      state = _currentUserComplete();
     } else if (opponentUserSetsCount == structureLength &&
         currentUserSetsCount < structureLength) {
-      return _opponentUserComplete();
+      state = _opponentUserComplete();
     } else {
-      return _challengeInProgress();
+      state = _challengeInProgress();
     }
+    print(state);
+    return state;
   }
 
   Future<void> reload() async {
@@ -131,18 +118,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   void openChallenge(PuttingChallenge challenge) {
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.challengeStructure.length) {
-        emit(_currentUserComplete());
-      } else {
-        emit(_challengeInProgress());
-      }
-    } else {
-      emit(ChallengesErrorState(
-          completedChallenges: [],
-          activeChallenges: [],
-          currentChallenge: null,
-          pendingChallenges: []));
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
   }
 

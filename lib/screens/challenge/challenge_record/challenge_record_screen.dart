@@ -4,16 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/challenge_previous_sets_list.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/challenge_director_panel.dart';
+import 'package:myputt/screens/challenge/challenge_record/components/undo_button.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
@@ -43,7 +44,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
-  late PuttsMadePicker puttsMadePicker;
 
   bool sessionInProgress = true;
 
@@ -102,17 +102,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             ],
           ),
           const SizedBox(height: 10),
-          BlocBuilder<ChallengesCubit, ChallengesState>(
-            builder: (context, state) {
-              if (state is! ChallengesErrorState) {
-                return _puttsMadeContainer(context);
-              } else {
-                return Container();
-              }
-            },
-          ),
+          _puttsMadeContainer(context),
           const SizedBox(height: 10),
-          _addAndUndo(context),
+          _addAndUndoRow(context),
           const SizedBox(height: 20),
           BlocBuilder<ChallengesCubit, ChallengesState>(
             builder: (context, state) {
@@ -138,13 +130,17 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     );
   }
 
-  Widget _addAndUndo(BuildContext context) {
+  Widget _addAndUndoRow(BuildContext context) {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           children: [
             Flexible(flex: 4, child: _addSetButton(context)),
-            Flexible(flex: 1, child: _undoButton(context)),
+            Flexible(
+                flex: 1,
+                child: UndoButton(
+                  decrementScrollLists: _decrementScrollLists,
+                )),
           ],
         ));
   }
@@ -162,7 +158,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         decoration: const BoxDecoration(color: Colors.white),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
-              padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               height: 30,
               child: Row(
                 children: [
@@ -185,8 +181,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   )
                 ],
               )),
+          Divider(
+            color: Colors.grey[100]!,
+            thickness: 1,
+            height: 2,
+          ),
           Container(
-              padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+              padding: const EdgeInsets.symmetric(vertical: 2),
               height: 60,
               child: Row(
                 children: [
@@ -215,8 +216,13 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   )
                 ],
               )),
+          Divider(
+            color: Colors.grey[100]!,
+            thickness: 1,
+            height: 2,
+          ),
           Container(
-              padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+              padding: const EdgeInsets.symmetric(vertical: 2),
               height: 60,
               child: Row(
                 children: [
@@ -244,6 +250,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   )
                 ],
               )),
+          Divider(
+            color: Colors.grey[100]!,
+            thickness: 1,
+            height: 2,
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             height: 20,
@@ -346,12 +357,15 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   Widget _addSetButton(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
-        if (state is CurrentUserComplete || state is BothUsersComplete) {
+        // print(state);
+        if (state is BothUsersComplete) {
           return MyPuttButton(
               title: 'Finish Challenge',
               color: ThemeColors.green,
               iconData: FlutterRemix.check_line,
+              iconColor: Colors.white,
               onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
                 showDialog(
                     context: context,
                     builder: (dialogContext) => BlocProvider.value(
@@ -369,6 +383,17 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                           confirmColor: ThemeColors.green,
                         ))).then((value) => dialogCallBack());
               });
+        } else if (state is CurrentUserComplete &&
+            state.currentChallenge != null) {
+          return MyPuttButton(
+            title:
+                'Waiting for ${state.currentChallenge!.opponentUser?.displayName ?? 'Unknown'}...',
+            color: ThemeColors.green,
+            onPressed: () {
+              Vibrate.feedback(FeedbackType.light);
+            },
+            textColor: Colors.white,
+          );
         }
         if ((state is ChallengeInProgress || state is OpponentUserComplete) &&
             state.currentChallenge != null) {
@@ -377,6 +402,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               color: Colors.blue,
               iconData: FlutterRemix.add_line,
               onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
                 if (state.currentChallenge!.currentUserSets.length <
                     state.currentChallenge!.challengeStructure.length) {
                   if (state.currentChallenge!.currentUserSets.length !=
@@ -405,77 +431,106 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     );
   }
 
-  Widget _undoButton(BuildContext context) {
-    return BlocBuilder<ChallengesCubit, ChallengesState>(
-      builder: (context, state) {
-        if (state is! ChallengesErrorState && state.currentChallenge != null) {
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(48)),
-                primary: Colors.transparent,
-                shadowColor: Colors.transparent),
-            child: const Icon(
-              FlutterRemix.arrow_go_back_line,
-              color: Colors.blue,
-            ),
-            onPressed: () async {
-              if (state.currentChallenge!.currentUserSets.isNotEmpty) {
-                final int indexToFocus =
-                    state.currentChallenge!.currentUserSets.length - 1;
-                BlocProvider.of<ChallengesCubit>(context).undo();
-                _decrementScrollLists(state.currentChallenge!, indexToFocus);
-              }
-            },
-          );
-        } else {
-          return PrimaryButton(
-            label: 'Undo',
-            onPressed: () {},
-            width: 100,
-            icon: FlutterRemix.arrow_go_back_line,
-          );
-        }
-      },
-    );
-  }
+  // Widget _undoButton(BuildContext context) {
+  //   return BlocBuilder<ChallengesCubit, ChallengesState>(
+  //     builder: (context, state) {
+  //       if (state is! ChallengesErrorState && state.currentChallenge != null) {
+  //         return Container(
+  //           decoration: BoxDecoration(
+  //               color: Colors.transparent,
+  //               borderRadius: BorderRadius.circular(48)),
+  //           child: ElevatedButton(
+  //             style: ElevatedButton.styleFrom(
+  //                 shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(48)),
+  //                 primary: Colors.transparent,
+  //                 shadowColor: Colors.transparent),
+  //             child: const Icon(
+  //               FlutterRemix.arrow_go_back_line,
+  //               color: Colors.blue,
+  //             ),
+  //             onPressed: () async {
+  //               if (state.currentChallenge!.currentUserSets.isNotEmpty) {
+  //                 final int indexToFocus =
+  //                     state.currentChallenge!.currentUserSets.length - 1;
+  //                 BlocProvider.of<ChallengesCubit>(context).undo();
+  //                 _decrementScrollLists(state.currentChallenge!, indexToFocus);
+  //               }
+  //             },
+  //           ),
+  //         );
+  //       } else {
+  //         return PrimaryButton(
+  //           label: 'Undo',
+  //           onPressed: () {},
+  //           width: 100,
+  //           icon: FlutterRemix.arrow_go_back_line,
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _puttsMadeContainer(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text('Putts made',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+    return BlocBuilder<ChallengesCubit, ChallengesState>(
+      builder: (context, state) {
+        int length = 0;
+        if (state is ChallengesErrorState) {
+          return Container();
+        } else if ((state is CurrentUserComplete ||
+                state is BothUsersComplete) &&
+            state.currentChallenge != null) {
+          length = state
+              .currentChallenge!
+              .challengeStructure[
+                  state.currentChallenge!.currentUserSets.length - 1]
+              .setLength;
+        } else {
+          length = state
+              .currentChallenge!
+              .challengeStructure[
+                  state.currentChallenge!.currentUserSets.length]
+              .setLength;
+        }
+
+        return Container(
+          padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text('Putts made',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 5),
+              PuttsMadePicker(
+                initialIndex: length.toDouble(),
+                length: length,
+                challengeMode: true,
+                sslKey: puttsMadePickerKey,
+                onUpdate: (int newIndex) {
+                  setState(() {
+                    puttsPickerFocusedIndex = newIndex;
+                  });
+                },
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
-          PuttsMadePicker(
-            length: puttsMadePickerLength,
-            challengeMode: true,
-            sslKey: puttsMadePickerKey,
-            onUpdate: (int newIndex) {
-              setState(() {
-                puttsPickerFocusedIndex = newIndex;
-              });
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

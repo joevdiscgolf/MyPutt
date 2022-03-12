@@ -96,7 +96,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
     return AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (Widget child, Animation<double> animation) =>
-            ScaleTransition(child: child, scale: animation),
+            FadeTransition(child: child, opacity: animation),
         child: index > widget.puttingSets.length - 1
             ? const EmptyListItem()
             : ListItem(
@@ -122,10 +122,47 @@ class EmptyListItem extends StatelessWidget {
   }
 }
 
-class ListItem extends StatelessWidget {
+class ListItem extends StatefulWidget {
   const ListItem({Key? key, required this.set}) : super(key: key);
 
   final PuttingSet set;
+
+  @override
+  State<ListItem> createState() => _ListItemState();
+}
+
+class _ListItemState extends State<ListItem>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController animationController;
+  late final Animation<double> animation;
+  int numCycles = 0;
+  final int maxCycles = 1;
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 400));
+    final CurvedAnimation curvedAnimation =
+        CurvedAnimation(parent: animationController, curve: Curves.easeIn);
+
+    animation = Tween<double>(begin: 1, end: 0).animate(curvedAnimation)
+      ..addListener(() => setState(() {}));
+    // ..addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     setState(() {
+    //       numCycles += 1;
+    //     });
+    //     animationController.reverse();
+    //   }
+    //   if (status == AnimationStatus.dismissed && numCycles < maxCycles) {
+    //     animationController.forward();
+    //   }
+    // });
+
+    animationController.forward();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -133,15 +170,15 @@ class ListItem extends StatelessWidget {
       height: 40,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: Colors.white,
+          color: ThemeColors.green.withAlpha((animation.value * 255).toInt()),
           border: Border.all(color: Colors.grey[600]!, width: 1.5)),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${set.distance} ft',
+            Text('${widget.set.distance} ft',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text('${set.puttsMade} / ${set.puttsAttempted}',
+            Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
