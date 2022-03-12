@@ -73,12 +73,12 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
       if (index == widget.puttingSets.length &&
           widget.puttingSets.length < widget.maxSets) {
         return Container(
+          width: 60,
+          height: 40,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: ThemeColors.green,
               border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-          width: 60,
-          height: 40,
         );
       } else if (index == widget.puttingSets.length + 1) {
         return SizedBox(
@@ -89,45 +89,59 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
             color: ThemeColors.green,
           ),
         );
+      } else {
+        return ListItem(set: widget.puttingSets[index]);
       }
     }
-    if (index > widget.puttingSets.length - 1) {
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.grey[200],
-            border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-        width: 60,
-        height: 40,
-        child: const Center(child: Text('-')),
-      );
-    }
-    // } else if (index > widget.challenge.currentUserSets.length) {
-    //   return Container(
-    //     decoration: BoxDecoration(
-    //         borderRadius: BorderRadius.circular(5),
-    //         color: Colors.grey[200],
-    //         border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-    //     width: 60,
-    //     height: 40,
-    //     child: const Center(child: Text('?')),
-    //   );
-    // }
+    return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (Widget child, Animation<double> animation) =>
+            ScaleTransition(child: child, scale: animation),
+        child: index > widget.puttingSets.length - 1
+            ? const EmptyListItem()
+            : ListItem(
+                set: widget.puttingSets[index],
+              ));
+  }
+}
+
+class EmptyListItem extends StatelessWidget {
+  const EmptyListItem({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.grey[200],
+          border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+      width: 60,
+      height: 40,
+      child: const Center(child: Text('-')),
+    );
+  }
+}
+
+class ListItem extends StatelessWidget {
+  const ListItem({Key? key, required this.set}) : super(key: key);
+
+  final PuttingSet set;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 40,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white,
           border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-      width: 60,
-      height: 40,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${widget.puttingSets[index].distance} ft',
+            Text('${set.distance} ft',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(
-                '${widget.puttingSets[index].puttsMade} / ${widget.puttingSets[index].puttsAttempted}',
+            Text('${set.puttsMade} / ${set.puttsAttempted}',
                 style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
