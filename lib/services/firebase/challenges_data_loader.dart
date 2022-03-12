@@ -28,6 +28,25 @@ class FBChallengesDataLoader {
     }).toList();
   }
 
+  Future<List<PuttingChallenge>> getAllChallenges(
+      MyPuttUser currentUser) async {
+    QuerySnapshot querySnapshot = await firestore
+        .collection(
+            '$challengesCollection/${currentUser.uid}/$challengesCollection')
+        .get()
+        .catchError((error) {
+      if (kDebugMode) {
+        print('[getPuttingChallenges] $error');
+      }
+    });
+
+    return querySnapshot.docs.map((doc) {
+      return PuttingChallenge.fromStorageChallenge(
+          StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
+          currentUser);
+    }).toList();
+  }
+
   Future<PuttingChallenge?> getPuttingChallengeByid(
       MyPuttUser currentUser, String challengeId) async {
     final DocumentSnapshot<dynamic> snapshot = await firestore

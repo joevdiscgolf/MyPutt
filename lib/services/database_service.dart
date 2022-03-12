@@ -83,6 +83,16 @@ class DatabaseService {
         currentUser, status);
   }
 
+  Future<List<PuttingChallenge>> getAllChallenges() async {
+    final UserRepository _userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return [];
+    }
+
+    return _challengesDataLoader.getAllChallenges(currentUser);
+  }
+
   Future<PuttingChallenge?> getPuttingChallengeById(String challengeId) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;

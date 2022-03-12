@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/utils/colors.dart';
 
 class FinishSessionDialog extends StatefulWidget {
   const FinishSessionDialog({Key? key, required this.stopSession})
@@ -65,7 +66,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                             fontSize: 18,
                             width: 100,
                             height: 50,
-                            backgroundColor: Colors.green,
+                            backgroundColor: MyPuttColors.green,
                             onPressed: () async {
                               final List<PuttingSet>? sets =
                                   state.currentSession.sets;
@@ -87,7 +88,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                               fontSize: 18,
                               width: 100,
                               height: 50,
-                              backgroundColor: Colors.green,
+                              backgroundColor: MyPuttColors.green,
                               onPressed: () {
                                 setState(() {
                                   _dialogErrorText = "No active session";

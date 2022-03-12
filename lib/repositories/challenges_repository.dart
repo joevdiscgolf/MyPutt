@@ -18,21 +18,17 @@ class ChallengesRepository {
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   Future<void> fetchAllChallenges() async {
-    final List<dynamic> result = await Future.wait([
-      _databaseService.getChallengesWithStatus(ChallengeStatus.pending),
-      _databaseService.getChallengesWithStatus(ChallengeStatus.active),
-      _databaseService.getChallengesWithStatus(ChallengeStatus.complete),
-    ]);
-
-    if (result[0] != null && result[0] is List<PuttingChallenge>) {
-      pendingChallenges = result[0] as List<PuttingChallenge>;
-    }
-    if (result[1] != null && result[1] is List<PuttingChallenge>) {
-      activeChallenges = result[1] as List<PuttingChallenge>;
-    }
-    if (result[2] != null && result[2] is List<PuttingChallenge>) {
-      completedChallenges = result[2] as List<PuttingChallenge>;
-    }
+    final List<PuttingChallenge> allChallenges =
+        await _databaseService.getAllChallenges();
+    pendingChallenges = allChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.pending)
+        .toList();
+    activeChallenges = allChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.active)
+        .toList();
+    completedChallenges = allChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.complete)
+        .toList();
   }
 
   void clearData() {

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
+
+import 'animated_arrows.dart';
 
 class ChallengeDirectorPanel extends StatelessWidget {
   const ChallengeDirectorPanel({Key? key}) : super(key: key);
@@ -33,149 +35,45 @@ class ChallengeDirectorPanel extends StatelessWidget {
       BuildContext context, PuttingChallenge currentChallenge, int index) {
     final int puttsMadeDifference =
         getDifferenceFromChallenge(currentChallenge);
-    final int currentUserPuttsMade = getPuttsMadeFromChallenge(
-        currentChallenge.currentUser.uid, currentChallenge);
-    final int currentUserPuttsAttempted = getPuttsAttemptedFromChallenge(
-        currentChallenge.currentUser.uid, currentChallenge);
-    final int opponentPuttsMade = getPuttsMadeFromChallenge(
-        currentChallenge.opponentUser?.uid ?? '', currentChallenge);
-    final int opponentPuttsAttempted = getPuttsAttemptedFromChallenge(
-        currentChallenge.opponentUser?.uid ?? '', currentChallenge);
+    // final int currentUserPuttsMade = getPuttsMadeFromChallenge(
+    //     currentChallenge.currentUser.uid, currentChallenge);
+    // final int currentUserPuttsAttempted = getPuttsAttemptedFromChallenge(
+    //     currentChallenge.currentUser.uid, currentChallenge);
+    // final int opponentPuttsMade = getPuttsMadeFromChallenge(
+    //     currentChallenge.opponentUser?.uid ?? '', currentChallenge);
+    // final int opponentPuttsAttempted = getPuttsAttemptedFromChallenge(
+    //     currentChallenge.opponentUser?.uid ?? '', currentChallenge);
+    final int distance = currentChallenge.challengeStructure[index].distance;
+    final int setLength = currentChallenge.challengeStructure[index].setLength;
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: puttsMadeDifference >= 0 ? ThemeColors.green : Colors.red,
-            width: 4),
+      decoration: const BoxDecoration(
+        // border: Border.all(
+        //     color: puttsMadeDifference >= 0 ? MyPuttColors.green : Colors.red,
+        //     width: 4),
         color: Colors.white,
       ),
       child: Column(
         children: [
-          IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Text(
-                                'Distance',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            Center(
-                              child: Text(
-                                'Putters',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: TweenAnimationBuilder<double>(
-                                tween: Tween<double>(
-                                    begin: 0.0,
-                                    end: currentChallenge
-                                        .challengeStructure[index].distance
-                                        .toDouble()),
-                                duration: const Duration(milliseconds: 300),
-                                builder: (context, value, _) => Text(
-                                  ' ${value.toInt().toString()} ft',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ),
-                            ),
-                            Center(
-                              child: TweenAnimationBuilder<double>(
-                                tween: Tween<double>(
-                                    begin: 0.0,
-                                    end: currentChallenge
-                                        .challengeStructure[index].setLength
-                                        .toDouble()),
-                                duration: const Duration(milliseconds: 300),
-                                builder: (context, value, _) => Text(
-                                  ' ${value.toInt().toString()}',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                VerticalDivider(
-                  thickness: 2,
-                  color: Colors.grey[800],
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Text(
-                                currentChallenge.opponentUser?.displayName ??
-                                    'Unknown',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            Center(
-                              child: Text(
-                                'You',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                _textAnimation(opponentPuttsMade.toDouble()),
-                                Text(
-                                  '/',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                _textAnimation(
-                                    opponentPuttsAttempted.toDouble()),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                _textAnimation(currentUserPuttsMade.toDouble()),
-                                Text(
-                                  '/',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                _textAnimation(
-                                    currentUserPuttsAttempted.toDouble())
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$distance ft',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline4
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const AnimatedArrows(),
+              Text(
+                '$setLength putts',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           Center(
@@ -189,8 +87,8 @@ class ChallengeDirectorPanel extends StatelessWidget {
                     Text('$puttsMadeDifference ',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
-                            ?.copyWith(color: ThemeColors.green)),
+                            .headline5
+                            ?.copyWith(color: MyPuttColors.lightGreen)),
                     Text(puttsMadeDifference == 1 ? 'putt' : 'putts',
                         style: style),
                   ],
@@ -203,7 +101,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                     Text('${puttsMadeDifference.abs()} ',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
+                            .headline5
                             ?.copyWith(color: Colors.red)),
                     Text(puttsMadeDifference == -1 ? 'putt' : 'putts',
                         style: style),
@@ -222,17 +120,17 @@ class ChallengeDirectorPanel extends StatelessWidget {
     );
   }
 
-  Widget _textAnimation(double endValue) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(
-        begin: 0.0,
-        end: endValue,
-      ),
-      duration: const Duration(milliseconds: 300),
-      builder: (context, value, _) => Text(
-        value.toInt().toString(),
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
-  }
+  // Widget _textAnimation(double endValue) {
+  //   return TweenAnimationBuilder<double>(
+  //     tween: Tween<double>(
+  //       begin: 0.0,
+  //       end: endValue,
+  //     ),
+  //     duration: const Duration(milliseconds: 300),
+  //     builder: (context, value, _) => Text(
+  //       value.toInt().toString(),
+  //       style: Theme.of(context).textTheme.bodyLarge,
+  //     ),
+  //   );
+  // }
 }

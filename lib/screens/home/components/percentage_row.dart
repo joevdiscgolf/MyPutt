@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 
 class PercentageRow extends StatefulWidget {
   const PercentageRow(
@@ -57,7 +57,7 @@ class _PercentageRowState extends State<PercentageRow> {
                             CircularProgressIndicator(
                           color: widget.percentage! < widget.allTimePercentage!
                               ? Colors.red
-                              : ThemeColors.green,
+                              : MyPuttColors.lightGreen,
                           backgroundColor: Colors.grey[200],
                           value: value,
                           strokeWidth: 5,

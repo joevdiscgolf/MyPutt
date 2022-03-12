@@ -5,7 +5,7 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 
 class SendChallengeDialog extends StatefulWidget {
@@ -56,7 +56,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
               Text(
                 ' ${widget.recipientUser.displayName}',
                 style: TextStyle(
-                    color: ThemeColors.green,
+                    color: MyPuttColors.green,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -88,7 +88,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                   height: 50,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: ThemeColors.green,
+                        primary: MyPuttColors.green,
                         padding: const EdgeInsets.symmetric(
                             vertical: 4, horizontal: 16),
                         shape: RoundedRectangleBorder(

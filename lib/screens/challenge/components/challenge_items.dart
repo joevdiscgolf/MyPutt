@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
@@ -49,7 +49,7 @@ class CompletedChallengeItem extends StatelessWidget {
                   color: difference == 0
                       ? Colors.white
                       : (difference > 0)
-                          ? ThemeColors.lightBlue
+                          ? MyPuttColors.lightBlue
                           : Colors.red),
             ),
             child: IntrinsicHeight(
@@ -97,7 +97,7 @@ class CompletedChallengeItem extends StatelessWidget {
                                         color: difference == 0
                                             ? Colors.white
                                             : (difference > 0)
-                                                ? ThemeColors.lightBlue
+                                                ? MyPuttColors.lightBlue
                                                 : Colors.red));
                           }
                         }),
@@ -148,13 +148,12 @@ class CompletedChallengeItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      challenge.currentUser.displayName
-                                          .toUpperCase(),
+                                      challenge.currentUser.displayName,
                                       style: Theme.of(context)
                                           .textTheme
                                           .headline6
                                           ?.copyWith(
-                                              color: ThemeColors.lightBlue),
+                                              color: MyPuttColors.lightBlue),
                                     ),
                                     Text(
                                         '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
@@ -178,7 +177,7 @@ class CompletedChallengeItem extends StatelessWidget {
                                     children: [
                                       Text(
                                         challenge.opponentUser?.displayName ??
-                                            'Unknown'.toUpperCase(),
+                                            'Unknown',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -242,7 +241,7 @@ class ActiveChallengeItem extends StatelessWidget {
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              border: Border.all(width: 1, color: ThemeColors.green),
+              border: Border.all(width: 1, color: MyPuttColors.lightGreen),
             ),
             child: IntrinsicHeight(
                 child: Column(
@@ -261,7 +260,7 @@ class ActiveChallengeItem extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .headline5
-                                ?.copyWith(color: ThemeColors.green)),
+                                ?.copyWith(color: MyPuttColors.lightGreen)),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -288,10 +287,10 @@ class ActiveChallengeItem extends StatelessWidget {
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
+                          children: const [
                             Icon(
                               FlutterRemix.play_fill,
-                              color: ThemeColors.lightBlue,
+                              color: MyPuttColors.lightBlue,
                             ),
                           ],
                         ),
@@ -319,13 +318,12 @@ class ActiveChallengeItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      challenge.currentUser.displayName
-                                          .toUpperCase(),
+                                      challenge.currentUser.displayName,
                                       style: Theme.of(context)
                                           .textTheme
                                           .headline6
                                           ?.copyWith(
-                                              color: ThemeColors.lightBlue),
+                                              color: MyPuttColors.lightBlue),
                                     ),
                                     Text(
                                         '${totalMadeFromSets(challenge.currentUserSets)}/${totalAttemptsFromSets(challenge.currentUserSets)}'),
@@ -349,8 +347,7 @@ class ActiveChallengeItem extends StatelessWidget {
                                     children: [
                                       Text(
                                         (challenge.opponentUser?.displayName ??
-                                                'Unknown')
-                                            .toUpperCase(),
+                                            'Unknown'),
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6
@@ -403,7 +400,7 @@ class PendingChallengeItem extends StatelessWidget {
           margin: const EdgeInsets.all(5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(width: 1, color: ThemeColors.lightBlue),
+            border: Border.all(width: 1, color: MyPuttColors.lightBlue),
           ),
           child: IntrinsicHeight(
               child: Column(
@@ -421,7 +418,7 @@ class PendingChallengeItem extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .headline5
-                            ?.copyWith(color: ThemeColors.lightBlue)),
+                            ?.copyWith(color: MyPuttColors.lightBlue)),
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -462,11 +459,11 @@ class PendingChallengeItem extends StatelessWidget {
                             const DefaultProfileCircle(),
                             const SizedBox(width: 10),
                             Text(
-                              challenge.currentUser.displayName.toUpperCase(),
+                              challenge.currentUser.displayName,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6
-                                  ?.copyWith(color: ThemeColors.lightBlue),
+                                  ?.copyWith(color: MyPuttColors.lightBlue),
                             ),
                           ],
                         ),
@@ -476,8 +473,7 @@ class PendingChallengeItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              challenge.opponentUser?.displayName ??
-                                  'Unknown'.toUpperCase(),
+                              challenge.opponentUser?.displayName ?? 'Unknown',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6
@@ -499,7 +495,7 @@ class PendingChallengeItem extends StatelessWidget {
                           height: 50,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: ThemeColors.green,
+                                  primary: MyPuttColors.lightGreen,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(48),
                                   ),

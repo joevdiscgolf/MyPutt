@@ -126,7 +126,7 @@ class _LandingScreenState extends State<LandingScreen> {
         decoration: InputDecoration(
           hintText: 'Email',
           contentPadding:
-              const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
@@ -134,10 +134,13 @@ class _LandingScreenState extends State<LandingScreen> {
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
-          prefixIcon: const Icon(
-            FlutterRemix.mail_line,
-            color: Colors.grey,
-            size: 22,
+          prefixIcon: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 18.0),
+            child: Icon(
+              FlutterRemix.mail_line,
+              color: Colors.grey,
+              size: 22,
+            ),
           ),
           counter: const Offstage(),
         ),
@@ -163,7 +166,7 @@ class _LandingScreenState extends State<LandingScreen> {
         decoration: InputDecoration(
           hintText: 'Password',
           contentPadding:
-              const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
@@ -171,10 +174,13 @@ class _LandingScreenState extends State<LandingScreen> {
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
-          prefixIcon: const Icon(
-            FlutterRemix.lock_line,
-            color: Colors.grey,
-            size: 22,
+          prefixIcon: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 18.0),
+            child: Icon(
+              FlutterRemix.lock_line,
+              color: Colors.grey,
+              size: 22,
+            ),
           ),
           counter: const Offstage(),
         ),

@@ -4,8 +4,8 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:share/share.dart';
 
 import 'components/user_list_view.dart';
@@ -29,40 +29,50 @@ class _ShareSheetState extends State<ShareSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          color: Colors.grey[100],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Text(
-              'Challenge a friend',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            const SizedBox(height: 10),
-            PrimaryButton(
-              backgroundColor: Colors.transparent,
-              labelColor: Colors.blue,
-              width: double.infinity,
-              label: 'Share with link',
-              onPressed: () => _share(),
-              iconColor: Colors.blue,
-              icon: FlutterRemix.share_box_line,
-            ),
-            const SizedBox(height: 15),
-            Text(
-              'Find a MyPutt user',
-              style: Theme.of(context).textTheme.headline5,
-              textAlign: TextAlign.center,
-            ),
-            _usernameField(context),
-            Expanded(child: UserListView(session: widget.session))
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(24),
+        topRight: Radius.circular(24),
+      )),
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () => _share(),
+                icon: const Icon(
+                  FlutterRemix.link,
+                  color: MyPuttColors.lightBlue,
+                )),
           ],
-        ));
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Send Challenge',
+            style: Theme.of(context)
+                .textTheme
+                .headline5
+                ?.copyWith(color: Colors.grey[800]!),
+          ),
+          backgroundColor: Colors.grey[100]!,
+          shadowColor: Colors.transparent,
+        ),
+        body: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            color: Colors.grey[100],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 15),
+                Text(
+                  'Search by username',
+                  style: Theme.of(context).textTheme.headline5,
+                  textAlign: TextAlign.center,
+                ),
+                _usernameField(context),
+                Expanded(child: UserListView(session: widget.session))
+              ],
+            )),
+      ),
+    );
   }
 
   Widget _usernameField(BuildContext context) {
@@ -79,7 +89,7 @@ class _ShareSheetState extends State<ShareSheet> {
       decoration: InputDecoration(
         hintText: 'Enter username',
         contentPadding:
-            const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+            const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
         isDense: true,
         hintStyle: Theme.of(context)
             .textTheme
@@ -87,10 +97,13 @@ class _ShareSheetState extends State<ShareSheet> {
             .copyWith(color: TWUIColors.gray[400], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,
-        prefixIcon: const Icon(
-          FlutterRemix.user_line,
-          color: TWUIColors.gray,
-          size: 22,
+        prefixIcon: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18.0),
+          child: const Icon(
+            FlutterRemix.user_line,
+            color: TWUIColors.gray,
+            size: 22,
+          ),
         ),
         counter: const Offstage(),
       ),

@@ -20,7 +20,7 @@ import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'components/challenge_scroll_snap_lists.dart';
 
@@ -95,17 +95,17 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       child: ListView(
         children: [
           _challengeProgressPanel(context),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Row(
             children: const [
               Expanded(child: ChallengeDirectorPanel()),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           _puttsMadeContainer(context),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           _addAndUndoRow(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
           BlocBuilder<ChallengesCubit, ChallengesState>(
             builder: (context, state) {
               if (state is! ChallengesErrorState &&
@@ -256,7 +256,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             height: 2,
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
             height: 20,
             child: currentUserSetsComplete
                 ? Container(height: 20)
@@ -361,7 +361,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         if (state is BothUsersComplete) {
           return MyPuttButton(
               title: 'Finish Challenge',
-              color: ThemeColors.green,
+              color: MyPuttColors.green,
               iconData: FlutterRemix.check_line,
               iconColor: Colors.white,
               onPressed: () {
@@ -380,7 +380,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                           },
                           buttonlabel: 'Finish',
                           title: 'Finish challenge?',
-                          confirmColor: ThemeColors.green,
+                          confirmColor: MyPuttColors.green,
                         ))).then((value) => dialogCallBack());
               });
         } else if (state is CurrentUserComplete &&
@@ -388,7 +388,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           return MyPuttButton(
             title:
                 'Waiting for ${state.currentChallenge!.opponentUser?.displayName ?? 'Unknown'}...',
-            color: ThemeColors.green,
+            color: MyPuttColors.green,
             onPressed: () {
               Vibrate.feedback(FeedbackType.light);
             },

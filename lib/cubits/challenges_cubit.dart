@@ -97,21 +97,15 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     } else {
       state = _challengeInProgress();
     }
-    print(state);
     return state;
   }
 
   Future<void> reload() async {
     await _challengesRepository.fetchAllChallenges();
-    if (_challengesRepository.currentChallenge != null) {
-      if (_challengesRepository.currentChallenge?.currentUserSets.length ==
-          _challengesRepository.currentChallenge?.challengeStructure.length) {
-        emit(_currentUserComplete());
-      } else {
-        emit(_challengeInProgress());
-      }
-    } else {
+    if (_challengesRepository.currentChallenge == null) {
       emit(_noCurrentChallenge());
+    } else {
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
   }
 

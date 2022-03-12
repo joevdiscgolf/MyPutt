@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/misc/previous_sets_list.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
 import 'summary_stats_panel.dart';
@@ -72,7 +72,7 @@ class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {
                   style: Theme.of(context)
                       .textTheme
                       .headline6
-                      ?.copyWith(color: ThemeColors.lightBlue),
+                      ?.copyWith(color: MyPuttColors.lightBlue),
                 ),
                 Text(
                   '${totalMadeFromSets(widget.challenge.currentUserSets)}/${totalAttemptsFromSets(widget.challenge.currentUserSets)}',

@@ -4,7 +4,7 @@ import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 
 class ChallengeScrollSnapList extends StatefulWidget {
   const ChallengeScrollSnapList({
@@ -77,7 +77,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           height: 40,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: ThemeColors.green,
+              color: MyPuttColors.green,
               border: Border.all(color: Colors.grey[600]!, width: 1.5)),
         );
       } else if (index == widget.puttingSets.length + 1) {
@@ -86,11 +86,14 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           height: 40,
           child: Icon(
             FlutterRemix.arrow_left_line,
-            color: ThemeColors.green,
+            color: MyPuttColors.green,
           ),
         );
       } else {
-        return ListItem(set: widget.puttingSets[index]);
+        return ListItem(
+          set: widget.puttingSets[index],
+          animate: false,
+        );
       }
     }
     return AnimatedSwitcher(
@@ -100,6 +103,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
         child: index > widget.puttingSets.length - 1
             ? const EmptyListItem()
             : ListItem(
+                animate: true,
                 set: widget.puttingSets[index],
               ));
   }
@@ -123,9 +127,11 @@ class EmptyListItem extends StatelessWidget {
 }
 
 class ListItem extends StatefulWidget {
-  const ListItem({Key? key, required this.set}) : super(key: key);
+  const ListItem({Key? key, required this.set, this.animate = false})
+      : super(key: key);
 
   final PuttingSet set;
+  final bool animate;
 
   @override
   State<ListItem> createState() => _ListItemState();
@@ -145,44 +151,67 @@ class _ListItemState extends State<ListItem>
     final CurvedAnimation curvedAnimation =
         CurvedAnimation(parent: animationController, curve: Curves.easeIn);
 
-    animation = Tween<double>(begin: 1, end: 0).animate(curvedAnimation)
-      ..addListener(() => setState(() {}));
-    // ..addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     setState(() {
-    //       numCycles += 1;
-    //     });
-    //     animationController.reverse();
-    //   }
-    //   if (status == AnimationStatus.dismissed && numCycles < maxCycles) {
-    //     animationController.forward();
-    //   }
-    // });
+    animation = Tween<double>(begin: 1, end: 0).animate(curvedAnimation);
 
-    animationController.forward();
+    if (widget.animate) {
+      animationController.forward();
+    }
     super.initState();
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 60,
-      height: 40,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: ThemeColors.green.withAlpha((animation.value * 255).toInt()),
-          border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('${widget.set.distance} ft',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
+    return AnimatedBuilder(
+      builder: (BuildContext context, Widget? child) {
+        return Container(
+            width: 60,
+            height: 40,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: widget.animate
+                    ? MyPuttColors.green
+                        .withAlpha((animation.value * 255).toInt())
+                    : Colors.transparent,
+                border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+            child: Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('${widget.set.distance} ft',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            )));
+      },
+      animation: animation,
+      // child: Container(
+      //   width: 60,
+      //   height: 40,
+      //   decoration: BoxDecoration(
+      //       borderRadius: BorderRadius.circular(5),
+      //       color: widget.animate
+      //           ? MyPuttColors.green.withAlpha((animation.value * 255).toInt())
+      //           : Colors.transparent,
+      //       border: Border.all(color: Colors.grey[600]!, width: 1.5)),
+      //   child: Center(
+      //     child: Column(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Text('${widget.set.distance} ft',
+      //             style: const TextStyle(fontWeight: FontWeight.bold)),
+      //         Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
+      //             style: const TextStyle(fontWeight: FontWeight.bold)),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

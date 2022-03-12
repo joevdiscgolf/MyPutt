@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
@@ -100,7 +101,9 @@ class SessionListRow extends StatelessWidget {
                       color: Colors.blue,
                     ),
                     onPressed: () async {
-                      showModalBottomSheet(
+                      showBarModalBottomSheet(
+                          topControl: Container(),
+                          bounce: true,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),

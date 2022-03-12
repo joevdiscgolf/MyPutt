@@ -44,7 +44,7 @@ class UserListItem extends StatelessWidget {
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
-                    Text(user.username),
+                    FittedBox(child: Text(user.username)),
                   ],
                 )),
             Flexible(
@@ -57,7 +57,7 @@ class UserListItem extends StatelessWidget {
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
-                    Text(user.displayName),
+                    FittedBox(child: Text(user.displayName)),
                   ],
                 )),
             const Flexible(

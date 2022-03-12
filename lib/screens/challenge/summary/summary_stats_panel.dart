@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -34,7 +34,7 @@ class ChallengeTitlePanel extends StatelessWidget {
     Color borderColor;
     if (difference > 0) {
       resultText = "VICTORY";
-      borderColor = ThemeColors.lightBlue;
+      borderColor = MyPuttColors.lightBlue;
     } else if (difference < 0) {
       resultText = "DEFEAT";
       borderColor = Colors.red;
@@ -66,7 +66,7 @@ class ChallengeTitlePanel extends StatelessWidget {
                     color: difference == 0
                         ? Colors.white
                         : (difference > 0)
-                            ? ThemeColors.lightBlue
+                            ? MyPuttColors.lightBlue
                             : Colors.red)),
           ),
           Container(
