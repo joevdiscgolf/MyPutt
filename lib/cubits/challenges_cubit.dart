@@ -43,6 +43,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
+  @override
+  Future<void> close() async {
+    super.close();
+  }
+
   CurrentUserComplete _currentUserComplete() {
     return CurrentUserComplete(
       currentChallenge: _challengesRepository.currentChallenge!,
@@ -141,15 +146,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  Future<void> completeCurrentChallenge() async {
-    await _challengesRepository.completeChallenge();
-    emit(_noCurrentChallenge());
-  }
-
-  void deleteChallenge(PuttingChallenge challenge) {
-    _challengesRepository.deleteChallenge(challenge);
-  }
-
   Future<void> addSet(PuttingSet set) async {
     if (_challengesRepository.currentChallenge != null) {
       var challengeStructureLength =
@@ -186,6 +182,32 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     await _challengesRepository.resyncCurrentChallenge();
     emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+  }
+
+  void updateOpponentSets(Object? rawObject) {
+    final Map<String, dynamic>? data = rawObject as Map<String, dynamic>?;
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (data != null && currentUser != null) {
+      final StoragePuttingChallenge storageChallenge =
+          StoragePuttingChallenge.fromJson(data);
+      final PuttingChallenge challenge =
+          PuttingChallenge.fromStorageChallenge(storageChallenge, currentUser);
+      if (_challengesRepository.currentChallenge != null &&
+          _challengesRepository.currentChallenge?.opponentSets.length !=
+              challenge.opponentSets.length) {
+        _challengesRepository.currentChallenge = challenge;
+        emit(getStateFromChallenge(challenge));
+      }
+    }
+  }
+
+  Future<void> completeCurrentChallenge() async {
+    await _challengesRepository.completeChallenge();
+    emit(_noCurrentChallenge());
+  }
+
+  void deleteChallenge(PuttingChallenge challenge) {
+    _challengesRepository.deleteChallenge(challenge);
   }
 
   void declineChallenge(PuttingChallenge challenge) {

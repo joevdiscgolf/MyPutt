@@ -35,8 +35,9 @@ class ChallengesList extends StatelessWidget {
                                           value:
                                               BlocProvider.of<ChallengesCubit>(
                                                   context),
-                                          child:
-                                              const ChallengeRecordScreen())));
+                                          child: ChallengeRecordScreen(
+                                            challengeId: challenge.id,
+                                          ))));
                             },
                             challenge: challenge,
                           );

@@ -103,6 +103,10 @@ class ChallengesRepository {
     }
   }
 
+  void exitChallenge() {
+    currentChallenge = null;
+  }
+
   Future<bool> completeChallenge() async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge == null || currentUser == null) {

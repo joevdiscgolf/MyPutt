@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/repositories/presets_repository.dart';
-import 'package:myputt/screens/challenge/components/dialogs/preset_structure_row.dart';
+import 'package:myputt/screens/challenge/components/dialogs/components/preset_structure_row.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/enums.dart';

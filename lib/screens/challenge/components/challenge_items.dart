@@ -230,7 +230,9 @@ class ActiveChallengeItem extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => BlocProvider.value(
                 value: BlocProvider.of<ChallengesCubit>(context),
-                child: const ChallengeRecordScreen())));
+                child: ChallengeRecordScreen(
+                  challengeId: challenge.id,
+                ))));
       },
       child: Builder(builder: (context) {
         final int currentUserPuttsMade =

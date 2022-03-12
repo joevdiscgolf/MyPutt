@@ -1,11 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
-
 import 'components/dialogs/select_preset_dialog.dart';
 
 class ChallengesScreen extends StatefulWidget {
@@ -18,102 +19,77 @@ class ChallengesScreen extends StatefulWidget {
 }
 
 class _ChallengesState extends State<ChallengesScreen> {
-  bool _loading = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ChallengesCubit>(context).reload();
     return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-          backgroundColor: Colors.grey[100]!,
-          appBar: AppBar(
-            actions: [_reloadButton(context)],
-            title: const Text('Challenges'),
-            centerTitle: true,
-          ),
-          floatingActionButton: _newChallengeButton(context),
-          body: Builder(builder: (context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: BlocBuilder<ChallengesCubit, ChallengesState>(
-                    builder: (context, state) {
-                      if (state is ChallengeInProgress) {
-                        return _tabBar(context);
-                      } else if (state is NoCurrentChallenge) {
-                        return _tabBar(context);
-                      } else if (state is CurrentUserComplete) {
-                        return _tabBar(context);
-                      } else if (state is NoCurrentChallenge) {
-                        return _tabBar(context);
-                      } else if (state is ChallengesLoading) {
-                        return _tabBar(context);
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
+        length: 3,
+        child: Scaffold(
+            backgroundColor: Colors.grey[100]!,
+            appBar: AppBar(
+              title: const Text('Challenges'),
+              centerTitle: true,
+            ),
+            floatingActionButton: _newChallengeButton(context),
+            body: _mainBody(context)));
+  }
+
+  Widget _mainBody(BuildContext context) {
+    return CustomScrollView(
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
+        controller: _scrollController,
+        slivers: [
+          CupertinoSliverRefreshControl(onRefresh: () async {
+            Vibrate.feedback(FeedbackType.light);
+            await BlocProvider.of<ChallengesCubit>(context).reload();
+          }),
+          SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: BlocBuilder<ChallengesCubit, ChallengesState>(
+                        builder: (context, state) {
+                          if (state is! ChallengesErrorState) {
+                            return _tabBar(context);
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                    ),
+                    BlocBuilder<ChallengesCubit, ChallengesState>(
+                        builder: (context, state) {
+                      return Expanded(
+                        child: TabBarView(children: [
+                          ChallengesList(
+                              category: ChallengeCategory.active,
+                              challenges:
+                                  List.from(state.activeChallenges.reversed)),
+                          ChallengesList(
+                              category: ChallengeCategory.pending,
+                              challenges:
+                                  List.from(state.pendingChallenges.reversed)),
+                          ChallengesList(
+                              category: ChallengeCategory.complete,
+                              challenges: List.from(
+                                  state.completedChallenges.reversed)),
+                        ]),
+                      );
+                    }),
+                  ],
                 ),
-                Expanded(
-                  child: BlocBuilder<ChallengesCubit, ChallengesState>(
-                      builder: (context, state) {
-                    if (state is ChallengeInProgress) {
-                      return TabBarView(children: [
-                        ChallengesList(
-                            category: ChallengeCategory.active,
-                            challenges:
-                                List.from(state.activeChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.pending,
-                            challenges:
-                                List.from(state.pendingChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.complete,
-                            challenges:
-                                List.from(state.completedChallenges.reversed)),
-                      ]);
-                    } else if (state is NoCurrentChallenge) {
-                      return TabBarView(children: [
-                        ChallengesList(
-                            category: ChallengeCategory.active,
-                            challenges:
-                                List.from(state.activeChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.pending,
-                            challenges:
-                                List.from(state.pendingChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.complete,
-                            challenges:
-                                List.from(state.completedChallenges.reversed)),
-                      ]);
-                    } else if (state is CurrentUserComplete) {
-                      return TabBarView(children: [
-                        ChallengesList(
-                            category: ChallengeCategory.active,
-                            challenges:
-                                List.from(state.activeChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.pending,
-                            challenges:
-                                List.from(state.pendingChallenges.reversed)),
-                        ChallengesList(
-                            category: ChallengeCategory.complete,
-                            challenges:
-                                List.from(state.completedChallenges.reversed)),
-                      ]);
-                    } else {
-                      return Container();
-                    }
-                  }),
-                ),
-              ],
-            );
-          })),
-    );
+              );
+            }),
+          )
+        ]);
   }
 
   Widget _tabBar(BuildContext context) {
@@ -156,46 +132,6 @@ class _ChallengesState extends State<ChallengesScreen> {
         ),
       ],
     );
-  }
-
-  Widget _reloadButton(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            shadowColor: Colors.transparent, primary: Colors.transparent),
-        onPressed: () async {
-          setState(() {
-            _loading = true;
-          });
-          await BlocProvider.of<ChallengesCubit>(context).reload();
-          Future.delayed(const Duration(milliseconds: 1000), () {
-            setState(() {
-              _loading = false;
-            });
-          });
-        },
-        child: Row(
-          children: [
-            SizedBox(
-              height: 15,
-              width: 15,
-              child: Center(
-                child: Visibility(
-                    visible: _loading,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    )),
-              ),
-            ),
-            const SizedBox(width: 10),
-            const SizedBox(
-                height: 25,
-                width: 25,
-                child: Center(
-                  child: Icon(IconData(0xe514, fontFamily: 'MaterialIcons')),
-                )),
-          ],
-        ));
   }
 
   Widget _newChallengeButton(BuildContext context) {
