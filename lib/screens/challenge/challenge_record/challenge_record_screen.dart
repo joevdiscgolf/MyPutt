@@ -431,46 +431,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     );
   }
 
-  // Widget _undoButton(BuildContext context) {
-  //   return BlocBuilder<ChallengesCubit, ChallengesState>(
-  //     builder: (context, state) {
-  //       if (state is! ChallengesErrorState && state.currentChallenge != null) {
-  //         return Container(
-  //           decoration: BoxDecoration(
-  //               color: Colors.transparent,
-  //               borderRadius: BorderRadius.circular(48)),
-  //           child: ElevatedButton(
-  //             style: ElevatedButton.styleFrom(
-  //                 shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(48)),
-  //                 primary: Colors.transparent,
-  //                 shadowColor: Colors.transparent),
-  //             child: const Icon(
-  //               FlutterRemix.arrow_go_back_line,
-  //               color: Colors.blue,
-  //             ),
-  //             onPressed: () async {
-  //               if (state.currentChallenge!.currentUserSets.isNotEmpty) {
-  //                 final int indexToFocus =
-  //                     state.currentChallenge!.currentUserSets.length - 1;
-  //                 BlocProvider.of<ChallengesCubit>(context).undo();
-  //                 _decrementScrollLists(state.currentChallenge!, indexToFocus);
-  //               }
-  //             },
-  //           ),
-  //         );
-  //       } else {
-  //         return PrimaryButton(
-  //           label: 'Undo',
-  //           onPressed: () {},
-  //           width: 100,
-  //           icon: FlutterRemix.arrow_go_back_line,
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
-
   Widget _puttsMadeContainer(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
