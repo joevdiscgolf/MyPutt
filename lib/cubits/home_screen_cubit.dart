@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/screens/home/components/enums.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/constants.dart';
 
 part 'home_screen_state.dart';
 
@@ -11,23 +14,22 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
-  final Map<int, num> sessionRanges = {0: 5, 1: 20, 2: 50, 3: 0};
-
-  int _currentSessionRange = 0;
+  int timeRange = 0;
 
   HomeScreenCubit() : super(HomeScreenLoading()) {
     reloadStats();
   }
 
-  void newUserLoggedIn() {}
-
   void reloadStats() {
-    final stats = _statsService.getStatsForSessionRange(
-        sessionRanges[_currentSessionRange]!, _sessionRepository.allSessions);
-    emit(HomeScreenLoaded(stats: stats, sessionRange: _currentSessionRange));
+    final Stats stats = _statsService.getStatsForSessionRange(
+        timeRange, _sessionRepository.allSessions);
+    emit(HomeScreenLoaded(
+        stats: stats,
+        sessionRange: timeRange,
+        allSessions: _sessionRepository.allSessions));
   }
 
-  void updateSessionRange(int sessionRange) {
-    _currentSessionRange = sessionRange;
+  void updateSessionRange(int newRange) {
+    timeRange = newRange;
   }
 }

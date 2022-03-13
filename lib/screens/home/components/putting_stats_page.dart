@@ -13,7 +13,7 @@ class PuttingStatsPage extends StatefulWidget {
       required this.screenType})
       : super(key: key);
 
-  final TimeRange timeRange;
+  final int timeRange;
   final Circles circle;
   final String screenType;
 
@@ -41,10 +41,12 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                               percentages: widget.circle == Circles.circle1
                                   ? state.stats.circleOnePercentages ?? {}
                                   : state.stats.circleTwoPercentages ?? {},
+                              timeRange: widget.timeRange,
                               allTimePercentages:
                                   widget.circle == Circles.circle1
                                       ? state.stats.circleOneAverages ?? {}
                                       : state.stats.circleTwoAverages ?? {},
+                              allSessions: state.allSessions,
                             );
                           } else {
                             return const CircularProgressIndicator();

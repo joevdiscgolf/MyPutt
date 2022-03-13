@@ -15,6 +15,14 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _sessionRangeIndex = 0;
+
+  Map<int, int> indexToTimeRange = {
+    0: TimeRange.lastFive,
+    1: TimeRange.lastTwenty,
+    2: TimeRange.lastFifty,
+    3: TimeRange.allTime,
+  };
+
   final List<String> _sessionRangeLabels = [
     'Last 5',
     'Last 20',
@@ -50,16 +58,16 @@ class HomeScreenState extends State<HomeScreen> {
           body: Column(
             children: [
               _sessionRangeRow(context),
-              const Expanded(
+              Expanded(
                 child: TabBarView(children: [
                   PuttingStatsPage(
                     circle: Circles.circle1,
-                    timeRange: TimeRange.lastFive,
+                    timeRange: indexToTimeRange[_sessionRangeIndex] ?? 5,
                     screenType: 'home',
                   ),
                   PuttingStatsPage(
                     circle: Circles.circle2,
-                    timeRange: TimeRange.lastFive,
+                    timeRange: indexToTimeRange[_sessionRangeIndex] ?? 5,
                     screenType: 'home',
                   ),
                 ]),
@@ -100,7 +108,9 @@ class HomeScreenState extends State<HomeScreen> {
                               });
 
                               BlocProvider.of<HomeScreenCubit>(context)
-                                  .updateSessionRange(_sessionRangeIndex);
+                                  .updateSessionRange(
+                                      indexToTimeRange[_sessionRangeIndex] ??
+                                          5);
                               BlocProvider.of<HomeScreenCubit>(context)
                                   .reloadStats();
                             });
@@ -120,7 +130,8 @@ class HomeScreenState extends State<HomeScreen> {
                               _sessionRangeIndex = entry.key;
                             });
                             BlocProvider.of<HomeScreenCubit>(context)
-                                .updateSessionRange(_sessionRangeIndex);
+                                .updateSessionRange(
+                                    indexToTimeRange[_sessionRangeIndex] ?? 5);
                             BlocProvider.of<HomeScreenCubit>(context)
                                 .reloadStats();
                           });

@@ -283,7 +283,7 @@ class StatsService {
     for (var session in sessions) {
       int index = 0;
       session.sets
-          .where((oldset) => oldset.distance == distance)
+          .where((oldSet) => oldSet.distance == distance)
           .forEach((set) {
         final double decimal = set.puttsAttempted == 0
             ? 0

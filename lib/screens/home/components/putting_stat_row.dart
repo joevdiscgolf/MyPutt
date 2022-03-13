@@ -2,25 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/data/types/chart/chart_point.dart';
+import 'package:myputt/screens/home/components/line_chart_preview.dart';
+import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 
-class PercentageRow extends StatefulWidget {
-  const PercentageRow(
+class PuttingStatRow extends StatefulWidget {
+  const PuttingStatRow(
       {Key? key,
       required this.distance,
       required this.percentage,
-      required this.allTimePercentage})
+      required this.allTimePercentage,
+      this.chartPoints = const []})
       : super(key: key);
 
   final num? percentage;
   final num? allTimePercentage;
   final int distance;
+  final List<ChartPoint> chartPoints;
 
   @override
-  State<PercentageRow> createState() => _PercentageRowState();
+  State<PuttingStatRow> createState() => _PuttingStatRowState();
 }
 
-class _PercentageRowState extends State<PercentageRow> {
+class _PuttingStatRowState extends State<PuttingStatRow> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -30,13 +35,13 @@ class _PercentageRowState extends State<PercentageRow> {
         Align(
           alignment: Alignment.centerRight,
           child: SizedBox(
-            width: 90,
+            width: 80,
             child: Text(widget.distance.toString() + ' ft',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
           ),
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: 10),
         Bounceable(
           onTap: () {
             Vibrate.feedback(FeedbackType.light);
@@ -97,12 +102,12 @@ class _PercentageRowState extends State<PercentageRow> {
           }),
         ),
         const SizedBox(
-          width: 30,
+          width: 16,
         ),
         Builder(builder: (context) {
           if (widget.allTimePercentage != null && widget.percentage != null) {
             return SizedBox(
-              width: 90,
+              width: 60,
               child: Row(children: <Widget>[
                 widget.percentage! < widget.allTimePercentage!
                     ? const Icon(FlutterRemix.arrow_down_line,
@@ -122,9 +127,14 @@ class _PercentageRowState extends State<PercentageRow> {
               ]),
             );
           } else {
-            return const SizedBox(width: 90, child: Text('- %'));
+            return const SizedBox(width: 60, child: Text('- %'));
           }
         }),
+        FittedBox(
+          child: LineChartPreview(
+              data: smoothChart(
+                  PerformanceChartData(points: widget.chartPoints), 2)),
+        )
       ]),
     );
   }

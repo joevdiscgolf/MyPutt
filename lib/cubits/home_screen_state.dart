@@ -8,7 +8,11 @@ class HomeScreenInitial extends HomeScreenState {}
 class HomeScreenLoading extends HomeScreenState {}
 
 class HomeScreenLoaded extends HomeScreenState {
-  HomeScreenLoaded({required this.stats, required this.sessionRange});
+  HomeScreenLoaded(
+      {required this.stats,
+      required this.sessionRange,
+      this.allSessions = const []});
   final Stats stats;
   final int sessionRange;
+  final List<PuttingSession> allSessions;
 }

@@ -361,7 +361,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         if (state is BothUsersComplete) {
           return MyPuttButton(
               title: 'Finish Challenge',
-              color: MyPuttColors.green,
+              color: MyPuttColors.lightGreen,
               iconData: FlutterRemix.check_line,
               iconColor: Colors.white,
               onPressed: () {
@@ -380,7 +380,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                           },
                           buttonlabel: 'Finish',
                           title: 'Finish challenge?',
-                          confirmColor: MyPuttColors.green,
+                          confirmColor: MyPuttColors.lightGreen,
                         ))).then((value) => dialogCallBack());
               });
         } else if (state is CurrentUserComplete &&
@@ -388,7 +388,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           return MyPuttButton(
             title:
                 'Waiting for ${state.currentChallenge!.opponentUser?.displayName ?? 'Unknown'}...',
-            color: MyPuttColors.green,
+            color: Colors.blue,
             onPressed: () {
               Vibrate.feedback(FeedbackType.light);
             },
