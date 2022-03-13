@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/misc/animated_circular_progress_indicator.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/screens/home/components/line_chart_preview.dart';
 import 'package:myputt/utils/calculators.dart';
@@ -48,38 +49,11 @@ class _PuttingStatRowState extends State<PuttingStatRow> {
           },
           child: Builder(builder: (context) {
             if (widget.allTimePercentage != null && widget.percentage != null) {
-              return SizedBox(
-                child: Stack(children: <Widget>[
-                  SizedBox(
-                      width: 90,
-                      height: 90,
-                      child: TweenAnimationBuilder<double>(
-                        curve: Curves.easeOutQuad,
-                        tween: Tween<double>(
-                            begin: 0.0, end: widget.percentage! as double),
-                        duration: const Duration(milliseconds: 750),
-                        builder: (context, value, _) =>
-                            CircularProgressIndicator(
-                          color: widget.percentage! < widget.allTimePercentage!
-                              ? Colors.red
-                              : MyPuttColors.lightGreen,
-                          backgroundColor: Colors.grey[200],
-                          value: value,
-                          strokeWidth: 5,
-                        ),
-                      )),
-                  Center(
-                      child: TweenAnimationBuilder<double>(
-                          curve: Curves.easeInOutQuad,
-                          tween: Tween<double>(
-                              begin: 0.0, end: widget.percentage as double),
-                          duration: const Duration(milliseconds: 750),
-                          builder: (context, value, _) =>
-                              (Text((value * 100).round().toString() + ' %'))))
-                ]),
-                width: 90,
-                height: 90,
-              );
+              return AnimatedCircularProgressIndicator(
+                  size: 90,
+                  strokeWidth: 5,
+                  duration: const Duration(milliseconds: 500),
+                  decimal: widget.percentage?.toDouble() ?? 0);
             } else {
               return SizedBox(
                 child: Stack(children: <Widget>[

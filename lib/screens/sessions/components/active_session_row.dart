@@ -91,6 +91,9 @@ class ActiveSessionRow extends StatelessWidget {
                         }),
                   ],
                 ),
+              ),
+              const SizedBox(
+                height: 4,
               )
             ],
           ),

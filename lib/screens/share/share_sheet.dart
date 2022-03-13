@@ -54,7 +54,7 @@ class _ShareSheetState extends State<ShareSheet> {
               ),
               const Spacer(),
               IconButton(
-                  onPressed: () => _share(),
+                  onPressed: () => _shareWithLink(),
                   icon: const Icon(
                     FlutterRemix.link,
                     color: MyPuttColors.lightBlue,
@@ -132,7 +132,7 @@ class _ShareSheetState extends State<ShareSheet> {
     );
   }
 
-  Future<void> _share() async {
+  Future<void> _shareWithLink() async {
     Vibrate.feedback(FeedbackType.light);
     final String? shareMessage = await BlocProvider.of<ChallengesCubit>(context)
         .getShareMessageFromSession(widget.session);

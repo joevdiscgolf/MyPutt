@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -19,8 +22,9 @@ class PresetStructureRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return Bounceable(
       onTap: () {
+        Vibrate.feedback(FeedbackType.light);
         if (!selected) {
           onTap(presetType);
         }
@@ -29,13 +33,21 @@ class PresetStructureRow extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: selected ? Colors.blue[200] : Colors.white,
+            color: selected
+                ? MyPuttColors.lightBlue.withOpacity(0.4)
+                : Colors.white,
             borderRadius: BorderRadius.circular(5),
             border: Border.all(width: 2, color: Colors.grey[400]!)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(challengePresetToText[presetType] ?? ''),
+            Text(
+              challengePresetToText[presetType] ?? '',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),

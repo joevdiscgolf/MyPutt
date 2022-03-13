@@ -205,7 +205,6 @@ class _LandingScreenState extends State<LandingScreen> {
             width: 120,
             onPressed: () async {
               if (_email == null || _password == null) {
-                print('email or password is null');
                 setState(() {
                   _error = true;
                   _errorText = 'Missing username or password';

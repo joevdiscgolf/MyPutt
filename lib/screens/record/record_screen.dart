@@ -27,7 +27,6 @@ class _RecordScreenState extends State<RecordScreen> {
   int _weatherIndex = 0;
   int _windIndex = 0;
   int _distancesIndex = 0;
-  int _lastChangedPutterCount = 0;
 
   final List<String> _windConditionWords = [
     'Calm',
@@ -244,8 +243,6 @@ class _RecordScreenState extends State<RecordScreen> {
                 puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
                 if (_setLength > 1) {
                   setState(() {
-                    _lastChangedPutterCount =
-                        DateTime.now().millisecondsSinceEpoch;
                     _setLength -= 1;
                     _focusedIndex = _setLength;
                   });

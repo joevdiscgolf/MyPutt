@@ -14,7 +14,13 @@ class PercentageColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('$distance ft'),
+        Text(
+          '$distance ft',
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(fontWeight: FontWeight.w600, fontSize: 12),
+        ),
         const SizedBox(
           height: 8,
         ),

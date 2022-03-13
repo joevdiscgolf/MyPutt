@@ -6,9 +6,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
-import 'package:myputt/screens/sessions/components/percentage_column.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
-import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/helpers.dart';
 
 class SessionListRow extends StatelessWidget {

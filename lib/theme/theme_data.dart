@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tailwind_colors/tailwind_colors.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:myputt/utils/colors.dart';
 
 ThemeData lightTheme(BuildContext context) {
@@ -10,9 +8,6 @@ ThemeData lightTheme(BuildContext context) {
     scaffoldBackgroundColor: MyPuttColors.white,
     canvasColor: MyPuttColors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    // appBarTheme: appBarTheme(),
-    // bottomNavigationBarTheme: bottomNavigationBarTheme(),
-    // inputDecorationTheme: inputDecorationTheme(),
     highlightColor: Colors.transparent,
     splashColor: Colors.transparent,
     textTheme: TextTheme(

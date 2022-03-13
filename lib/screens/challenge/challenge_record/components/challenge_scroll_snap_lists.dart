@@ -81,7 +81,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
               border: Border.all(color: Colors.grey[600]!, width: 1.5)),
         );
       } else if (index == widget.puttingSets.length + 1) {
-        return SizedBox(
+        return const SizedBox(
           width: 60,
           height: 40,
           child: Icon(
