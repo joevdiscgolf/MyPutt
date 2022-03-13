@@ -10,11 +10,15 @@ import 'package:myputt/screens/share/share_sheet.dart';
 
 class SendChallengeDialog extends StatefulWidget {
   const SendChallengeDialog(
-      {Key? key, required this.recipientUser, required this.session})
+      {Key? key,
+      required this.recipientUser,
+      required this.session,
+      required this.onComplete})
       : super(key: key);
 
   final MyPuttUser recipientUser;
   final PuttingSession session;
+  final Function onComplete;
 
   @override
   _SendChallengeDialogState createState() => _SendChallengeDialogState();
@@ -55,7 +59,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
               ),
               Text(
                 ' ${widget.recipientUser.displayName}',
-                style: TextStyle(
+                style: const TextStyle(
                     color: MyPuttColors.green,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
@@ -103,14 +107,16 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                           _loadingState = LoadingState.loading;
                         });
 
-                        await BlocProvider.of<ChallengesCubit>(context)
-                            .generateAndSendChallengeToUser(
-                                widget.session, widget.recipientUser);
+                        // await BlocProvider.of<ChallengesCubit>(context)
+                        //     .generateAndSendChallengeToUser(
+                        //         widget.session, widget.recipientUser);
+                        await Future.delayed(Duration(milliseconds: 500));
                         setState(() {
                           _loadingState = LoadingState.loaded;
                         });
                         Future.delayed(const Duration(milliseconds: 300), () {
-                          Navigator.pop(context);
+                          // widget.onComplete();
+                          // Navigator.pop(context);
                         });
                       },
                       child: Builder(builder: (context) {

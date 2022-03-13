@@ -543,7 +543,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   void _incrementScrollLists(PuttingChallenge challenge) {
     setState(() {
       puttsMadePickerLength = challenge
-          .challengeStructure[challenge.currentUserSets.length - 1].setLength;
+          .challengeStructure[challenge.currentUserSets.length].setLength;
       if (puttsPickerFocusedIndex + 1 > puttsMadePickerLength) {
         puttsMadePickerKey.currentState?.focusToItem(puttsMadePickerLength);
       }

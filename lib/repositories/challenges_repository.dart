@@ -20,8 +20,11 @@ class ChallengesRepository {
   Future<void> fetchAllChallenges() async {
     final List<PuttingChallenge> allChallenges =
         await _databaseService.getAllChallenges();
+    final MyPuttUser? currentUser = _userRepository.currentUser;
     pendingChallenges = allChallenges
-        .where((challenge) => challenge.status == ChallengeStatus.pending)
+        .where((challenge) =>
+            challenge.status == ChallengeStatus.pending &&
+            currentUser?.uid != challenge.challengerUser.uid)
         .toList();
     activeChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)

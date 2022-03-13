@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'components/active_session_row.dart';
 import 'session_summary_screen.dart';
 
 class SessionsScreen extends StatefulWidget {
@@ -47,8 +50,14 @@ class _SessionsState extends State<SessionsScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               child: Text(
-                                  '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                  style: Theme.of(context).textTheme.headline4),
+                                '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 24),
+                              ),
                             ),
                           ),
                           _continueSessionCard(context),
@@ -68,9 +77,14 @@ class _SessionsState extends State<SessionsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 child: Text(
-                                    '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                                    style:
-                                        Theme.of(context).textTheme.headline4),
+                                  '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 24),
+                                ),
                               ),
                             ),
                           ),
@@ -84,9 +98,21 @@ class _SessionsState extends State<SessionsScreen> {
                     } else {
                       return Column(
                         children: [
-                          Text(
-                              '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
-                              style: Theme.of(context).textTheme.headline4),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                '${state.sessions.length} ${state.sessions.length == 1 ? 'Session' : 'Sessions'}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 24),
+                              ),
+                            ),
+                          ),
                           _sessionsListView(context),
                         ],
                       );
@@ -107,14 +133,9 @@ class _SessionsState extends State<SessionsScreen> {
         if (state is! SessionInProgressState) {
           return Container();
         } else {
-          return InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BlocProvider.value(
-                        value: BlocProvider.of<SessionsCubit>(context),
-                        child: const RecordScreen())));
-              },
-              child: SessionListRow(
+          return Bounceable(
+              onTap: () {},
+              child: ActiveSessionRow(
                 isCurrentSession: true,
                 delete: () {
                   BlocProvider.of<SessionsCubit>(context)
@@ -122,6 +143,13 @@ class _SessionsState extends State<SessionsScreen> {
                 },
                 session: state.currentSession,
                 stats: state.currentSessionStats,
+                onTap: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => BlocProvider.value(
+                          value: BlocProvider.of<SessionsCubit>(context),
+                          child: const RecordScreen())));
+                },
               ));
         }
       },
@@ -135,30 +163,33 @@ class _SessionsState extends State<SessionsScreen> {
           return Flexible(
             fit: FlexFit.loose,
             child: ListView(
+                shrinkWrap: true,
                 children: List.from(state.sessions
                     .asMap()
                     .entries
                     .map((entry) => InkWell(
-                          onTap: () {
-                            BlocProvider.of<SessionSummaryCubit>(context)
-                                .openSessionSummary(entry.value);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    SessionSummaryScreen(
-                                        session: entry.value)));
-                          },
                           child: SessionListRow(
-                              stats: state
-                                  .individualStats[entry.value.dateStarted]!,
-                              session: entry.value,
-                              index: entry.key + 1,
-                              delete: () {
-                                BlocProvider.of<SessionsCubit>(context)
-                                    .deleteSession(entry.value);
-                                BlocProvider.of<HomeScreenCubit>(context)
-                                    .reloadStats();
-                              },
-                              isCurrentSession: false),
+                            stats:
+                                state.individualStats[entry.value.dateStarted]!,
+                            session: entry.value,
+                            index: entry.key + 1,
+                            delete: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .deleteSession(entry.value);
+                              BlocProvider.of<HomeScreenCubit>(context)
+                                  .reloadStats();
+                            },
+                            isCurrentSession: false,
+                            onTap: () {
+                              Vibrate.feedback(FeedbackType.light);
+                              BlocProvider.of<SessionSummaryCubit>(context)
+                                  .openSessionSummary(entry.value);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      SessionSummaryScreen(
+                                          session: entry.value)));
+                            },
+                          ),
                         ))
                     .toList()
                     .reversed)),
@@ -171,26 +202,28 @@ class _SessionsState extends State<SessionsScreen> {
                     .asMap()
                     .entries
                     .map((entry) => InkWell(
-                          onTap: () {
-                            BlocProvider.of<SessionSummaryCubit>(context)
-                                .openSessionSummary(entry.value);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    SessionSummaryScreen(
-                                        session: entry.value)));
-                          },
                           child: SessionListRow(
-                              stats: state
-                                  .individualStats[entry.value.dateStarted]!,
-                              session: entry.value,
-                              index: entry.key + 1,
-                              delete: () {
-                                BlocProvider.of<SessionsCubit>(context)
-                                    .deleteSession(entry.value);
-                                BlocProvider.of<HomeScreenCubit>(context)
-                                    .reloadStats();
-                              },
-                              isCurrentSession: false),
+                            stats:
+                                state.individualStats[entry.value.dateStarted]!,
+                            session: entry.value,
+                            index: entry.key + 1,
+                            delete: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .deleteSession(entry.value);
+                              BlocProvider.of<HomeScreenCubit>(context)
+                                  .reloadStats();
+                            },
+                            isCurrentSession: false,
+                            onTap: () {
+                              Vibrate.feedback(FeedbackType.light);
+                              BlocProvider.of<SessionSummaryCubit>(context)
+                                  .openSessionSummary(entry.value);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      SessionSummaryScreen(
+                                          session: entry.value)));
+                            },
+                          ),
                         ))
                     .toList()
                     .reversed)),

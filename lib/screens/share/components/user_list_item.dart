@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
-import 'dialogs/send_challenge_dialog.dart';
 
 class UserListItem extends StatelessWidget {
-  const UserListItem({Key? key, required this.user, required this.session})
+  const UserListItem(
+      {Key? key,
+      required this.user,
+      required this.session,
+      required this.onTap})
       : super(key: key);
 
   final PuttingSession session;
   final MyPuttUser user;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (context) =>
-                SendChallengeDialog(recipientUser: user, session: session));
-      },
+    return Bounceable(
+      onTap: () => onTap(),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.all(8),
