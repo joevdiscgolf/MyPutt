@@ -8,7 +8,7 @@ import 'package:myputt/services/firebase/fb_constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
-  Future<List<PuttingChallenge>> getPuttingChallengesWithStatus(
+  Future<List<PuttingChallenge>> getPuttingChallengesByStatus(
       MyPuttUser currentUser, String status) async {
     QuerySnapshot querySnapshot = await firestore
         .collection(
@@ -28,10 +28,31 @@ class FBChallengesDataLoader {
     }).toList();
   }
 
-  Future<PuttingChallenge?> getCurrentPuttingChallenge(
+  Future<List<PuttingChallenge>> getAllChallenges(
       MyPuttUser currentUser) async {
-    final DocumentSnapshot<dynamic> snapshot =
-        await firestore.doc('$challengesCollection/${currentUser.uid}').get();
+    QuerySnapshot querySnapshot = await firestore
+        .collection(
+            '$challengesCollection/${currentUser.uid}/$challengesCollection')
+        .get()
+        .catchError((error) {
+      if (kDebugMode) {
+        print('[getPuttingChallenges] $error');
+      }
+    });
+
+    return querySnapshot.docs.map((doc) {
+      return PuttingChallenge.fromStorageChallenge(
+          StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
+          currentUser);
+    }).toList();
+  }
+
+  Future<PuttingChallenge?> getPuttingChallengeByid(
+      MyPuttUser currentUser, String challengeId) async {
+    final DocumentSnapshot<dynamic> snapshot = await firestore
+        .doc(
+            '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId')
+        .get();
 
     if (snapshot.exists &&
         isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {

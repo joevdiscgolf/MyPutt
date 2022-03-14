@@ -49,10 +49,8 @@ class SigninService {
   }
 
   Future<bool> attemptSignUp(String email, String password) async {
-    print('attempting sign up');
     final bool? signUpSuccess =
         await _authService.signUpWithEmail(email, password);
-    print(signUpSuccess);
     if (signUpSuccess == null ||
         !signUpSuccess ||
         _authService.getCurrentUserId() == null) {
@@ -76,10 +74,8 @@ class SigninService {
   }
 
   Future<bool> attemptSignIn(String email, String password) async {
-    print('attempting signin');
     final bool? signInSuccess =
         await _authService.signInWithEmail(email, password);
-    print(signInSuccess);
     if (signInSuccess == null ||
         !signInSuccess ||
         _authService.getCurrentUserId() == null) {

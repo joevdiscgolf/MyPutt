@@ -67,6 +67,13 @@ class SessionRepository {
     return true;
   }
 
+  List<PuttingSession> getSessionsWithRange(int range) {
+    allSessions.sort((s1, s2) => s1.timeStamp.compareTo(s2.timeStamp));
+    final List<PuttingSession> selectedSessions =
+        allSessions.take(range).toList();
+    return range == 0 ? allSessions : selectedSessions;
+  }
+
   void clearData() {
     currentSession = null;
     allSessions = [];

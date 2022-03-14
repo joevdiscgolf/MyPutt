@@ -130,12 +130,10 @@ class StatsService {
     int totalAttempts = 0;
     int totalMade = 0;
 
-    num sessionIndex = 0;
-
     final sessionsInOrder = List.from(sessions).reversed;
     for (var session in sessionsInOrder) {
       final sets = session.sets;
-      sets.forEach((set) {
+      for (var set in sets) {
         final distance = set.distance;
 
         overallPuttsAttempted[distance] =
@@ -145,8 +143,7 @@ class StatsService {
         overallPuttsMade[distance] = overallPuttsMade[distance] == null
             ? set.puttsMade
             : overallPuttsMade[distance]! + set.puttsMade;
-      });
-      sessionIndex += 1;
+      }
     }
 
     final focusSessionSets = focusSession.sets;
@@ -286,7 +283,7 @@ class StatsService {
     for (var session in sessions) {
       int index = 0;
       session.sets
-          .where((oldset) => oldset.distance == distance)
+          .where((oldSet) => oldSet.distance == distance)
           .forEach((set) {
         final double decimal = set.puttsAttempted == 0
             ? 0

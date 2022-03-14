@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/misc/putting_set_row.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
 
 class PreviousSetsList extends StatefulWidget {
   const PreviousSetsList(
@@ -25,71 +23,23 @@ class PreviousSetsList extends StatefulWidget {
 class _PreviousSetsListState extends State<PreviousSetsList> {
   @override
   Widget build(BuildContext context) {
-    return widget.static
-        ? widget.sets.isEmpty
-            ? const Center(child: Text('No sets yet'))
-            : ListView(
-                children: List.from(widget.sets
-                    .asMap()
-                    .entries
-                    .map((entry) {
-                      return PuttingSetRow(
-                          deletable: widget.deletable,
-                          set: entry.value,
-                          index: entry.key,
-                          delete: () {
-                            widget.deleteSet(entry.value);
-                            /*BlocProvider.of<ChallengesCubit>(context)
-                            .deleteSet(entry.value);*/
-                          });
-                    })
-                    .toList()
-                    .reversed),
-              )
-        : BlocBuilder<ChallengesCubit, ChallengesState>(
-            builder: (context, state) {
-            if (state is ChallengeInProgress) {
-              return widget.sets.isEmpty
-                  ? const Center(child: Text('No sets yet'))
-                  : ListView(
-                      children: List.from(widget.sets
-                          .asMap()
-                          .entries
-                          .map((entry) {
-                            return PuttingSetRow(
-                                deletable: widget.deletable,
-                                set: entry.value,
-                                index: entry.key,
-                                delete: () {
-                                  widget.deleteSet(entry.value);
-                                  /*BlocProvider.of<ChallengesCubit>(context)
-                              .deleteSet(entry.value);*/
-                                });
-                          })
-                          .toList()
-                          .reversed),
-                    );
-            } else if (state is ChallengeComplete) {
-              return widget.sets.isEmpty
-                  ? const Center(child: Text('No sets yet'))
-                  : ListView(
-                      children: List.from(widget.sets
-                          .asMap()
-                          .entries
-                          .map((entry) => PuttingSetRow(
-                              deletable: widget.deletable,
-                              set: entry.value,
-                              index: entry.key,
-                              delete: () {
-                                widget.deleteSet(entry.value);
-                                /*BlocProvider.of<ChallengesCubit>(context)
-                              .deleteSet(entry.value);*/
-                              }))
-                          .toList()
-                          .reversed),
-                    );
-            }
-            return Container();
-          });
+    return widget.sets.isEmpty
+        ? const Center(child: Text('No sets yet'))
+        : ListView(
+            children: List.from(widget.sets
+                .asMap()
+                .entries
+                .map((entry) {
+                  return PuttingSetRow(
+                      deletable: widget.deletable,
+                      set: entry.value,
+                      index: entry.key,
+                      delete: () {
+                        widget.deleteSet(entry.value);
+                      });
+                })
+                .toList()
+                .reversed),
+          );
   }
 }

@@ -3,6 +3,8 @@ import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/services/auth_service.dart';
 part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
@@ -11,7 +13,7 @@ class PuttingChallenge {
       {required this.status,
       required this.creationTimeStamp,
       required this.id,
-      required this.opponentUser,
+      this.opponentUser,
       required this.currentUser,
       required this.challengerUser,
       required this.recipientUser,
@@ -24,19 +26,24 @@ class PuttingChallenge {
   final int creationTimeStamp;
   late final int? completionTimeStamp;
   final String id;
-  final MyPuttUser opponentUser;
+  final MyPuttUser? opponentUser;
   final MyPuttUser currentUser;
   final MyPuttUser challengerUser;
-  final MyPuttUser recipientUser;
+  final MyPuttUser? recipientUser;
   final List<ChallengeStructureItem> challengeStructure;
-  final List<PuttingSet> opponentSets;
+  List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
 
   factory PuttingChallenge.fromStorageChallenge(
       StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
+    final String? currentUid = locator.get<AuthService>().getCurrentUserId();
     MyPuttUser recipientUser;
-    if (storageChallenge.recipientUser == null) {
+
+    // recipient user is only the current user if it's null and the current user is not the challenger.
+    if (storageChallenge.recipientUser == null &&
+        storageChallenge.challengerUser.uid != currentUid) {
       recipientUser = currentUser;
+
       return PuttingChallenge(
           status: storageChallenge.status,
           creationTimeStamp: storageChallenge.creationTimeStamp,
@@ -63,7 +70,7 @@ class PuttingChallenge {
       creationTimeStamp: storageChallenge.creationTimeStamp,
       id: storageChallenge.id,
       opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
-          ? storageChallenge.recipientUser!
+          ? storageChallenge.recipientUser
           : storageChallenge.challengerUser,
       currentUser: storageChallenge.recipientUser!.uid == currentUser.uid
           ? storageChallenge.recipientUser!
@@ -76,7 +83,7 @@ class PuttingChallenge {
           ? storageChallenge.recipientSets
           : storageChallenge.challengerSets,
       challengerUser: storageChallenge.challengerUser,
-      recipientUser: storageChallenge.recipientUser!,
+      recipientUser: storageChallenge.recipientUser,
     );
   }
 

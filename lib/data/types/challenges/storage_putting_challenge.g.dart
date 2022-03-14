@@ -10,6 +10,7 @@ StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
     StoragePuttingChallenge(
       status: json['status'] as String,
       creationTimeStamp: json['creationTimeStamp'] as int,
+      completionTimeStamp: json['completionTimeStamp'] as int?,
       id: json['id'] as String,
       challengerUser: MyPuttUser.fromJson(
           Map<String, dynamic>.from(json['challengerUser'] as Map)),
@@ -34,6 +35,7 @@ Map<String, dynamic> _$StoragePuttingChallengeToJson(
     <String, dynamic>{
       'status': instance.status,
       'creationTimeStamp': instance.creationTimeStamp,
+      'completionTimeStamp': instance.completionTimeStamp,
       'id': instance.id,
       'challengerUser': instance.challengerUser.toJson(),
       'recipientUser': instance.recipientUser?.toJson(),

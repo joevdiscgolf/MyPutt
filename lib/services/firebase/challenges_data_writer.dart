@@ -7,19 +7,19 @@ import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataWriter {
-  Future<bool> setPuttingChallenge(
-      MyPuttUser currentUser, PuttingChallenge puttingChallenge) {
-    final currentSessionReference = firestore.doc(
-        '$challengesCollection/${currentUser.uid}/$challengesCollection/${puttingChallenge.id}');
+  Future<bool> setPuttingChallenge(String recipientUid, String challengerUid,
+      StoragePuttingChallenge storageChallenge) {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    final recipientRef = firestore.doc(
+        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
+    final challengerRef = firestore.doc(
+        '$challengesCollection/$challengerUid/$challengesCollection/${storageChallenge.id}');
 
-    return currentSessionReference
-        .set(
-            StoragePuttingChallenge.fromPuttingChallenge(
-                    puttingChallenge, currentUser)
-                .toJson(),
-            SetOptions(merge: true))
-        .then((value) => true)
-        .catchError((error) => false);
+    batch.set(recipientRef, storageChallenge.toJson(), SetOptions(merge: true));
+    batch.set(
+        challengerRef, storageChallenge.toJson(), SetOptions(merge: true));
+
+    return batch.commit().then((value) => true).catchError((e) => false);
   }
 
   Future<bool> sendChallengeToUser(String recipientUid, MyPuttUser currentUser,
@@ -35,7 +35,7 @@ class FBChallengesDataWriter {
   Future<bool> uploadUnclaimedChallenge(
       StoragePuttingChallenge storageChallenge) {
     return firestore
-        .collection('Unclaimed_Challenges')
+        .collection(unclaimedChallengesCollection)
         .doc(storageChallenge.id)
         .set(storageChallenge.toJson())
         .then((value) => true)

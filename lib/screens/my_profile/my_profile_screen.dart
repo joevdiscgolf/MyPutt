@@ -9,7 +9,7 @@ import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/my_profile/components/charts/performance_chart_panel.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'components/pdga_info_panel.dart';
@@ -494,8 +494,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       Text(
                         '${numChallenges == 0 ? '-' : (winRate * 100).toStringAsFixed(2)} %',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color:
-                                winRate > 0.5 ? ThemeColors.green : Colors.red),
+                            color: winRate > 0.5
+                                ? MyPuttColors.green
+                                : Colors.red),
                       )
                     ],
                   ),
@@ -529,7 +530,7 @@ class PercentageCircle extends StatelessWidget {
                 tween: Tween<double>(begin: 0.0, end: decimal),
                 duration: const Duration(milliseconds: 300),
                 builder: (context, value, _) => CircularProgressIndicator(
-                  color: ThemeColors.green,
+                  color: MyPuttColors.green,
                   backgroundColor: Colors.grey[200],
                   value: value,
                   strokeWidth: 5,
@@ -540,7 +541,7 @@ class PercentageCircle extends StatelessWidget {
             width: diameter,
             height: diameter,
             child: CircularProgressIndicator(
-              color: ThemeColors.green,
+              color: MyPuttColors.green,
               backgroundColor: Colors.grey[200],
               value: 0,
               strokeWidth: 5,

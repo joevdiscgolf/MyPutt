@@ -7,6 +7,7 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/components/misc/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
+import 'components/finish_session_dialog.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -19,20 +20,10 @@ class RecordScreen extends StatefulWidget {
 
 class _RecordScreenState extends State<RecordScreen> {
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
-  late final PuttsMadePicker puttsMadePicker = PuttsMadePicker(
-      challengeMode: false,
-      sslKey: puttsMadePickerKey,
-      onUpdate: (int newIndex) {
-        setState(() {
-          _focusedIndex = newIndex;
-        });
-      });
 
   bool sessionInProgress = true;
-
-  int _focusedIndex = 0;
   int _setLength = 10;
-
+  int _focusedIndex = 10;
   int _weatherIndex = 0;
   int _windIndex = 0;
   int _distancesIndex = 0;
@@ -109,7 +100,16 @@ class _RecordScreenState extends State<RecordScreen> {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  puttsMadePicker,
+                  PuttsMadePicker(
+                      length: _setLength,
+                      initialIndex: _setLength.toDouble(),
+                      challengeMode: false,
+                      sslKey: puttsMadePickerKey,
+                      onUpdate: (int newIndex) {
+                        setState(() {
+                          _focusedIndex = newIndex;
+                        });
+                      }),
                 ],
               ),
             ),
@@ -240,12 +240,13 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('-',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                puttsMadePicker.adjustSetLength(false);
-                setState(() {
-                  if (_setLength > 1) {
+                puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
+                if (_setLength > 1) {
+                  setState(() {
                     _setLength -= 1;
-                  }
-                });
+                    _focusedIndex = _setLength;
+                  });
+                }
               },
               style: ElevatedButton.styleFrom(
                 shape: const CircleBorder(),
@@ -258,9 +259,14 @@ class _RecordScreenState extends State<RecordScreen> {
               child: const Text('+',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                puttsMadePicker.adjustSetLength(true);
                 setState(() {
                   _setLength += 1;
+                });
+                setState(() {
+                  _focusedIndex = _setLength + 1;
+                });
+                Future.delayed(const Duration(milliseconds: 25), () {
+                  puttsMadePickerKey.currentState?.focusToItem(_setLength + 1);
                 });
               },
               style: ElevatedButton.styleFrom(
@@ -273,79 +279,6 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-/*
-  Widget _puttsMadePicker(BuildContext context) {
-    return Container(
-      height: 80,
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: ScrollSnapList(
-        updateOnScroll: true,
-        itemSize: 80,
-        itemCount: _setLength + 1,
-        duration: 125,
-        focusOnItemTap: true,
-        onItemFocus: _onItemFocus,
-        itemBuilder: _buildListItem,
-        dynamicItemSize: true,
-        allowAnotherDirection: true,
-        dynamicSizeEquation: (displacement) {
-          const threshold = 0;
-          const maxDisplacement = 800;
-          if (displacement >= threshold) {
-            const slope = 1 / (-maxDisplacement);
-            return slope * displacement + (1 - slope * threshold);
-          } else {
-            const slope = 1 / (maxDisplacement);
-            return slope * displacement + (1 - slope * threshold);
-          }
-        },
-        // dynamicSizeEquation: customEquation, //optional
-      ),
-    );
-  }
-
-  void _onItemFocus(int index) {
-    setState(() {
-      _focusedIndex = index;
-    });
-    HapticFeedback.mediumImpact();
-  }
-
-  Widget _buildListItem(BuildContext context, int index) {
-    Color? iconColor;
-    Color backgroundColor;
-    if (index == 0) {
-      iconColor = _focusedIndex == index ? Colors.red : Colors.grey[400]!;
-      backgroundColor = Colors.transparent;
-    } else {
-      backgroundColor =
-          index <= _focusedIndex ? const Color(0xff00d162) : Colors.grey[200]!;
-    }
-    return Container(
-      decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Colors.grey[600]!)),
-      width: 80,
-      child: Center(
-          child: index == 0
-              ? Icon(
-                  FlutterRemix.close_circle_line,
-                  color: iconColor ?? Colors.white,
-                  size: 40,
-                )
-              : Text((index).toString(),
-                  style: TextStyle(
-                      color:
-                          index <= _focusedIndex ? Colors.white : Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold))),
-    );
-  }
-*/
   Widget _previousSetsList(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
       if (state is SessionInProgressState) {
@@ -375,205 +308,10 @@ class _RecordScreenState extends State<RecordScreen> {
       }
     });
   }
-  //
-  // Widget _finishSessionDialog(BuildContext context) {
-  //   return Dialog(
-  //       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(24),
-  //       ),
-  //       child: Container(
-  //         padding: const EdgeInsets.all(24),
-  //         width: double.infinity,
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.start,
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             const Text(
-  //               'Finish Putting Session',
-  //               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-  //             ),
-  //             const SizedBox(
-  //               height: 24,
-  //             ),
-  //             Text(_dialogErrorText ?? ''),
-  //             const SizedBox(height: 24),
-  //             SizedBox(
-  //               width: double.infinity,
-  //               child: Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                 children: [
-  //                   PrimaryButton(
-  //                       width: 100,
-  //                       height: 50,
-  //                       label: 'Cancel',
-  //                       fontSize: 18,
-  //                       labelColor: Colors.grey[600]!,
-  //                       backgroundColor: Colors.grey[200]!,
-  //                       onPressed: () {
-  //                         setState(() {
-  //                           _dialogErrorText = '';
-  //                         });
-  //                         BlocProvider.of<SessionsCubit>(context)
-  //                             .continueSession();
-  //                         Navigator.pop(context);
-  //                       }),
-  //                   BlocBuilder<SessionsCubit, SessionsState>(
-  //                     builder: (context, state) {
-  //                       if (state is SessionInProgressState) {
-  //                         return PrimaryButton(
-  //                           label: 'Finish',
-  //                           fontSize: 18,
-  //                           width: 100,
-  //                           height: 50,
-  //                           backgroundColor: Colors.green,
-  //                           onPressed: () async {
-  //                             final List<PuttingSet>? sets =
-  //                                 state.currentSession.sets;
-  //                             if (sets == null || sets.isEmpty) {
-  //                               setState(() {
-  //                                 _dialogErrorText = 'Empty session!';
-  //                               });
-  //                             } else {
-  //                               await BlocProvider.of<SessionsCubit>(context)
-  //                                   .completeSession();
-  //                               setState(() {
-  //                                 sessionInProgress = false;
-  //                               });
-  //                               Navigator.pop(context);
-  //                             }
-  //                           },
-  //                         );
-  //                       } else {
-  //                         return PrimaryButton(
-  //                             label: 'Finish',
-  //                             fontSize: 18,
-  //                             width: 100,
-  //                             height: 50,
-  //                             backgroundColor: Colors.green,
-  //                             onPressed: () {
-  //                               setState(() {
-  //                                 _dialogErrorText = "No active session";
-  //                               });
-  //                               return 'Finish';
-  //                             });
-  //                       }
-  //                     },
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ));
-  // }
 
   void dialogCallBack() {
     if (!sessionInProgress) {
       Navigator.pop(context);
     }
-  }
-}
-
-class FinishSessionDialog extends StatefulWidget {
-  const FinishSessionDialog({Key? key, required this.stopSession})
-      : super(key: key);
-
-  final Function stopSession;
-
-  @override
-  State<FinishSessionDialog> createState() => _FinishSessionDialogState();
-}
-
-class _FinishSessionDialogState extends State<FinishSessionDialog> {
-  String _dialogErrorText = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Finish Putting Session',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              Text(_dialogErrorText),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    PrimaryButton(
-                        width: 100,
-                        height: 50,
-                        label: 'Cancel',
-                        fontSize: 18,
-                        labelColor: Colors.grey[600]!,
-                        backgroundColor: Colors.grey[200]!,
-                        onPressed: () async {
-                          _dialogErrorText = '';
-                          Navigator.pop(context);
-                        }),
-                    BlocBuilder<SessionsCubit, SessionsState>(
-                      builder: (context, state) {
-                        if (state is SessionInProgressState) {
-                          return PrimaryButton(
-                            label: 'Finish',
-                            fontSize: 18,
-                            width: 100,
-                            height: 50,
-                            backgroundColor: Colors.green,
-                            onPressed: () async {
-                              final List<PuttingSet>? sets =
-                                  state.currentSession.sets;
-                              if (sets == null || sets.isEmpty) {
-                                setState(() {
-                                  _dialogErrorText = 'Empty session!';
-                                });
-                              } else {
-                                await BlocProvider.of<SessionsCubit>(context)
-                                    .completeSession();
-                                widget.stopSession();
-                                Navigator.pop(context);
-                              }
-                            },
-                          );
-                        } else {
-                          return PrimaryButton(
-                              label: 'Finish',
-                              fontSize: 18,
-                              width: 100,
-                              height: 50,
-                              backgroundColor: Colors.green,
-                              onPressed: () {
-                                setState(() {
-                                  _dialogErrorText = "No active session";
-                                });
-                                return 'Finish';
-                              });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
   }
 }

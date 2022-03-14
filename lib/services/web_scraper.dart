@@ -5,9 +5,9 @@ class WebScraperService {
   Future<PDGAPlayerInfo?> getPDGAData(int? pdgaNumber) async {
     if (pdgaNumber != null) {
       final webScraper = WebScraper('https://www.pdga.com/');
-      if (await webScraper.loadWebPage('player/$pdgaNumber').catchError((e) {
-        print(e);
-      })) {
+      if (await webScraper
+          .loadWebPage('player/$pdgaNumber')
+          .catchError((e) {})) {
         List<Map<String, dynamic>> nameHTML = webScraper
             .getElement('div.inside > div.panel-pane > div.pane-content', []);
         List<Map<String, dynamic>> locationHTML =
@@ -126,7 +126,6 @@ class WebScraperService {
         return null;
       }
     } else {
-      print('pdga num is null');
       return null;
     }
   }

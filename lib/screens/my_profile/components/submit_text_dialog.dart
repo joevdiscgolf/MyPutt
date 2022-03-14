@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 
@@ -73,7 +73,7 @@ class _SubmitTextDialogState extends State<SubmitTextDialog> {
                   loading: _loading,
                   width: 100,
                   height: 50,
-                  backgroundColor: ThemeColors.green,
+                  backgroundColor: MyPuttColors.green,
                   onPressed: () async {
                     setState(() {
                       _loading = true;

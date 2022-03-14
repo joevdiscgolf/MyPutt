@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/screens/challenge/components/challenge_items.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/screens/challenge/challenge_record_screen.dart';
+import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 
 class ChallengesList extends StatelessWidget {
   const ChallengesList(
@@ -25,7 +25,7 @@ class ChallengesList extends StatelessWidget {
                     .map(
                       (challenge) => Builder(builder: (context) {
                         if (category == ChallengeCategory.pending) {
-                          return NewPendingChallengeItem(
+                          return PendingChallengeItem(
                             accept: () {
                               BlocProvider.of<ChallengesCubit>(context)
                                   .openChallenge(challenge);
@@ -35,29 +35,14 @@ class ChallengesList extends StatelessWidget {
                                           value:
                                               BlocProvider.of<ChallengesCubit>(
                                                   context),
-                                          child:
-                                              const ChallengeRecordScreen())));
+                                          child: ChallengeRecordScreen(
+                                            challengeId: challenge.id,
+                                          ))));
                             },
                             challenge: challenge,
                           );
-                        } else if (category == ChallengeCategory.active) {
-                          return NewActiveChallengeItem(
-                              challenge:
-                                  challenge); /*ActiveChallengeItem(
-                              accept: () {
-                                BlocProvider.of<ChallengesCubit>(context)
-                                    .openChallenge(challenge);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        BlocProvider.value(
-                                            value: BlocProvider.of<
-                                                ChallengesCubit>(context),
-                                            child:
-                                                const ChallengeRecordScreen())));
-                              },
-                              challenge: challenge);*/
                         } else {
-                          return CompletedChallengeItem(
+                          return BasicChallengeItem(
                             challenge: challenge,
                           );
                         }

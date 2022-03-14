@@ -5,16 +5,23 @@ import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
-import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
+import 'package:myputt/utils/enums.dart';
 
 class SendChallengeDialog extends StatefulWidget {
   const SendChallengeDialog(
-      {Key? key, required this.recipientUser, required this.session})
+      {Key? key,
+      required this.recipientUser,
+      this.session,
+      required this.onComplete,
+      this.preset})
       : super(key: key);
 
   final MyPuttUser recipientUser;
-  final PuttingSession session;
+  final PuttingSession? session;
+  final Function onComplete;
+  final ChallengePreset? preset;
 
   @override
   _SendChallengeDialogState createState() => _SendChallengeDialogState();
@@ -55,8 +62,8 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
               ),
               Text(
                 ' ${widget.recipientUser.displayName}',
-                style: TextStyle(
-                    color: ThemeColors.green,
+                style: const TextStyle(
+                    color: MyPuttColors.green,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -88,7 +95,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                   height: 50,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: ThemeColors.green,
+                        primary: MyPuttColors.green,
                         padding: const EdgeInsets.symmetric(
                             vertical: 4, horizontal: 16),
                         shape: RoundedRectangleBorder(
@@ -103,13 +110,21 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                           _loadingState = LoadingState.loading;
                         });
 
-                        await BlocProvider.of<ChallengesCubit>(context)
-                            .generateAndSendChallengeToUser(
-                                widget.session, widget.recipientUser);
+                        if (widget.preset != null) {
+                          await BlocProvider.of<ChallengesCubit>(context)
+                              .sendChallengeWithPreset(
+                                  widget.preset!, widget.recipientUser);
+                        } else if (widget.session != null) {
+                          await BlocProvider.of<ChallengesCubit>(context)
+                              .generateAndSendChallengeToUser(
+                                  widget.session!, widget.recipientUser);
+                        }
+                        await Future.delayed(const Duration(milliseconds: 500));
                         setState(() {
                           _loadingState = LoadingState.loaded;
                         });
                         Future.delayed(const Duration(milliseconds: 300), () {
+                          widget.onComplete();
                           Navigator.pop(context);
                         });
                       },

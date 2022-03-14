@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 
@@ -117,4 +119,56 @@ int totalAttemptsFromSubset(List<PuttingSet> sets, int limit) {
     total += sets[i].puttsAttempted.toInt();
   }
   return total;
+}
+
+int totalAttemptsFromStructure(List<ChallengeStructureItem> structure) {
+  int total = 0;
+  for (var item in structure) {
+    total += item.setLength;
+  }
+  return total;
+}
+
+int getDifferenceFromChallenge(PuttingChallenge challenge) {
+  final int currentUserSetsLength = challenge.currentUserSets.length;
+  final int opponentSetsLength = challenge.opponentSets.length;
+  final int minLength = min(currentUserSetsLength, opponentSetsLength);
+
+  final int currentUserPuttsMade =
+      totalMadeFromSubset(challenge.currentUserSets, minLength);
+  final int opponentPuttsMade =
+      totalMadeFromSubset(challenge.opponentSets, minLength);
+
+  return currentUserPuttsMade - opponentPuttsMade;
+}
+
+int getPuttsMadeFromChallenge(String uid, PuttingChallenge challenge) {
+  if (uid != challenge.currentUser.uid && uid != challenge.opponentUser?.uid) {
+    return 0;
+  }
+  final int currentUserSetsLength = challenge.currentUserSets.length;
+  final int opponentSetsLength = challenge.opponentSets.length;
+  final int minLength = min(currentUserSetsLength, opponentSetsLength);
+
+  return totalMadeFromSubset(
+      uid == challenge.currentUser.uid
+          ? challenge.currentUserSets
+          : challenge.opponentSets,
+      minLength);
+}
+
+int getPuttsAttemptedFromChallenge(String uid, PuttingChallenge challenge) {
+  if (uid != challenge.currentUser.uid && uid != challenge.opponentUser?.uid) {
+    return 0;
+  }
+
+  final int currentUserSetsLength = challenge.currentUserSets.length;
+  final int opponentSetsLength = challenge.opponentSets.length;
+  final int minLength = min(currentUserSetsLength, opponentSetsLength);
+
+  return totalAttemptsFromSubset(
+      uid == challenge.currentUser.uid
+          ? challenge.currentUserSets
+          : challenge.opponentSets,
+      minLength);
 }
