@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
@@ -77,7 +78,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           height: 40,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: MyPuttColors.green,
+              color: MyPuttColors.lightGreen,
               border: Border.all(color: Colors.grey[600]!, width: 1.5)),
         );
       } else if (index == widget.puttingSets.length + 1) {
@@ -86,7 +87,7 @@ class _ChallengeScrollSnapListState extends State<ChallengeScrollSnapList> {
           height: 40,
           child: Icon(
             FlutterRemix.arrow_left_line,
-            color: MyPuttColors.green,
+            color: MyPuttColors.lightGreen,
           ),
         );
       } else {
@@ -141,8 +142,6 @@ class _ListItemState extends State<ListItem>
     with SingleTickerProviderStateMixin {
   late final AnimationController animationController;
   late final Animation<double> animation;
-  int numCycles = 0;
-  final int maxCycles = 1;
 
   @override
   void initState() {
@@ -175,7 +174,7 @@ class _ListItemState extends State<ListItem>
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: widget.animate
-                    ? MyPuttColors.green
+                    ? MyPuttColors.lightGreen
                         .withAlpha((animation.value * 255).toInt())
                     : Colors.transparent,
                 border: Border.all(color: Colors.grey[600]!, width: 1.5)),
@@ -183,35 +182,29 @@ class _ListItemState extends State<ListItem>
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('${widget.set.distance} ft',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                AutoSizeText(
+                  '${widget.set.distance} ft',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                  maxLines: 1,
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                AutoSizeText(
+                  '${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.w600, fontSize: 12),
+                  maxLines: 1,
+                ),
               ],
             )));
       },
       animation: animation,
-      // child: Container(
-      //   width: 60,
-      //   height: 40,
-      //   decoration: BoxDecoration(
-      //       borderRadius: BorderRadius.circular(5),
-      //       color: widget.animate
-      //           ? MyPuttColors.green.withAlpha((animation.value * 255).toInt())
-      //           : Colors.transparent,
-      //       border: Border.all(color: Colors.grey[600]!, width: 1.5)),
-      //   child: Center(
-      //     child: Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Text('${widget.set.distance} ft',
-      //             style: const TextStyle(fontWeight: FontWeight.bold)),
-      //         Text('${widget.set.puttsMade} / ${widget.set.puttsAttempted}',
-      //             style: const TextStyle(fontWeight: FontWeight.bold)),
-      //       ],
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

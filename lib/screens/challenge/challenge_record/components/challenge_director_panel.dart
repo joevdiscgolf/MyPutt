@@ -35,14 +35,6 @@ class ChallengeDirectorPanel extends StatelessWidget {
       BuildContext context, PuttingChallenge currentChallenge, int index) {
     final int puttsMadeDifference =
         getDifferenceFromChallenge(currentChallenge);
-    // final int currentUserPuttsMade = getPuttsMadeFromChallenge(
-    //     currentChallenge.currentUser.uid, currentChallenge);
-    // final int currentUserPuttsAttempted = getPuttsAttemptedFromChallenge(
-    //     currentChallenge.currentUser.uid, currentChallenge);
-    // final int opponentPuttsMade = getPuttsMadeFromChallenge(
-    //     currentChallenge.opponentUser?.uid ?? '', currentChallenge);
-    // final int opponentPuttsAttempted = getPuttsAttemptedFromChallenge(
-    //     currentChallenge.opponentUser?.uid ?? '', currentChallenge);
     final int distance = currentChallenge.challengeStructure[index].distance;
     final int setLength = currentChallenge.challengeStructure[index].setLength;
     return Container(

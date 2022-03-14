@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -165,9 +166,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   SizedBox(
                       width: 100,
                       child: Center(
-                          child: Text(
+                          child: AutoSizeText(
                         'Set',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                        maxLines: 1,
                       ))),
                   CounterScrollSnapList(
                     initialIndex: initialIndex,
@@ -195,9 +198,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       width: 100,
                       child: Center(
                           child: Center(
-                              child: Text(
+                              child: AutoSizeText(
                         challenge.opponentUser?.displayName ?? 'Unknown',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                        maxLines: 1,
                       )))),
                   ChallengeScrollSnapList(
                     initialIndex: initialIndex,
@@ -229,9 +234,11 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   SizedBox(
                       width: 100,
                       child: Center(
-                          child: Text(
+                          child: AutoSizeText(
                         'You',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                        maxLines: 1,
                       ))),
                   ChallengeScrollSnapList(
                     initialIndex: initialIndex,

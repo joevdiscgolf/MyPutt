@@ -41,10 +41,8 @@ class ChallengesList extends StatelessWidget {
                             },
                             challenge: challenge,
                           );
-                        } else if (category == ChallengeCategory.active) {
-                          return ActiveChallengeItem(challenge: challenge);
                         } else {
-                          return CompletedChallengeItem(
+                          return BasicChallengeItem(
                             challenge: challenge,
                           );
                         }

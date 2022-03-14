@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AnimatedArrows extends StatefulWidget {
@@ -16,8 +18,6 @@ class _AnimatedArrowsState extends State<AnimatedArrows>
 
   List<bool> disposed = [false, false, false, false, false];
 
-  // final double minSize = 20;
-  // final double maxSize = 25;
   final double minSize = 20;
   final double maxSize = 30;
 
@@ -90,27 +90,32 @@ class _AnimatedArrowsState extends State<AnimatedArrows>
   Widget build(BuildContext context) {
     return SizedBox(
         width: 125,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < 4; i++)
-              AnimatedBuilder(
-                builder: (BuildContext context, Widget? child) {
-                  return SizedBox(
-                    // width: 25,
-                    child: Transform.translate(
-                      offset: Offset(animations[i].value - 20, 0),
-                      child: const Icon(
-                        FlutterRemix.arrow_right_s_line,
-                        color: MyPuttColors.lightBlue,
-                        // size: animations[i].value,
+        child: Bounceable(
+          onTap: () {
+            Vibrate.feedback(FeedbackType.light);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (int i = 0; i < 4; i++)
+                AnimatedBuilder(
+                  builder: (BuildContext context, Widget? child) {
+                    return SizedBox(
+                      // width: 25,
+                      child: Transform.translate(
+                        offset: Offset(animations[i].value - 20, 0),
+                        child: const Icon(
+                          FlutterRemix.arrow_right_s_line,
+                          color: MyPuttColors.lightBlue,
+                          // size: animations[i].value,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                animation: animations[i],
-              )
-          ],
+                    );
+                  },
+                  animation: animations[i],
+                )
+            ],
+          ),
         ));
   }
 }

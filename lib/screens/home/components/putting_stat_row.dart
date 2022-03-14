@@ -6,7 +6,6 @@ import 'package:myputt/components/misc/animated_circular_progress_indicator.dart
 import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/screens/home/components/line_chart_preview.dart';
 import 'package:myputt/utils/calculators.dart';
-import 'package:myputt/utils/colors.dart';
 
 class PuttingStatRow extends StatefulWidget {
   const PuttingStatRow(
