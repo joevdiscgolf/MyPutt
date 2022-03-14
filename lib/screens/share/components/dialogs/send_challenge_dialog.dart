@@ -7,18 +7,21 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
+import 'package:myputt/utils/enums.dart';
 
 class SendChallengeDialog extends StatefulWidget {
   const SendChallengeDialog(
       {Key? key,
       required this.recipientUser,
-      required this.session,
-      required this.onComplete})
+      this.session,
+      required this.onComplete,
+      this.preset})
       : super(key: key);
 
   final MyPuttUser recipientUser;
-  final PuttingSession session;
+  final PuttingSession? session;
   final Function onComplete;
+  final ChallengePreset? preset;
 
   @override
   _SendChallengeDialogState createState() => _SendChallengeDialogState();
@@ -107,16 +110,22 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
                           _loadingState = LoadingState.loading;
                         });
 
-                        await BlocProvider.of<ChallengesCubit>(context)
-                            .generateAndSendChallengeToUser(
-                                widget.session, widget.recipientUser);
+                        if (widget.preset != null) {
+                          await BlocProvider.of<ChallengesCubit>(context)
+                              .sendChallengeWithPreset(
+                                  widget.preset!, widget.recipientUser);
+                        } else if (widget.session != null) {
+                          await BlocProvider.of<ChallengesCubit>(context)
+                              .generateAndSendChallengeToUser(
+                                  widget.session!, widget.recipientUser);
+                        }
                         await Future.delayed(const Duration(milliseconds: 500));
                         setState(() {
                           _loadingState = LoadingState.loaded;
                         });
                         Future.delayed(const Duration(milliseconds: 300), () {
-                          // widget.onComplete();
-                          // Navigator.pop(context);
+                          widget.onComplete();
+                          Navigator.pop(context);
                         });
                       },
                       child: Builder(builder: (context) {

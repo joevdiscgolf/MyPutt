@@ -204,6 +204,28 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
+  Future<bool> sendChallengeWithPreset(
+      ChallengePreset challengePreset, MyPuttUser recipientUser) async {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return false;
+    } else {
+      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+      final List<ChallengeStructureItem> challengeStructure =
+          _presetsRepository.presetStructures[challengePreset]!;
+      final storageChallenge = StoragePuttingChallenge(
+          status: ChallengeStatus.active,
+          creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
+          id: '${currentUser.uid}~$timestamp',
+          challengerUser: currentUser,
+          challengeStructure: challengeStructure,
+          challengerSets: [],
+          recipientSets: [],
+          recipientUser: recipientUser);
+      return _databaseService.setStorageChallenge(storageChallenge);
+    }
+  }
+
   Future<String?> getShareMessageFromSession(PuttingSession session) async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {

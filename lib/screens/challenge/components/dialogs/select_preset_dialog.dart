@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/screens/challenge/components/dialogs/components/preset_structure_row.dart';
+import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/enums.dart';
@@ -84,10 +87,26 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                   fontSize: 18,
                   width: 100,
                   height: 50,
-                  backgroundColor: MyPuttColors.green,
+                  backgroundColor: MyPuttColors.lightGreen,
                   onPressed: () {
-                    BlocProvider.of<ChallengesCubit>(context)
-                        .getShareMessageFromPreset(_selectedPreset);
+                    Vibrate.feedback(FeedbackType.light);
+                    if (_selectedPreset != ChallengePreset.none) {
+                      showBarModalBottomSheet(
+                          topControl: Container(),
+                          bounce: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0)),
+                          ),
+                          context: context,
+                          builder: (context) => ShareSheet(
+                                preset: _selectedPreset,
+                                onComplete: () {
+                                  Navigator.pop(context);
+                                },
+                              )).then((_) => Navigator.pop(context));
+                    }
                   },
                 )
               ],

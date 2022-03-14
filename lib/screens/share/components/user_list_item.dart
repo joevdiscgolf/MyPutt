@@ -13,7 +13,7 @@ class UserListItem extends StatelessWidget {
       required this.onTap})
       : super(key: key);
 
-  final PuttingSession session;
+  final PuttingSession? session;
   final MyPuttUser user;
   final Function onTap;
 

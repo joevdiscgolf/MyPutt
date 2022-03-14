@@ -4,16 +4,18 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/screens/share/components/user_list_item.dart';
+import 'package:myputt/utils/enums.dart';
 
 import 'dialogs/send_challenge_dialog.dart';
 
 class UserListView extends StatelessWidget {
   const UserListView(
-      {Key? key, required this.session, required this.onComplete})
+      {Key? key, required this.session, required this.onComplete, this.preset})
       : super(key: key);
 
-  final PuttingSession session;
+  final PuttingSession? session;
   final Function onComplete;
+  final ChallengePreset? preset;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class UserListView extends StatelessWidget {
                       showDialog(
                           context: context,
                           builder: (context) => SendChallengeDialog(
+                              preset: preset,
                               onComplete: onComplete,
                               recipientUser: user,
                               session: session));

@@ -6,6 +6,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:share/share.dart';
 
@@ -14,11 +15,13 @@ import 'components/user_list_view.dart';
 enum LoadingState { static, loading, loaded }
 
 class ShareSheet extends StatefulWidget {
-  const ShareSheet({Key? key, required this.session, required this.onComplete})
+  const ShareSheet(
+      {Key? key, this.session, required this.onComplete, this.preset})
       : super(key: key);
 
-  final PuttingSession session;
+  final PuttingSession? session;
   final Function onComplete;
+  final ChallengePreset? preset;
 
   @override
   _ShareSheetState createState() => _ShareSheetState();
@@ -72,7 +75,9 @@ class _ShareSheetState extends State<ShareSheet> {
           _usernameField(context),
           Expanded(
               child: UserListView(
-                  onComplete: widget.onComplete, session: widget.session))
+                  preset: widget.preset,
+                  onComplete: widget.onComplete,
+                  session: widget.session))
         ],
       ),
     );
@@ -134,8 +139,15 @@ class _ShareSheetState extends State<ShareSheet> {
 
   Future<void> _shareWithLink() async {
     Vibrate.feedback(FeedbackType.light);
-    final String? shareMessage = await BlocProvider.of<ChallengesCubit>(context)
-        .getShareMessageFromSession(widget.session);
+    String? shareMessage;
+    if (widget.preset != null) {
+      shareMessage = await BlocProvider.of<ChallengesCubit>(context)
+          .getShareMessageFromPreset(widget.preset!);
+    }
+    if (widget.session != null) {
+      shareMessage = await BlocProvider.of<ChallengesCubit>(context)
+          .getShareMessageFromSession(widget.session!);
+    }
     if (shareMessage == null) {
       return;
     }
