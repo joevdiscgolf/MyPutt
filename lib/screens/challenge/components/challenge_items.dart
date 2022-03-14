@@ -80,16 +80,16 @@ class _BasicChallengeItemState extends State<BasicChallengeItem> {
           }
         },
         child: Container(
-            margin: const EdgeInsets.all(5),
+            margin: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: MyPuttColors.white,
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(width: 1, color: color),
             ),
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: MyPuttColors.white,
                     borderRadius: BorderRadius.circular(5),
