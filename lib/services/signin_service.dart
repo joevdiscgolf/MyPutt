@@ -48,7 +48,7 @@ class SigninService {
     }
   }
 
-  Future<bool> attemptSignUp(String email, String password) async {
+  Future<bool> attemptSignUpWithEmail(String email, String password) async {
     final bool? signUpSuccess =
         await _authService.signUpWithEmail(email, password);
     if (signUpSuccess == null ||
@@ -73,7 +73,7 @@ class SigninService {
     return true;
   }
 
-  Future<bool> attemptSignIn(String email, String password) async {
+  Future<bool> attemptSignInWithEmail(String email, String password) async {
     final bool? signInSuccess =
         await _authService.signInWithEmail(email, password);
     if (signInSuccess == null ||

@@ -15,4 +15,9 @@ enum ChallengePreset {
   none,
 }
 
+enum Circles {
+  circle1,
+  circle2,
+}
+
 enum LoginState { loggedIn, setup, none, forceUpgrade, error }

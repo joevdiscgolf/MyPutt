@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class MyPuttButton extends StatelessWidget {
   const MyPuttButton(
@@ -10,7 +11,8 @@ class MyPuttButton extends StatelessWidget {
       this.height = 50,
       this.color = Colors.blue,
       this.iconColor = Colors.white,
-      this.textColor = Colors.white})
+      this.textColor = Colors.white,
+      this.textSize = 16})
       : super(key: key);
 
   final String title;
@@ -20,14 +22,18 @@ class MyPuttButton extends StatelessWidget {
   final Color color;
   final Color iconColor;
   final Color textColor;
+  final double textSize;
 
   @override
   Widget build(BuildContext context) {
     return Bounceable(
-      onTap: () => onPressed(),
+      onTap: () {
+        Vibrate.feedback(FeedbackType.light);
+        onPressed();
+      },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(48),
+          borderRadius: BorderRadius.circular(24),
           color: color,
         ),
         height: 50,
@@ -44,7 +50,9 @@ class MyPuttButton extends StatelessWidget {
             ],
             Text(title,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.w600)),
+                    color: textColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: textSize)),
           ],
         )),
       ),

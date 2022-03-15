@@ -55,15 +55,7 @@ class _ChallengesState extends State<ChallengesScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      child: BlocBuilder<ChallengesCubit, ChallengesState>(
-                        builder: (context, state) {
-                          if (state is! ChallengesErrorState) {
-                            return _tabBar(context);
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
+                      child: _tabBar(context),
                     ),
                     BlocBuilder<ChallengesCubit, ChallengesState>(
                         builder: (context, state) {
@@ -96,7 +88,7 @@ class _ChallengesState extends State<ChallengesScreen> {
     return TabBar(
       indicator: BoxDecoration(
         borderRadius: BorderRadius.circular(
-          25.0,
+          16,
         ),
         color: Colors.blue,
       ),

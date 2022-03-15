@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/utils/colors.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -14,14 +17,21 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   final AuthService _authService = locator.get<AuthService>();
+  final SigninService _signinService = locator.get<SigninService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _email;
   String? _password;
   bool _error = false;
   String _errorText = '';
-  bool _signInLoading = false;
-  bool _signUpLoading = false;
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,26 +54,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 ),
                 Column(
                   children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: _emailField(context),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: _passwordField(context),
-                    ),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _loginButton(context, true),
-                          const SizedBox(width: 20),
-                          _loginButton(context, false)
-                        ],
-                      ),
-                    ),
+                    _emailField(context),
+                    _passwordField(context),
+                    const SizedBox(height: 8),
+                    _signInButton(context, true),
                     const SizedBox(height: 36),
                     _error
                         ? SizedBox(
@@ -71,7 +65,27 @@ class _LandingScreenState extends State<LandingScreen> {
                             child: Text(_errorText,
                                 style: const TextStyle(color: Colors.red)),
                           )
-                        : Container(height: 50)
+                        : Container(height: 50),
+                    Text("Don't have an account?",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(color: MyPuttColors.gray[400])),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    MyPuttButton(
+                      title: 'Sign up',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const SignUpScreen()));
+                      },
+                      color: Colors.transparent,
+                      textColor: MyPuttColors.blue,
+                    )
                   ],
                 ),
               ],
@@ -90,22 +104,27 @@ class _LandingScreenState extends State<LandingScreen> {
         children: <Widget>[
           RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.headline3,
-              children: const [
+              children: [
                 TextSpan(
-                  text: 'My',
-                ),
-                TextSpan(text: 'Putt', style: TextStyle(color: Colors.blue)),
+                    text: 'My',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        color: MyPuttColors.gray[800]!, fontSize: 64)),
+                TextSpan(
+                    text: 'Putt',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineLarge
+                        ?.copyWith(color: MyPuttColors.blue, fontSize: 64)),
               ],
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Master your game',
-            style: Theme.of(context)
-                .textTheme
-                .headline6!
-                .copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                color: Colors.grey[400],
+                fontWeight: FontWeight.w500,
+                fontSize: 20),
           ),
         ]);
   }
@@ -189,20 +208,20 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  Widget _loginButton(BuildContext context, bool signIn) {
+  Widget _signInButton(BuildContext context, bool signIn) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         PrimaryButton(
-            loading: signIn ? _signInLoading : _signUpLoading,
-            label: signIn ? 'Sign in' : 'Sign up',
+            loading: _loading,
+            disabled: _email == null || _email == '' || _checkDisabled(),
+            label: 'Sign in',
             fontSize: 20,
-            // icon: FlutterRemix.cellphone_fill,
             backgroundColor: Colors.blue,
             height: 48,
-            width: 120,
+            width: 260,
             onPressed: () async {
               if (_email == null || _password == null) {
                 setState(() {
@@ -211,26 +230,13 @@ class _LandingScreenState extends State<LandingScreen> {
                 });
               } else {
                 setState(() {
-                  if (signIn) {
-                    _signInLoading = true;
-                  } else {
-                    _signUpLoading = true;
-                  }
+                  _loading = true;
                 });
-                final authSuccess = signIn
-                    ? await locator
-                        .get<SigninService>()
-                        .attemptSignIn(_email!, _password!)
-                    : await locator
-                        .get<SigninService>()
-                        .attemptSignUp(_email!, _password!);
-                if (!authSuccess) {
+                final signinSuccess = await _signinService
+                    .attemptSignInWithEmail(_email!, _password!);
+                if (!signinSuccess) {
                   setState(() {
-                    if (signIn) {
-                      _signInLoading = false;
-                    } else {
-                      _signUpLoading = false;
-                    }
+                    _loading = false;
                     _error = true;
                     _errorText = _authService.exception;
                   });
@@ -239,5 +245,12 @@ class _LandingScreenState extends State<LandingScreen> {
             }),
       ],
     );
+  }
+
+  bool _checkDisabled() {
+    return _password == null ||
+        _password!.length < 8 ||
+        _email == null ||
+        _email!.isEmpty;
   }
 }

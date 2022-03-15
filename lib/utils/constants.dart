@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'enums.dart';
 
+class TimeRange {
+  static const lastFive = 5;
+  static const lastTwenty = 20;
+  static const lastFifty = 50;
+  static const allTime = 0;
+}
+
 class ChallengeStatus {
   static String pending = 'pending';
   static String active = 'active';
@@ -13,6 +20,13 @@ class Cutoffs {
   static const int c2 = 33;
   static const int none = 0;
 }
+
+const Map<int, int> indexToTimeRange = {
+  0: TimeRange.lastFive,
+  1: TimeRange.lastTwenty,
+  2: TimeRange.lastFifty,
+  3: TimeRange.allTime,
+};
 
 const Map<ChallengePreset, String> challengePresetToText = {
   ChallengePreset.c1Basics: 'Circle 1 basics',

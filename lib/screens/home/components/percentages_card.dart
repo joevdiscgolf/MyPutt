@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/screens/home/components/enums.dart';
-import 'package:myputt/screens/home/components/putting_stat_row.dart';
+import 'package:myputt/screens/home/components/rows/putting_stat_row.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 
 class PercentagesCard extends StatelessWidget {
   PercentagesCard(

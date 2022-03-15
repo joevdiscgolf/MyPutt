@@ -277,7 +277,7 @@ class StatsService {
   }
 
   List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
-      List<PuttingChallenge> challenges, int distance, int limit) {
+      List<PuttingChallenge> challenges, int distance, int? limit) {
     List<ChartPoint> points = [];
     List<ChartPoint> finalPoints = [];
     for (var session in sessions) {
@@ -323,12 +323,17 @@ class StatsService {
           : p1.index.compareTo(p2.index);
     });
     List<ChartPoint> reversedPoints = List.from(points.reversed);
-    for (var index = 0; index < limit; index++) {
-      if (index >= reversedPoints.length) {
-        break;
+    if (limit == null) {
+      finalPoints = reversedPoints;
+    } else {
+      for (var index = 0; index < limit; index++) {
+        if (index >= reversedPoints.length) {
+          break;
+        }
+        finalPoints.add(reversedPoints[index]);
       }
-      finalPoints.add(reversedPoints[index]);
     }
+
     return List.from(finalPoints.reversed);
   }
 
