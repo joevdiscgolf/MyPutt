@@ -7,6 +7,8 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
@@ -16,6 +18,273 @@ import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/default_profile_circle.dart';
+
+class ChallengeItem extends StatefulWidget {
+  const ChallengeItem({Key? key, required this.challenge}) : super(key: key);
+
+  final PuttingChallenge challenge;
+
+  @override
+  _ChallengeItemState createState() => _ChallengeItemState();
+}
+
+class _ChallengeItemState extends State<ChallengeItem> {
+  late final int difference;
+  late final String titleText;
+  late final int currentUserPuttsMade;
+  late final int currentUserPuttsAttempted;
+  late final int opponentPuttsMade;
+  late final int opponentPuttsAttempted;
+  late final Color color;
+  late final bool activeChallenge;
+
+  @override
+  void initState() {
+    activeChallenge = widget.challenge.status == ChallengeStatus.active;
+    final int minLength = min(
+      widget.challenge.currentUserSets.length,
+      widget.challenge.opponentSets.length,
+    );
+    currentUserPuttsMade =
+        totalMadeFromSubset(widget.challenge.currentUserSets, minLength);
+    currentUserPuttsAttempted =
+        totalAttemptsFromSubset(widget.challenge.currentUserSets, minLength);
+    opponentPuttsMade =
+        totalMadeFromSubset(widget.challenge.opponentSets, minLength);
+    opponentPuttsAttempted =
+        totalAttemptsFromSubset(widget.challenge.opponentSets, minLength);
+
+    difference = currentUserPuttsMade - opponentPuttsMade;
+    titleText = activeChallenge ? 'Active' : getTitleFromDifference(difference);
+    color = activeChallenge
+        ? MyPuttColors.lightBlue
+        : getColorFromDifference(difference);
+
+    super.initState();
+  }
+
+  Widget _profileColumn(BuildContext context, Image image, String displayName) {
+    return Column(
+      children: [
+        Text(
+          displayName,
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(fontSize: 16, color: MyPuttColors.gray[500]),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Container(
+          height: 60,
+          width: 60,
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          child: image,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Bounceable(
+        onTap: () {
+          Vibrate.feedback(FeedbackType.light);
+          if (activeChallenge) {
+            BlocProvider.of<ChallengesCubit>(context)
+                .openChallenge(widget.challenge);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    ChallengeRecordScreen(challengeId: widget.challenge.id)));
+          } else {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    ChallengeSummaryScreen(challenge: widget.challenge)));
+          }
+        },
+        child: Container(
+            margin: const EdgeInsets.all(4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+                color: MyPuttColors.gray[50],
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      offset: const Offset(0, 2),
+                      color: MyPuttColors.gray[400]!,
+                      blurRadius: 2)
+                ]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _profileColumn(context, Image(image: blueFrisbeeIcon),
+                    widget.challenge.currentUser.displayName),
+                // Row(children: [
+                //   Expanded(
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.start,
+                //       children: [
+                //         const DefaultProfileCircle(),
+                //         const SizedBox(width: 10),
+                //         Column(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: [
+                //             AutoSizeText(
+                //               widget.challenge.currentUser.displayName,
+                //               style: Theme.of(context)
+                //                   .textTheme
+                //                   .headline6
+                //                   ?.copyWith(color: MyPuttColors.lightBlue),
+                //               maxLines: 1,
+                //             ),
+                //             Text(
+                //               '$currentUserPuttsMade/$currentUserPuttsAttempted',
+                //               style: Theme.of(context).textTheme.bodyLarge,
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                //   Expanded(
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.end,
+                //       children: [
+                //         Column(
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             children: [
+                //               AutoSizeText(
+                //                 (widget.challenge.opponentUser?.displayName ??
+                //                     'Unknown'),
+                //                 style: Theme.of(context)
+                //                     .textTheme
+                //                     .headline6
+                //                     ?.copyWith(color: Colors.red),
+                //                 maxLines: 1,
+                //               ),
+                //               Text(
+                //                 '$opponentPuttsMade/$opponentPuttsAttempted',
+                //                 style: Theme.of(context).textTheme.bodyLarge,
+                //               )
+                //             ]),
+                //         const SizedBox(
+                //           width: 10,
+                //         ),
+                //         const DefaultProfileCircle(),
+                //       ],
+                //     ),
+                //   ),
+                // ]),
+                _centerColumn(context, widget.challenge.status),
+                _profileColumn(context, const Image(image: blueFrisbeeIcon),
+                    widget.challenge.opponentUser?.displayName ?? 'Unknown'),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.start,
+                //   children: [
+                //     Text(
+                //         '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}',
+                //         style: Theme.of(context)
+                //             .textTheme
+                //             .bodyLarge
+                //             ?.copyWith(fontWeight: FontWeight.w600)),
+                //     const Spacer(),
+                //   ],
+                // ),
+              ],
+            )));
+  }
+
+  Widget _centerColumn(BuildContext context, String status) {
+    switch (status) {
+      case 'pending':
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              '${widget.challenge.challengeStructure.length} sets, ${totalAttemptsFromStructure(widget.challenge.challengeStructure)} putts',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(48)),
+                  primary: MyPuttColors.blue,
+                  shadowColor: MyPuttColors.shadowColor),
+              child: Text('Accept'),
+              onPressed: () {},
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(48)),
+                  primary: Colors.red,
+                  shadowColor: MyPuttColors.shadowColor),
+              child: Text('Decline'),
+              onPressed: () {},
+            ),
+          ],
+        );
+      default:
+        return Column(
+          children: [
+            Text(
+              '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 12, color: MyPuttColors.gray[400]),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(currentUserPuttsMade.toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 20, color: MyPuttColors.blue)),
+                Text('   :   ',
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        fontSize: 20, color: MyPuttColors.gray[400])),
+                Text(opponentPuttsMade.toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 20, color: MyPuttColors.red))
+              ],
+            ),
+          ],
+        );
+    }
+  }
+
+  String getTitleFromDifference(int puttsMadeDifference) {
+    if (puttsMadeDifference == 0) {
+      return 'Draw';
+    } else if (puttsMadeDifference > 0) {
+      return 'Victory';
+    } else {
+      return 'Defeat';
+    }
+  }
+
+  Color getColorFromDifference(int puttsMadeDifference) {
+    if (puttsMadeDifference == 0) {
+      return MyPuttColors.lightBlue;
+    } else if (puttsMadeDifference > 0) {
+      return MyPuttColors.lightGreen;
+    } else {
+      return Colors.red;
+    }
+  }
+}
 
 class BasicChallengeItem extends StatefulWidget {
   const BasicChallengeItem({Key? key, required this.challenge})
@@ -82,9 +351,8 @@ class _BasicChallengeItemState extends State<BasicChallengeItem> {
         child: Container(
             margin: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: MyPuttColors.white,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(width: 1, color: color),
+              color: MyPuttColors.gray[50],
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               children: [
@@ -137,11 +405,6 @@ class _BasicChallengeItemState extends State<BasicChallengeItem> {
                           : const Spacer(),
                     ],
                   ),
-                ),
-                Divider(
-                  color: MyPuttColors.gray[100],
-                  thickness: 2,
-                  height: 4,
                 ),
                 Container(
                   padding: const EdgeInsets.all(8),

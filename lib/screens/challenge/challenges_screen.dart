@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
 import 'components/dialogs/select_preset_dialog.dart';
@@ -27,7 +28,7 @@ class _ChallengesState extends State<ChallengesScreen> {
     return DefaultTabController(
         length: 3,
         child: Scaffold(
-            backgroundColor: Colors.grey[100]!,
+            backgroundColor: MyPuttColors.white,
             appBar: AppBar(
               title: const Text('Challenges'),
               centerTitle: true,

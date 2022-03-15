@@ -42,7 +42,7 @@ class ChallengesList extends StatelessWidget {
                             challenge: challenge,
                           );
                         } else {
-                          return BasicChallengeItem(
+                          return ChallengeItem(
                             challenge: challenge,
                           );
                         }

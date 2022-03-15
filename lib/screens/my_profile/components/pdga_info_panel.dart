@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -42,7 +43,7 @@ class PDGAInfoPanel extends StatelessWidget {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                AutoSizeText(
                                   '${state.pdgaPlayerInfo?.name}',
                                   style: Theme.of(context)
                                       .textTheme
@@ -52,6 +53,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                         color: MyPuttColors.gray[800],
                                       ),
                                   textAlign: TextAlign.center,
+                                  maxLines: 1,
                                 ),
                                 Text(
                                   '#${state.pdgaPlayerInfo?.pdgaNum}',
@@ -170,60 +172,67 @@ class PDGAInfoPanel extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Text(state.pdgaPlayerInfo?.classification ?? 'N/A',
+                            AutoSizeText(
+                                state.pdgaPlayerInfo?.classification ?? 'N/A',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800])),
-                            Text('Class',
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Class',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text('${playerInfo.rating ?? 'N/A'}',
+                            AutoSizeText('${playerInfo.rating ?? 'N/A'}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800])),
-                            Text('Rating',
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Rating',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text(playerInfo.memberSince ?? 'N/A',
+                            AutoSizeText(playerInfo.memberSince ?? 'N/A',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800])),
-                            Text('Since',
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Since',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
@@ -237,64 +246,69 @@ class PDGAInfoPanel extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Text('${playerInfo.careerEvents ?? 'N/A'}',
+                            AutoSizeText('${playerInfo.careerEvents ?? 'N/A'}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800])),
-                            Text('Events',
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Events',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text('${playerInfo.careerWins ?? 'N/A'}',
+                            AutoSizeText('${playerInfo.careerWins ?? 'N/A'}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800])),
-                            Text('Wins',
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Wins',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text(
-                              playerInfo.careerEarnings != null
-                                  ? '\$${playerInfo.careerEarnings}'
-                                  : 'N/A',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline6
-                                  ?.copyWith(
-                                      fontSize: 16,
-                                      color: MyPuttColors.gray[800]),
-                            ),
-                            Text('Earnings',
+                            AutoSizeText(
+                                playerInfo.careerEarnings != null
+                                    ? '\$${playerInfo.careerEarnings}'
+                                    : 'N/A',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Earnings',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 12,
-                                        color: MyPuttColors.gray[400])),
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
@@ -304,13 +318,21 @@ class PDGAInfoPanel extends StatelessWidget {
                     height: 5,
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Next event: ',
-                          style: Theme.of(context).textTheme.headline6),
-                      Text(
-                        playerInfo.nextEvent ?? 'N/A',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      )
+                      AutoSizeText(
+                        'Next event: ',
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontSize: 16, color: MyPuttColors.gray[800]),
+                        maxLines: 1,
+                      ),
+                      AutoSizeText(playerInfo.nextEvent ?? 'N/A',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  fontSize: 12, color: MyPuttColors.gray[400]),
+                          maxLines: 1)
                     ],
                   )
                 ],

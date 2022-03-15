@@ -7,6 +7,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
+import 'package:myputt/screens/my_profile/components/lifetime_stat_row.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/colors.dart';
@@ -50,8 +51,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 },
                 child: ListView(children: [
                   _basicInfoPanel(context),
+                  _lifetimeStats(context),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   _percentagesPanel(context),
-                  // _lifetimeStatsPanel(context),
                   const SizedBox(height: 20),
                   const PDGAInfoPanel(),
                 ]),
@@ -147,80 +151,80 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         style: Theme.of(context).textTheme.headline6?.copyWith(
                             color: MyPuttColors.gray[300], fontSize: 16),
                       ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                '${_sessionRepository.allSessions.length}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[800],
-                                        fontSize: 20),
-                              ),
-                              Text(
-                                'Sessions',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[400],
-                                        fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                '${_challengesRepository.completedChallenges.length}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[800],
-                                        fontSize: 20),
-                              ),
-                              Text(
-                                'Challenges',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[400],
-                                        fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[800],
-                                        fontSize: 20),
-                              ),
-                              Text(
-                                'Total Putts',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[400],
-                                        fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      // const SizedBox(
+                      //   height: 24,
+                      // ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: [
+                      //     Column(
+                      //       children: [
+                      //         Text(
+                      //           '${_sessionRepository.allSessions.length}',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[800],
+                      //                   fontSize: 20),
+                      //         ),
+                      //         Text(
+                      //           'Sessions',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[400],
+                      //                   fontSize: 16),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     Column(
+                      //       children: [
+                      //         Text(
+                      //           '${_challengesRepository.completedChallenges.length}',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[800],
+                      //                   fontSize: 20),
+                      //         ),
+                      //         Text(
+                      //           'Challenges',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[400],
+                      //                   fontSize: 16),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     Column(
+                      //       children: [
+                      //         Text(
+                      //           '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[800],
+                      //                   fontSize: 20),
+                      //         ),
+                      //         Text(
+                      //           'Total Putts',
+                      //           style: Theme.of(context)
+                      //               .textTheme
+                      //               .headline6
+                      //               ?.copyWith(
+                      //                   color: MyPuttColors.gray[400],
+                      //                   fontSize: 16),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   )),
             ),
@@ -241,151 +245,218 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
 
   Widget _percentagesPanel(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-            offset: const Offset(0, 4),
-            color: MyPuttColors.gray[400]!,
-            blurRadius: 4)
-      ], color: MyPuttColors.gray[50]),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Percentages',
-              style:
-                  Theme.of(context).textTheme.headline6?.copyWith(fontSize: 16),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.only(top: 20, bottom: 16, left: 20, right: 20),
+          child: Text(
+            'Percentages',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
           ),
-          const SizedBox(
-            height: 24,
-          ),
-          Row(
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                offset: const Offset(0, 4),
+                color: MyPuttColors.gray[400]!,
+                blurRadius: 4)
+          ], color: MyPuttColors.gray[50]),
+          child: Column(
             children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Builder(builder: (context) {
-                      final double? c1XPercentage =
-                          _statsService.getPercentagesWithCutoff(
-                              _sessionRepository.allSessions,
-                              _challengesRepository.completedChallenges,
-                              Cutoffs.c1x);
-                      return ShadowCircularIndicator(
-                          decimal: c1XPercentage, size: 80);
+              // Align(
+              //   alignment: Alignment.centerLeft,
+              //   child: Text(
+              //     'Percentages',
+              //     style: Theme.of(context)
+              //         .textTheme
+              //         .headline6
+              //         ?.copyWith(fontSize: 16),
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 24,
+              // ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Builder(builder: (context) {
+                          final double? c1XPercentage =
+                              _statsService.getPercentagesWithCutoff(
+                                  _sessionRepository.allSessions,
+                                  _challengesRepository.completedChallenges,
+                                  Cutoffs.c1x);
+                          return ShadowCircularIndicator(
+                              decimal: c1XPercentage, size: 80);
+                        }),
+                        const SizedBox(height: 12),
+                        Text('Circle 1X',
+                            style: Theme.of(context).textTheme.headline6),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      return Column(
+                        children: [
+                          Builder(builder: (context) {
+                            final double? c2Percentage =
+                                _statsService.getPercentagesWithCutoff(
+                                    _sessionRepository.allSessions,
+                                    _challengesRepository.completedChallenges,
+                                    Cutoffs.c2);
+                            return ShadowCircularIndicator(
+                                decimal: c2Percentage, size: 80);
+                          }),
+                          const SizedBox(height: 12),
+                          Text('Circle 2',
+                              style: Theme.of(context).textTheme.headline6),
+                        ],
+                      );
                     }),
-                    const SizedBox(height: 12),
-                    Text('Circle 1X',
-                        style: Theme.of(context).textTheme.headline6),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Builder(builder: (context) {
-                  return Column(
-                    children: [
-                      Builder(builder: (context) {
-                        final double? c2Percentage =
-                            _statsService.getPercentagesWithCutoff(
-                                _sessionRepository.allSessions,
-                                _challengesRepository.completedChallenges,
-                                Cutoffs.c2);
-                        return ShadowCircularIndicator(
-                            decimal: c2Percentage, size: 80);
-                      }),
-                      const SizedBox(height: 12),
-                      Text('Circle 2',
-                          style: Theme.of(context).textTheme.headline6),
-                    ],
-                  );
-                }),
-              ),
-              Expanded(
-                child: Builder(builder: (context) {
-                  return Column(
-                    children: [
-                      Builder(builder: (context) {
-                        final double? c2Percentage =
-                            _statsService.getPercentagesWithCutoff(
-                                _sessionRepository.allSessions,
-                                _challengesRepository.completedChallenges,
-                                Cutoffs.none);
-                        return ShadowCircularIndicator(
-                            decimal: c2Percentage, size: 80);
-                      }),
-                      const SizedBox(height: 12),
-                      Text('All', style: Theme.of(context).textTheme.headline6),
-                    ],
-                  );
-                }),
+                  ),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      return Column(
+                        children: [
+                          Builder(builder: (context) {
+                            final double? c2Percentage =
+                                _statsService.getPercentagesWithCutoff(
+                                    _sessionRepository.allSessions,
+                                    _challengesRepository.completedChallenges,
+                                    Cutoffs.none);
+                            return ShadowCircularIndicator(
+                                decimal: c2Percentage, size: 80);
+                          }),
+                          const SizedBox(height: 12),
+                          Text('All',
+                              style: Theme.of(context).textTheme.headline6),
+                        ],
+                      );
+                    }),
+                  )
+                ],
               )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
-  //
-  // Widget _lifetimeStatsPanel(BuildContext context) {
-  //   return BlocBuilder<MyProfileCubit, MyProfileState>(
-  //     builder: (context, state) {
-  //       if (state is MyProfileLoaded) {
-  //         return Row(
-  //           children: [
-  //             Expanded(
-  //               child: Container(
-  //                   padding: const EdgeInsets.all(8),
-  //                   decoration: const BoxDecoration(color: Colors.white),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         'Lifetime stats',
-  //                         style: Theme.of(context).textTheme.headline5,
-  //                       ),
-  //                       const SizedBox(
-  //                         height: 5,
-  //                       ),
-  //                       Text(
-  //                         'Putts made',
-  //                         style: Theme.of(context).textTheme.headline6,
-  //                       ),
-  //                       const SizedBox(height: 5),
-  //                       _puttsMadeRow(context),
-  //                       Divider(
-  //                         height: 20,
-  //                         thickness: 1,
-  //                         color: Colors.grey[300],
-  //                       ),
-  //                       const SizedBox(
-  //                         height: 5,
-  //                       ),
-  //                       Divider(
-  //                         height: 20,
-  //                         thickness: 1,
-  //                         color: Colors.grey[300],
-  //                       ),
-  //                       Text(
-  //                         'Challenges',
-  //                         style: Theme.of(context).textTheme.headline6,
-  //                       ),
-  //                       const SizedBox(
-  //                         height: 5,
-  //                       ),
-  //                       _challengeStatsRow(context)
-  //                     ],
-  //                   )),
-  //             ),
-  //           ],
-  //         );
-  //       } else {
-  //         return Container();
-  //       }
-  //     },
-  //   );
-  // }
+
+  Widget _lifetimeStats(BuildContext context) {
+    return BlocBuilder<MyProfileCubit, MyProfileState>(
+      builder: (context, state) {
+        if (state is MyProfileLoaded) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 20, bottom: 16, left: 20, right: 20),
+                child: Text(
+                  'Lifetime Stats',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+                ),
+              ),
+              LifetimeStatRow(
+                  icon: const Image(
+                    image: blueFrisbeeIcon,
+                    height: 24,
+                    width: 24,
+                  ),
+                  title: 'Total putts',
+                  subtitle:
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) /*+ _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)*/}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) /*+ _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)*/}'),
+              const SizedBox(
+                height: 4,
+              ),
+              LifetimeStatRow(
+                  icon: const Icon(
+                    FlutterRemix.bar_chart_2_fill,
+                    color: MyPuttColors.blue,
+                    size: 32,
+                  ),
+                  title: 'Sessions completed',
+                  subtitle: '${_sessionRepository.allSessions.length}'),
+              const SizedBox(
+                height: 4,
+              ),
+              LifetimeStatRow(
+                  icon: const Icon(
+                    FlutterRemix.sword_fill,
+                    color: MyPuttColors.blue,
+                    size: 32,
+                  ),
+                  title: 'Challenges completed',
+                  subtitle:
+                      '${_challengesRepository.activeChallenges.length + _challengesRepository.pendingChallenges.length + _challengesRepository.completedChallenges.length}'),
+            ],
+          );
+          // return Row(
+          //   children: [
+          //     Expanded(
+          //       child: Container(
+          //           padding: const EdgeInsets.all(8),
+          //           decoration: const BoxDecoration(color: Colors.white),
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               Text(
+          //                 'Lifetime stats',
+          //                 style: Theme.of(context).textTheme.headline5,
+          //               ),
+          //               const SizedBox(
+          //                 height: 5,
+          //               ),
+          //               Text(
+          //                 'Putts made',
+          //                 style: Theme.of(context).textTheme.headline6,
+          //               ),
+          //               const SizedBox(height: 5),
+          //               _puttsMadeRow(context),
+          //               Divider(
+          //                 height: 20,
+          //                 thickness: 1,
+          //                 color: Colors.grey[300],
+          //               ),
+          //               const SizedBox(
+          //                 height: 5,
+          //               ),
+          //               Divider(
+          //                 height: 20,
+          //                 thickness: 1,
+          //                 color: Colors.grey[300],
+          //               ),
+          //               Text(
+          //                 'Challenges',
+          //                 style: Theme.of(context).textTheme.headline6,
+          //               ),
+          //               const SizedBox(
+          //                 height: 5,
+          //               ),
+          //               _challengeStatsRow(context)
+          //             ],
+          //           )),
+          //     ),
+          //   ],
+          // );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
 
   Widget _puttsMadeRow(BuildContext context) {
     return Container(

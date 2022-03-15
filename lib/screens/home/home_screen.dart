@@ -82,12 +82,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               SliverToBoxAdapter(
                 child: Container(
                     padding: const EdgeInsets.only(top: 8),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
-                          end: Alignment(1.1, 0),
-                          transform: GradientRotation(math.pi / 2),
+                          end: const Alignment(1.2, 0),
+                          transform: const GradientRotation(math.pi / 2),
                           colors: [
-                            MyPuttColors.blue,
+                            MyPuttColors.blue.withOpacity(0.8),
                             MyPuttColors.white,
                           ]),
                     ),

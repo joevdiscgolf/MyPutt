@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:myputt/screens/my_profile/components/charts/performance_chart.dart';
+import 'package:myputt/screens/home/components/charts/performance_chart.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
