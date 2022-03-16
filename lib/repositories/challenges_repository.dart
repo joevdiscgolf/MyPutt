@@ -107,6 +107,7 @@ class ChallengesRepository {
   }
 
   Future<bool> completeChallenge() async {
+    print('completing session');
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge == null || currentUser == null) {
       return false;

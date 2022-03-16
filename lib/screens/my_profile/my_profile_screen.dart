@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -122,20 +123,16 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   decoration: const BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Builder(builder: (context) {
                         final double size =
                             MediaQuery.of(context).size.width / 4;
-                        return Container(
-                          width: size,
-                          height: size,
-                          decoration: BoxDecoration(
-                              color: MyPuttColors.gray[200],
-                              shape: BoxShape.circle),
-                          child: Icon(
-                            FlutterRemix.user_fill,
-                            size: size * 0.8,
-                            color: MyPuttColors.gray[400],
-                          ),
+                        return FrisbeeCircleIcon(
+                          size: size,
+                          backGroundColor: MyPuttColors.red,
+                          iconSize: size * 0.8,
                         );
                       }),
                       const SizedBox(
@@ -151,80 +148,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         style: Theme.of(context).textTheme.headline6?.copyWith(
                             color: MyPuttColors.gray[300], fontSize: 16),
                       ),
-                      // const SizedBox(
-                      //   height: 24,
-                      // ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //   children: [
-                      //     Column(
-                      //       children: [
-                      //         Text(
-                      //           '${_sessionRepository.allSessions.length}',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[800],
-                      //                   fontSize: 20),
-                      //         ),
-                      //         Text(
-                      //           'Sessions',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[400],
-                      //                   fontSize: 16),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     Column(
-                      //       children: [
-                      //         Text(
-                      //           '${_challengesRepository.completedChallenges.length}',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[800],
-                      //                   fontSize: 20),
-                      //         ),
-                      //         Text(
-                      //           'Challenges',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[400],
-                      //                   fontSize: 16),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     Column(
-                      //       children: [
-                      //         Text(
-                      //           '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[800],
-                      //                   fontSize: 20),
-                      //         ),
-                      //         Text(
-                      //           'Total Putts',
-                      //           style: Theme.of(context)
-                      //               .textTheme
-                      //               .headline6
-                      //               ?.copyWith(
-                      //                   color: MyPuttColors.gray[400],
-                      //                   fontSize: 16),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   )),
             ),
@@ -269,19 +192,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           ], color: MyPuttColors.gray[50]),
           child: Column(
             children: [
-              // Align(
-              //   alignment: Alignment.centerLeft,
-              //   child: Text(
-              //     'Percentages',
-              //     style: Theme.of(context)
-              //         .textTheme
-              //         .headline6
-              //         ?.copyWith(fontSize: 16),
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 24,
-              // ),
               Row(
                 children: [
                   Expanded(

@@ -31,13 +31,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     3: TimeRange.allTime,
   };
 
-  // final List<String> _sessionRangeLabels = [
-  //   'Last 5',
-  //   'Last 20',
-  //   'Last 50',
-  //   'All time'
-  // ];
-
   @override
   void initState() {
     _scrollController = ScrollController();
@@ -80,23 +73,24 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           headerSliverBuilder: (BuildContext context, bool value) {
             return [
               SliverToBoxAdapter(
-                child: Container(
-                    padding: const EdgeInsets.only(top: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          end: const Alignment(1.2, 0),
-                          transform: const GradientRotation(math.pi / 2),
-                          colors: [
-                            MyPuttColors.blue.withOpacity(0.8),
-                            MyPuttColors.white,
-                          ]),
-                    ),
-                    child: Column(
-                      children: [
-                        const PerformanceChartPanel(),
-                        _circlesTabBar(context)
-                      ],
-                    )),
+                child: Column(
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.only(top: 8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              end: const Alignment(1, 0),
+                              transform:
+                                  const GradientRotation(3 * math.pi / 2),
+                              colors: [
+                                MyPuttColors.blue.withOpacity(0.6),
+                                MyPuttColors.white,
+                              ]),
+                        ),
+                        child: const PerformanceChartPanel()),
+                    _circlesTabBar(context)
+                  ],
+                ),
               ),
             ];
           },
@@ -115,72 +109,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ));
   }
 
-  // Widget _sessionRangeRow(BuildContext context) {
-  //   return Container(
-  //     padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
-  //     decoration: const BoxDecoration(
-  //       color: Colors.white,
-  //     ),
-  //     child: Row(
-  //         children: _sessionRangeLabels
-  //             .asMap()
-  //             .entries
-  //             .map((entry) => Expanded(
-  //                   child: Builder(builder: (context) {
-  //                     if (_sessionRangeIndex == entry.key) {
-  //                       return ElevatedButton(
-  //                           child: Text(entry.value,
-  //                               style: const TextStyle(
-  //                                   color: Colors.white, fontSize: 15)),
-  //                           style: ElevatedButton.styleFrom(
-  //                               shape: RoundedRectangleBorder(
-  //                                 borderRadius: BorderRadius.circular(10.0),
-  //                               ),
-  //                               side: const BorderSide(
-  //                                   width: 2.0, color: Colors.blue),
-  //                               primary: Colors.blue,
-  //                               shadowColor: Colors.transparent),
-  //                           onPressed: () {
-  //                             setState(() {
-  //                               _sessionRangeIndex = entry.key;
-  //                             });
-  //
-  //                             BlocProvider.of<HomeScreenCubit>(context)
-  //                                 .updateSessionRange(
-  //                                     indexToTimeRange[_sessionRangeIndex] ??
-  //                                         5);
-  //                             BlocProvider.of<HomeScreenCubit>(context)
-  //                                 .reloadStats();
-  //                           });
-  //                     }
-  //                     return ElevatedButton(
-  //                         style: ElevatedButton.styleFrom(
-  //                             shape: RoundedRectangleBorder(
-  //                               borderRadius: BorderRadius.circular(10.0),
-  //                             ),
-  //                             primary: Colors.transparent,
-  //                             shadowColor: Colors.transparent),
-  //                         child: Text(entry.value,
-  //                             style: const TextStyle(
-  //                                 fontSize: 15, color: Colors.blue)),
-  //                         onPressed: () {
-  //                           setState(() {
-  //                             _sessionRangeIndex = entry.key;
-  //                           });
-  //                           BlocProvider.of<HomeScreenCubit>(context)
-  //                               .updateSessionRange(
-  //                                   indexToTimeRange[_sessionRangeIndex] ?? 5);
-  //                           BlocProvider.of<HomeScreenCubit>(context)
-  //                               .reloadStats();
-  //                         });
-  //                   }),
-  //                 ))
-  //             .toList()),
-  //   );
-  // }
-
   Widget _circlesTabBar(BuildContext context) {
     return Container(
+      color: MyPuttColors.white,
       height: 60,
       child: TabBar(
         controller: _circlesController,

@@ -9,20 +9,26 @@ class MyPuttButton extends StatelessWidget {
       required this.onPressed,
       this.iconData,
       this.height = 50,
+      this.width = 100,
       this.color = Colors.blue,
       this.iconColor = Colors.white,
       this.textColor = Colors.white,
-      this.textSize = 16})
+      this.textSize = 16,
+      this.padding,
+      this.shadowColor})
       : super(key: key);
 
   final String title;
   final Function onPressed;
   final IconData? iconData;
   final double height;
+  final double width;
   final Color color;
   final Color iconColor;
   final Color textColor;
+  final Color? shadowColor;
   final double textSize;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +38,19 @@ class MyPuttButton extends StatelessWidget {
         onPressed();
       },
       child: Container(
+        padding: padding,
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+                offset: const Offset(0, 2),
+                color: shadowColor ?? Colors.transparent,
+                blurRadius: 2)
+          ],
           borderRadius: BorderRadius.circular(24),
           color: color,
         ),
-        height: 50,
+        height: height,
+        width: width,
         child: Center(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -49,10 +63,10 @@ class MyPuttButton extends StatelessWidget {
               const SizedBox(width: 10)
             ],
             Text(title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: textColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: textSize)),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(color: textColor, fontSize: textSize)),
           ],
         )),
       ),

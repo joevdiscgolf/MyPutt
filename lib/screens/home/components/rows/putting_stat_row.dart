@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/components/misc/animated_circular_progress_indicator.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
-import 'package:myputt/screens/home/components/line_chart_preview.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
-import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PuttingStatRow extends StatefulWidget {
@@ -68,9 +65,9 @@ class _PuttingStatRowState extends State<PuttingStatRow> {
                   child: Row(children: <Widget>[
                     widget.percentage! < widget.allTimePercentage!
                         ? const Icon(FlutterRemix.arrow_down_line,
-                            color: Colors.red)
+                            color: MyPuttColors.red)
                         : const Icon(FlutterRemix.arrow_up_line,
-                            color: Colors.greenAccent),
+                            color: MyPuttColors.lightBlue),
                     Text(
                         (100 * (widget.percentage! - widget.allTimePercentage!))
                                 .round()
@@ -78,8 +75,8 @@ class _PuttingStatRowState extends State<PuttingStatRow> {
                             ' %',
                         style: TextStyle(
                           color: widget.percentage! < widget.allTimePercentage!
-                              ? Colors.red
-                              : Colors.greenAccent,
+                              ? MyPuttColors.red
+                              : MyPuttColors.lightBlue,
                         ))
                   ]),
                 );

@@ -25,7 +25,7 @@ class ChallengesList extends StatelessWidget {
                     .map(
                       (challenge) => Builder(builder: (context) {
                         if (category == ChallengeCategory.pending) {
-                          return PendingChallengeItem(
+                          return ChallengeItem(
                             accept: () {
                               BlocProvider.of<ChallengesCubit>(context)
                                   .openChallenge(challenge);
@@ -38,6 +38,10 @@ class ChallengesList extends StatelessWidget {
                                           child: ChallengeRecordScreen(
                                             challengeId: challenge.id,
                                           ))));
+                            },
+                            decline: () {
+                              BlocProvider.of<ChallengesCubit>(context)
+                                  .declineChallenge(challenge);
                             },
                             challenge: challenge,
                           );

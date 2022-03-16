@@ -34,6 +34,22 @@ const Map<ChallengePreset, String> challengePresetToText = {
   ChallengePreset.twentyFooterClinic: '20-footer clinic'
 };
 
+const List<String> victorySubtitles = [
+  "You're on fire 🔥",
+  "McBeast mode 🐐",
+  "Give someone else a chance 😜",
+  "Hey, shouldn't you be on tour? 🥏",
+  "Ice in your veins 🥶"
+];
+
+const List<String> defeatSubtitles = [
+  "Aw shucks! Putter got cold? 🧊",
+  "Someone has the yips 🥴",
+  "Blame it on the frisbee 🥏",
+  "You just got Ulied 😞",
+  "Maybe you should buy more discs 💰"
+];
+
 const blueFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutout.png');
 const redFrisbeeIcon = AssetImage('assets/frisbeeEmojiCutoutRed.png');
 

@@ -16,3 +16,13 @@ List<String> getPrefixes(String str) {
   }
   return result;
 }
+
+String getMessageFromDifference(int difference) {
+  if (difference > 0) {
+    return 'Victory';
+  } else if (difference < 0) {
+    return 'Defeat';
+  } else {
+    return 'Draw';
+  }
+}

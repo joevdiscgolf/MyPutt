@@ -364,7 +364,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   Widget _addSetButton(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
-        // print(state);
         if (state is BothUsersComplete) {
           return MyPuttButton(
               title: 'Finish Challenge',

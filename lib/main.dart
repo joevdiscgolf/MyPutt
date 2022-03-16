@@ -27,7 +27,6 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<SigninService>().init();
-  locator.get<SigninService>().signOut();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
@@ -65,7 +64,6 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder<LoginState>(
             stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
-              print(snapshot.data);
               if (snapshot.data == LoginState.loggedIn) {
                 return const MainWrapper();
               } else if (snapshot.data == LoginState.none) {

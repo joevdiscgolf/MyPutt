@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:myputt/screens/home/components/charts/performance_chart.dart';
@@ -94,9 +95,9 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
               children: [
                 Expanded(
                   child: Slider(
-                    inactiveColor: Colors.grey[400]!,
-                    activeColor: Colors.blue,
-                    thumbColor: Colors.blue,
+                    inactiveColor: MyPuttColors.white,
+                    activeColor: MyPuttColors.gray[600]!,
+                    thumbColor: MyPuttColors.gray[600]!,
                     label: _numSets.toString(),
                     onChanged: (double newValue) {
                       setState(() {
@@ -121,12 +122,12 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       height: 60,
       child: TabBar(
         indicator: const UnderlineTabIndicator(
-            borderSide: BorderSide(color: MyPuttColors.white)),
+            borderSide: BorderSide(color: MyPuttColors.darkBlue)),
         controller: _rangeTabController,
         labelPadding: const EdgeInsets.all(0),
         indicatorPadding: const EdgeInsets.all(0),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        labelColor: Colors.white,
+        labelColor: MyPuttColors.darkBlue,
         unselectedLabelColor: Colors.black,
         tabs: const [
           Tab(
@@ -141,63 +142,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
           Tab(
             child: Text('All time'),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _chartOptionsPanel(BuildContext context) {
-    return Container(
-      color: MyPuttColors.white,
-      padding: const EdgeInsets.all(4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     Text(
-          //       'Last',
-          //       style: Theme.of(context).textTheme.headline6,
-          //     ),
-          //     const SizedBox(width: 5),
-          //     Text(
-          //       '$_numSets',
-          //       style: Theme.of(context)
-          //           .textTheme
-          //           .headline6
-          //           ?.copyWith(color: Colors.blue),
-          //     ),
-          //     const SizedBox(width: 5),
-          //     Text(
-          //       _numSets == 1 ? 'Set' : 'Sets',
-          //       style: Theme.of(context).textTheme.headline6,
-          //     ),
-          //   ],
-          // ),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: Slider(
-          //         inactiveColor: Colors.blue,
-          //         activeColor: Colors.grey[400]!,
-          //         thumbColor: Colors.blue,
-          //         label: _numSets.toString(),
-          //         onChanged: (double newValue) {
-          //           setState(() {
-          //             _numSets = ((1 - newValue) * _totalSets).toInt();
-          //             _sliderValue = newValue;
-          //           });
-          //         },
-          //         value: _sliderValue,
-          //       ),
-          //     )
-          //   ],
-          // ),
-          // Text(
-          //   'Smoothness',
-          //   style: Theme.of(context).textTheme.headline6,
-          // ),
         ],
       ),
     );
@@ -222,14 +166,15 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
               color: _selectedDistance == distance
                   ? MyPuttColors.gray[100]
                   : Colors.transparent),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           margin: const EdgeInsets.symmetric(horizontal: 2),
-          child: Text(
+          child: AutoSizeText(
             '$distance',
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(color: MyPuttColors.blue, fontSize: 10),
+                ?.copyWith(color: MyPuttColors.gray[800], fontSize: 16),
+            maxLines: 1,
           ),
         ),
       ),

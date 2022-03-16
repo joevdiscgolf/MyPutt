@@ -24,7 +24,7 @@ class PuttingChallenge {
 
   String status;
   final int creationTimeStamp;
-  late final int? completionTimeStamp;
+  int? completionTimeStamp;
   final String id;
   final MyPuttUser? opponentUser;
   final MyPuttUser currentUser;

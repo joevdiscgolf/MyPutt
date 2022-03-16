@@ -86,4 +86,15 @@ class MyPuttColors {
   static const Color darkBlue = Color(0xff0E7DD6);
   static const Color shadowColor = Color(0x1F000000);
   static const Color red = Color(0xffFF5151);
+  static const Color darkRed = Color(0xffFF4e4e);
+}
+
+Color getColorFromDifference(int difference) {
+  if (difference > 0) {
+    return MyPuttColors.darkBlue;
+  } else if (difference < 0) {
+    return MyPuttColors.darkRed;
+  } else {
+    return MyPuttColors.gray[400]!;
+  }
 }
