@@ -18,9 +18,14 @@ class ChallengesScreen extends StatefulWidget {
   _ChallengesState createState() => _ChallengesState();
 }
 
-class _ChallengesState extends State<ChallengesScreen> {
+class _ChallengesState extends State<ChallengesScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     BlocProvider.of<ChallengesCubit>(context).reload();
     return DefaultTabController(
         length: 3,
@@ -39,16 +44,12 @@ class _ChallengesState extends State<ChallengesScreen> {
               shadowColor: Colors.transparent,
             ),
             floatingActionButton: _newChallengeButton(context),
-            body: RefreshIndicator(
-              onRefresh: () =>
-                  BlocProvider.of<ChallengesCubit>(context).reload(),
-              child: NestedScrollView(
-                body: _mainBody(context),
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return [SliverToBoxAdapter(child: _tabBar(context))];
-                },
-              ),
+            body: NestedScrollView(
+              body: _mainBody(context),
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return [SliverToBoxAdapter(child: _tabBar(context))];
+              },
             )));
   }
 
@@ -119,7 +120,8 @@ class _ChallengesState extends State<ChallengesScreen> {
         onPressed: () {
           showDialog(
               context: context,
-              builder: (context) => const ChallengeResultDialog(difference: 5));
+              builder: (context) =>
+                  const ChallengeResultDialog(difference: -5));
         });
   }
 }

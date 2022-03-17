@@ -32,12 +32,15 @@ class MyPuttButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(width);
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
         onPressed();
       },
       child: Container(
+        height: height,
+        width: width,
         padding: padding,
         decoration: BoxDecoration(
           boxShadow: [
@@ -49,10 +52,7 @@ class MyPuttButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           color: color,
         ),
-        height: height,
-        width: width,
-        child: Center(
-            child: Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (iconData != null) ...[
@@ -68,7 +68,7 @@ class MyPuttButton extends StatelessWidget {
                     .headline6
                     ?.copyWith(color: textColor, fontSize: textSize)),
           ],
-        )),
+        ),
       ),
     );
   }

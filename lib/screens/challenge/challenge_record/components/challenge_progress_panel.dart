@@ -1,0 +1,307 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/screens/challenge/challenge_record/components/animated_arrows.dart';
+import 'package:myputt/screens/challenge/components/challenge_set_row.dart';
+import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/colors.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+
+class ChallengeProgressPanel extends StatelessWidget {
+  const ChallengeProgressPanel({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ChallengesCubit, ChallengesState>(
+      builder: (context, state) {
+        if (state is! ChallengesErrorState && state.currentChallenge != null) {
+          final PuttingChallenge challenge = state.currentChallenge!;
+          final bool challengeComplete = challenge.currentUserSets.length ==
+              challenge.challengeStructure.length;
+          final int distance = challengeComplete
+              ? challenge
+                  .challengeStructure[challenge.currentUserSets.length - 1]
+                  .distance
+              : challenge.challengeStructure[challenge.currentUserSets.length]
+                  .distance;
+          final int setLength = challengeComplete
+              ? challenge
+                  .challengeStructure[challenge.currentUserSets.length - 1]
+                  .setLength
+              : challenge.challengeStructure[challenge.currentUserSets.length]
+                  .setLength;
+          final int setNumber =
+              (state is CurrentUserComplete || state is BothUsersComplete)
+                  ? challenge.currentUserSets.length
+                  : challenge.currentUserSets.length + 1;
+          final int difference = getDifferenceFromChallenge(challenge);
+
+          return Column(
+            children: [
+              _setNumberContainer(
+                  context, setNumber, challenge.challengeStructure.length),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                color: MyPuttColors.white,
+                child: Column(
+                  children: [
+                    _versusRow(context, challenge.currentUser.displayName,
+                        challenge.opponentUser?.displayName ?? 'Unknown'),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    const ChallengeSetRow(
+                        currentUserMade: 10, opponentMade: 10, setLength: 15),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                  ],
+                ),
+              ),
+              _instructionsPanel(context, distance, setLength),
+              const SizedBox(
+                height: 16,
+              ),
+              _percentCompleteIndicator(
+                context,
+                totalAttemptsFromSets(challenge.currentUserSets).toDouble() /
+                    totalAttemptsFromStructure(challenge.challengeStructure)
+                        .toDouble(),
+                (totalAttemptsFromSubset(challenge.currentUserSets,
+                            challenge.currentUserSets.length)
+                        .toDouble()) /
+                    totalAttemptsFromStructure(challenge.challengeStructure)
+                        .toDouble(),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              _puttsDifferenceText(context, difference),
+            ],
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Widget _setNumberContainer(BuildContext context, int setNumber, int maxSets) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
+        BoxShadow(
+            offset: const Offset(0, 2),
+            color: MyPuttColors.gray[400]!,
+            blurRadius: 2)
+      ]),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Expanded(
+            //   child: Visibility(
+            //     visible: setNumber != 0,
+            //     child: Align(
+            //       alignment: Alignment.centerLeft,
+            //       child: Bounceable(
+            //         onTap: () {
+            //           Vibrate.feedback(FeedbackType.light);
+            //         },
+            //         child: IconButton(
+            //           onPressed: () {},
+            //           icon: const Icon(FlutterRemix.arrow_left_s_line),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Text(
+              'Set $setNumber',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 20, color: MyPuttColors.gray[800]),
+            ),
+            // Expanded(
+            //   child: Visibility(
+            //     visible: setNumber != maxSets,
+            //     child: Align(
+            //       alignment: Alignment.centerRight,
+            //       child: Bounceable(
+            //         onTap: () {
+            //           Vibrate.feedback(FeedbackType.light);
+            //         },
+            //         child: IconButton(
+            //           onPressed: () {},
+            //           icon: const Icon(FlutterRemix.arrow_right_s_line),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _versusRow(
+      BuildContext context, currentUserDisplayname, opponentDisplayname) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: AutoSizeText(
+            currentUserDisplayname,
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+          ),
+        ),
+        Expanded(
+          child: AutoSizeText(
+            'VS',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+          ),
+        ),
+        Expanded(
+          child: AutoSizeText(
+            opponentDisplayname,
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _percentCompleteIndicator(
+      BuildContext context, double begin, double end) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TweenAnimationBuilder<double>(
+          curve: Curves.easeOutQuad,
+          tween: Tween<double>(
+            begin: begin,
+            end: end,
+          ),
+          duration: const Duration(milliseconds: 400),
+          builder: (context, value, _) => Row(
+                children: [
+                  Flexible(
+                    flex: 5,
+                    child: LinearPercentIndicator(
+                      lineHeight: 8,
+                      percent: value,
+                      progressColor: MyPuttColors.gray[400],
+                      backgroundColor: Colors.grey[200],
+                      barRadius: const Radius.circular(2),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Center(
+                      child: Text(
+                        '${(value * 100).toInt()} %',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontSize: 12, color: MyPuttColors.gray),
+                      ),
+                    ),
+                  )
+                ],
+              )),
+    );
+  }
+
+  Widget _instructionsPanel(BuildContext context, int distance, int setLength) {
+    return Container(
+      decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
+        BoxShadow(
+            offset: const Offset(0, 2),
+            color: MyPuttColors.gray[400]!,
+            blurRadius: 2)
+      ]),
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '$distance ft',
+            style: Theme.of(context)
+                .textTheme
+                .headline4
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const AnimatedArrows(),
+          Text(
+            '$setLength putts',
+            style: Theme.of(context)
+                .textTheme
+                .headline5
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _puttsDifferenceText(BuildContext context, int puttsMadeDifference) {
+    return Builder(builder: (context) {
+      final TextStyle? style = Theme.of(context).textTheme.headline6;
+      if (puttsMadeDifference > 0) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("You're ahead by ", style: style),
+            Text('$puttsMadeDifference ',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    ?.copyWith(color: MyPuttColors.blue)),
+            Text(puttsMadeDifference == 1 ? 'putt' : 'putts', style: style),
+          ],
+        );
+      } else if (puttsMadeDifference < 0) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("You're behind by ", style: style),
+            Text('${puttsMadeDifference.abs()} ',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    ?.copyWith(color: MyPuttColors.red)),
+            Text(puttsMadeDifference == -1 ? 'putt' : 'putts', style: style),
+          ],
+        );
+      } else {
+        return Text(
+          'All tied up',
+          style: style,
+        );
+      }
+    });
+  }
+}

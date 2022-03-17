@@ -20,9 +20,9 @@ class ShadowCircularIndicator extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
             BoxShadow(
-                offset: const Offset(0, 8),
-                blurRadius: 2,
-                color: MyPuttColors.gray[300]!)
+                offset: const Offset(0, 4),
+                blurRadius: 6,
+                color: MyPuttColors.gray[400]!)
           ]),
           child: SizedBox(
               height: size,

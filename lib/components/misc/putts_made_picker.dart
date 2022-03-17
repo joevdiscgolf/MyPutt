@@ -36,10 +36,14 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: MyPuttColors.gray[50]!,
-        ),
+        height: 140,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(color: MyPuttColors.gray[50]!, boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              color: MyPuttColors.gray[400]!,
+              blurRadius: 2)
+        ]),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,
           key: widget.sslKey,
@@ -55,7 +59,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
           allowAnotherDirection: true,
           dynamicSizeEquation: (displacement) {
             const threshold = 0;
-            const maxDisplacement = 600;
+            const maxDisplacement = 500;
             if (displacement >= threshold) {
               const slope = 1 / (-maxDisplacement);
               return slope * displacement + (1 - slope * threshold);
@@ -84,6 +88,8 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
         backgroundColor =
             focusedIndex == index ? MyPuttColors.gray[50]! : MyPuttColors.white;
         return Container(
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
               color: backgroundColor,
               shape: BoxShape.circle,
@@ -91,8 +97,6 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
                 width: 4,
                 color: MyPuttColors.gray[100]!,
               )),
-          width: 80,
-          height: 80,
           child: Icon(
             FlutterRemix.close_circle_line,
             color: iconColor,
@@ -104,6 +108,8 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
             ? MyPuttColors.white
             : MyPuttColors.gray[200]!;
         return Container(
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -117,8 +123,6 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
                 width: 4,
                 color: MyPuttColors.lightBlue,
               )),
-          width: 80,
-          height: 80,
           child: Center(
               child: Text((index).toString(),
                   style: Theme.of(context).textTheme.headline6?.copyWith(
@@ -128,9 +132,3 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
     });
   }
 }
-
-/*TextStyle(
-                        color:
-                            index <= focusedIndex ? Colors.white : Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)*/

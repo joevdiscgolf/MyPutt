@@ -9,13 +9,13 @@ class ChallengeSetRow extends StatelessWidget {
       required this.currentUserMade,
       required this.opponentMade,
       required this.setLength,
-      required this.distance})
+      this.distance})
       : super(key: key);
 
   final int currentUserMade;
   final int opponentMade;
   final int setLength;
-  final int distance;
+  final int? distance;
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +24,18 @@ class ChallengeSetRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('$distance ft',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400])),
+          if (distance != null)
+            Text('$distance ft',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400])),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
+                fit: FlexFit.loose,
                 flex: 1,
                 child: AutoSizeText(
                   '$currentUserMade/$setLength',
@@ -45,6 +48,7 @@ class ChallengeSetRow extends StatelessWidget {
               ),
               Flexible(
                 flex: 6,
+                fit: FlexFit.loose,
                 child: LinearPercentIndicator(
                   percent: opponentMade + currentUserMade == 0
                       ? 0
@@ -59,6 +63,7 @@ class ChallengeSetRow extends StatelessWidget {
               ),
               Flexible(
                 flex: 1,
+                fit: FlexFit.loose,
                 child: AutoSizeText(
                   '$opponentMade/$setLength',
                   style: Theme.of(context)

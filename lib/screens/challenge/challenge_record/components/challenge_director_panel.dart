@@ -68,45 +68,6 @@ class ChallengeDirectorPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Builder(builder: (context) {
-              final TextStyle? style = Theme.of(context).textTheme.headline6;
-              if (puttsMadeDifference > 0) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("You're ahead by ", style: style),
-                    Text('$puttsMadeDifference ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.copyWith(color: MyPuttColors.lightGreen)),
-                    Text(puttsMadeDifference == 1 ? 'putt' : 'putts',
-                        style: style),
-                  ],
-                );
-              } else if (puttsMadeDifference < 0) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("You're behind by ", style: style),
-                    Text('${puttsMadeDifference.abs()} ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.copyWith(color: Colors.red)),
-                    Text(puttsMadeDifference == -1 ? 'putt' : 'putts',
-                        style: style),
-                  ],
-                );
-              } else {
-                return Text(
-                  'All tied up',
-                  style: style,
-                );
-              }
-            }),
-          )
         ],
       ),
     );
