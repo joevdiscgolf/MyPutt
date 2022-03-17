@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/challenge_previous_sets_list.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -82,16 +81,34 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          iconTheme: IconThemeData(color: MyPuttColors.gray[800]),
-        ),
         body: NestedScrollView(
           controller: _scrollController,
           body: _mainBody(context),
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 100,
+                  padding: const EdgeInsets.all(8),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Vibrate.feedback(FeedbackType.light);
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              FlutterRemix.arrow_left_s_line,
+                              color: MyPuttColors.gray[800],
+                            ))
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               const SliverToBoxAdapter(
                 child: ChallengeProgressPanel(),
               )

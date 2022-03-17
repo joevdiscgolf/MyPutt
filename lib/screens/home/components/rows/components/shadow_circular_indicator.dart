@@ -60,7 +60,7 @@ class ShadowCircularIndicator extends StatelessWidget {
                                           color: MyPuttColors.gray[400],
                                           fontSize: 12),
                                 )
-                              : Text('-- %')))
+                              : const Text('-- %')))
                 ],
               )),
         ),
