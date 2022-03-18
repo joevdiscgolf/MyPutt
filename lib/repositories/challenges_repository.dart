@@ -12,6 +12,7 @@ class ChallengesRepository {
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   PuttingChallenge? currentChallenge;
+  PuttingChallenge? finishedChallenge;
   List<PuttingChallenge> pendingChallenges = [];
   List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> completedChallenges = [];
@@ -106,8 +107,7 @@ class ChallengesRepository {
     currentChallenge = null;
   }
 
-  Future<bool> completeChallenge() async {
-    print('completing session');
+  Future<bool> finishChallenge() async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge == null || currentUser == null) {
       return false;
@@ -128,6 +128,12 @@ class ChallengesRepository {
     }
   }
 
+  Future<void> addFinishedChallenge(PuttingChallenge challenge) async {
+    activeChallenges.remove(challenge);
+    finishedChallenge = challenge;
+    currentChallenge = null;
+  }
+
   void deleteChallenge(PuttingChallenge challenge) {
     if (pendingChallenges.contains(challenge)) {
       pendingChallenges.remove(challenge);
@@ -141,6 +147,10 @@ class ChallengesRepository {
   void declineChallenge(PuttingChallenge challenge) {
     pendingChallenges.remove(challenge);
     _databaseService.deleteChallenge(challenge);
+  }
+
+  void deleteFinishedChallenge() {
+    finishedChallenge = null;
   }
 
   Future<void> addDeepLinkChallenges() async {

@@ -50,13 +50,8 @@ class PercentagesCard extends StatelessWidget {
             ))
         .toList();
 
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      Flexible(
-        fit: FlexFit.loose,
-        child: ListView(
-          children: children,
-        ),
-      )
-    ]);
+    return ListView(
+      children: children,
+    );
   }
 }

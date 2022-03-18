@@ -17,42 +17,50 @@ class ChallengesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(8),
-        child: challenges.isEmpty
-            ? const Center(child: Text('No challenges'))
-            : ListView(
-                shrinkWrap: true,
-                children: challenges
-                    .map(
-                      (challenge) => Builder(builder: (context) {
-                        if (category == ChallengeCategory.pending) {
-                          return ChallengeItem(
-                            accept: () {
-                              BlocProvider.of<ChallengesCubit>(context)
-                                  .openChallenge(challenge);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      BlocProvider.value(
-                                          value:
-                                              BlocProvider.of<ChallengesCubit>(
-                                                  context),
-                                          child: ChallengeRecordScreen(
-                                            challengeId: challenge.id,
-                                          ))));
-                            },
-                            decline: () {
-                              BlocProvider.of<ChallengesCubit>(context)
-                                  .declineChallenge(challenge);
-                            },
-                            challenge: challenge,
-                          );
-                        } else {
-                          return ChallengeItem(
-                            challenge: challenge,
-                          );
-                        }
-                      }),
-                    )
-                    .toList(),
-              ));
+        child: RefreshIndicator(
+            onRefresh: () => BlocProvider.of<ChallengesCubit>(context).reload(),
+            child: challenges.isEmpty
+                ? LayoutBuilder(
+                    builder: (BuildContext context, constraints) =>
+                        ListView(children: [
+                      Container(
+                          constraints:
+                              BoxConstraints(minHeight: constraints.maxHeight),
+                          child: Center(child: const Text('No challenges')))
+                    ]),
+                  )
+                : ListView(
+                    children: challenges
+                        .map(
+                          (challenge) => Builder(builder: (context) {
+                            if (category == ChallengeCategory.pending) {
+                              return ChallengeItem(
+                                accept: () {
+                                  BlocProvider.of<ChallengesCubit>(context)
+                                      .openChallenge(challenge);
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          BlocProvider.value(
+                                              value: BlocProvider.of<
+                                                  ChallengesCubit>(context),
+                                              child: ChallengeRecordScreen(
+                                                challengeId: challenge.id,
+                                              ))));
+                                },
+                                decline: () {
+                                  BlocProvider.of<ChallengesCubit>(context)
+                                      .declineChallenge(challenge);
+                                },
+                                challenge: challenge,
+                              );
+                            } else {
+                              return ChallengeItem(
+                                challenge: challenge,
+                              );
+                            }
+                          }),
+                        )
+                        .toList(),
+                  )));
   }
 }

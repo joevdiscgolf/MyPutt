@@ -8,6 +8,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -45,40 +46,42 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     }
     return Scaffold(
         backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          actions: [
-            _logoutButton(context),
-          ],
-        ),
         body: BlocBuilder<MyProfileCubit, MyProfileState>(
           builder: (context, state) {
             if (state is MyProfileLoaded) {
+              final List<Widget> bodyChidren = [
+                _basicInfoPanel(context),
+                _percentagesPanel(context),
+                const SizedBox(height: 8),
+                _lifetimeStats(context),
+                const SizedBox(
+                  height: 8,
+                ),
+                const SizedBox(height: 20),
+                ChallengePerformancePanel(
+                  chartSize: MediaQuery.of(context).size.width / 1.8,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const PDGAInfoPanel(),
+                const SizedBox(
+                  height: 16,
+                )
+              ];
               return RefreshIndicator(
                 onRefresh: () async {
-                  await BlocProvider.of<MyProfileCubit>(context).reload();
+                  await BlocProvider.of<ChallengesCubit>(context).reload();
                 },
-                child: ListView(children: [
-                  _basicInfoPanel(context),
-                  _percentagesPanel(context),
-                  const SizedBox(height: 8),
-                  _lifetimeStats(context),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  const SizedBox(height: 20),
-                  ChallengePerformancePanel(
-                    chartSize: MediaQuery.of(context).size.width / 1.8,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const PDGAInfoPanel(),
-                  const SizedBox(
-                    height: 16,
-                  )
-                ]),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                          (context, index) => bodyChidren[index],
+                          childCount: bodyChidren.length),
+                    ),
+                  ],
+                ),
               );
             } else if (state is MyProfileInitial) {
               return const Center(
@@ -120,43 +123,49 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         builder: (context, state) {
       if (state is MyProfileLoaded) {
         return Container(
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.only(top: 32),
+          decoration: const BoxDecoration(
               color: MyPuttColors.blue,
               gradient: LinearGradient(
                   transform: GradientRotation(pi / 2),
                   end: Alignment(0.5, 0),
-                  colors: [MyPuttColors.blue, MyPuttColors.white])),
+                  colors: [MyPuttColors.skyBlue, MyPuttColors.white])),
           child: Row(
             children: [
               Expanded(
-                child: Bounceable(
-                  onTap: () {
-                    Vibrate.feedback(FeedbackType.light);
-                    showBarModalBottomSheet(
-                      context: context,
-                      duration: const Duration(milliseconds: 200),
-                      enableDrag: true,
-                      isDismissible: true,
-                      topControl: Container(),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(36),
-                          topRight: Radius.circular(36),
+                child: Container(
+                    padding: const EdgeInsets.all(0),
+                    // margin: const EdgeInsets.all(0),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _logoutButton(context),
                         ),
-                      ),
-                      builder: (BuildContext context) =>
-                          EditProfileFrisbeePanel(
-                        initialBackgroundColor: MyPuttColors.blue,
-                        initialFrisbeeIconColor:
-                            state.myUser.frisbeeAvatar?.frisbeeIconColor,
-                      ),
-                    );
-                  },
-                  child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Builder(builder: (context) {
+                        Bounceable(
+                          onTap: () {
+                            Vibrate.feedback(FeedbackType.light);
+                            showBarModalBottomSheet(
+                              context: context,
+                              duration: const Duration(milliseconds: 200),
+                              enableDrag: true,
+                              isDismissible: true,
+                              topControl: Container(),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(36),
+                                  topRight: Radius.circular(36),
+                                ),
+                              ),
+                              builder: (BuildContext context) =>
+                                  EditProfileFrisbeePanel(
+                                initialBackgroundColor: MyPuttColors.blue,
+                                initialFrisbeeIconColor: state
+                                    .myUser.frisbeeAvatar?.frisbeeIconColor,
+                              ),
+                            );
+                          },
+                          child: Builder(builder: (context) {
                             final double size =
                                 MediaQuery.of(context).size.width / 4;
                             return SizedBox(
@@ -171,52 +180,50 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               ),
                             );
                           }),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FlutterRemix.pencil_fill,
-                                color: MyPuttColors.gray[400],
-                                size: 20,
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                'Edit',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(
-                                        color: MyPuttColors.gray[800],
-                                        fontSize: 16),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Text(
-                            state.myUser.displayName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                ?.copyWith(
-                                    color: MyPuttColors.lightBlue,
-                                    fontSize: 40),
-                          ),
-                          Text(
-                            '@${state.myUser.username}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                ?.copyWith(
-                                    color: MyPuttColors.gray[300],
-                                    fontSize: 16),
-                          ),
-                        ],
-                      )),
-                ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FlutterRemix.pencil_fill,
+                              color: MyPuttColors.gray[400],
+                              size: 20,
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              'Edit',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(
+                                      color: MyPuttColors.gray[800],
+                                      fontSize: 16),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          state.myUser.displayName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: MyPuttColors.lightBlue, fontSize: 40),
+                        ),
+                        Text(
+                          '@${state.myUser.username}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: MyPuttColors.gray[300], fontSize: 16),
+                        ),
+                      ],
+                    )),
               ),
             ],
           ),

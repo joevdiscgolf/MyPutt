@@ -87,7 +87,7 @@ class MyPuttColors {
   static const Color darkBlue = Color(0xff0E7DD6);
   static const Color shadowColor = Color(0x1F000000);
   static const Color red = Color(0xffFF5151);
-  static const Color darkRed = Color(0xffFF4e4e);
+  static const Color darkRed = Color(0xffef1919);
   static const Color purple = Color(0xff5f3df8);
   static const Color pink = Color(0xffed54ff);
   static const Color orange = Color(0xffffad14);

@@ -7,42 +7,45 @@ import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/users/frisbee_avatar.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
+import 'package:myputt/components/misc/fade_in_widget.dart';
 
-import '../../../../../components/misc/fade_in_widget.dart';
-
-class ChallengeResultDialog extends StatefulWidget {
-  const ChallengeResultDialog({
+class ChallengeResultScreen extends StatefulWidget {
+  const ChallengeResultScreen({
     Key? key,
-    required this.difference,
-    this.challenge,
+    required this.challenge,
   }) : super(key: key);
 
-  final PuttingChallenge? challenge;
-  final int difference;
+  final PuttingChallenge challenge;
 
   @override
-  State<ChallengeResultDialog> createState() => _ChallengeResultDialogState();
+  State<ChallengeResultScreen> createState() => _ChallengeResultScreenState();
 }
 
-class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
+class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
+  final ChallengesRepository _challengesRepository =
+      locator.get<ChallengesRepository>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   bool _showButton = false;
   late final IconData _iconData;
   late final String _subtitle;
+  late final int _difference;
 
   @override
   void initState() {
-    if (widget.difference >= 0) {
+    _difference = getDifferenceFromChallenge(widget.challenge);
+    if (_difference >= 0) {
       _iconData = FlutterRemix.medal_2_fill;
     } else {
       _iconData = FlutterRemix.emotion_sad_fill;
     }
-    _subtitle = getSubtitleFromDifference(widget.difference);
+    _subtitle = getSubtitleFromDifference(_difference);
     _showDelayedButton();
     super.initState();
   }
@@ -54,20 +57,12 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-            padding: const EdgeInsets.all(24),
-            width: double.infinity,
-            child: _mainBody(context)));
+    return Scaffold(body: _mainBody(context));
   }
 
   Widget _mainBody(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.only(top: 64, left: 32, right: 32),
         width: double.infinity,
         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -75,10 +70,9 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${getMessageFromDifference(widget.difference)}!',
+                '${getMessageFromDifference(_difference)}!',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
-                    fontSize: 40,
-                    color: getColorFromDifference(widget.difference)),
+                    fontSize: 40, color: getColorFromDifference(_difference)),
               ),
               const SizedBox(
                 height: 12,
@@ -95,13 +89,13 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 _profileColumn(
                     context,
-                    widget.challenge?.currentUser.displayName ?? 'You',
+                    widget.challenge.currentUser.displayName,
                     _userRepository.currentUser?.frisbeeAvatar),
                 _centerColumn(context),
                 _profileColumn(
                   context,
-                  widget.challenge?.opponentUser?.displayName ?? 'Opponent',
-                  widget.challenge?.opponentUser?.frisbeeAvatar,
+                  widget.challenge.opponentUser?.displayName ?? 'Opponent',
+                  widget.challenge.opponentUser?.frisbeeAvatar,
                 )
               ]),
               const SizedBox(
@@ -116,7 +110,10 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
                           height: 50,
                           title: 'Continue',
                           iconData: FlutterRemix.check_line,
-                          onPressed: () => Navigator.pop(context)),
+                          onPressed: () {
+                            _challengesRepository.deleteFinishedChallenge();
+                            Navigator.pop(context);
+                          }),
                     )
                   : const SizedBox(
                       height: 50,

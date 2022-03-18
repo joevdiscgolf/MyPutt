@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/screens/challenge/challenge_record/components/dialogs/challenge_result_dialog.dart';
+import 'package:myputt/screens/challenge/challenge_record/components/screens/challenge_result_screen.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
+import 'package:myputt/screens/challenge/components/dialogs/select_preset_dialog.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
@@ -58,23 +59,20 @@ class _ChallengesState extends State<ChallengesScreen>
   }
 
   Widget _mainBody(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: BlocBuilder<ChallengesCubit, ChallengesState>(
-          builder: (context, state) {
-        return TabBarView(children: [
-          ChallengesList(
-              category: ChallengeCategory.active,
-              challenges: List.from(state.activeChallenges.reversed)),
-          ChallengesList(
-              category: ChallengeCategory.pending,
-              challenges: List.from(state.pendingChallenges.reversed)),
-          ChallengesList(
-              category: ChallengeCategory.complete,
-              challenges: List.from(state.completedChallenges.reversed)),
-        ]);
-      }),
-    );
+    return BlocBuilder<ChallengesCubit, ChallengesState>(
+        builder: (context, state) {
+      return TabBarView(children: [
+        ChallengesList(
+            category: ChallengeCategory.active,
+            challenges: List.from(state.activeChallenges.reversed)),
+        ChallengesList(
+            category: ChallengeCategory.pending,
+            challenges: List.from(state.pendingChallenges.reversed)),
+        ChallengesList(
+            category: ChallengeCategory.complete,
+            challenges: List.from(state.completedChallenges.reversed)),
+      ]);
+    });
   }
 
   Widget _tabBar(BuildContext context) {
@@ -130,13 +128,13 @@ class _ChallengesState extends State<ChallengesScreen>
               showDialog(
                   context: context,
                   builder: (BuildContext context) =>
-                      const ChallengeResultDialog(difference: -1));
+                      const SelectPresetDialog());
             },
             title: 'New challenge',
             iconData: FlutterRemix.add_line,
             color: MyPuttColors.blue,
             padding: const EdgeInsets.all(16),
-            width: double.infinity,
+            width: MediaQuery.of(context).size.width / 2,
             shadowColor: MyPuttColors.gray[400],
           ),
         ));

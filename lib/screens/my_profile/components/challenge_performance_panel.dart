@@ -34,7 +34,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   late final double? _winPercent;
   late List<int> _selectedIndices;
   late List<int> _allIndices;
-  List<int> _spacerIndices = [];
+  final List<int> _spacerIndices = [];
 
   late final List<ChartData> _chartData;
   List<ChartData> _spacerChartData = [];
@@ -50,6 +50,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
             label: 'Not complete',
             challengeResult: ChallengeResult.none)
       ];
+      _spacerChartData = _chartData;
       _winPercent = null;
       _allIndices = [0];
       _selectedIndices = _allIndices;
@@ -91,7 +92,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         _spacerChartData.add(data);
         _spacerChartData.add(ChartData(
             challengeResult: ChallengeResult.none,
-            value: _completedChallenges.length * 0.02,
+            value: _completedChallenges.length * 0.01,
             color: Colors.transparent,
             label: 'spacer'));
         _spacerIndices.add(i * 2 + 1);
@@ -131,45 +132,72 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
     return Column(
       children: [
         Row(
-          children: const [
-            ColorMarker(
+          children: [
+            const ColorMarker(
               color: MyPuttColors.darkBlue,
               size: 16,
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
-            SizedBox(width: 40, child: Text('Wins')),
+            SizedBox(
+                width: 40,
+                child: AutoSizeText(
+                  'Wins',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                  maxLines: 1,
+                )),
           ],
         ),
         const SizedBox(
           height: 8,
         ),
         Row(
-          children: const [
-            ColorMarker(
+          children: [
+            const ColorMarker(
               color: MyPuttColors.red,
               size: 16,
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
-            SizedBox(width: 40, child: Text('Losses')),
+            SizedBox(
+                width: 40,
+                child: AutoSizeText(
+                  'Losses',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                  maxLines: 1,
+                )),
           ],
         ),
         const SizedBox(
           height: 8,
         ),
         Row(
-          children: const [
-            ColorMarker(
+          children: [
+            const ColorMarker(
               color: MyPuttColors.gray,
               size: 16,
             ),
-            SizedBox(
+            const SizedBox(
               width: 4,
             ),
-            SizedBox(width: 40, child: Text('Draws')),
+            SizedBox(
+                width: 40,
+                child: AutoSizeText(
+                  'Draws',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                  maxLines: 1,
+                )),
           ],
         ),
       ],
@@ -201,14 +229,28 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                 maxLines: 1,
               );
             } else if (_challengeResult == ChallengeResult.none) {
-              return AutoSizeText(
-                '${_winPercent?.toStringAsFixed(0)}% \n win rate',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 28, color: MyPuttColors.gray[800]),
-                maxLines: 2,
-                textAlign: TextAlign.center,
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AutoSizeText(
+                    '${_winPercent?.toStringAsFixed(0)}%',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                  ),
+                  AutoSizeText(
+                    'Win rate',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 20, color: MyPuttColors.gray[600]),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               );
             } else {
               return Builder(
@@ -216,12 +258,31 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      AutoSizeText(
-                        '${getChallengeResultText()}\n${challengeResultToCount()}',
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            fontSize: 28, color: MyPuttColors.gray[800]),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+                      Column(
+                        children: [
+                          AutoSizeText(
+                            '${challengeResultToCount()}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                    fontSize: 28,
+                                    color: MyPuttColors.gray[800]),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                          ),
+                          AutoSizeText(
+                            getChallengeResultText(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                    fontSize: 16,
+                                    color: MyPuttColors.gray[800]),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ],
                   );
@@ -237,11 +298,11 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   String getChallengeResultText() {
     switch (_challengeResult) {
       case ChallengeResult.win:
-        return 'Wins';
+        return _wins == 1 ? 'Win' : 'Wins';
       case ChallengeResult.loss:
-        return 'Losses';
+        return _losses == 1 ? 'Loss' : 'Losses';
       default:
-        return 'Draws';
+        return _draws == 1 ? 'Draw' : 'Draws';
     }
   }
 
@@ -273,8 +334,10 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
               initialSelectedDataIndexes: _selectedIndices,
               explodeGesture: ActivationMode.none,
               radius: '100%',
-              innerRadius: '80%',
-              cornerStyle: CornerStyle.bothCurve,
+              innerRadius: '85%',
+              cornerStyle: _completedChallenges.isEmpty
+                  ? CornerStyle.bothFlat
+                  : CornerStyle.bothCurve,
               dataSource: _spacerChartData,
               strokeWidth: 30,
               pointColorMapper: (ChartData data, _) => data.color,

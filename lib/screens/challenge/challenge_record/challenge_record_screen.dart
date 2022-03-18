@@ -20,6 +20,7 @@ import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/utils/colors.dart';
 import 'components/challenge_progress_panel.dart';
 import 'components/challenge_record_set_row.dart';
+import 'components/screens/challenge_result_screen.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -64,7 +65,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           .snapshots();
       _streamSubscription = documentStream.listen((snapshot) {
         BlocProvider.of<ChallengesCubit>(context)
-            .updateOpponentSets(snapshot.data());
+            .updateIncomingChallenge(snapshot.data());
       });
     }
     super.initState();
@@ -79,32 +80,42 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          leading: IconButton(
-              onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
-                Navigator.pop(context);
+    return BlocBuilder<ChallengesCubit, ChallengesState>(
+      builder: (context, state) {
+        if (state is ChallengeFinished) {
+          return ChallengeResultScreen(
+            challenge: state.finishedChallenge,
+          );
+        }
+        return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              leading: IconButton(
+                  onPressed: () {
+                    Vibrate.feedback(FeedbackType.light);
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    FlutterRemix.arrow_left_s_line,
+                    color: MyPuttColors.gray[800],
+                  )),
+            ),
+            backgroundColor: MyPuttColors.white,
+            body: NestedScrollView(
+              controller: _scrollController,
+              body: _mainBody(context),
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                return [
+                  SliverToBoxAdapter(
+                    child: ChallengeProgressPanel(),
+                  )
+                ];
               },
-              icon: Icon(
-                FlutterRemix.arrow_left_s_line,
-                color: MyPuttColors.gray[800],
-              )),
-        ),
-        backgroundColor: MyPuttColors.white,
-        body: NestedScrollView(
-          controller: _scrollController,
-          body: _mainBody(context),
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverToBoxAdapter(
-                child: ChallengeProgressPanel(),
-              )
-            ];
-          },
-        ));
+            ));
+      },
+    );
   }
 
   Widget _mainBody(BuildContext context) {
@@ -167,12 +178,12 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                                 sessionInProgress = false;
                               });
                               await BlocProvider.of<ChallengesCubit>(context)
-                                  .completeCurrentChallenge();
+                                  .finishChallenge();
                             },
                             buttonlabel: 'Finish',
                             title: 'Finish challenge?',
                             confirmColor: MyPuttColors.lightGreen,
-                          ))).then((value) => dialogCallBack());
+                          )));
                 });
           } else if (state is CurrentUserComplete &&
               state.currentChallenge != null) {
