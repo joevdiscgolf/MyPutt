@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/dialogs/challenge_result_dialog.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
@@ -43,6 +46,8 @@ class _ChallengesState extends State<ChallengesScreen>
               shadowColor: Colors.transparent,
             ),
             floatingActionButton: _newChallengeButton(context),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             body: NestedScrollView(
               body: _mainBody(context),
               headerSliverBuilder:
@@ -114,13 +119,26 @@ class _ChallengesState extends State<ChallengesScreen>
   }
 
   Widget _newChallengeButton(BuildContext context) {
-    return FloatingActionButton(
-        child: const Icon(FlutterRemix.add_line),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) =>
-                  const ChallengeResultDialog(difference: -5));
-        });
+    return Bounceable(
+        onTap: () {
+          Vibrate.feedback(FeedbackType.light);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: MyPuttButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      const ChallengeResultDialog(difference: -1));
+            },
+            title: 'New challenge',
+            iconData: FlutterRemix.add_line,
+            color: MyPuttColors.blue,
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            shadowColor: MyPuttColors.gray[400],
+          ),
+        ));
   }
 }

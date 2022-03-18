@@ -80,35 +80,25 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          leading: IconButton(
+              onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                FlutterRemix.arrow_left_s_line,
+                color: MyPuttColors.gray[800],
+              )),
+        ),
         backgroundColor: MyPuttColors.white,
         body: NestedScrollView(
           controller: _scrollController,
           body: _mainBody(context),
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 100,
-                  padding: const EdgeInsets.all(8),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Vibrate.feedback(FeedbackType.light);
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(
-                              FlutterRemix.arrow_left_s_line,
-                              color: MyPuttColors.gray[800],
-                            ))
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               const SliverToBoxAdapter(
                 child: ChallengeProgressPanel(),
               )
@@ -154,82 +144,94 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   }
 
   Widget _addSetButton(BuildContext context) {
-    return BlocBuilder<ChallengesCubit, ChallengesState>(
-      builder: (context, state) {
-        if (state is BothUsersComplete) {
-          return MyPuttButton(
-              title: 'Finish Challenge',
-              color: MyPuttColors.lightGreen,
-              iconData: FlutterRemix.check_line,
-              iconColor: Colors.white,
-              width: MediaQuery.of(context).size.width / 4,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: BlocBuilder<ChallengesCubit, ChallengesState>(
+        builder: (context, state) {
+          if (state is BothUsersComplete) {
+            return MyPuttButton(
+                title: 'Finish Challenge',
+                color: MyPuttColors.lightGreen,
+                iconData: FlutterRemix.check_line,
+                iconColor: Colors.white,
+                width: MediaQuery.of(context).size.width / 4,
+                onPressed: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  showDialog(
+                      context: context,
+                      builder: (dialogContext) => BlocProvider.value(
+                          value: BlocProvider.of<ChallengesCubit>(context),
+                          child: ConfirmDialog(
+                            actionPressed: () async {
+                              setState(() {
+                                sessionInProgress = false;
+                              });
+                              await BlocProvider.of<ChallengesCubit>(context)
+                                  .completeCurrentChallenge();
+                            },
+                            buttonlabel: 'Finish',
+                            title: 'Finish challenge?',
+                            confirmColor: MyPuttColors.lightGreen,
+                          ))).then((value) => dialogCallBack());
+                });
+          } else if (state is CurrentUserComplete &&
+              state.currentChallenge != null) {
+            return MyPuttButton(
+              title:
+                  'Waiting for ${state.currentChallenge!.opponentUser?.displayName ?? 'Unknown'}...',
+              color: Colors.blue,
+              width: MediaQuery.of(context).size.width / 2,
               onPressed: () {
                 Vibrate.feedback(FeedbackType.light);
-                showDialog(
-                    context: context,
-                    builder: (dialogContext) => BlocProvider.value(
-                        value: BlocProvider.of<ChallengesCubit>(context),
-                        child: ConfirmDialog(
-                          actionPressed: () async {
-                            setState(() {
-                              sessionInProgress = false;
-                            });
-                            await BlocProvider.of<ChallengesCubit>(context)
-                                .completeCurrentChallenge();
-                          },
-                          buttonlabel: 'Finish',
-                          title: 'Finish challenge?',
-                          confirmColor: MyPuttColors.lightGreen,
-                        ))).then((value) => dialogCallBack());
-              });
-        } else if (state is CurrentUserComplete &&
-            state.currentChallenge != null) {
-          return MyPuttButton(
-            title:
-                'Waiting for ${state.currentChallenge!.opponentUser?.displayName ?? 'Unknown'}...',
-            color: Colors.blue,
-            width: MediaQuery.of(context).size.width / 2,
-            onPressed: () {
-              Vibrate.feedback(FeedbackType.light);
-            },
-            textColor: Colors.white,
-          );
-        }
-        if ((state is ChallengeInProgress || state is OpponentUserComplete) &&
-            state.currentChallenge != null) {
-          return MyPuttButton(
+              },
+              textColor: Colors.white,
+            );
+          }
+          if ((state is ChallengeInProgress || state is OpponentUserComplete) &&
+              state.currentChallenge != null) {
+            return MyPuttButton(
+                title: 'Add Set',
+                color: Colors.blue,
+                iconData: FlutterRemix.add_line,
+                iconColor: MyPuttColors.white,
+                width: 50,
+                shadowColor: MyPuttColors.gray[400],
+                onPressed: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  if (state.currentChallenge!.currentUserSets.length <
+                      state.currentChallenge!.challengeStructure.length) {
+                    if (state.currentChallenge!.currentUserSets.length !=
+                        state.currentChallenge!.challengeStructure.length - 1) {
+                      _incrementScrollLists(state.currentChallenge!);
+                    }
+                    BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                        timeStamp: DateTime.now().millisecondsSinceEpoch,
+                        distance: state
+                            .currentChallenge!
+                            .challengeStructure[
+                                state.currentChallenge!.currentUserSets.length]
+                            .distance,
+                        puttsAttempted: state
+                            .currentChallenge!
+                            .challengeStructure[
+                                state.currentChallenge!.currentUserSets.length]
+                            .setLength,
+                        puttsMade: puttsPickerFocusedIndex));
+                  }
+                });
+          } else {
+            return MyPuttButton(
               title: 'Add Set',
               color: Colors.blue,
-              // iconData: FlutterRemix.add_line,
-              width: MediaQuery.of(context).size.width / 4,
+              iconData: FlutterRemix.add_line,
+              iconColor: MyPuttColors.white,
+              width: 50,
               shadowColor: MyPuttColors.gray[400],
-              onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
-                if (state.currentChallenge!.currentUserSets.length <
-                    state.currentChallenge!.challengeStructure.length) {
-                  if (state.currentChallenge!.currentUserSets.length !=
-                      state.currentChallenge!.challengeStructure.length - 1) {
-                    _incrementScrollLists(state.currentChallenge!);
-                  }
-                  BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                      timeStamp: DateTime.now().millisecondsSinceEpoch,
-                      distance: state
-                          .currentChallenge!
-                          .challengeStructure[
-                              state.currentChallenge!.currentUserSets.length]
-                          .distance,
-                      puttsAttempted: state
-                          .currentChallenge!
-                          .challengeStructure[
-                              state.currentChallenge!.currentUserSets.length]
-                          .setLength,
-                      puttsMade: puttsPickerFocusedIndex));
-                }
-              });
-        } else {
-          return const Text('Something went wrong');
-        }
-      },
+              onPressed: () {},
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -323,14 +325,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
     });
   }
 
-  void _decrementScrollLists(PuttingChallenge challenge, int index) {
-    final int setLength = challenge.challengeStructure[index].setLength;
-    if (puttsPickerFocusedIndex >= setLength) {
-      puttsMadePickerKey.currentState?.focusToItem(setLength);
-      puttsPickerFocusedIndex = setLength;
-    }
-    _focusAllToIndex(index);
-  }
+  // void _decrementScrollLists(PuttingChallenge challenge, int index) {
+  //   final int setLength = challenge.challengeStructure[index].setLength;
+  //   if (puttsPickerFocusedIndex >= setLength) {
+  //     puttsMadePickerKey.currentState?.focusToItem(setLength);
+  //     puttsPickerFocusedIndex = setLength;
+  //   }
+  //   _focusAllToIndex(index);
+  // }
 
   void dialogCallBack() {
     if (!sessionInProgress) {

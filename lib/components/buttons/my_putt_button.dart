@@ -9,12 +9,12 @@ class MyPuttButton extends StatelessWidget {
       required this.onPressed,
       this.iconData,
       this.height = 50,
-      this.width = 100,
+      this.width,
       this.color = Colors.blue,
       this.iconColor = Colors.white,
       this.textColor = Colors.white,
       this.textSize = 16,
-      this.padding,
+      this.padding = const EdgeInsets.all(8),
       this.shadowColor})
       : super(key: key);
 
@@ -22,7 +22,7 @@ class MyPuttButton extends StatelessWidget {
   final Function onPressed;
   final IconData? iconData;
   final double height;
-  final double width;
+  final double? width;
   final Color color;
   final Color iconColor;
   final Color textColor;
@@ -47,13 +47,14 @@ class MyPuttButton extends StatelessWidget {
             BoxShadow(
                 offset: const Offset(0, 2),
                 color: shadowColor ?? Colors.transparent,
-                blurRadius: 2)
+                blurRadius: 4)
           ],
           borderRadius: BorderRadius.circular(24),
           color: color,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (iconData != null) ...[
               Icon(

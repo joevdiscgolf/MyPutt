@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   //   return PrimaryButton(
   //     label: 'Sign in with Google',
   //     iconColor: MyPuttColors.green,
-  //     icon: FlutterRemix.google_fill,
+  //     app_icon: FlutterRemix.google_fill,
   //     backgroundColor: MyPuttColors.gray[800]!,
   //     width: 310,
   //     onPressed: () {

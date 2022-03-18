@@ -18,6 +18,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(opponentPuttsMade);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(

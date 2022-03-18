@@ -2,34 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/utils/colors.dart';
 
-class PuttingStatRow extends StatefulWidget {
-  const PuttingStatRow(
-      {Key? key,
-      required this.distance,
-      required this.percentage,
-      required this.allTimePercentage,
-      this.chartPoints = const []})
-      : super(key: key);
+class PuttingStatRow extends StatelessWidget {
+  const PuttingStatRow({
+    Key? key,
+    this.backgroundColor = MyPuttColors.white,
+    required this.distance,
+    required this.percentage,
+    required this.allTimePercentage,
+  }) : super(key: key);
 
+  final Color backgroundColor;
   final num? percentage;
   final num? allTimePercentage;
   final int distance;
-  final List<ChartPoint> chartPoints;
 
-  @override
-  State<PuttingStatRow> createState() => _PuttingStatRowState();
-}
-
-class _PuttingStatRowState extends State<PuttingStatRow> {
   @override
   Widget build(BuildContext context) {
     final double indicatorSize = MediaQuery.of(context).size.height * 0.1;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+    return Container(
+      color: backgroundColor,
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child:
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Bounceable(
@@ -37,44 +32,38 @@ class _PuttingStatRowState extends State<PuttingStatRow> {
             Vibrate.feedback(FeedbackType.light);
           },
           child: ShadowCircularIndicator(
-              size: indicatorSize, decimal: widget.percentage?.toDouble()),
-          // return AnimatedCircularProgressIndicator(
-          //     size: 90,
-          //     strokeWidth: 5,
-          //     duration: const Duration(milliseconds: 500),
-          //     decimal: widget.percentage?.toDouble() ?? 0);
+              size: indicatorSize, decimal: percentage?.toDouble()),
         ),
         const SizedBox(
-          width: 24,
+          width: 40,
         ),
         Column(
           children: [
             SizedBox(
               width: 80,
-              child: Text(widget.distance.toString() + ' ft',
+              child: Text(distance.toString() + ' ft',
                   style: Theme.of(context)
                       .textTheme
                       .headline6
                       ?.copyWith(color: MyPuttColors.gray[800]!, fontSize: 24)),
             ),
             Builder(builder: (context) {
-              if (widget.allTimePercentage != null &&
-                  widget.percentage != null) {
+              if (allTimePercentage != null && percentage != null) {
                 return SizedBox(
                   width: 60,
                   child: Row(children: <Widget>[
-                    widget.percentage! < widget.allTimePercentage!
+                    percentage! < allTimePercentage!
                         ? const Icon(FlutterRemix.arrow_down_line,
                             color: MyPuttColors.red)
                         : const Icon(FlutterRemix.arrow_up_line,
                             color: MyPuttColors.lightBlue),
                     Text(
-                        (100 * (widget.percentage! - widget.allTimePercentage!))
+                        (100 * (percentage! - allTimePercentage!))
                                 .round()
                                 .toString() +
                             ' %',
                         style: TextStyle(
-                          color: widget.percentage! < widget.allTimePercentage!
+                          color: percentage! < allTimePercentage!
                               ? MyPuttColors.red
                               : MyPuttColors.lightBlue,
                         ))

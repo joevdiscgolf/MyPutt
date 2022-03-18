@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/screens/challenge/components/challenge_set_row.dart';
 import 'package:myputt/screens/challenge/summary/challenge_info_panel.dart';
 import 'package:myputt/utils/colors.dart';
+
+import 'components/challenge_sets_list.dart';
 
 class ChallengeSummaryScreen extends StatefulWidget {
   const ChallengeSummaryScreen({Key? key, required this.challenge})
@@ -35,30 +36,5 @@ class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {
         ),
       ),
     );
-  }
-}
-
-class ChallengeSetsList extends StatelessWidget {
-  const ChallengeSetsList({Key? key, required this.challenge})
-      : super(key: key);
-
-  final PuttingChallenge challenge;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-        shrinkWrap: true,
-        children: challenge.challengeStructure
-            .asMap()
-            .entries
-            .map((entry) => ChallengeSetRow(
-                  currentUserMade:
-                      challenge.currentUserSets[entry.key].puttsMade.toInt(),
-                  opponentMade:
-                      challenge.opponentSets[entry.key].puttsMade.toInt(),
-                  setLength: entry.value.setLength,
-                  distance: entry.value.distance,
-                ))
-            .toList());
   }
 }

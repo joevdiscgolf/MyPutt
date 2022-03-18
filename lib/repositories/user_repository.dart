@@ -1,12 +1,16 @@
+import 'package:flutter/material.dart';
+import 'package:myputt/data/types/users/frisbee_avatar.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/user_service.dart';
 
 class UserRepository {
   MyPuttUser? currentUser;
   final AuthService _authService = locator.get<AuthService>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
+  final UserService _userService = locator.get<UserService>();
 
   void clearData() {
     currentUser = null;
@@ -27,5 +31,13 @@ class UserRepository {
 
   Future<List<MyPuttUser>> fetchUsersByUsername(String username) async {
     return _databaseService.getUsersByUsername(username);
+  }
+
+  Future<bool> updateUserAvatar(FrisbeeAvatar frisbeeAvatar) async {
+    if (currentUser != null) {
+      currentUser?.frisbeeAvatar = frisbeeAvatar;
+      return _userService.setUserWithPayload(currentUser!);
+    }
+    return false;
   }
 }

@@ -83,7 +83,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               transform:
                                   const GradientRotation(3 * math.pi / 2),
                               colors: [
-                                MyPuttColors.blue.withOpacity(0.6),
+                                MyPuttColors.blue.withOpacity(0.8),
                                 MyPuttColors.white,
                               ]),
                         ),

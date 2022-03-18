@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
@@ -8,6 +12,8 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
+import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
+import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';
 import 'package:myputt/screens/my_profile/components/lifetime_stat_row.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
@@ -38,7 +44,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return Scaffold(
         backgroundColor: MyPuttColors.white,
         appBar: AppBar(
-          title: _title(context),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           actions: [
             _logoutButton(context),
           ],
@@ -52,16 +59,26 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 },
                 child: ListView(children: [
                   _basicInfoPanel(context),
+                  _percentagesPanel(context),
+                  const SizedBox(height: 8),
                   _lifetimeStats(context),
                   const SizedBox(
                     height: 8,
                   ),
-                  _percentagesPanel(context),
                   const SizedBox(height: 20),
+                  ChallengePerformancePanel(
+                    chartSize: MediaQuery.of(context).size.width / 1.8,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   const PDGAInfoPanel(),
+                  const SizedBox(
+                    height: 16,
+                  )
                 ]),
               );
-            } else if (state is MyProfileLoading) {
+            } else if (state is MyProfileInitial) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -69,44 +86,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [Text('Failed to load. Please try again')],
+                children: const [
+                  Center(child: Text('Failed to load. Please try again'))
+                ],
               );
             }
           },
         ));
   }
 
-  Widget _title(BuildContext context) {
-    return BlocBuilder<MyProfileCubit, MyProfileState>(
-      builder: (context, state) {
-        if (state is MyProfileLoaded) {
-          return Text(state.myUser.displayName);
-        } else if (state is MyProfileLoading) {
-          return Text(state.myUser.displayName);
-        } else {
-          return const Text('');
-        }
-      },
-    );
-  }
-
   Widget _logoutButton(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shadowColor: Colors.transparent,
-      ),
-      onPressed: () {
-        locator.get<SigninService>().signOut();
-      },
-      child: Row(
-        children: const [
-          Icon(
-            FlutterRemix.logout_box_line,
-            size: 15,
-          ),
-          SizedBox(width: 5),
-          Text('Log out'),
-        ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: MyPuttButton(
+        onPressed: () {
+          locator.get<SigninService>().signOut();
+        },
+        padding: const EdgeInsets.all(8),
+        height: 50,
+        title: 'Log out',
+        iconData: FlutterRemix.logout_box_line,
+        iconColor: MyPuttColors.gray[800]!,
+        color: Colors.transparent,
+        textColor: MyPuttColors.gray[800]!,
       ),
     );
   }
@@ -118,51 +120,82 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         return Row(
           children: [
             Expanded(
-              child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(color: Colors.white),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 20,
+              child: Bounceable(
+                onTap: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  showBarModalBottomSheet(
+                    context: context,
+                    duration: const Duration(milliseconds: 200),
+                    enableDrag: true,
+                    isDismissible: true,
+                    topControl: Container(),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(36),
+                        topRight: Radius.circular(36),
                       ),
-                      Builder(builder: (context) {
-                        final double size =
-                            MediaQuery.of(context).size.width / 4;
-                        return FrisbeeCircleIcon(
-                          size: size,
-                          backGroundColor: MyPuttColors.red,
-                          iconSize: size * 0.8,
-                        );
-                      }),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        state.myUser.displayName,
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            color: MyPuttColors.lightBlue, fontSize: 40),
-                      ),
-                      Text(
-                        '@${state.myUser.username}',
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            color: MyPuttColors.gray[300], fontSize: 16),
-                      ),
-                    ],
-                  )),
+                    ),
+                    builder: (BuildContext context) => EditProfileFrisbeePanel(
+                      initialBackgroundColor: MyPuttColors.blue,
+                      initialFrisbeeIconColor:
+                          state.myUser.frisbeeAvatar?.frisbeeIconColor,
+                    ),
+                  );
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(
+                      children: [
+                        Builder(builder: (context) {
+                          final double size =
+                              MediaQuery.of(context).size.width / 4;
+                          return SizedBox(
+                            height: size + 20,
+                            width: size + 20,
+                            child: Stack(children: [
+                              Center(
+                                child: FrisbeeCircleIcon(
+                                  frisbeeAvatar: state.myUser.frisbeeAvatar,
+                                  size: size,
+                                  iconSize: size * 0.8,
+                                ),
+                              ),
+                              const Positioned(
+                                child: Icon(FlutterRemix.pencil_fill),
+                                top: 0,
+                                right: 0,
+                              )
+                            ]),
+                          );
+                        }),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Text(
+                          state.myUser.displayName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: MyPuttColors.lightBlue, fontSize: 40),
+                        ),
+                        Text(
+                          '@${state.myUser.username}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: MyPuttColors.gray[300], fontSize: 16),
+                        ),
+                      ],
+                    )),
+              ),
             ),
           ],
         );
       } else {
-        return Row(
-          children: const [
-            Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          ],
-        );
+        return Container();
       }
     });
   }
@@ -281,7 +314,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               LifetimeStatRow(
                   icon: const Image(
-                    image: blueFrisbeeIcon,
+                    image: AssetImage(blueFrisbeeIconSrc),
                     height: 24,
                     width: 24,
                   ),
@@ -310,57 +343,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Challenges completed',
                   subtitle:
-                      '${_challengesRepository.activeChallenges.length + _challengesRepository.pendingChallenges.length + _challengesRepository.completedChallenges.length}'),
+                      '${_challengesRepository.completedChallenges.length}'),
             ],
           );
-          // return Row(
-          //   children: [
-          //     Expanded(
-          //       child: Container(
-          //           padding: const EdgeInsets.all(8),
-          //           decoration: const BoxDecoration(color: Colors.white),
-          //           child: Column(
-          //             crossAxisAlignment: CrossAxisAlignment.start,
-          //             children: [
-          //               Text(
-          //                 'Lifetime stats',
-          //                 style: Theme.of(context).textTheme.headline5,
-          //               ),
-          //               const SizedBox(
-          //                 height: 5,
-          //               ),
-          //               Text(
-          //                 'Putts made',
-          //                 style: Theme.of(context).textTheme.headline6,
-          //               ),
-          //               const SizedBox(height: 5),
-          //               _puttsMadeRow(context),
-          //               Divider(
-          //                 height: 20,
-          //                 thickness: 1,
-          //                 color: Colors.grey[300],
-          //               ),
-          //               const SizedBox(
-          //                 height: 5,
-          //               ),
-          //               Divider(
-          //                 height: 20,
-          //                 thickness: 1,
-          //                 color: Colors.grey[300],
-          //               ),
-          //               Text(
-          //                 'Challenges',
-          //                 style: Theme.of(context).textTheme.headline6,
-          //               ),
-          //               const SizedBox(
-          //                 height: 5,
-          //               ),
-          //               _challengeStatsRow(context)
-          //             ],
-          //           )),
-          //     ),
-          //   ],
-          // );
         } else {
           return Container();
         }

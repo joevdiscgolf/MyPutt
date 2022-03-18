@@ -4,10 +4,12 @@ import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SigninService {
   late StreamController<LoginState> controller;
@@ -15,6 +17,8 @@ class SigninService {
   final AuthService _authService = locator.get<AuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
   late final String _version;
+  final Connectivity _connectivity = Connectivity();
+
   LoginState currentLoginState = LoginState.none;
   SigninService() {
     controller = StreamController<LoginState>();
@@ -23,28 +27,34 @@ class SigninService {
 
   Future<void> init() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    _version = packageInfo.version;
-    if (_authService.getCurrentUserId() != null) {
-      if (!(await _authService.userIsSetup())) {
-        controller.add(LoginState.setup);
-        currentLoginState = LoginState.setup;
-      } else {
-        final String? minimumVersion = await getMinimumAppVersion();
-        if (minimumVersion == null) {
-          controller.add(LoginState.loggedIn);
-          return;
-        }
-        if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-          controller.add(LoginState.forceUpgrade);
-          return;
-        }
-        await fetchRepositoryData();
-        controller.add(LoginState.loggedIn);
-        currentLoginState = LoginState.loggedIn;
-      }
-    } else {
+    ConnectivityResult _connectivityResult =
+        await _connectivity.checkConnectivity();
+    if (!validConnectivityResults.contains(_connectivityResult)) {
       controller.add(LoginState.none);
-      currentLoginState = LoginState.none;
+    } else {
+      _version = packageInfo.version;
+      if (_authService.getCurrentUserId() != null) {
+        if (!(await _authService.userIsSetup())) {
+          controller.add(LoginState.setup);
+          currentLoginState = LoginState.setup;
+        } else {
+          final String? minimumVersion = await getMinimumAppVersion();
+          if (minimumVersion == null) {
+            controller.add(LoginState.loggedIn);
+            return;
+          }
+          if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+            controller.add(LoginState.forceUpgrade);
+            return;
+          }
+          await fetchRepositoryData();
+          controller.add(LoginState.loggedIn);
+          currentLoginState = LoginState.loggedIn;
+        }
+      } else {
+        controller.add(LoginState.none);
+        currentLoginState = LoginState.none;
+      }
     }
   }
 

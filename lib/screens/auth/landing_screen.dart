@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
@@ -7,6 +10,7 @@ import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
 
 class LandingScreen extends StatefulWidget {
   const LandingScreen({Key? key}) : super(key: key);
@@ -16,10 +20,16 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   final AuthService _authService = locator.get<AuthService>();
   final SigninService _signinService = locator.get<SigninService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _connected = true;
+
   String? _email;
   String? _password;
   bool _error = false;
@@ -27,69 +37,92 @@ class _LandingScreenState extends State<LandingScreen> {
   bool _loading = false;
 
   @override
+  void initState() {
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((ConnectivityResult _updatedStatus) {
+      print(_updatedStatus);
+      setState(() {
+        _connected = validConnectivityResults.contains(_updatedStatus);
+      });
+    });
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Center(
-                    child: _header(context),
+        backgroundColor: Colors.white,
+        body:
+            _connected ? _connectedBody(context) : _disconnectedBody(context));
+  }
+
+  Widget _disconnectedBody(BuildContext context) {
+    return const Center(
+      child: Text('There was an error connecting'),
+    );
+  }
+
+  Widget _connectedBody(BuildContext context) {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Center(
+                  child: _header(context),
+                ),
+              ),
+              Column(
+                children: [
+                  _emailField(context),
+                  _passwordField(context),
+                  const SizedBox(height: 8),
+                  _signInButton(context, true),
+                  const SizedBox(height: 36),
+                  _error
+                      ? SizedBox(
+                          height: 50,
+                          child: Text(_errorText,
+                              style: const TextStyle(color: Colors.red)),
+                        )
+                      : Container(height: 50),
+                  Text("Don't have an account?",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(color: MyPuttColors.gray[400])),
+                  const SizedBox(
+                    height: 16,
                   ),
-                ),
-                Column(
-                  children: [
-                    _emailField(context),
-                    _passwordField(context),
-                    const SizedBox(height: 8),
-                    _signInButton(context, true),
-                    const SizedBox(height: 36),
-                    _error
-                        ? SizedBox(
-                            height: 50,
-                            child: Text(_errorText,
-                                style: const TextStyle(color: Colors.red)),
-                          )
-                        : Container(height: 50),
-                    Text("Don't have an account?",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(color: MyPuttColors.gray[400])),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    MyPuttButton(
-                      title: 'Sign up',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const SignUpScreen()));
-                      },
-                      color: Colors.transparent,
-                      textColor: MyPuttColors.blue,
-                    )
-                  ],
-                ),
-              ],
-            ),
+                  MyPuttButton(
+                    title: 'Sign up',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const SignUpScreen()));
+                    },
+                    color: Colors.transparent,
+                    textColor: MyPuttColors.blue,
+                  )
+                ],
+              ),
+            ],
           ),
         ),
       ),

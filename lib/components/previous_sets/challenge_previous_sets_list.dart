@@ -25,14 +25,12 @@ class ChallengePreviousSetsList extends StatelessWidget {
               return ChallengeRecordSetRow(
                 setNumber: entry.key,
                 currentUserPuttsMade: entry.value.puttsMade.toInt(),
-                opponentPuttsMade: opponentSets.length,
+                opponentPuttsMade: opponentSets[entry.key].puttsMade.toInt(),
                 setLength: entry.value.puttsAttempted.toInt(),
               );
             })
             .toList()
             .reversed);
-
-        print(children);
         return currentUserSets.isEmpty
             ? const Center(child: Text('No sets yet'))
             : ListView(children: children);

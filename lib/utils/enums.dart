@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-enum ChallengeResult { win, loss, draw }
+enum ChallengeResult { win, loss, draw, none }
 
 enum ChallengeCategory { pending, active, complete, none }
 
@@ -21,3 +21,16 @@ enum Circles {
 }
 
 enum LoginState { loggedIn, setup, none, forceUpgrade, error }
+
+enum FrisbeeIconColor {
+  @JsonValue('red')
+  red,
+  @JsonValue('green')
+  green,
+  @JsonValue('blue')
+  blue,
+  @JsonValue('purple')
+  purple,
+  @JsonValue('pink')
+  pink
+}

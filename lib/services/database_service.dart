@@ -138,10 +138,6 @@ class DatabaseService {
     return _userDataLoader.getUser(uid!);
   }
 
-  Future<bool> setUserWithPayload(MyPuttUser user) {
-    return _userDataWriter.setUserWithPayload(user);
-  }
-
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;

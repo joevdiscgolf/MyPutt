@@ -5,6 +5,8 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
@@ -21,6 +23,8 @@ class ChallengeInfoPanel extends StatefulWidget {
 }
 
 class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
+  final UserRepository _userRepository = locator.get<UserRepository>();
+
   late final int difference;
   late final String titleText;
   late final int currentUserPuttsMade;
@@ -172,9 +176,9 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         FrisbeeCircleIcon(
-                          size: 60,
-                          backGroundColor: MyPuttColors.gray[100]!,
-                        ),
+                            size: 60,
+                            frisbeeAvatar:
+                                _userRepository.currentUser?.frisbeeAvatar),
                         const SizedBox(
                           width: 8,
                         ),
@@ -204,9 +208,9 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                           width: 8,
                         ),
                         FrisbeeCircleIcon(
-                          size: 60,
-                          backGroundColor: MyPuttColors.gray[100]!,
-                        )
+                            size: 60,
+                            frisbeeAvatar:
+                                widget.challenge.opponentUser?.frisbeeAvatar)
                       ],
                     )
                   ],

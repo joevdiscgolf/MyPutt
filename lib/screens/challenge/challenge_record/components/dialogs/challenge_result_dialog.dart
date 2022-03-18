@@ -2,19 +2,55 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/data/types/users/frisbee_avatar.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
-class ChallengeResultDialog extends StatelessWidget {
-  const ChallengeResultDialog(
-      {Key? key, required this.difference, this.challenge})
-      : super(key: key);
+import '../../../../../components/misc/fade_in_widget.dart';
+
+class ChallengeResultDialog extends StatefulWidget {
+  const ChallengeResultDialog({
+    Key? key,
+    required this.difference,
+    this.challenge,
+  }) : super(key: key);
 
   final PuttingChallenge? challenge;
   final int difference;
+
+  @override
+  State<ChallengeResultDialog> createState() => _ChallengeResultDialogState();
+}
+
+class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
+  final UserRepository _userRepository = locator.get<UserRepository>();
+
+  bool _showButton = false;
+  late final IconData _iconData;
+  late final String _subtitle;
+
+  @override
+  void initState() {
+    if (widget.difference >= 0) {
+      _iconData = FlutterRemix.medal_2_fill;
+    } else {
+      _iconData = FlutterRemix.emotion_sad_fill;
+    }
+    _subtitle = getSubtitleFromDifference(widget.difference);
+    _showDelayedButton();
+    super.initState();
+  }
+
+  Future<void> _showDelayedButton() async {
+    await Future.delayed(const Duration(milliseconds: 3000),
+        () => setState(() => _showButton = true));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,40 +75,59 @@ class ChallengeResultDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '${getMessageFromDifference(difference)}!',
+                '${getMessageFromDifference(widget.difference)}!',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
-                    fontSize: 40, color: getColorFromDifference(difference)),
+                    fontSize: 40,
+                    color: getColorFromDifference(widget.difference)),
               ),
               const SizedBox(
                 height: 12,
               ),
               AutoSizeText(
-                getSubtitleFromDifference(difference),
+                _subtitle,
                 style: Theme.of(context)
                     .textTheme
                     .headline6
                     ?.copyWith(fontSize: 20, color: MyPuttColors.gray[300]),
                 maxLines: 1,
               ),
-              const AnimatedMedal(),
+              AnimatedIcon(iconData: _iconData),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 _profileColumn(
                     context,
-                    challenge?.currentUser.displayName ?? 'You',
-                    MyPuttColors.gray[100]!),
+                    widget.challenge?.currentUser.displayName ?? 'You',
+                    _userRepository.currentUser?.frisbeeAvatar),
                 _centerColumn(context),
                 _profileColumn(
-                    context,
-                    challenge?.currentUser.displayName ?? 'Opponent',
-                    MyPuttColors.gray[100]!)
+                  context,
+                  widget.challenge?.opponentUser?.displayName ?? 'Opponent',
+                  widget.challenge?.opponentUser?.frisbeeAvatar,
+                )
               ]),
+              const SizedBox(
+                height: 24,
+              ),
+              _showButton
+                  ? FadeInWidget(
+                      duration: const Duration(milliseconds: 1000),
+                      child: MyPuttButton(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          height: 50,
+                          title: 'Continue',
+                          iconData: FlutterRemix.check_line,
+                          onPressed: () => Navigator.pop(context)),
+                    )
+                  : const SizedBox(
+                      height: 50,
+                    )
             ]));
   }
 
   Widget _profileColumn(
     BuildContext context,
     String displayName,
-    Color backgroundColor,
+    FrisbeeAvatar? frisbeeAvatar,
   ) {
     return Column(
       children: [
@@ -88,8 +143,7 @@ class ChallengeResultDialog extends StatelessWidget {
         ),
         FrisbeeCircleIcon(
           size: 72,
-          backGroundColor: backgroundColor,
-          redIcon: backgroundColor == MyPuttColors.blue,
+          frisbeeAvatar: frisbeeAvatar,
         ),
       ],
     );
@@ -141,14 +195,16 @@ class ChallengeResultDialog extends StatelessWidget {
   }
 }
 
-class AnimatedMedal extends StatefulWidget {
-  const AnimatedMedal({Key? key}) : super(key: key);
+class AnimatedIcon extends StatefulWidget {
+  const AnimatedIcon({Key? key, required this.iconData}) : super(key: key);
+
+  final IconData iconData;
 
   @override
-  _AnimatedMedalState createState() => _AnimatedMedalState();
+  _AnimatedIconState createState() => _AnimatedIconState();
 }
 
-class _AnimatedMedalState extends State<AnimatedMedal>
+class _AnimatedIconState extends State<AnimatedIcon>
     with TickerProviderStateMixin {
   late final AnimationController _scaleController;
   late final Animation<double> _scaleAnimation;
@@ -162,7 +218,7 @@ class _AnimatedMedalState extends State<AnimatedMedal>
     _scaleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-      reverseDuration: const Duration(milliseconds: 600),
+      reverseDuration: const Duration(milliseconds: 800),
     );
     _rotateController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
@@ -218,7 +274,7 @@ class _AnimatedMedalState extends State<AnimatedMedal>
           angle: 0,
           // angle: _rotateAnimation.value,
           child: Icon(
-            FlutterRemix.medal_line,
+            widget.iconData,
             size: _scaleAnimation.value,
             color: MyPuttColors.gray.withOpacity(_opacityAnimation.value),
           ),

@@ -184,8 +184,6 @@ class AuthService {
         !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       return false;
     } else {
-      // final MyPuttUser currentMyPuttUser =
-      //     MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
       return true;
     }
   }

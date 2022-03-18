@@ -49,17 +49,22 @@ class ChallengeSetRow extends StatelessWidget {
               Flexible(
                 flex: 6,
                 fit: FlexFit.loose,
-                child: LinearPercentIndicator(
-                  percent: opponentMade + currentUserMade == 0
+                child: Builder(builder: (context) {
+                  final double percent = opponentMade + currentUserMade == 0
                       ? 0
                       : currentUserMade.toDouble() /
-                          (opponentMade + currentUserMade).toDouble(),
-                  progressColor: MyPuttColors.blue,
-                  backgroundColor: MyPuttColors.red,
-                  barRadius: const Radius.circular(4),
-                  lineHeight: 8,
-                  // fillColor: MyPuttColors.blue,
-                ),
+                          (opponentMade + currentUserMade).toDouble();
+                  return LinearPercentIndicator(
+                    percent: percent,
+                    progressColor: MyPuttColors.blue,
+                    backgroundColor: percent == 0
+                        ? MyPuttColors.gray[200]
+                        : MyPuttColors.red,
+                    barRadius: const Radius.circular(4),
+                    lineHeight: 8,
+                    // fillColor: MyPuttColors.blue,
+                  );
+                }),
               ),
               Flexible(
                 flex: 1,

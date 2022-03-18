@@ -94,8 +94,8 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
                 Expanded(
                   child: Slider(
                     inactiveColor: MyPuttColors.white,
-                    activeColor: MyPuttColors.gray[600]!,
-                    thumbColor: MyPuttColors.gray[600]!,
+                    activeColor: MyPuttColors.darkBlue,
+                    thumbColor: MyPuttColors.darkBlue,
                     label: _numSets.toString(),
                     onChanged: (double newValue) {
                       setState(() {
