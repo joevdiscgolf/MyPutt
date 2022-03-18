@@ -1,8 +1,11 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/colors.dart';
 
 class PuttingSetRow extends StatefulWidget {
   const PuttingSetRow({
@@ -29,52 +32,66 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle =
-        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
+    final double width = MediaQuery.of(context).size.width / 8;
     return Container(
-      padding: const EdgeInsets.fromLTRB(15, 5, 10, 5),
-      margin: const EdgeInsets.fromLTRB(3, 4, 3, 0),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        color: MyPuttColors.white,
+        border: Border.symmetric(
+            horizontal: BorderSide(color: MyPuttColors.gray[50]!, width: 2)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Align(
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: 50,
-              child: Text('${widget.index + 1}', style: textStyle),
+          SizedBox(
+            width: width,
+            child: Center(
+              child: AutoSizeText('${widget.index + 1}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(color: MyPuttColors.gray[600], fontSize: 20),
+                  maxLines: 1),
             ),
           ),
-          SizedBox(
-            width: 50,
-            child: Text('${widget.set.puttsMade}/${widget.set.puttsAttempted}',
-                style: textStyle),
+          const SizedBox(
+            width: 4,
           ),
           SizedBox(
-            width: 50,
-            child: Text(
-                '${(100 * widget.set.puttsMade / widget.set.puttsAttempted).round()} %',
-                style: textStyle),
-          ),
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: CircularProgressIndicator(
-              color: colorFromDecimal(widget.set.puttsMade.toDouble() /
-                  widget.set.puttsAttempted.toDouble()),
-              backgroundColor: Colors.grey[200],
-              value: widget.set.puttsMade / widget.set.puttsAttempted,
-              strokeWidth: 5,
+            width: width,
+            child: Center(
+              child: AutoSizeText(
+                  '${widget.set.puttsMade}/${widget.set.puttsAttempted}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(color: MyPuttColors.blue, fontSize: 20),
+                  maxLines: 1),
             ),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           SizedBox(
-              width: 50,
+              width: width,
               child: Center(
-                  child: Text('${widget.set.distance} ft', style: textStyle))),
+                child: AutoSizeText('${widget.set.distance} ft',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: MyPuttColors.gray[600], fontSize: 20),
+                    maxLines: 1),
+              )),
+          const Spacer(),
+          ShadowCircularIndicator(
+            size: 60,
+            // color: colorFromDecimal(widget.set.puttsMade.toDouble() /
+            //     widget.set.puttsAttempted.toDouble()),
+            // backgroundColor: Colors.grey[200],
+            decimal: widget.set.puttsMade / widget.set.puttsAttempted,
+            // strokeWidth: 5,
+          ),
           widget.deletable
               ? SizedBox(
                   width: 50,

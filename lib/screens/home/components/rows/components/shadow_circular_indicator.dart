@@ -57,7 +57,7 @@ class ShadowCircularIndicator extends StatelessWidget {
                                       .textTheme
                                       .headline6
                                       ?.copyWith(
-                                          color: MyPuttColors.gray[400],
+                                          color: MyPuttColors.gray,
                                           fontSize: 12),
                                 )
                               : const Text('-- %')))

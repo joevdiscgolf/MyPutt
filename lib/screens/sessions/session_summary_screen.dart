@@ -3,7 +3,7 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/home/components/putting_stats_page.dart';
-import 'package:myputt/components/misc/putting_set_row.dart';
+import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
 

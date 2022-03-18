@@ -17,6 +17,10 @@ MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
           ? null
           : FrisbeeAvatar.fromJson(
               Map<String, dynamic>.from(json['frisbeeAvatar'] as Map)),
+      userSettings: json['userSettings'] == null
+          ? null
+          : UserSettings.fromJson(
+              Map<String, dynamic>.from(json['userSettings'] as Map)),
     );
 
 Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
@@ -27,4 +31,5 @@ Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
       'uid': instance.uid,
       'pdgaNum': instance.pdgaNum,
       'frisbeeAvatar': instance.frisbeeAvatar?.toJson(),
+      'userSettings': instance.userSettings?.toJson(),
     };

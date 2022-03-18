@@ -19,7 +19,7 @@ class FrisbeeCircleIcon extends StatelessWidget {
         : MyPuttColors.blue;
     final String frisbeeImgSrc =
         frisbeeIconColorToSrc[frisbeeAvatar?.frisbeeIconColor] ??
-            blueFrisbeeIconSrc;
+            redFrisbeeIconSrc;
     return Container(
       height: size,
       width: size,

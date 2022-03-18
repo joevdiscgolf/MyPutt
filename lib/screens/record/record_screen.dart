@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
-import 'package:myputt/components/misc/putting_set_row.dart';
+import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
-import 'components/finish_session_dialog.dart';
+import 'components/dialogs/finish_session_dialog.dart';
 import 'components/rows/conditions_row.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -22,85 +25,109 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  final UserRepository _userRepository = locator.get<UserRepository>();
+
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
 
   bool sessionInProgress = true;
   int _setLength = 10;
   int _focusedIndex = 10;
-  int _weatherIndex = 0;
-  int _windIndex = 0;
-  int _distancesIndex = 0;
+  late int _distance;
+  WeatherCondition _weatherCondition = WeatherCondition.sunny;
+  WindCondition _windCondition = WindCondition.calm;
 
-  final List<String> _windConditionWords = [
-    'Calm',
-    'Breezy',
-    'Strong',
-    'Intense',
-  ];
-  final List<String> _weatherConditionWords = [
-    'Sunny',
-    'Rainy',
-    'Snowy',
-  ];
-  final List<int> _distances = [10, 15, 20, 25, 30, 40, 50, 60];
+  @override
+  void initState() {
+    _distance = _userRepository
+            .currentUser?.userSettings?.sessionSettings?.preferredDistance ??
+        20;
+    _setLength = _userRepository.currentUser?.userSettings?.sessionSettings
+            ?.preferredPuttsPickerLength ??
+        10;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100]!,
-      appBar: AppBar(
-        actions: [
-          BlocBuilder<SessionsCubit, SessionsState>(
-            builder: (context, state) {
-              return ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(shadowColor: Colors.transparent),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (dialogContext) =>
-                            FinishSessionDialog(stopSession: () {
-                              setState(() {
-                                sessionInProgress = false;
-                              });
-                            })).then((value) => dialogCallBack());
-                  },
-                  child: const Text('Finish'));
-            },
+        backgroundColor: MyPuttColors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: MyPuttColors.gray[800]!,
           ),
-        ],
-        title: const Text('Record'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            _detailsPanel(context),
-            const SizedBox(height: 10),
+          backgroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          actions: [
             Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: MyPuttButton(
+                color: Colors.transparent,
+                textColor: MyPuttColors.gray[800]!,
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (dialogContext) =>
+                          FinishSessionDialog(stopSession: () {
+                            setState(() {
+                              sessionInProgress = false;
+                            });
+                          })).then((value) => dialogCallBack());
+                },
+                title: 'Finish',
+                iconData: FlutterRemix.check_line,
+                iconColor: MyPuttColors.gray[800]!,
               ),
-              child: Column(
+            ),
+          ],
+          title: const Text('Record'),
+        ),
+        body: _mainBody(context));
+  }
+
+  Widget _mainBody(BuildContext context) {
+    return BlocBuilder<SessionsCubit, SessionsState>(
+      builder: (context, state) {
+        if (state is SessionInProgressState) {
+          List<Widget> previousSetsChildren =
+              List.from(state.currentSession.sets
+                  .asMap()
+                  .entries
+                  .map((entry) => PuttingSetRow(
+                        deletable: true,
+                        set: entry.value,
+                        index: entry.key,
+                        delete: () {
+                          BlocProvider.of<SessionsCubit>(context)
+                              .deleteSet(entry.value);
+                        },
+                      ))
+                  .toList()
+                  .reversed);
+          return ListView(
+            children: [
+              _detailsPanel(context),
+              const SizedBox(height: 16),
+              Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('Putts made',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: _putterCountPicker(context),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Putts made',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                    color: MyPuttColors.gray[800],
+                                    fontSize: 20)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _putterCountPicker(context),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 5),
                   PuttsMadePicker(
@@ -115,28 +142,32 @@ class _RecordScreenState extends State<RecordScreen> {
                       }),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: PrimaryButton(
-                  label: 'Add set',
-                  width: double.infinity,
-                  height: 50,
-                  icon: FlutterRemix.add_line,
-                  onPressed: () {
-                    BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
-                        timeStamp: DateTime.now().millisecondsSinceEpoch,
-                        puttsMade: _focusedIndex,
-                        puttsAttempted: _setLength,
-                        distance: _distances[_distancesIndex]));
-                  }),
-            ),
-            const SizedBox(height: 10),
-            _previousSetsList(context),
-          ],
-        ),
-      ),
+              const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: MyPuttButton(
+                    title: 'Add set',
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: 50,
+                    iconData: FlutterRemix.add_line,
+                    onPressed: () {
+                      BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
+                          timeStamp: DateTime.now().millisecondsSinceEpoch,
+                          puttsMade: _focusedIndex,
+                          puttsAttempted: _setLength,
+                          distance: _distance));
+                    }),
+              ),
+              const SizedBox(height: 10),
+              ...previousSetsChildren,
+            ],
+          );
+        } else {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+      },
     );
   }
 
@@ -161,19 +192,24 @@ class _RecordScreenState extends State<RecordScreen> {
           height: 12,
         ),
         ConditionsRow(
-          onPressed: () {},
+          onPressed: (WindCondition wind) =>
+              setState(() => _windCondition = wind),
           iconData: FlutterRemix.windy_line,
           label: 'Wind',
+          type: ConditionsType.wind,
         ),
         ConditionsRow(
-          onPressed: () {},
+          onPressed: (WeatherCondition weather) =>
+              setState(() => _weatherCondition = weather),
           iconData: FlutterRemix.sun_fill,
           label: 'Weather',
+          type: ConditionsType.weather,
         ),
         ConditionsRow(
-          onPressed: () {},
+          onPressed: (int dist) => setState(() => _distance = dist),
           iconData: FlutterRemix.map_pin_2_line,
           label: 'Distance',
+          type: ConditionsType.distance,
         ),
       ],
     );
@@ -182,7 +218,6 @@ class _RecordScreenState extends State<RecordScreen> {
   Widget _putterCountPicker(BuildContext context) {
     return Column(
       children: [
-        const Text('Putters', style: TextStyle(fontWeight: FontWeight.bold)),
         Row(
           children: [
             ElevatedButton(
@@ -191,7 +226,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 24, color: MyPuttColors.gray[800]),
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.gray[800]),
               ),
               onPressed: () {
                 puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
@@ -220,7 +255,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 24, color: MyPuttColors.gray[800]),
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.gray[800]),
               ),
               onPressed: () {
                 setState(() {

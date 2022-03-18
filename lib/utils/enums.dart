@@ -15,6 +15,28 @@ enum ChallengePreset {
   none,
 }
 
+enum ConditionsType { wind, weather, distance }
+
+enum WindCondition {
+  @JsonValue('Calm')
+  calm,
+  @JsonValue('Breezy')
+  breezy,
+  @JsonValue('Gusty')
+  gusty,
+  @JsonValue('Intense')
+  intense
+}
+
+enum WeatherCondition {
+  @JsonValue('Sunny')
+  sunny,
+  @JsonValue('Rainy')
+  rainy,
+  @JsonValue('Snowy')
+  snowy
+}
+
 enum Circles {
   circle1,
   circle2,

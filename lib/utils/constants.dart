@@ -23,6 +23,34 @@ class Cutoffs {
   static const int none = 0;
 }
 
+const List<WindCondition> windConditions = [
+  WindCondition.calm,
+  WindCondition.breezy,
+  WindCondition.gusty,
+  WindCondition.intense,
+];
+
+const Map<WindCondition, String> windConditionsEnumMap = {
+  WindCondition.calm: 'Calm',
+  WindCondition.breezy: 'Breezy',
+  WindCondition.gusty: 'Gusty',
+  WindCondition.intense: 'Intense',
+};
+
+const List<WeatherCondition> weatherConditions = [
+  WeatherCondition.sunny,
+  WeatherCondition.rainy,
+  WeatherCondition.snowy,
+];
+
+const Map<WeatherCondition, String> weatherConditionsEnumMap = {
+  WeatherCondition.sunny: 'Sunny',
+  WeatherCondition.rainy: 'Rainy',
+  WeatherCondition.snowy: 'Snowy',
+};
+
+const List<int> distanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
+
 List<ConnectivityResult> validConnectivityResults = [
   ConnectivityResult.wifi,
   ConnectivityResult.mobile

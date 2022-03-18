@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -60,14 +61,18 @@ class MyPuttButton extends StatelessWidget {
               Icon(
                 iconData,
                 color: iconColor,
+                size: 20,
               ),
               const SizedBox(width: 10)
             ],
-            Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(color: textColor, fontSize: textSize)),
+            AutoSizeText(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(color: textColor, fontSize: textSize),
+              maxLines: 1,
+            ),
           ],
         ),
       ),

@@ -23,7 +23,7 @@ class UndoButton extends StatelessWidget {
                 final int indexToFocus =
                     state.currentChallenge!.currentUserSets.length - 1;
                 BlocProvider.of<ChallengesCubit>(context).undo();
-                decrementScrollLists(state.currentChallenge!, indexToFocus);
+                // decrementScrollLists(state.currentChallenge!, indexToFocus);
               }
             },
             child: Container(

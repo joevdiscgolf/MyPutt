@@ -1,8 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/animated_arrows.dart';
 import 'package:myputt/screens/challenge/components/challenge_set_row.dart';
 import 'package:myputt/utils/calculators.dart';
@@ -10,7 +14,9 @@ import 'package:myputt/utils/colors.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class ChallengeProgressPanel extends StatelessWidget {
-  const ChallengeProgressPanel({Key? key}) : super(key: key);
+  ChallengeProgressPanel({Key? key}) : super(key: key);
+
+  final UserRepository _userRepository = locator.get<UserRepository>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +54,19 @@ class ChallengeProgressPanel extends StatelessWidget {
                 color: MyPuttColors.white,
                 child: Column(
                   children: [
-                    _versusRow(context, challenge.currentUser.displayName,
-                        challenge.opponentUser?.displayName ?? 'Unknown'),
+                    _versusRow(
+                        context, challenge.currentUser, challenge.opponentUser),
                     const SizedBox(
                       height: 32,
                     ),
                     const ChallengeSetRow(
                         currentUserMade: 10, opponentMade: 10, setLength: 15),
-                    const SizedBox(
-                      height: 16,
-                    ),
                   ],
                 ),
               ),
               _instructionsPanel(context, distance, setLength),
               const SizedBox(
-                height: 16,
+                height: 8,
               ),
               _percentCompleteIndicator(
                 context,
@@ -103,23 +106,6 @@ class ChallengeProgressPanel extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Expanded(
-            //   child: Visibility(
-            //     visible: setNumber != 0,
-            //     child: Align(
-            //       alignment: Alignment.centerLeft,
-            //       child: Bounceable(
-            //         onTap: () {
-            //           Vibrate.feedback(FeedbackType.light);
-            //         },
-            //         child: IconButton(
-            //           onPressed: () {},
-            //           icon: const Icon(FlutterRemix.arrow_left_s_line),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Text(
               'Set $setNumber',
               style: Theme.of(context)
@@ -127,23 +113,6 @@ class ChallengeProgressPanel extends StatelessWidget {
                   .headline6
                   ?.copyWith(fontSize: 20, color: MyPuttColors.gray[800]),
             ),
-            // Expanded(
-            //   child: Visibility(
-            //     visible: setNumber != maxSets,
-            //     child: Align(
-            //       alignment: Alignment.centerRight,
-            //       child: Bounceable(
-            //         onTap: () {
-            //           Vibrate.feedback(FeedbackType.light);
-            //         },
-            //         child: IconButton(
-            //           onPressed: () {},
-            //           icon: const Icon(FlutterRemix.arrow_right_s_line),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -151,19 +120,30 @@ class ChallengeProgressPanel extends StatelessWidget {
   }
 
   Widget _versusRow(
-      BuildContext context, currentUserDisplayname, opponentDisplayname) {
+      BuildContext context, MyPuttUser currentUser, MyPuttUser? opponentUser) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
-          child: AutoSizeText(
-            currentUserDisplayname,
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
-            textAlign: TextAlign.center,
-            maxLines: 1,
+          child: Column(
+            children: [
+              FrisbeeCircleIcon(
+                frisbeeAvatar: _userRepository.currentUser?.frisbeeAvatar,
+                size: 48,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              AutoSizeText(
+                currentUser.displayName,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -178,14 +158,25 @@ class ChallengeProgressPanel extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: AutoSizeText(
-            opponentDisplayname,
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
-            textAlign: TextAlign.center,
-            maxLines: 1,
+          child: Column(
+            children: [
+              FrisbeeCircleIcon(
+                frisbeeAvatar: opponentUser?.frisbeeAvatar,
+                size: 48,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              AutoSizeText(
+                opponentUser?.displayName ?? 'Unknown',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+              ),
+            ],
           ),
         ),
       ],

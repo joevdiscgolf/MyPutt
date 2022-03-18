@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/components/misc/putting_set_row.dart';
+import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 
 class PreviousSetsList extends StatefulWidget {
   const PreviousSetsList(

@@ -4,18 +4,36 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 
-class ConditionsRow extends StatelessWidget {
+class ConditionsRow extends StatefulWidget {
   const ConditionsRow(
       {Key? key,
       required this.iconData,
       required this.onPressed,
-      required this.label})
+      required this.label,
+      required this.type})
       : super(key: key);
 
   final IconData iconData;
   final Function onPressed;
   final String label;
+  final ConditionsType type;
+
+  @override
+  State<ConditionsRow> createState() => _ConditionsRowState();
+}
+
+class _ConditionsRowState extends State<ConditionsRow> {
+  late final List<dynamic> _conditionOptions;
+  int _index = 0;
+
+  @override
+  void initState() {
+    _conditionOptions = getConditionOptions();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +54,7 @@ class ConditionsRow extends StatelessWidget {
           children: [
             CircularIconContainer(
               icon: Icon(
-                iconData,
+                widget.iconData,
                 color: MyPuttColors.blue,
                 size: 32,
               ),
@@ -47,7 +65,7 @@ class ConditionsRow extends StatelessWidget {
               width: 16,
             ),
             Text(
-              label,
+              widget.label,
               style: Theme.of(context)
                   .textTheme
                   .headline6
@@ -55,14 +73,44 @@ class ConditionsRow extends StatelessWidget {
             ),
             const Spacer(),
             MyPuttButton(
-              title: 'label',
-              height: 40,
+              width: MediaQuery.of(context).size.width / 4,
+              height: 32,
+              title: getTitle(),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              onPressed: () => onPressed(),
+              onPressed: () {
+                widget.onPressed(_conditionOptions[_index]);
+                if (_index < _conditionOptions.length - 1) {
+                  setState(() => _index += 1);
+                } else {
+                  setState(() => _index = 0);
+                }
+              },
             )
           ],
         ),
       ),
     );
+  }
+
+  List<dynamic> getConditionOptions() {
+    switch (widget.type) {
+      case ConditionsType.wind:
+        return windConditions;
+      case ConditionsType.weather:
+        return weatherConditions;
+      default:
+        return distanceOptions;
+    }
+  }
+
+  String getTitle() {
+    switch (widget.type) {
+      case ConditionsType.wind:
+        return windConditionsEnumMap[_conditionOptions[_index]]!;
+      case ConditionsType.weather:
+        return weatherConditionsEnumMap[_conditionOptions[_index]]!;
+      default:
+        return '${distanceOptions[_index].toString()} ft';
+    }
   }
 }

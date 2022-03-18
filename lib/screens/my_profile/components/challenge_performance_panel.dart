@@ -42,7 +42,6 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   @override
   void initState() {
     _completedChallenges = _challengesRepository.completedChallenges;
-
     if (_completedChallenges.isEmpty) {
       _chartData = [
         ChartData(
@@ -52,6 +51,8 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
             challengeResult: ChallengeResult.none)
       ];
       _winPercent = null;
+      _allIndices = [0];
+      _selectedIndices = _allIndices;
     } else {
       _wins = _completedChallenges
           .where((challenge) => getDifferenceFromChallenge(challenge) > 0)
@@ -85,7 +86,6 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
               label: 'Draws',
               challengeResult: ChallengeResult.draw),
       ];
-
       for (int i = 0; i < _chartData.length; i++) {
         final ChartData data = _chartData[i];
         _spacerChartData.add(data);

@@ -99,7 +99,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           body: _mainBody(context),
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: ChallengeProgressPanel(),
               )
             ];
@@ -257,10 +257,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
               .setLength;
         }
         return Container(
-          padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+          decoration: const BoxDecoration(
+            color: MyPuttColors.white,
           ),
           child: Column(
             children: [
