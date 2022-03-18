@@ -76,7 +76,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         if (_losses > 0)
           ChartData(
               value: _losses.toDouble(),
-              color: MyPuttColors.red,
+              color: MyPuttColors.darkRed,
               label: 'Losses',
               challengeResult: ChallengeResult.loss),
         if (_draws > 0)
@@ -274,7 +274,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
               explodeGesture: ActivationMode.none,
               radius: '100%',
               innerRadius: '80%',
-              cornerStyle: CornerStyle.bothFlat,
+              cornerStyle: CornerStyle.bothCurve,
               dataSource: _spacerChartData,
               strokeWidth: 30,
               pointColorMapper: (ChartData data, _) => data.color,
