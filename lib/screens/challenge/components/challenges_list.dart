@@ -26,7 +26,7 @@ class ChallengesList extends StatelessWidget {
                       Container(
                           constraints:
                               BoxConstraints(minHeight: constraints.maxHeight),
-                          child: Center(child: const Text('No challenges')))
+                          child: const Center(child: Text('No challenges')))
                     ]),
                   )
                 : ListView(

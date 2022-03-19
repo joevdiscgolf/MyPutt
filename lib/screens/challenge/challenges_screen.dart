@@ -4,8 +4,8 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/screens/challenge/challenge_record/components/screens/challenge_result_screen.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/screens/challenge/components/dialogs/select_preset_dialog.dart';
 import 'package:myputt/utils/colors.dart';
@@ -61,6 +61,10 @@ class _ChallengesState extends State<ChallengesScreen>
   Widget _mainBody(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
         builder: (context, state) {
+      if (state is ChallengesErrorState) {
+        return EmptyState(
+            onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
+      }
       return TabBarView(children: [
         ChallengesList(
             category: ChallengeCategory.active,

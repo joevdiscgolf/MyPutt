@@ -10,6 +10,7 @@ import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/undo_button.dart';
+import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
@@ -20,7 +21,6 @@ import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/utils/colors.dart';
 import 'components/challenge_progress_panel.dart';
 import 'components/challenge_record_set_row.dart';
-import 'components/screens/challenge_result_screen.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 

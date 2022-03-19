@@ -7,7 +7,9 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
+import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
@@ -22,7 +24,6 @@ import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/enums.dart';
 import 'components/pdga_info_panel.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -71,7 +72,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ];
               return RefreshIndicator(
                 onRefresh: () async {
-                  await BlocProvider.of<ChallengesCubit>(context).reload();
+                  await BlocProvider.of<MyProfileCubit>(context).reload();
                 },
                 child: CustomScrollView(
                   slivers: [
@@ -84,17 +85,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
               );
             } else if (state is MyProfileInitial) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const LoadingScreen();
             } else {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Center(child: Text('Failed to load. Please try again'))
-                ],
-              );
+              return EmptyState(
+                  onRetry: () =>
+                      BlocProvider.of<MyProfileCubit>(context).reload());
             }
           },
         ));
@@ -105,6 +100,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       padding: const EdgeInsets.all(16),
       child: MyPuttButton(
         onPressed: () {
+          BlocProvider.of<MyProfileCubit>(context).signOut();
           locator.get<SigninService>().signOut();
         },
         padding: const EdgeInsets.all(8),
@@ -159,7 +155,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               ),
                               builder: (BuildContext context) =>
                                   EditProfileFrisbeePanel(
-                                initialBackgroundColor: MyPuttColors.blue,
+                                initialBackgroundColorHex: state.myUser
+                                        .frisbeeAvatar?.backgroundColorHex ??
+                                    '2196F3',
                                 initialFrisbeeIconColor: state
                                     .myUser.frisbeeAvatar?.frisbeeIconColor,
                               ),
@@ -229,7 +227,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           ),
         );
       } else {
-        return Container();
+        return EmptyState(onRetry: () async {
+          await BlocProvider.of<MyProfileCubit>(context).reload();
+        });
       }
     });
   }
@@ -385,275 +385,5 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         }
       },
     );
-  }
-
-  Widget _puttsMadeRow(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(width: 2, color: Colors.grey[400]!),
-          borderRadius: BorderRadius.circular(5)),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      blueFrisbeeImageIcon,
-                      Text(
-                        'Total',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            VerticalDivider(
-              width: 1,
-              thickness: 2,
-              color: Colors.grey[400]!,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      blueFrisbeeImageIcon,
-                      Text(
-                        'Sessions',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            VerticalDivider(
-              width: 1,
-              thickness: 2,
-              color: Colors.grey[400]!,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      blueFrisbeeImageIcon,
-                      Text(
-                        'Challenges',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)}/${_statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _challengeStatsRow(BuildContext context) {
-    return Builder(builder: (context) {
-      final int numWins = _statsService.getNumChallengesWithResult(
-          _challengesRepository.completedChallenges, ChallengeResult.win);
-      final int numLosses = _statsService.getNumChallengesWithResult(
-          _challengesRepository.completedChallenges, ChallengeResult.loss);
-      final int numDraws = _statsService.getNumChallengesWithResult(
-          _challengesRepository.completedChallenges, ChallengeResult.draw);
-      final int numChallenges = numWins + numLosses + numDraws;
-      final double winRate = numWins.toDouble() / numChallenges.toDouble();
-      return Container(
-        decoration: BoxDecoration(
-            border: Border.all(width: 2, color: Colors.grey[400]!),
-            borderRadius: BorderRadius.circular(5)),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Wins',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        numWins.toString(),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              VerticalDivider(
-                thickness: 2,
-                width: 1,
-                color: Colors.grey[400]!,
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Losses',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        numLosses.toString(),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              VerticalDivider(
-                thickness: 2,
-                width: 1,
-                color: Colors.grey[400]!,
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Draws',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        numDraws.toString(),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              VerticalDivider(
-                thickness: 2,
-                width: 1,
-                color: Colors.grey[400]!,
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Win rate',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text(
-                        '${numChallenges == 0 ? '-' : (winRate * 100).toStringAsFixed(2)} %',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: winRate > 0.5
-                                ? MyPuttColors.green
-                                : Colors.red),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-}
-
-class PercentageCircle extends StatelessWidget {
-  const PercentageCircle(
-      {Key? key, required this.diameter, required this.decimal})
-      : super(key: key);
-
-  final double? decimal;
-  final double diameter;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(children: <Widget>[
-      Builder(builder: (context) {
-        if (decimal != null) {
-          return SizedBox(
-              width: diameter,
-              height: diameter,
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: decimal),
-                duration: const Duration(milliseconds: 300),
-                builder: (context, value, _) => CircularProgressIndicator(
-                  color: MyPuttColors.green,
-                  backgroundColor: Colors.grey[200],
-                  value: value,
-                  strokeWidth: 5,
-                ),
-              ));
-        } else {
-          return SizedBox(
-            width: diameter,
-            height: diameter,
-            child: CircularProgressIndicator(
-              color: MyPuttColors.green,
-              backgroundColor: Colors.grey[200],
-              value: 0,
-              strokeWidth: 5,
-            ),
-          );
-        }
-      }),
-      Builder(builder: (context) {
-        if (decimal != null) {
-          return SizedBox(
-            height: diameter,
-            width: diameter,
-            child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: decimal),
-                duration: const Duration(milliseconds: 300),
-                builder: (context, value, _) => Center(
-                    child: (Text((value * 100).round().toString() + ' %')))),
-          );
-        } else {
-          return SizedBox(
-              height: diameter,
-              width: diameter,
-              child: const Center(child: Text('- %')));
-        }
-      })
-    ]);
   }
 }

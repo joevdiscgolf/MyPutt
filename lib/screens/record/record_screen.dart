@@ -6,7 +6,6 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
@@ -275,36 +274,6 @@ class _RecordScreenState extends State<RecordScreen> {
         ),
       ],
     );
-  }
-
-  Widget _previousSetsList(BuildContext context) {
-    return BlocBuilder<SessionsCubit, SessionsState>(builder: (context, state) {
-      if (state is SessionInProgressState) {
-        return Flexible(
-          fit: FlexFit.loose,
-          child: state.currentSession.sets.isEmpty
-              ? const Center(child: Text('No sets yet'))
-              : ListView(
-                  children: List.from(state.currentSession.sets
-                      .asMap()
-                      .entries
-                      .map((entry) => PuttingSetRow(
-                            deletable: true,
-                            set: entry.value,
-                            index: entry.key,
-                            delete: () {
-                              BlocProvider.of<SessionsCubit>(context)
-                                  .deleteSet(entry.value);
-                            },
-                          ))
-                      .toList()
-                      .reversed),
-                ),
-        );
-      } else {
-        return Container();
-      }
-    });
   }
 
   void dialogCallBack() {

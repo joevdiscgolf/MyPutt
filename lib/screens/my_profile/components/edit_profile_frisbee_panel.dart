@@ -16,11 +16,11 @@ import 'package:myputt/utils/enums.dart';
 class EditProfileFrisbeePanel extends StatefulWidget {
   const EditProfileFrisbeePanel(
       {Key? key,
-      required this.initialBackgroundColor,
+      this.initialBackgroundColorHex = '2196F3',
       this.initialFrisbeeIconColor})
       : super(key: key);
 
-  final Color initialBackgroundColor;
+  final String initialBackgroundColorHex;
   final FrisbeeIconColor? initialFrisbeeIconColor;
 
   @override
@@ -37,9 +37,8 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
 
   @override
   void initState() {
-    _selectedBackgroundColor = widget.initialBackgroundColor;
-    _selectedBackgroundColorHex =
-        myPuttColorToHex[_selectedBackgroundColor] ?? '2196F3';
+    _selectedBackgroundColor = HexColor(widget.initialBackgroundColorHex);
+    _selectedBackgroundColorHex = widget.initialBackgroundColorHex;
     _frisbeeIconColor = widget.initialFrisbeeIconColor ?? FrisbeeIconColor.blue;
     super.initState();
   }
@@ -88,13 +87,10 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
             iconData: FlutterRemix.check_line,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
             onPressed: () {
-              _userRepository.currentUser?.frisbeeAvatar = FrisbeeAvatar(
-                  backgroundColorHex: _selectedBackgroundColorHex.toString(),
-                  frisbeeIconColor: _frisbeeIconColor);
-              _userRepository.updateUserAvatar(FrisbeeAvatar(
-                  backgroundColorHex: _selectedBackgroundColorHex,
-                  frisbeeIconColor: _frisbeeIconColor));
-              BlocProvider.of<MyProfileCubit>(context).reload();
+              BlocProvider.of<MyProfileCubit>(context).updateFrisbeeAvatar(
+                  FrisbeeAvatar(
+                      backgroundColorHex: _selectedBackgroundColorHex,
+                      frisbeeIconColor: _frisbeeIconColor));
               Navigator.pop(context);
             }),
       )

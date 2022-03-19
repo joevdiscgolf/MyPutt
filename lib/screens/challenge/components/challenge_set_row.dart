@@ -57,7 +57,7 @@ class ChallengeSetRow extends StatelessWidget {
                   return LinearPercentIndicator(
                     percent: percent,
                     progressColor: MyPuttColors.blue,
-                    backgroundColor: percent == 0
+                    backgroundColor: opponentMade + currentUserMade == 0
                         ? MyPuttColors.gray[200]
                         : MyPuttColors.red,
                     barRadius: const Radius.circular(4),

@@ -3,6 +3,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -55,15 +56,19 @@ class _SessionsState extends State<SessionsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          _sessionRepository.allSessions.isEmpty
-                              ? 'No sessions yet'
-                              : '${_sessionRepository.allSessions.length} total',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(
-                                  fontSize: 20, color: MyPuttColors.gray[400]),
+                        Center(
+                          child: Text(
+                            _sessionRepository.allSessions.isEmpty
+                                ? 'No sessions yet'
+                                : '${_sessionRepository.allSessions.length} total',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(
+                                    fontSize: 20,
+                                    color: MyPuttColors.gray[400]),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         const SizedBox(
                           height: 12,
@@ -131,12 +136,10 @@ class _SessionsState extends State<SessionsScreen> {
               padding: const EdgeInsets.only(top: 0),
             ),
           );
-        } else if (state is SessionErrorState) {
-          return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [Text('Something went wrong')]);
         } else {
-          return const Text('No sessions yet');
+          return EmptyState(
+            onRetry: () => BlocProvider.of<SessionsCubit>(context).reload(),
+          );
         }
       },
     );

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/data/types/stats/stats.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
@@ -97,6 +99,30 @@ class SessionListRow extends StatelessWidget {
                 size: 32,
               ),
             ),
+          const SizedBox(
+            width: 12,
+          ),
+          Bounceable(
+            onTap: () {
+              Vibrate.feedback(FeedbackType.light);
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ConfirmDialog(
+                        actionPressed: () {
+                          BlocProvider.of<SessionsCubit>(context)
+                              .deleteSession(session);
+                        },
+                        title: 'Delete session',
+                        buttonlabel: 'Delete',
+                        confirmColor: MyPuttColors.red,
+                      ));
+            },
+            child: const Icon(
+              FlutterRemix.delete_bin_line,
+              color: MyPuttColors.red,
+              size: 24,
+            ),
+          ),
           const SizedBox(
             width: 8,
           ),

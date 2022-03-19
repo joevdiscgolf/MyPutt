@@ -2,9 +2,13 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
-import 'package:myputt/screens/home/components/putting_stats_page.dart';
+import 'package:myputt/screens/home/components/calendar/performance_calendar_panel.dart';
 import 'package:myputt/screens/home/components/charts/performance_chart_panel.dart';
+import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
@@ -20,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _sessionRangeIndex = 0;
+  final PerformanceViewMode _performanceViewMode = PerformanceViewMode.chart;
   late final TabController _rangeTabController;
   late final TabController _circlesController;
   late ScrollController _scrollController;
@@ -87,7 +92,14 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 MyPuttColors.white,
                               ]),
                         ),
-                        child: const PerformanceChartPanel()),
+                        child: Column(
+                          children: [
+                            // _calendarChartButtons(context),
+                            _performanceViewMode == PerformanceViewMode.chart
+                                ? const PerformanceChartPanel()
+                                : const PerformanceCalendarPanel(),
+                          ],
+                        )),
                     _circlesTabBar(context)
                   ],
                 ),
@@ -108,6 +120,48 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ]),
         ));
   }
+  //
+  // Widget _calendarChartButtons(BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       Bounceable(
+  //           onTap: () {
+  //             Vibrate.feedback(FeedbackType.light);
+  //             setState(() => _performanceViewMode = PerformanceViewMode.chart);
+  //           },
+  //           child: Container(
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   color: _performanceViewMode == PerformanceViewMode.chart
+  //                       ? MyPuttColors.gray[200]
+  //                       : Colors.transparent),
+  //               padding: const EdgeInsets.all(8),
+  //               child: const Icon(FlutterRemix.line_chart_line))),
+  //       const SizedBox(
+  //         width: 8,
+  //       ),
+  //       Bounceable(
+  //         onTap: () {
+  //           Vibrate.feedback(FeedbackType.light);
+  //           setState(() => _performanceViewMode = PerformanceViewMode.calendar);
+  //         },
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(12),
+  //               color: _performanceViewMode == PerformanceViewMode.calendar
+  //                   ? MyPuttColors.gray[200]
+  //                   : Colors.transparent),
+  //           padding: const EdgeInsets.all(8),
+  //           child: const Icon(FlutterRemix.calendar_line),
+  //         ),
+  //       ),
+  //       const SizedBox(
+  //         width: 8,
+  //       )
+  //     ],
+  //   );
+  // }
 
   Widget _circlesTabBar(BuildContext context) {
     return Container(

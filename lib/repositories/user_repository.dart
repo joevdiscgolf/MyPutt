@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:myputt/data/types/users/frisbee_avatar.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';

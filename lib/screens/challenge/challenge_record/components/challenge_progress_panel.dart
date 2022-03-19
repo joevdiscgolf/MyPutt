@@ -129,7 +129,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             children: [
               FrisbeeCircleIcon(
                 frisbeeAvatar: _userRepository.currentUser?.frisbeeAvatar,
-                size: 48,
+                size: 60,
               ),
               const SizedBox(
                 height: 8,
@@ -162,7 +162,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             children: [
               FrisbeeCircleIcon(
                 frisbeeAvatar: opponentUser?.frisbeeAvatar,
-                size: 48,
+                size: 60,
               ),
               const SizedBox(
                 height: 8,

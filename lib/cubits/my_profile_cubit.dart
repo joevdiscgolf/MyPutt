@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/data/types/users/frisbee_avatar.dart';
 import 'package:myputt/data/types/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/user_service.dart';
@@ -17,6 +18,10 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     reload();
   }
 
+  void signOut() {
+    emit(MyProfileInitial());
+  }
+
   Future<void> reload() async {
     if (_userRepository.currentUser != null) {
       final PDGAPlayerInfo? playerInfo = await _webScraperService
@@ -26,6 +31,14 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     } else {
       emit(NoProfileLoaded());
     }
+  }
+
+  Future<void> updateFrisbeeAvatar(FrisbeeAvatar frisbeeAvatar) async {
+    _userRepository.updateUserAvatar(frisbeeAvatar);
+    final PDGAPlayerInfo? playerInfo = await _webScraperService
+        .getPDGAData(_userRepository.currentUser?.pdgaNum);
+    emit(MyProfileLoaded(
+        myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
   }
 
   Future<bool> submitPDGANumber(String pdgaNum) async {

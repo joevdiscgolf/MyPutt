@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+enum PerformanceViewMode { calendar, chart }
+
 enum ChallengeResult { win, loss, draw, none }
 
 enum ChallengeCategory { pending, active, complete, none }

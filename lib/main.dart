@@ -5,6 +5,8 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
+import 'package:myputt/screens/introduction/introduction_screen.dart';
 import 'package:myputt/screens/upgrade/force_upgrade_screen.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/screens/auth/landing_screen.dart';
@@ -65,7 +67,7 @@ class MyApp extends StatelessWidget {
             stream: locator.get<SigninService>().siginStream,
             builder: (context, snapshot) {
               if (snapshot.data == LoginState.loggedIn) {
-                return const MainWrapper();
+                return const MyPuttIntroductionScreen();
               } else if (snapshot.data == LoginState.none) {
                 return const LandingScreen();
               } else if (snapshot.data == LoginState.forceUpgrade) {

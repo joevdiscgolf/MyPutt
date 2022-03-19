@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/utils/calculators.dart';
 
 import 'animated_arrows.dart';
 
@@ -32,16 +31,11 @@ class ChallengeDirectorPanel extends StatelessWidget {
 
   Widget _mainBody(
       BuildContext context, PuttingChallenge currentChallenge, int index) {
-    final int puttsMadeDifference =
-        getDifferenceFromChallenge(currentChallenge);
     final int distance = currentChallenge.challengeStructure[index].distance;
     final int setLength = currentChallenge.challengeStructure[index].setLength;
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
-        // border: Border.all(
-        //     color: puttsMadeDifference >= 0 ? MyPuttColors.green : Colors.red,
-        //     width: 4),
         color: Colors.white,
       ),
       child: Column(

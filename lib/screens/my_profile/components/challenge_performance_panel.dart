@@ -35,6 +35,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   late List<int> _selectedIndices;
   late List<int> _allIndices;
   final List<int> _spacerIndices = [];
+  int _numCategories = 0;
 
   late final List<ChartData> _chartData;
   List<ChartData> _spacerChartData = [];
@@ -66,6 +67,9 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
           .length;
       _winPercent =
           (_wins.toDouble() / _completedChallenges.length.toDouble() * 100);
+      _numCategories += _wins > 0 ? 1 : 0;
+      _numCategories += _losses > 0 ? 1 : 0;
+      _numCategories += _draws > 0 ? 1 : 0;
 
       _chartData = [
         if (_wins > 0)
@@ -87,15 +91,19 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
               label: 'Draws',
               challengeResult: ChallengeResult.draw),
       ];
-      for (int i = 0; i < _chartData.length; i++) {
-        final ChartData data = _chartData[i];
-        _spacerChartData.add(data);
-        _spacerChartData.add(ChartData(
-            challengeResult: ChallengeResult.none,
-            value: _completedChallenges.length * 0.01,
-            color: Colors.transparent,
-            label: 'spacer'));
-        _spacerIndices.add(i * 2 + 1);
+      if (_chartData.length == 1) {
+        _spacerChartData = _chartData;
+      } else {
+        for (int i = 0; i < _chartData.length; i++) {
+          final ChartData data = _chartData[i];
+          _spacerChartData.add(data);
+          _spacerChartData.add(ChartData(
+              challengeResult: ChallengeResult.none,
+              value: _completedChallenges.length * 0.01,
+              color: Colors.transparent,
+              label: 'spacer'));
+          _spacerIndices.add(i * 2 + 1);
+        }
       }
       _allIndices = [for (int i = 0; i < _spacerChartData.length; i++) i];
       _selectedIndices = _allIndices;
@@ -335,7 +343,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
               explodeGesture: ActivationMode.none,
               radius: '100%',
               innerRadius: '85%',
-              cornerStyle: _completedChallenges.isEmpty
+              cornerStyle: _numCategories < 2
                   ? CornerStyle.bothFlat
                   : CornerStyle.bothCurve,
               dataSource: _spacerChartData,

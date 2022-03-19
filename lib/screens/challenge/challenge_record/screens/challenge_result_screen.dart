@@ -18,10 +18,10 @@ import 'package:myputt/components/misc/fade_in_widget.dart';
 class ChallengeResultScreen extends StatefulWidget {
   const ChallengeResultScreen({
     Key? key,
-    required this.challenge,
+    this.challenge,
   }) : super(key: key);
 
-  final PuttingChallenge challenge;
+  final PuttingChallenge? challenge;
 
   @override
   State<ChallengeResultScreen> createState() => _ChallengeResultScreenState();
@@ -39,7 +39,9 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
 
   @override
   void initState() {
-    _difference = getDifferenceFromChallenge(widget.challenge);
+    _difference = widget.challenge == null
+        ? 1
+        : getDifferenceFromChallenge(widget.challenge!);
     if (_difference >= 0) {
       _iconData = FlutterRemix.medal_2_fill;
     } else {
@@ -64,61 +66,73 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
     return Container(
         padding: const EdgeInsets.only(top: 64, left: 32, right: 32),
         width: double.infinity,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${getMessageFromDifference(_difference)}!',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
-                    fontSize: 40, color: getColorFromDifference(_difference)),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              AutoSizeText(
-                _subtitle,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 20, color: MyPuttColors.gray[300]),
-                maxLines: 1,
-              ),
-              AnimatedIcon(iconData: _iconData),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                _profileColumn(
-                    context,
-                    widget.challenge.currentUser.displayName,
-                    _userRepository.currentUser?.frisbeeAvatar),
-                _centerColumn(context),
-                _profileColumn(
-                  context,
-                  widget.challenge.opponentUser?.displayName ?? 'Opponent',
-                  widget.challenge.opponentUser?.frisbeeAvatar,
+        child: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${getMessageFromDifference(_difference)}!',
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontSize: 40,
+                            color: getColorFromDifference(_difference)),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      AutoSizeText(
+                        _subtitle,
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontSize: 20, color: MyPuttColors.gray[300]),
+                        maxLines: 1,
+                      ),
+                      AnimatedIcon(iconData: _iconData),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _profileColumn(
+                                context,
+                                widget.challenge?.currentUser.displayName ??
+                                    'You',
+                                _userRepository.currentUser?.frisbeeAvatar),
+                            _centerColumn(context),
+                            _profileColumn(
+                              context,
+                              widget.challenge?.opponentUser?.displayName ??
+                                  'Opponent',
+                              widget.challenge?.opponentUser?.frisbeeAvatar,
+                            )
+                          ]),
+                    ],
+                  ),
+                ),
+                _showButton
+                    ? FadeInWidget(
+                        duration: const Duration(milliseconds: 1000),
+                        child: MyPuttButton(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            height: 50,
+                            title: 'Continue',
+                            iconData: FlutterRemix.check_line,
+                            onPressed: () {
+                              _challengesRepository.deleteFinishedChallenge();
+                              Navigator.pop(context);
+                            }),
+                      )
+                    : const SizedBox(
+                        height: 50,
+                      ),
+                const SizedBox(
+                  height: 32,
                 )
               ]),
-              const SizedBox(
-                height: 24,
-              ),
-              _showButton
-                  ? FadeInWidget(
-                      duration: const Duration(milliseconds: 1000),
-                      child: MyPuttButton(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          height: 50,
-                          title: 'Continue',
-                          iconData: FlutterRemix.check_line,
-                          onPressed: () {
-                            _challengesRepository.deleteFinishedChallenge();
-                            Navigator.pop(context);
-                          }),
-                    )
-                  : const SizedBox(
-                      height: 50,
-                    )
-            ]));
+        ));
   }
 
   Widget _profileColumn(
@@ -206,7 +220,6 @@ class _AnimatedIconState extends State<AnimatedIcon>
   late final AnimationController _scaleController;
   late final Animation<double> _scaleAnimation;
   late final AnimationController _rotateController;
-  late final Animation<double> _rotateAnimation;
   late final Animation<double> _opacityAnimation;
   int rotateCycles = 0;
 
@@ -225,9 +238,6 @@ class _AnimatedIconState extends State<AnimatedIcon>
         curve: Curves.decelerate,
         reverseCurve: const SpringCurve());
 
-    final CurvedAnimation rotateCurve =
-        CurvedAnimation(parent: _rotateController, curve: const SineCurve());
-
     _scaleAnimation = Tween<double>(begin: 140, end: 200).animate(scaleCurve)
       ..addListener(() => setState(() {}))
       ..addStatusListener((status) {
@@ -235,18 +245,6 @@ class _AnimatedIconState extends State<AnimatedIcon>
           _scaleController.reverse();
         }
       });
-    _rotateAnimation = Tween<double>(begin: 1, end: 0).animate(rotateCurve)
-      ..addListener(() => setState(() {}));
-    // ..addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     _rotateController.reverse();
-    //     rotateCycles += 1;
-    //   }
-    //   if (status == AnimationStatus.dismissed && rotateCycles < 3) {
-    //     _rotateController.forward();
-    //   }
-    // })
-    //
     _opacityAnimation = Tween<double>(begin: 1, end: 0.5).animate(scaleCurve)
       ..addListener(() => setState(() {}));
     _scaleController.forward();
@@ -269,7 +267,6 @@ class _AnimatedIconState extends State<AnimatedIcon>
       child: Center(
         child: Transform.rotate(
           angle: 0,
-          // angle: _rotateAnimation.value,
           child: Icon(
             widget.iconData,
             size: _scaleAnimation.value,

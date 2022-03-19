@@ -20,10 +20,7 @@ class UndoButton extends StatelessWidget {
             onTap: () {
               Vibrate.feedback(FeedbackType.light);
               if (state.currentChallenge!.currentUserSets.isNotEmpty) {
-                final int indexToFocus =
-                    state.currentChallenge!.currentUserSets.length - 1;
                 BlocProvider.of<ChallengesCubit>(context).undo();
-                // decrementScrollLists(state.currentChallenge!, indexToFocus);
               }
             },
             child: Container(

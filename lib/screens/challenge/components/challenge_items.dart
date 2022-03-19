@@ -203,6 +203,7 @@ class _ChallengeItemState extends State<ChallengeItem> {
               title: 'Accept',
               color: MyPuttColors.blue,
               height: 30,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               shadowColor: MyPuttColors.gray[400],
             ),
             const SizedBox(
@@ -217,6 +218,7 @@ class _ChallengeItemState extends State<ChallengeItem> {
               title: 'Decline',
               color: MyPuttColors.red,
               height: 30,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               shadowColor: MyPuttColors.gray[400],
             ),
           ],

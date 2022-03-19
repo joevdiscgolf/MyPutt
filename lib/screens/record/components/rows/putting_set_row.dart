@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
-import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PuttingSetRow extends StatefulWidget {
