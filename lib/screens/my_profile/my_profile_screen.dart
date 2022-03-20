@@ -10,7 +10,6 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -38,13 +37,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
-  final UserRepository _userRepository = locator.get<UserRepository>();
 
   @override
   Widget build(BuildContext context) {
-    if (_userRepository.currentUser == null) {
-      BlocProvider.of<MyProfileCubit>(context).reload();
-    }
     return Scaffold(
         backgroundColor: MyPuttColors.white,
         body: BlocBuilder<MyProfileCubit, MyProfileState>(

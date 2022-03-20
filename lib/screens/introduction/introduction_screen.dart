@@ -2,26 +2,30 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/screens/introduction/constants.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class MyPuttIntroductionScreen extends StatelessWidget {
-  const MyPuttIntroductionScreen({Key? key}) : super(key: key);
+  MyPuttIntroductionScreen({Key? key}) : super(key: key);
+
+  final SharedPreferencesService _sharedPreferencesService =
+      locator.get<SharedPreferencesService>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.only(top: 120),
-        child: Align(
-          alignment: Alignment.center,
+        child: SizedBox(
           child: IntroductionScreen(
             pages: kIntroPages,
             onDone: () {
-              // When done button is press
-            },
-            onSkip: () {
-              // You can also override onSkip callback
+              _sharedPreferencesService.setBooleanValue('isFirstRun', false);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => const LandingScreen()));
             },
             showBackButton: false,
             showSkipButton: false,

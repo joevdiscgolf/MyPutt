@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 final List<PageViewModel> kIntroPages = [
   PageViewModel(
       title: 'Take your putting to the next level',
-      body: "Record your putting sessions from anywhere with a few taps.",
+      body: "Record your putting sessions from anywhere in a few taps.",
       image: const Image(
         image: AssetImage(kSessionsScreenScreenshot),
       )),
@@ -19,10 +19,10 @@ final List<PageViewModel> kIntroPages = [
     image: const Image(
       image: AssetImage(kHomeScreenScreenshot),
     ),
-    body: 'Watch your practice pay off over time',
+    body: 'Watch your practice pay off',
   ),
   PageViewModel(
-    title: 'View lifetime stats',
+    title: 'Lifetime stats',
     body: 'View detailed stats for challenges and practice sessions.',
     image: const Image(
       image: AssetImage(kLifetimeStatsScreenshots),

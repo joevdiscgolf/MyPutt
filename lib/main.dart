@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
 import 'package:myputt/screens/introduction/introduction_screen.dart';
 import 'package:myputt/screens/upgrade/force_upgrade_screen.dart';
-import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -63,15 +63,17 @@ class MyApp extends StatelessWidget {
         theme: lightTheme(context),
         title: 'MyPutt',
         debugShowCheckedModeBanner: false,
-        home: StreamBuilder<LoginState>(
-            stream: locator.get<SigninService>().siginStream,
+        home: StreamBuilder<AppScreenState>(
+            stream: locator.get<ScreenController>().appStateStream,
             builder: (context, snapshot) {
-              if (snapshot.data == LoginState.loggedIn) {
-                return const MyPuttIntroductionScreen();
-              } else if (snapshot.data == LoginState.none) {
+              if (snapshot.data == AppScreenState.loggedIn) {
+                return const MainWrapper();
+              } else if (snapshot.data == AppScreenState.notLoggedIn) {
                 return const LandingScreen();
-              } else if (snapshot.data == LoginState.forceUpgrade) {
+              } else if (snapshot.data == AppScreenState.forceUpgrade) {
                 return const ForceUpgradeScreen();
+              } else if (snapshot.data == AppScreenState.firstRun) {
+                return MyPuttIntroductionScreen();
               } else {
                 return const EnterDetailsScreen();
               }

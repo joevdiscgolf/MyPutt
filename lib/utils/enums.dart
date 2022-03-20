@@ -46,6 +46,15 @@ enum Circles {
 
 enum LoginState { loggedIn, setup, none, forceUpgrade, error }
 
+enum AppScreenState {
+  loggedIn,
+  notLoggedIn,
+  setup,
+  firstRun,
+  forceUpgrade,
+  error
+}
+
 enum FrisbeeIconColor {
   @JsonValue('red')
   red,

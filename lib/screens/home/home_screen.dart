@@ -2,9 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/calendar/performance_calendar_panel.dart';
 import 'package:myputt/screens/home/components/charts/performance_chart_panel.dart';

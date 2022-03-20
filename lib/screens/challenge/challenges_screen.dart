@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
+import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/screens/challenge/components/dialogs/select_preset_dialog.dart';
@@ -64,6 +65,8 @@ class _ChallengesState extends State<ChallengesScreen>
       if (state is ChallengesErrorState) {
         return EmptyState(
             onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
+      } else if (state is ChallengesLoading || state is ChallengesInitial) {
+        return const LoadingScreen();
       }
       return TabBarView(children: [
         ChallengesList(

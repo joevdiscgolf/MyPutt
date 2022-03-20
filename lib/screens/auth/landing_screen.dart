@@ -40,7 +40,6 @@ class _LandingScreenState extends State<LandingScreen> {
   void initState() {
     _connectivitySubscription = _connectivity.onConnectivityChanged
         .listen((ConnectivityResult _updatedStatus) {
-      print(_updatedStatus);
       setState(() {
         _connected = validConnectivityResults.contains(_updatedStatus);
       });
@@ -271,7 +270,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   setState(() {
                     _loading = false;
                     _error = true;
-                    _errorText = _authService.exception;
+                    _errorText = _signinService.errorMessage;
                   });
                 }
               }

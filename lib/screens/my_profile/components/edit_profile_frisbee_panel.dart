@@ -6,8 +6,6 @@ import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/data/types/users/frisbee_avatar.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/my_profile/components/color_marker.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -29,15 +27,11 @@ class EditProfileFrisbeePanel extends StatefulWidget {
 }
 
 class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
-  final UserRepository _userRepository = locator.get<UserRepository>();
-
   late String _selectedBackgroundColorHex;
-  late Color _selectedBackgroundColor;
   late FrisbeeIconColor _frisbeeIconColor;
 
   @override
   void initState() {
-    _selectedBackgroundColor = HexColor(widget.initialBackgroundColorHex);
     _selectedBackgroundColorHex = widget.initialBackgroundColorHex;
     _frisbeeIconColor = widget.initialFrisbeeIconColor ?? FrisbeeIconColor.blue;
     super.initState();

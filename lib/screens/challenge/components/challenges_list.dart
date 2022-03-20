@@ -13,6 +13,7 @@ class ChallengesList extends StatelessWidget {
 
   final ChallengeCategory category;
   final List<PuttingChallenge> challenges;
+
   @override
   Widget build(BuildContext context) {
     return Container(

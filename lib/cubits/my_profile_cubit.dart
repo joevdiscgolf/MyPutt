@@ -29,7 +29,15 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       emit(MyProfileLoaded(
           myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
     } else {
-      emit(NoProfileLoaded());
+      await _userRepository.fetchCurrentUser();
+      if (_userRepository.currentUser != null) {
+        final PDGAPlayerInfo? playerInfo = await _webScraperService
+            .getPDGAData(_userRepository.currentUser?.pdgaNum);
+        emit(MyProfileLoaded(
+            myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
+      } else {
+        emit(NoProfileLoaded());
+      }
     }
   }
 
