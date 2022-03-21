@@ -7,13 +7,13 @@ class ChallengeSetRow extends StatelessWidget {
   const ChallengeSetRow(
       {Key? key,
       required this.currentUserMade,
-      required this.opponentMade,
+      this.opponentMade,
       required this.setLength,
       this.distance})
       : super(key: key);
 
   final int currentUserMade;
-  final int opponentMade;
+  final int? opponentMade;
   final int setLength;
   final int? distance;
 
@@ -50,16 +50,22 @@ class ChallengeSetRow extends StatelessWidget {
                 flex: 6,
                 fit: FlexFit.loose,
                 child: Builder(builder: (context) {
-                  final double percent = opponentMade + currentUserMade == 0
-                      ? 0
-                      : currentUserMade.toDouble() /
-                          (opponentMade + currentUserMade).toDouble();
+                  double percent;
+                  Color backgroundColor;
+                  if (opponentMade == null) {
+                    percent = currentUserMade / setLength;
+                    backgroundColor = MyPuttColors.gray[200]!;
+                  } else {
+                    percent = opponentMade! + currentUserMade == 0
+                        ? 0
+                        : currentUserMade.toDouble() /
+                            (opponentMade! + currentUserMade).toDouble();
+                    backgroundColor = MyPuttColors.red;
+                  }
                   return LinearPercentIndicator(
                     percent: percent,
                     progressColor: MyPuttColors.blue,
-                    backgroundColor: opponentMade + currentUserMade == 0
-                        ? MyPuttColors.gray[200]
-                        : MyPuttColors.red,
+                    backgroundColor: backgroundColor,
                     barRadius: const Radius.circular(4),
                     lineHeight: 8,
                     // fillColor: MyPuttColors.blue,
@@ -70,7 +76,7 @@ class ChallengeSetRow extends StatelessWidget {
                 flex: 1,
                 fit: FlexFit.loose,
                 child: AutoSizeText(
-                  '$opponentMade/$setLength',
+                  '${opponentMade ?? '-'}/$setLength',
                   style: Theme.of(context)
                       .textTheme
                       .headline6

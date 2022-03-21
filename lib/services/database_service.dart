@@ -108,7 +108,6 @@ class DatabaseService {
     if (recipientUser == null || challengerUser == null) {
       return false;
     }
-
     return _challengesDataWriter.setPuttingChallenge(
         recipientUser.uid, challengerUser.uid, storageChallenge);
   }

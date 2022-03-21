@@ -232,7 +232,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
             children: [
               Expanded(
                 child: Text(
-                  '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? 0))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? 0))}',
+                  '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? widget.challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? widget.challenge.creationTimeStamp))}',
                   style: Theme.of(context)
                       .textTheme
                       .headline6

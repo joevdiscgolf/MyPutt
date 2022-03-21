@@ -107,7 +107,7 @@ class ChallengesRepository {
     currentChallenge = null;
   }
 
-  Future<bool> finishChallenge() async {
+  Future<bool> finishChallengeAndSync() async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentChallenge == null || currentUser == null) {
       return false;
@@ -115,11 +115,9 @@ class ChallengesRepository {
       currentChallenge?.status = ChallengeStatus.complete;
       currentChallenge?.completionTimeStamp =
           DateTime.now().millisecondsSinceEpoch;
-      if (activeChallenges.contains(currentChallenge)) {
-        completedChallenges.add(currentChallenge!);
-        activeChallenges.remove(currentChallenge);
-      }
-
+      completedChallenges.add(currentChallenge!);
+      activeChallenges =
+          removeChallengeFromList(currentChallenge!, activeChallenges);
       await _databaseService.setStorageChallenge(
           StoragePuttingChallenge.fromPuttingChallenge(
               currentChallenge!, currentUser));
@@ -129,7 +127,11 @@ class ChallengesRepository {
   }
 
   Future<void> addFinishedChallenge(PuttingChallenge challenge) async {
-    activeChallenges.remove(challenge);
+    activeChallenges =
+        removeChallengeFromList(currentChallenge!, activeChallenges);
+    print(completedChallenges.length);
+    completedChallenges.add(challenge);
+    print(completedChallenges.length);
     finishedChallenge = challenge;
     currentChallenge = null;
   }
@@ -139,7 +141,8 @@ class ChallengesRepository {
       pendingChallenges.remove(challenge);
       // database event here
     } else if (activeChallenges.contains(challenge)) {
-      activeChallenges.remove(challenge);
+      activeChallenges =
+          removeChallengeFromList(currentChallenge!, activeChallenges);
       // database event here
     }
   }
@@ -176,5 +179,12 @@ class ChallengesRepository {
       }
       deepLinkChallenges = [];
     }
+  }
+
+  List<PuttingChallenge> removeChallengeFromList(
+      PuttingChallenge challengeToRemove, List<PuttingChallenge> listToFilter) {
+    return listToFilter
+        .where((challenge) => challengeToRemove.id != challenge.id)
+        .toList();
   }
 }

@@ -33,17 +33,17 @@ class SigninService {
 
   Future<void> init() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    _version = packageInfo.version;
     final ConnectivityResult _connectivityResult =
         await _connectivity.checkConnectivity();
-    final bool isFirstRun =
+    final bool? isFirstRun =
         await _sharedPreferencesService.getBooleanValue('isFirstRun');
-    if (isFirstRun) {
+    if (isFirstRun == null || isFirstRun) {
       controller.add(AppScreenState.firstRun);
     } else {
       if (!validConnectivityResults.contains(_connectivityResult)) {
         controller.add(AppScreenState.notLoggedIn);
       } else {
-        _version = packageInfo.version;
         if (_authService.getCurrentUserId() != null) {
           if (!(await _authService.userIsSetup())) {
             controller.add(AppScreenState.setup);

@@ -6,8 +6,8 @@ class SharedPreferencesService {
     myPrefs.setBool(key, value);
   }
 
-  Future<bool> getBooleanValue(String key) async {
+  Future<bool?> getBooleanValue(String key) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
-    return myPrefs.getBool(key) ?? false;
+    return myPrefs.getBool(key);
   }
 }

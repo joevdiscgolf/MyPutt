@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +46,18 @@ class ChallengeProgressPanel extends StatelessWidget {
                   : challenge.currentUserSets.length + 1;
           final int difference = getDifferenceFromChallenge(challenge);
 
+          final int currentUserPuttsMade =
+              state.currentChallenge!.currentUserSets.last.puttsMade.toInt();
+          final int? opponentPuttsMade =
+              state.currentChallenge!.opponentSets.length <=
+                      state.currentChallenge!.currentUserSets.length
+                  ? state
+                      .currentChallenge!
+                      .opponentSets[challenge.currentUserSets.length - 1]
+                      .puttsMade
+                      .toInt()
+                  : null;
+
           return Column(
             children: [
               _setNumberContainer(
@@ -59,8 +73,12 @@ class ChallengeProgressPanel extends StatelessWidget {
                     const SizedBox(
                       height: 32,
                     ),
-                    const ChallengeSetRow(
-                        currentUserMade: 10, opponentMade: 10, setLength: 15),
+                    ChallengeSetRow(
+                      currentUserMade: currentUserPuttsMade,
+                      opponentMade: opponentPuttsMade,
+                      setLength: setLength,
+                      distance: distance,
+                    ),
                   ],
                 ),
               ),

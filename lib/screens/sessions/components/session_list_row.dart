@@ -108,10 +108,7 @@ class SessionListRow extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (BuildContext context) => ConfirmDialog(
-                        actionPressed: () {
-                          BlocProvider.of<SessionsCubit>(context)
-                              .deleteSession(session);
-                        },
+                        actionPressed: delete,
                         title: 'Delete session',
                         buttonlabel: 'Delete',
                         confirmColor: MyPuttColors.red,

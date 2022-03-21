@@ -288,11 +288,9 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               ?.copyWith(
                                   fontSize: 20, color: MyPuttColors.gray[800])),
                     ),
-                    Align(
+                    const Align(
                       alignment: Alignment.centerRight,
-                      child: UndoButton(
-                        decrementScrollLists: () {},
-                      ),
+                      child: UndoButton(),
                     )
                   ],
                 ),

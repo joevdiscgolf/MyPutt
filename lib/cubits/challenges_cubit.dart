@@ -186,14 +186,10 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     }
   }
 
-  Future<bool> finishChallenge() async {
+  Future<void> finishChallenge() async {
     if (_challengesRepository.currentChallenge != null) {
-      _challengesRepository.finishedChallenge =
-          _challengesRepository.currentChallenge;
+      await _challengesRepository.finishChallengeAndSync();
       emit(_challengeFinished());
-      return _challengesRepository.finishChallenge();
-    } else {
-      return false;
     }
   }
 

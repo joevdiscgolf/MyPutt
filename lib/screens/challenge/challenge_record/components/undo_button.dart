@@ -7,10 +7,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class UndoButton extends StatelessWidget {
-  const UndoButton({Key? key, required this.decrementScrollLists})
-      : super(key: key);
-
-  final Function decrementScrollLists;
+  const UndoButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
