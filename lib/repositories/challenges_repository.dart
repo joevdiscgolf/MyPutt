@@ -129,9 +129,7 @@ class ChallengesRepository {
   Future<void> addFinishedChallenge(PuttingChallenge challenge) async {
     activeChallenges =
         removeChallengeFromList(currentChallenge!, activeChallenges);
-    print(completedChallenges.length);
     completedChallenges.add(challenge);
-    print(completedChallenges.length);
     finishedChallenge = challenge;
     currentChallenge = null;
   }

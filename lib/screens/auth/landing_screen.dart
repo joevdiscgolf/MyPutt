@@ -7,7 +7,6 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -23,7 +22,6 @@ class _LandingScreenState extends State<LandingScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  final AuthService _authService = locator.get<AuthService>();
   final SigninService _signinService = locator.get<SigninService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

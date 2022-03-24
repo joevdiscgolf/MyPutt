@@ -12,11 +12,8 @@ Future<void> fetchRepositoryData() async {
     locator.get<SessionRepository>().fetchCompletedSessions(),
     locator.get<SessionRepository>().fetchCurrentSession(),
     locator.get<ChallengesRepository>().fetchAllChallenges(),
-  ]).timeout(const Duration(seconds: 3));
-  await locator
-      .get<ChallengesRepository>()
-      .addDeepLinkChallenges()
-      .timeout(const Duration(seconds: 3));
+  ]);
+  await locator.get<ChallengesRepository>().addDeepLinkChallenges();
 }
 
 void clearRepositoryData() {

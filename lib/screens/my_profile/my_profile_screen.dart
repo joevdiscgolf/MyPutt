@@ -14,7 +14,6 @@ import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
 import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';

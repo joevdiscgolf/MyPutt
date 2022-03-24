@@ -6,7 +6,6 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
-import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
@@ -23,7 +22,6 @@ class SigninService {
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   late final String _version;
-  final Connectivity _connectivity = Connectivity();
   String errorMessage = '';
 
   AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
@@ -34,38 +32,32 @@ class SigninService {
   Future<void> init() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     _version = packageInfo.version;
-    final ConnectivityResult _connectivityResult =
-        await _connectivity.checkConnectivity();
     final bool? isFirstRun =
         await _sharedPreferencesService.getBooleanValue('isFirstRun');
     if (isFirstRun == null || isFirstRun) {
       controller.add(AppScreenState.firstRun);
     } else {
-      if (!validConnectivityResults.contains(_connectivityResult)) {
-        controller.add(AppScreenState.notLoggedIn);
-      } else {
-        if (_authService.getCurrentUserId() != null) {
-          if (!(await _authService.userIsSetup())) {
-            controller.add(AppScreenState.setup);
-            currentAppScreenState = AppScreenState.setup;
-          } else {
-            final String? minimumVersion = await getMinimumAppVersion();
-            if (minimumVersion == null) {
-              controller.add(AppScreenState.loggedIn);
-              return;
-            }
-            if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-              controller.add(AppScreenState.forceUpgrade);
-              return;
-            }
-            await fetchRepositoryData();
-            controller.add(AppScreenState.loggedIn);
-            currentAppScreenState = AppScreenState.loggedIn;
-          }
+      if (_authService.getCurrentUserId() != null) {
+        if (!(await _authService.userIsSetup())) {
+          controller.add(AppScreenState.setup);
+          currentAppScreenState = AppScreenState.setup;
         } else {
-          controller.add(AppScreenState.notLoggedIn);
-          currentAppScreenState = AppScreenState.notLoggedIn;
+          final String? minimumVersion = await getMinimumAppVersion();
+          if (minimumVersion == null) {
+            controller.add(AppScreenState.loggedIn);
+            return;
+          }
+          if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+            controller.add(AppScreenState.forceUpgrade);
+            return;
+          }
+          await fetchRepositoryData().timeout(const Duration(seconds: 3));
+          controller.add(AppScreenState.loggedIn);
+          currentAppScreenState = AppScreenState.loggedIn;
         }
+      } else {
+        controller.add(AppScreenState.notLoggedIn);
+        currentAppScreenState = AppScreenState.notLoggedIn;
       }
     }
   }
