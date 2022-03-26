@@ -68,6 +68,17 @@ class _ChallengesState extends State<ChallengesScreen>
       } else if (state is ChallengesLoading || state is ChallengesInitial) {
         return const LoadingScreen();
       }
+      state.activeChallenges.sort(
+          (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
+      state.pendingChallenges.sort(
+          (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
+      state.completedChallenges.sort((c1, c2) {
+        final int dateCompletedComparison = (c1.completionTimeStamp ?? 0)
+            .compareTo(c2.completionTimeStamp ?? 0);
+        return dateCompletedComparison != 0
+            ? dateCompletedComparison
+            : c1.creationTimeStamp.compareTo(c2.creationTimeStamp);
+      });
       return TabBarView(children: [
         ChallengesList(
             category: ChallengeCategory.active,

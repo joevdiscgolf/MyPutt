@@ -20,7 +20,8 @@ class StoragePuttingChallenge {
       this.recipientUser,
       required this.challengeStructure,
       required this.challengerSets,
-      required this.recipientSets});
+      required this.recipientSets,
+      this.createdFromSession});
 
   String status;
   final int creationTimeStamp;
@@ -31,6 +32,7 @@ class StoragePuttingChallenge {
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> challengerSets;
   final List<PuttingSet> recipientSets;
+  final bool? createdFromSession;
 
   factory StoragePuttingChallenge.fromPuttingChallenge(
       PuttingChallenge challenge, MyPuttUser currentUser) {
@@ -69,7 +71,8 @@ class StoragePuttingChallenge {
             ? challenge.currentUserSets
             : challenge.opponentSets,
         recipientSets: recipientSets,
-        completionTimeStamp: challenge.completionTimeStamp);
+        completionTimeStamp: challenge.completionTimeStamp,
+        createdFromSession: challenge.createdFromSession);
   }
 
   factory StoragePuttingChallenge.fromSession(
@@ -77,15 +80,15 @@ class StoragePuttingChallenge {
       {MyPuttUser? opponentUser}) {
     final now = DateTime.now().millisecondsSinceEpoch;
     return StoragePuttingChallenge(
-      status: ChallengeStatus.pending,
-      creationTimeStamp: now,
-      id: currentUser.uid + '~' + now.toString(),
-      challengeStructure: challengeStructureFromSession(session),
-      recipientSets: [],
-      challengerSets: session.sets,
-      challengerUser: currentUser,
-      recipientUser: opponentUser,
-    );
+        status: ChallengeStatus.pending,
+        creationTimeStamp: now,
+        id: currentUser.uid + '~' + now.toString(),
+        challengeStructure: challengeStructureFromSession(session),
+        recipientSets: [],
+        challengerSets: session.sets,
+        challengerUser: currentUser,
+        recipientUser: opponentUser,
+        createdFromSession: true);
   }
 
   factory StoragePuttingChallenge.fromJson(Map<String, dynamic> json) =>

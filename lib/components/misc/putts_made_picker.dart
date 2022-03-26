@@ -36,7 +36,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 140,
+        height: 120,
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(color: MyPuttColors.gray[50]!, boxShadow: [
           BoxShadow(

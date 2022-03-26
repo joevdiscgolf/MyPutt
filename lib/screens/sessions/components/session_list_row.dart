@@ -85,6 +85,7 @@ class SessionListRow extends StatelessWidget {
               onTap: () {
                 Vibrate.feedback(FeedbackType.light);
                 showBarModalBottomSheet(
+                    topControl: Container(),
                     context: context,
                     builder: (BuildContext context) => ShareSheet(
                           session: session,

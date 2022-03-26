@@ -23,8 +23,8 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<UserService>(UserService());
   locator.registerSingleton<UserRepository>(UserRepository());
   locator.registerSingleton<SessionRepository>(SessionRepository());
-  locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
   locator.registerSingleton<PresetsRepository>(PresetsRepository());
+  locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
   locator.registerSingleton<StatsService>(StatsService());
   locator.registerSingleton<SigninService>(SigninService());
   locator.registerSingleton<WebScraperService>(WebScraperService());

@@ -14,7 +14,6 @@ import 'package:myputt/screens/challenge/challenge_record/screens/challenge_resu
 import 'package:myputt/services/firebase/fb_constants.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
@@ -48,11 +47,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   int opponentFocusedIndex = 0;
   int currentUserFocusedIndex = 0;
   int challengeSetsCompleted = 0;
-  int lastUndoTime = 0;
-
-  final GlobalKey<ScrollSnapListState> opponentKey = GlobalKey();
-  final GlobalKey<ScrollSnapListState> currentUserKey = GlobalKey();
-  final GlobalKey<ScrollSnapListState> numberListKey = GlobalKey();
 
   @override
   void initState() {
@@ -68,6 +62,8 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             .updateIncomingChallenge(snapshot.data());
       });
     }
+    puttsPickerFocusedIndex =
+        BlocProvider.of<ChallengesCubit>(context).getPuttsPickerIndex();
     super.initState();
   }
 
@@ -88,18 +84,21 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           );
         }
         return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: IconButton(
-                  onPressed: () {
-                    Vibrate.feedback(FeedbackType.light);
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    FlutterRemix.arrow_left_s_line,
-                    color: MyPuttColors.gray[800],
-                  )),
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(40.0),
+              child: AppBar(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                leading: IconButton(
+                    onPressed: () {
+                      Vibrate.feedback(FeedbackType.light);
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      FlutterRemix.arrow_left_s_line,
+                      color: MyPuttColors.gray[800],
+                    )),
+              ),
             ),
             backgroundColor: MyPuttColors.white,
             body: NestedScrollView(
@@ -129,14 +128,15 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
         final List<Widget> children = List.from(currentUserSets
             .asMap()
             .entries
-            .map((entry) {
-              return ChallengeRecordSetRow(
-                setNumber: entry.key,
-                currentUserPuttsMade: entry.value.puttsMade.toInt(),
-                opponentPuttsMade: opponentSets.length,
-                setLength: entry.value.puttsAttempted.toInt(),
-              );
-            })
+            .map((entry) => ChallengeRecordSetRow(
+                  setNumber: entry.key,
+                  currentUserPuttsMade: entry.value.puttsMade.toInt(),
+                  opponentPuttsMade:
+                      opponentSets.length >= currentUserSets.length
+                          ? opponentSets[entry.key].puttsMade.toInt()
+                          : null,
+                  setLength: entry.value.puttsAttempted.toInt(),
+                ))
             .toList()
             .reversed);
         return ListView(
@@ -211,10 +211,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                   Vibrate.feedback(FeedbackType.light);
                   if (state.currentChallenge!.currentUserSets.length <
                       state.currentChallenge!.challengeStructure.length) {
-                    if (state.currentChallenge!.currentUserSets.length !=
-                        state.currentChallenge!.challengeStructure.length - 1) {
-                      _incrementScrollLists(state.currentChallenge!);
-                    }
                     BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
                         timeStamp: DateTime.now().millisecondsSinceEpoch,
                         distance: state
@@ -313,34 +309,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
       },
     );
   }
-
-  void _focusAllToIndex(int index) {
-    opponentKey.currentState?.focusToItem(index);
-    currentUserKey.currentState?.focusToItem(index);
-    numberListKey.currentState?.focusToItem(index);
-  }
-
-  void _incrementScrollLists(PuttingChallenge challenge) {
-    setState(() {
-      puttsMadePickerLength = challenge
-          .challengeStructure[challenge.currentUserSets.length].setLength;
-      if (puttsPickerFocusedIndex + 1 > puttsMadePickerLength) {
-        puttsMadePickerKey.currentState?.focusToItem(puttsMadePickerLength);
-      }
-    });
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _focusAllToIndex(challenge.currentUserSets.length);
-    });
-  }
-
-  // void _decrementScrollLists(PuttingChallenge challenge, int index) {
-  //   final int setLength = challenge.challengeStructure[index].setLength;
-  //   if (puttsPickerFocusedIndex >= setLength) {
-  //     puttsMadePickerKey.currentState?.focusToItem(setLength);
-  //     puttsPickerFocusedIndex = setLength;
-  //   }
-  //   _focusAllToIndex(index);
-  // }
 
   void dialogCallBack() {
     if (!sessionInProgress) {

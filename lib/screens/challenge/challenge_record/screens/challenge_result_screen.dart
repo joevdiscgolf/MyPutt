@@ -18,10 +18,10 @@ import 'package:myputt/components/misc/fade_in_widget.dart';
 class ChallengeResultScreen extends StatefulWidget {
   const ChallengeResultScreen({
     Key? key,
-    this.challenge,
+    required this.challenge,
   }) : super(key: key);
 
-  final PuttingChallenge? challenge;
+  final PuttingChallenge challenge;
 
   @override
   State<ChallengeResultScreen> createState() => _ChallengeResultScreenState();
@@ -39,9 +39,7 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
 
   @override
   void initState() {
-    _difference = widget.challenge == null
-        ? 1
-        : getDifferenceFromChallenge(widget.challenge!);
+    getDifferenceFromChallenge(widget.challenge);
     if (_difference >= 0) {
       _iconData = FlutterRemix.medal_2_fill;
     } else {
@@ -97,15 +95,14 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
                           children: [
                             _profileColumn(
                                 context,
-                                widget.challenge?.currentUser.displayName ??
-                                    'You',
+                                widget.challenge.currentUser.displayName,
                                 _userRepository.currentUser?.frisbeeAvatar),
                             _centerColumn(context),
                             _profileColumn(
                               context,
-                              widget.challenge?.opponentUser?.displayName ??
+                              widget.challenge.opponentUser?.displayName ??
                                   'Opponent',
-                              widget.challenge?.opponentUser?.frisbeeAvatar,
+                              widget.challenge.opponentUser?.frisbeeAvatar,
                             )
                           ]),
                     ],
@@ -161,8 +158,12 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
   }
 
   Widget _centerColumn(BuildContext context) {
-    const int currentUserPuttsMade = 10;
-    const int opponentPuttsMade = 10;
+    final int currentUserPuttsMade = getPuttsMadeFromChallenge(
+        widget.challenge.currentUser.uid, widget.challenge);
+    final int opponentPuttsMade = widget.challenge.opponentUser != null
+        ? getPuttsMadeFromChallenge(
+            widget.challenge.opponentUser!.uid, widget.challenge)
+        : 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

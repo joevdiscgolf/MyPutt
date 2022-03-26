@@ -20,6 +20,7 @@ import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.
 import 'package:myputt/screens/my_profile/components/lifetime_stat_row.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'components/pdga_info_panel.dart';
@@ -348,7 +349,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Total putts',
                   subtitle:
-                      '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) /*+ _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, true)*/}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) /*+ _statsService.getPuttCountFromChallenges(_challengesRepository.completedChallenges, false)*/}'),
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(removeDuplicateChallenges(_challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(removeDuplicateChallenges(_challengesRepository.completedChallenges), false)}'),
               const SizedBox(
                 height: 4,
               ),

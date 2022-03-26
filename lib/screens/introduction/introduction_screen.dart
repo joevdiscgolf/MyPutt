@@ -25,7 +25,9 @@ class MyPuttIntroductionScreen extends StatelessWidget {
             onDone: () {
               _sharedPreferencesService.setBooleanValue('isFirstRun', false);
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => const LandingScreen()));
+                  builder: (BuildContext context) => const LandingScreen(
+                        isFirstRun: true,
+                      )));
             },
             showBackButton: false,
             showSkipButton: false,

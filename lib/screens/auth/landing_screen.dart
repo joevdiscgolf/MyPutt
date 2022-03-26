@@ -12,7 +12,9 @@ import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key}) : super(key: key);
+  const LandingScreen({Key? key, this.isFirstRun = false}) : super(key: key);
+
+  final bool isFirstRun;
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -263,13 +265,18 @@ class _LandingScreenState extends State<LandingScreen> {
                   _loading = true;
                 });
                 final signinSuccess = await _signinService
-                    .attemptSignInWithEmail(_email!, _password!);
+                    .attemptSignInWithEmail(_email!, _password!)
+                    .timeout(const Duration(seconds: 3));
                 if (!signinSuccess) {
                   setState(() {
                     _loading = false;
                     _error = true;
                     _errorText = _signinService.errorMessage;
                   });
+                } else {
+                  if (widget.isFirstRun) {
+                    Navigator.pop(context);
+                  }
                 }
               }
             }),

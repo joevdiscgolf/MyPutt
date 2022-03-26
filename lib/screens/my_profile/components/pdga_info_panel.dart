@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/data/types/users/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/submit_text_dialog.dart';
@@ -12,121 +13,91 @@ class PDGAInfoPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-            margin: const EdgeInsets.only(left: 64, right: 32),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: MyPuttColors.gray[50],
-                borderRadius: BorderRadius.circular(4),
-                boxShadow: [
-                  BoxShadow(
-                      offset: const Offset(0, 4),
-                      blurRadius: 4,
-                      color: MyPuttColors.gray[400]!),
-                ]),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(width: 32),
-                      BlocBuilder<MyProfileCubit, MyProfileState>(
-                        builder: (context, state) {
-                          if (state is MyProfileLoaded &&
-                              state.myUser.pdgaNum != null &&
-                              state.pdgaPlayerInfo?.pdgaNum != null &&
-                              state.pdgaPlayerInfo?.name != null) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoSizeText(
-                                  '${state.pdgaPlayerInfo?.name}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      ?.copyWith(
-                                        fontSize: 16,
-                                        color: MyPuttColors.gray[800],
-                                      ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                ),
-                                Text(
-                                  '#${state.pdgaPlayerInfo?.pdgaNum}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      ?.copyWith(
-                                          fontSize: 12,
-                                          color: MyPuttColors.gray[400]),
-                                ),
-                              ],
-                            );
-                          }
-                          return Text(
-                            'PDGA player info',
-                            style: Theme.of(context).textTheme.headline5,
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: SizedBox(
-                          width: 32,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.transparent,
-                                    shadowColor: Colors.transparent),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) => SubmitTextDialog(
-                                            title: 'Enter PDGA number',
-                                            onSubmit: (String pdgaNumber) {
-                                              return BlocProvider.of<
-                                                      MyProfileCubit>(context)
-                                                  .submitPDGANumber(pdgaNumber);
-                                            },
-                                          ));
-                                },
-                                child: const Center(
-                                    child: Icon(
-                                  FlutterRemix.edit_line,
-                                  color: Colors.blue,
-                                ))),
-                          ),
-                        ),
-                      )
-                    ],
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+            color: MyPuttColors.gray[50],
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(0, 4),
+                  blurRadius: 4,
+                  color: MyPuttColors.gray[400]!),
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BlocBuilder<MyProfileCubit, MyProfileState>(
+                    builder: (context, state) {
+                      if (state is MyProfileLoaded &&
+                          state.pdgaPlayerInfo?.pdgaNum != null &&
+                          state.pdgaPlayerInfo?.name != null) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoSizeText(
+                              '${state.pdgaPlayerInfo?.name}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(
+                                    fontSize: 16,
+                                    color: MyPuttColors.gray[800],
+                                  ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                            ),
+                            Text(
+                              '#${state.pdgaPlayerInfo?.pdgaNum}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(
+                                      fontSize: 12,
+                                      color: MyPuttColors.gray[400]),
+                            ),
+                          ],
+                        );
+                      }
+                      return Text(
+                        'PDGA player info',
+                        style: Theme.of(context).textTheme.headline6,
+                      );
+                    },
                   ),
-                ),
-                _mainBody(context)
-              ],
-            )),
-        Positioned(
-          top: 0,
-          left: 50,
-          child: Container(
-            height: 50,
-            width: 50,
-            color: MyPuttColors.blue,
-          ),
-          // child: Image(
-          //   image: AssetImage(
-          //       'assets/images/profile/USDGC-McBeth-1024x683.jpeg'),
-          //   height: 50,
-          //   width: 50,
-          //   color: Colors.blue,
-          // )),
-        ),
-      ],
-    );
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: MyPuttButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => SubmitTextDialog(
+                                  title: 'Enter PDGA number',
+                                  onSubmit: (String pdgaNumber) {
+                                    return BlocProvider.of<MyProfileCubit>(
+                                            context)
+                                        .submitPDGANumber(pdgaNumber);
+                                  },
+                                ));
+                      },
+                      color: MyPuttColors.gray[50]!,
+                      iconData: FlutterRemix.edit_line,
+                      iconColor: MyPuttColors.blue,
+                      title: 'Edit',
+                      textColor: MyPuttColors.blue,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            _mainBody(context)
+          ],
+        ));
   }
 
   Widget _mainBody(BuildContext context) {

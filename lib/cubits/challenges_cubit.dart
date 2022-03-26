@@ -11,6 +11,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -223,24 +224,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   Future<bool> sendChallengeWithPreset(
       ChallengePreset challengePreset, MyPuttUser recipientUser) async {
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    } else {
-      final int timestamp = DateTime.now().millisecondsSinceEpoch;
-      final List<ChallengeStructureItem> challengeStructure =
-          _presetsRepository.presetStructures[challengePreset]!;
-      final storageChallenge = StoragePuttingChallenge(
-          status: ChallengeStatus.active,
-          creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-          id: '${currentUser.uid}~$timestamp',
-          challengerUser: currentUser,
-          challengeStructure: challengeStructure,
-          challengerSets: [],
-          recipientSets: [],
-          recipientUser: recipientUser);
-      return _databaseService.setStorageChallenge(storageChallenge);
+    final bool success = await _challengesRepository.sendChallengeWithPreset(
+        challengePreset, recipientUser);
+    if (_challengesRepository.currentChallenge != null) {
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
+    return success;
   }
 
   Future<String?> getShareMessageFromSession(PuttingSession session) async {
@@ -281,5 +270,16 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
     print(uri);
     return '${currentUser.displayName} is challenging you to a putting competition! $uri';
+  }
+
+  int getPuttsPickerIndex() {
+    if (state.currentChallenge == null) {
+      return 0;
+    }
+    return state
+        .currentChallenge!
+        .challengeStructure[state.currentChallenge!.currentUserSets.length -
+            (currentUserSetsComplete(state.currentChallenge!) ? 1 : 0)]
+        .setLength;
   }
 }

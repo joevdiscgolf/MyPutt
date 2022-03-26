@@ -10,7 +10,6 @@ import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SigninService {
   final SharedPreferencesService _sharedPreferencesService =
@@ -25,6 +24,7 @@ class SigninService {
   String errorMessage = '';
 
   AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
+
   SigninService() {
     controller = _screenController.controller;
   }
@@ -76,18 +76,11 @@ class SigninService {
       errorMessage = _authService.exception;
       return false;
     }
-    final String? minimumVersion = await getMinimumAppVersion();
-    if (minimumVersion != null) {
-      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-        controller.add(AppScreenState.forceUpgrade);
-        return true;
-      }
-    }
     final bool fetchUserSuccess = await _userRepository.fetchCurrentUser();
     if (fetchUserSuccess) {
       return false;
     }
-    await fetchRepositoryData();
+    await fetchRepositoryData().timeout(const Duration(seconds: 3));
     controller.add(AppScreenState.setup);
     currentAppScreenState = AppScreenState.setup;
     return true;
@@ -95,11 +88,10 @@ class SigninService {
 
   Future<bool> attemptSignInWithEmail(String email, String password) async {
     bool signInSuccess = false;
-    print('attempting signin');
     try {
       signInSuccess = await _authService
           .signInWithEmail(email, password)
-          .timeout(const Duration(seconds: 4));
+          .timeout(const Duration(seconds: 3));
     } on TimeoutException catch (_) {
       errorMessage = 'Failed to connect';
       return false;
@@ -108,14 +100,7 @@ class SigninService {
       errorMessage = _authService.exception;
       return false;
     }
-    final String? minimumVersion = await getMinimumAppVersion();
-    if (minimumVersion != null) {
-      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-        controller.add(AppScreenState.forceUpgrade);
-        return true;
-      }
-    }
-    await fetchRepositoryData();
+    await fetchRepositoryData().timeout(const Duration(seconds: 3));
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;
     return true;

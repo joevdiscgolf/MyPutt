@@ -4,13 +4,18 @@ import 'package:myputt/data/types/stats/general_stats.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/enums.dart';
 
+import 'auth_service.dart';
+
 class StatsService {
   // sessionLimit is an num and it's the number of sessions to look back for stats.
-  Stats getStatsForSessionRange(
-      num sessionLimit, List<PuttingSession> sessions) {
+  Stats getStatsForRange(
+    num sessionLimit,
+    List<PuttingSession> sessions,
+  ) {
     Map<int, num> sessionRangePuttsAttempted = {};
     Map<int, num> sessionRangePuttsMade = {};
     Map<int, num> overallPuttsAttempted = {};
@@ -278,6 +283,11 @@ class StatsService {
 
   List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
       List<PuttingChallenge> challenges, int distance, int? limit) {
+    final AuthService _authService = locator.get<AuthService>();
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentUid == null) {
+      return [];
+    }
     List<ChartPoint> points = [];
     List<ChartPoint> finalPoints = [];
     for (var session in sessions) {
@@ -299,22 +309,26 @@ class StatsService {
       });
     }
     for (var challenge in challenges) {
-      int index = 0;
-      challenge.currentUserSets
-          .where((oldset) => oldset.distance == distance)
-          .forEach((set) {
-        final double decimal = set.puttsAttempted == 0
-            ? 0
-            : double.parse(
-                (set.puttsMade.toDouble() / set.puttsAttempted.toDouble())
-                    .toStringAsFixed(4));
-        points.add(ChartPoint(
-            index: index,
-            timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
-            distance: set.distance.toInt(),
-            decimal: decimal));
-        index += 1;
-      });
+      if (!(challenge.challengerUser.uid == currentUid &&
+          (challenge.createdFromSession != null ||
+              challenge.createdFromSession == true))) {
+        int index = 0;
+        challenge.currentUserSets
+            .where((oldSet) => oldSet.distance == distance)
+            .forEach((set) {
+          final double decimal = set.puttsAttempted == 0
+              ? 0
+              : double.parse(
+                  (set.puttsMade.toDouble() / set.puttsAttempted.toDouble())
+                      .toStringAsFixed(4));
+          points.add(ChartPoint(
+              index: index,
+              timeStamp: set.timeStamp ?? challenge.creationTimeStamp,
+              distance: set.distance.toInt(),
+              decimal: decimal));
+          index += 1;
+        });
+      }
     }
     points.sort((p1, p2) {
       final int timeStampDifference = p1.timeStamp.compareTo(p2.timeStamp);

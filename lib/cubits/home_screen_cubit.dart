@@ -19,8 +19,10 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   }
 
   void reloadStats() {
-    final Stats stats = _statsService.getStatsForSessionRange(
-        timeRange, _sessionRepository.allSessions);
+    final Stats stats = _statsService.getStatsForRange(
+      timeRange,
+      _sessionRepository.allSessions,
+    );
     emit(HomeScreenLoaded(
         stats: stats,
         sessionRange: timeRange,

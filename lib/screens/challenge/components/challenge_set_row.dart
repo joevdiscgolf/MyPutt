@@ -66,7 +66,8 @@ class ChallengeSetRow extends StatelessWidget {
                     percent: percent,
                     progressColor: MyPuttColors.blue,
                     backgroundColor: backgroundColor,
-                    barRadius: const Radius.circular(4),
+                    barRadius: const Radius.circular(2),
+                    animation: true,
                     lineHeight: 8,
                     // fillColor: MyPuttColors.blue,
                   );

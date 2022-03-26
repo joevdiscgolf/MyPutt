@@ -13,13 +13,19 @@ class UndoButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
+        Function onPressed;
+        if (state.currentChallenge != null && state is! ChallengesErrorState) {
+          onPressed = () {
+            Vibrate.feedback(FeedbackType.light);
+            if (state.currentChallenge!.currentUserSets.isNotEmpty) {
+              BlocProvider.of<ChallengesCubit>(context).undo();
+            }
+          };
+        } else {
+          onPressed = () {};
+        }
         return Bounceable(
-            onTap: () {
-              Vibrate.feedback(FeedbackType.light);
-              if (state.currentChallenge!.currentUserSets.isNotEmpty) {
-                BlocProvider.of<ChallengesCubit>(context).undo();
-              }
-            },
+            onTap: () => onPressed(),
             child: Container(
                 decoration: BoxDecoration(
                     color: Colors.transparent,

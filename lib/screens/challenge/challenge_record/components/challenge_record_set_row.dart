@@ -96,7 +96,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
               width: 4,
             ),
             Text(
-              '$opponentPuttsMade/$setLength',
+              '${opponentPuttsMade ?? '--'}/$setLength',
               style: Theme.of(context)
                   .textTheme
                   .headline6

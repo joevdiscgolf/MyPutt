@@ -175,7 +175,7 @@ class _RecordScreenState extends State<RecordScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 32,
+          height: 16,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -190,20 +190,20 @@ class _RecordScreenState extends State<RecordScreen> {
         const SizedBox(
           height: 12,
         ),
-        ConditionsRow(
-          onPressed: (WindCondition wind) =>
-              setState(() => _windCondition = wind),
-          iconData: FlutterRemix.windy_line,
-          label: 'Wind',
-          type: ConditionsType.wind,
-        ),
-        ConditionsRow(
-          onPressed: (WeatherCondition weather) =>
-              setState(() => _weatherCondition = weather),
-          iconData: FlutterRemix.sun_fill,
-          label: 'Weather',
-          type: ConditionsType.weather,
-        ),
+        // ConditionsRow(
+        //   onPressed: (WindCondition wind) =>
+        //       setState(() => _windCondition = wind),
+        //   iconData: FlutterRemix.windy_line,
+        //   label: 'Wind',
+        //   type: ConditionsType.wind,
+        // ),
+        // ConditionsRow(
+        //   onPressed: (WeatherCondition weather) =>
+        //       setState(() => _weatherCondition = weather),
+        //   iconData: FlutterRemix.sun_fill,
+        //   label: 'Weather',
+        //   type: ConditionsType.weather,
+        // ),
         ConditionsRow(
           onPressed: (int dist) => setState(() => _distance = dist),
           iconData: FlutterRemix.map_pin_2_line,

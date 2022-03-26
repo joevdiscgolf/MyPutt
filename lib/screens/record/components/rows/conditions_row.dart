@@ -80,7 +80,7 @@ class _ConditionsRowState extends State<ConditionsRow> {
               onPressed: () {
                 widget.onPressed(_conditionOptions[_index]);
                 if (_index < _conditionOptions.length - 1) {
-                  setState(() => _index += 1);
+                  setState(() => _index++);
                 } else {
                   setState(() => _index = 0);
                 }

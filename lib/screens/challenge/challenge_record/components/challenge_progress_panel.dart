@@ -26,6 +26,7 @@ class ChallengeProgressPanel extends StatelessWidget {
           final PuttingChallenge challenge = state.currentChallenge!;
           final bool challengeComplete = challenge.currentUserSets.length ==
               challenge.challengeStructure.length;
+
           final int distance = challengeComplete
               ? challenge
                   .challengeStructure[challenge.currentUserSets.length - 1]
@@ -44,17 +45,18 @@ class ChallengeProgressPanel extends StatelessWidget {
                   : challenge.currentUserSets.length + 1;
           final int difference = getDifferenceFromChallenge(challenge);
 
-          final int currentUserPuttsMade =
-              state.currentChallenge!.currentUserSets.last.puttsMade.toInt();
-          final int? opponentPuttsMade =
-              state.currentChallenge!.opponentSets.length <=
-                      state.currentChallenge!.currentUserSets.length
-                  ? state
-                      .currentChallenge!
-                      .opponentSets[challenge.currentUserSets.length - 1]
-                      .puttsMade
-                      .toInt()
-                  : null;
+          final int currentUserPuttsMade = challenge.currentUserSets.isNotEmpty
+              ? challenge.currentUserSets.last.puttsMade.toInt()
+              : 0;
+          final int? opponentPuttsMade = challenge.opponentSets.length >=
+                      challenge.currentUserSets.length &&
+                  challenge.opponentSets.isNotEmpty
+              ? challenge
+                  .opponentSets[challenge.currentUserSets.length -
+                      (challengeComplete ? 1 : 0)]
+                  .puttsMade
+                  .toInt()
+              : null;
 
           return Column(
             children: [
@@ -69,7 +71,7 @@ class ChallengeProgressPanel extends StatelessWidget {
                     _versusRow(
                         context, challenge.currentUser, challenge.opponentUser),
                     const SizedBox(
-                      height: 32,
+                      height: 12,
                     ),
                     ChallengeSetRow(
                       currentUserMade: currentUserPuttsMade,
@@ -127,7 +129,7 @@ class ChallengeProgressPanel extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline6
-                  ?.copyWith(fontSize: 20, color: MyPuttColors.gray[800]),
+                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
             ),
           ],
         ),
@@ -255,16 +257,16 @@ class ChallengeProgressPanel extends StatelessWidget {
             '$distance ft',
             style: Theme.of(context)
                 .textTheme
-                .headline4
-                ?.copyWith(fontWeight: FontWeight.w600),
+                .headline6
+                ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const AnimatedArrows(),
           Text(
             '$setLength putts',
             style: Theme.of(context)
                 .textTheme
-                .headline5
-                ?.copyWith(fontWeight: FontWeight.w600),
+                .headline6
+                ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
           ),
         ],
       ),
