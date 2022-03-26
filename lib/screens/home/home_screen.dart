@@ -51,6 +51,8 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _sessionRangeIndex = _rangeTabController.index;
+    BlocProvider.of<HomeScreenCubit>(context)
+        .updateTimeRangeIndex(_sessionRangeIndex);
     BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     return Scaffold(
         backgroundColor: Colors.grey[100]!,

@@ -157,7 +157,7 @@ class _SessionsState extends State<SessionsScreen> {
           shadowColor: MyPuttColors.gray[400],
           onPressed: () {
             if (state is! SessionInProgressState) {
-              BlocProvider.of<SessionsCubit>(context).startSession();
+              BlocProvider.of<SessionsCubit>(context).startNewSession();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => BlocProvider.value(
                       value: BlocProvider.of<SessionsCubit>(context),

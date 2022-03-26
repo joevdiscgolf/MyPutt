@@ -37,7 +37,7 @@ class FBSessionsDataWriter {
 
   Future<bool> addCompletedSession(PuttingSession completedSession, uid) async {
     final previousSessionReference = firestore.doc(
-        '$sessionsCollection/$uid/$completedSessionsCollection/${completedSession.dateStarted}');
+        '$sessionsCollection/$uid/$completedSessionsCollection/${completedSession.id}');
 
     return previousSessionReference
         .set(completedSession.toJson())
@@ -48,7 +48,7 @@ class FBSessionsDataWriter {
   Future<bool> deleteCompletedSession(
       PuttingSession currentSession, uid) async {
     final previousSessionReference = firestore.doc(
-        '$sessionsCollection/$uid/$completedSessionsCollection/${currentSession.dateStarted}');
+        '$sessionsCollection/$uid/$completedSessionsCollection/${currentSession.id}');
 
     return previousSessionReference
         .delete()

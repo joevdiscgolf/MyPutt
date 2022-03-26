@@ -1,20 +1,23 @@
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/services/auth_service.dart';
-
-final AuthService _authService = locator.get<AuthService>();
+import 'package:myputt/data/types/putting_session.dart';
+import 'package:collection/collection.dart';
 
 bool currentUserSetsComplete(PuttingChallenge challenge) {
   return challenge.currentUserSets.length ==
       challenge.challengeStructure.length;
 }
 
-List<PuttingChallenge> removeDuplicateChallenges(
-    List<PuttingChallenge> challenges) {
-  final String? currentUid = _authService.getCurrentUserId();
+bool isDuplicateChallenge(
+    List<PuttingSession> sessions, PuttingChallenge challenge) {
+  final PuttingSession? match = sessions.firstWhereOrNull(
+    (session) => session.id == challenge.id,
+  );
+  return match != null;
+}
+
+List<PuttingChallenge> filterDuplicateChallenges(
+    List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
   return challenges
-      .where((challenge) => !(challenge.createdFromSession != null &&
-          challenge.createdFromSession! &&
-          challenge.challengerUser.uid == currentUid))
+      .where((challenge) => !isDuplicateChallenge(sessions, challenge))
       .toList();
 }

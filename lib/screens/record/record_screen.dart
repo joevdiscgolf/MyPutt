@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -162,9 +163,11 @@ class _RecordScreenState extends State<RecordScreen> {
             ],
           );
         } else {
-          return const Center(
-            child: Text('Something went wrong'),
-          );
+          return Center(
+              child: Center(
+                  child: EmptyState(
+                      onRetry: () => BlocProvider.of<SessionsCubit>(context)
+                          .continueSession())));
         }
       },
     );

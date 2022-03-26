@@ -8,6 +8,7 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/string_helpers.dart';
 
 class SessionListRow extends StatelessWidget {
   const SessionListRow(
@@ -61,7 +62,7 @@ class SessionListRow extends StatelessWidget {
                 )
               ],
               Text(
-                session.dateStarted,
+                timestampToDate(session.timeStamp),
                 style: Theme.of(context)
                     .textTheme
                     .headline6

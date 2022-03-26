@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
@@ -12,6 +12,7 @@ part 'sessions_state.dart';
 
 class SessionsCubit extends Cubit<SessionsState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final UserRepository _userRepository = locator.get<UserRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   SessionsCubit() : super(const SessionLoadingState(sessions: [])) {
@@ -36,32 +37,55 @@ class SessionsCubit extends Cubit<SessionsState> {
     }
   }
 
-  void startSession() {
-    _sessionRepository.startCurrentSession();
-    emit(SessionInProgressState(
+  Future<void> startNewSession() async {
+    final String? currentUid = _userRepository.currentUser?.uid;
+    if (currentUid != null) {
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      final PuttingSession newSession = PuttingSession(
+        timeStamp: now,
+        id: '$currentUid~$now',
+      );
+      _sessionRepository.currentSession = newSession;
+      emit(SessionInProgressState(
+          sessions: _sessionRepository.allSessions,
+          currentSession: _sessionRepository.currentSession!,
+          individualStats: _statsService
+              .generateSessionsStatsMap(_sessionRepository.allSessions),
+          currentSessionStats: _statsService.getStatsForSession(
+              _sessionRepository.allSessions,
+              _sessionRepository.currentSession!)));
+      final bool success = await _sessionRepository.startNewSession(newSession);
+      print(success);
+      if (success) {
+        emit(SessionInProgressState(
+            sessions: _sessionRepository.allSessions,
+            currentSession: _sessionRepository.currentSession!,
+            individualStats: _statsService
+                .generateSessionsStatsMap(_sessionRepository.allSessions),
+            currentSessionStats: _statsService.getStatsForSession(
+                _sessionRepository.allSessions,
+                _sessionRepository.currentSession!)));
+      } else {
+        emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+      }
+    } else {
+      emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+    }
+  }
+
+  void continueSession() {
+    if (_sessionRepository.currentSession != null) {
+      emit(SessionInProgressState(
         sessions: _sessionRepository.allSessions,
         currentSession: _sessionRepository.currentSession!,
         individualStats: _statsService
             .generateSessionsStatsMap(_sessionRepository.allSessions),
         currentSessionStats: _statsService.getStatsForSession(
-            _sessionRepository.allSessions,
-            _sessionRepository.currentSession!)));
-  }
-
-  void continueSession() {
-    emit(SessionInProgressState(
-      sessions: _sessionRepository.allSessions,
-      currentSession: _sessionRepository.currentSession ??
-          PuttingSession(
-            timeStamp: DateTime.now().millisecondsSinceEpoch,
-            dateStarted:
-                '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-          ),
-      individualStats: _statsService
-          .generateSessionsStatsMap(_sessionRepository.allSessions),
-      currentSessionStats: _statsService.getStatsForSession(
-          _sessionRepository.allSessions, _sessionRepository.currentSession!),
-    ));
+            _sessionRepository.allSessions, _sessionRepository.currentSession!),
+      ));
+    } else {
+      emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+    }
   }
 
   Future<void> completeSession() async {
@@ -76,19 +100,18 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   void addSet(PuttingSet set) {
     _sessionRepository.addSet(set);
-    emit(SessionInProgressState(
-        sessions: _sessionRepository.allSessions,
-        currentSession: _sessionRepository.currentSession ??
-            PuttingSession(
-              timeStamp: DateTime.now().millisecondsSinceEpoch,
-              dateStarted:
-                  '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-            ),
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.allSessions),
-        currentSessionStats: _statsService.getStatsForSession(
-            _sessionRepository.allSessions,
-            _sessionRepository.currentSession!)));
+    if (_sessionRepository.currentSession != null) {
+      emit(SessionInProgressState(
+          sessions: _sessionRepository.allSessions,
+          currentSession: _sessionRepository.currentSession!,
+          individualStats: _statsService
+              .generateSessionsStatsMap(_sessionRepository.allSessions),
+          currentSessionStats: _statsService.getStatsForSession(
+              _sessionRepository.allSessions,
+              _sessionRepository.currentSession!)));
+    } else {
+      emit(SessionErrorState(sessions: _sessionRepository.allSessions));
+    }
   }
 
   void deleteSet(PuttingSet set) {

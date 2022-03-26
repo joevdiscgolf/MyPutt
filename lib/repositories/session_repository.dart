@@ -1,12 +1,14 @@
-import 'package:intl/intl.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
 
 class SessionRepository {
   PuttingSession? currentSession;
   List<PuttingSession> allSessions = [];
   final DatabaseService _databaseService = DatabaseService();
+  final UserRepository _userRepository = locator.get<UserRepository>();
 
   Future<void> addCompletedSession(PuttingSession sessionToAdd) async {
     allSessions.add(sessionToAdd);
@@ -18,13 +20,17 @@ class SessionRepository {
     _databaseService.deleteCompletedSession(sessionToDelete);
   }
 
-  void startCurrentSession() {
-    currentSession = PuttingSession(
-      timeStamp: DateTime.now().millisecondsSinceEpoch,
-      dateStarted:
-          '${DateFormat.yMMMMd('en_US').format(DateTime.now()).toString()}, ${DateFormat.jm().format(DateTime.now()).toString()}',
-    );
-    _databaseService.startCurrentSession(currentSession!);
+  Future<bool> startNewSession(PuttingSession session) async {
+    final String? currentUid = _userRepository.currentUser?.uid;
+    if (currentUid != null) {
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      currentSession = PuttingSession(
+        timeStamp: now,
+        id: '$currentUid~$now',
+      );
+      return _databaseService.startCurrentSession(currentSession!);
+    }
+    return false;
   }
 
   void deleteCurrentSession() {

@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/charts/performance_chart.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/locator.dart';
@@ -40,6 +42,9 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
     _rangeTabController = TabController(length: 4, vsync: this);
     _rangeTabController.addListener(() {
       setState(() => _sessionRangeIndex = _rangeTabController.index);
+      BlocProvider.of<HomeScreenCubit>(context)
+          .updateTimeRangeIndex(_rangeTabController.index);
+      BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     });
     _totalSets = _statsService.getTotalPuttingSets(
         _sessionRepository.allSessions,
