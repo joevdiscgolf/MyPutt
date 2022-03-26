@@ -11,6 +11,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
 
@@ -76,6 +77,15 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         currentChallenge: null);
   }
 
+  ChallengeFinished _challengeFinished() {
+    return ChallengeFinished(
+        activeChallenges: _challengesRepository.activeChallenges,
+        pendingChallenges: _challengesRepository.pendingChallenges,
+        completedChallenges: _challengesRepository.completedChallenges,
+        finishedChallenge: _challengesRepository.finishedChallenge!,
+        currentChallenge: null);
+  }
+
   ChallengesState getStateFromChallenge(PuttingChallenge challenge) {
     ChallengesState state;
     final structureLength =
@@ -84,9 +94,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         _challengesRepository.currentChallenge!.currentUserSets.length;
     final opponentUserSetsCount =
         _challengesRepository.currentChallenge!.opponentSets.length;
-    if (challenge.status == ChallengeStatus.complete ||
-        (currentUserSetsCount == opponentUserSetsCount &&
-            currentUserSetsCount == structureLength)) {
+    if (challenge.status == ChallengeStatus.complete &&
+        _challengesRepository.finishedChallenge != null) {
+      state = _challengeFinished();
+    }
+    if ((currentUserSetsCount == opponentUserSetsCount &&
+        currentUserSetsCount == structureLength)) {
       state = _bothUsersComplete();
     } else if (currentUserSetsCount == structureLength &&
         opponentUserSetsCount < structureLength) {
@@ -103,7 +116,11 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   Future<void> reload() async {
     await _challengesRepository.fetchAllChallenges();
     if (_challengesRepository.currentChallenge == null) {
-      emit(_noCurrentChallenge());
+      if (_challengesRepository.finishedChallenge != null) {
+        emit(_challengeFinished());
+      } else {
+        emit(_noCurrentChallenge());
+      }
     } else {
       emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
@@ -124,10 +141,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
           _challengesRepository.currentChallenge!.currentUserSets.length;
       if (currentUserSetsCount < challengeStructureLength) {
         _challengesRepository.addSet(set);
-        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-        await _challengesRepository.resyncCurrentChallenge();
-        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-      } else {
         emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
         await _challengesRepository.resyncCurrentChallenge();
         emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
@@ -154,7 +167,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
   }
 
-  void updateOpponentSets(Object? rawObject) {
+  void updateIncomingChallenge(Object? rawObject) {
     final Map<String, dynamic>? data = rawObject as Map<String, dynamic>?;
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (data != null && currentUser != null) {
@@ -162,18 +175,23 @@ class ChallengesCubit extends Cubit<ChallengesState> {
           StoragePuttingChallenge.fromJson(data);
       final PuttingChallenge challenge =
           PuttingChallenge.fromStorageChallenge(storageChallenge, currentUser);
-      if (_challengesRepository.currentChallenge != null &&
-          _challengesRepository.currentChallenge?.opponentSets.length !=
-              challenge.opponentSets.length) {
-        _challengesRepository.currentChallenge = challenge;
-        emit(getStateFromChallenge(challenge));
+      if (_challengesRepository.currentChallenge != null) {
+        if (challenge.status == ChallengeStatus.complete) {
+          _challengesRepository.addFinishedChallenge(challenge);
+          emit(_challengeFinished());
+        } else {
+          _challengesRepository.currentChallenge = challenge;
+          emit(getStateFromChallenge(challenge));
+        }
       }
     }
   }
 
-  Future<void> completeCurrentChallenge() async {
-    await _challengesRepository.completeChallenge();
-    emit(_noCurrentChallenge());
+  Future<void> finishChallenge() async {
+    if (_challengesRepository.currentChallenge != null) {
+      await _challengesRepository.finishChallengeAndSync();
+      emit(_challengeFinished());
+    }
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
@@ -206,24 +224,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   Future<bool> sendChallengeWithPreset(
       ChallengePreset challengePreset, MyPuttUser recipientUser) async {
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
-      return false;
-    } else {
-      final int timestamp = DateTime.now().millisecondsSinceEpoch;
-      final List<ChallengeStructureItem> challengeStructure =
-          _presetsRepository.presetStructures[challengePreset]!;
-      final storageChallenge = StoragePuttingChallenge(
-          status: ChallengeStatus.active,
-          creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-          id: '${currentUser.uid}~$timestamp',
-          challengerUser: currentUser,
-          challengeStructure: challengeStructure,
-          challengerSets: [],
-          recipientSets: [],
-          recipientUser: recipientUser);
-      return _databaseService.setStorageChallenge(storageChallenge);
+    final bool success = await _challengesRepository.sendChallengeWithPreset(
+        challengePreset, recipientUser);
+    if (_challengesRepository.currentChallenge != null) {
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
+    return success;
   }
 
   Future<String?> getShareMessageFromSession(PuttingSession session) async {
@@ -264,5 +270,16 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
     print(uri);
     return '${currentUser.displayName} is challenging you to a putting competition! $uri';
+  }
+
+  int getPuttsPickerIndex() {
+    if (state.currentChallenge == null) {
+      return 0;
+    }
+    return state
+        .currentChallenge!
+        .challengeStructure[state.currentChallenge!.currentUserSets.length -
+            (currentUserSetsComplete(state.currentChallenge!) ? 1 : 0)]
+        .setLength;
   }
 }

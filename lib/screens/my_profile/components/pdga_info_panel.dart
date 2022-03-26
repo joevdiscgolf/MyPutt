@@ -1,9 +1,12 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/data/types/users/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/submit_text_dialog.dart';
+import 'package:myputt/utils/colors.dart';
 
 class PDGAInfoPanel extends StatelessWidget {
   const PDGAInfoPanel({Key? key}) : super(key: key);
@@ -11,53 +14,86 @@ class PDGAInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(8),
-        color: Colors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+            color: MyPuttColors.gray[50],
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(0, 4),
+                  blurRadius: 4,
+                  color: MyPuttColors.gray[400]!),
+            ]),
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                BlocBuilder<MyProfileCubit, MyProfileState>(
-                  builder: (context, state) {
-                    if (state is MyProfileLoaded &&
-                        state.myUser.pdgaNum != null &&
-                        state.pdgaPlayerInfo?.pdgaNum != null &&
-                        state.pdgaPlayerInfo?.name != null) {
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BlocBuilder<MyProfileCubit, MyProfileState>(
+                    builder: (context, state) {
+                      if (state is MyProfileLoaded &&
+                          state.pdgaPlayerInfo?.pdgaNum != null &&
+                          state.pdgaPlayerInfo?.name != null) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoSizeText(
+                              '${state.pdgaPlayerInfo?.name}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(
+                                    fontSize: 16,
+                                    color: MyPuttColors.gray[800],
+                                  ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                            ),
+                            Text(
+                              '#${state.pdgaPlayerInfo?.pdgaNum}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(
+                                      fontSize: 12,
+                                      color: MyPuttColors.gray[400]),
+                            ),
+                          ],
+                        );
+                      }
                       return Text(
-                        '${state.pdgaPlayerInfo?.name} #${state.pdgaPlayerInfo?.pdgaNum}',
+                        'PDGA player info',
                         style: Theme.of(context).textTheme.headline6,
                       );
-                    }
-                    return Text(
-                      'PDGA player info',
-                      style: Theme.of(context).textTheme.headline5,
-                    );
-                  },
-                ),
-                const Spacer(),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => SubmitTextDialog(
-                                title: 'Enter PDGA number',
-                                onSubmit: (String pdgaNumber) {
-                                  return BlocProvider.of<MyProfileCubit>(
-                                          context)
-                                      .submitPDGANumber(pdgaNumber);
-                                },
-                              ));
                     },
-                    child: const Center(
-                        child: Icon(
-                      FlutterRemix.edit_line,
-                      color: Colors.blue,
-                    )))
-              ],
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: MyPuttButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => SubmitTextDialog(
+                                  title: 'Enter PDGA number',
+                                  onSubmit: (String pdgaNumber) {
+                                    return BlocProvider.of<MyProfileCubit>(
+                                            context)
+                                        .submitPDGANumber(pdgaNumber);
+                                  },
+                                ));
+                      },
+                      color: MyPuttColors.gray[50]!,
+                      iconData: FlutterRemix.edit_line,
+                      iconColor: MyPuttColors.blue,
+                      title: 'Edit',
+                      textColor: MyPuttColors.blue,
+                    ),
+                  )
+                ],
+              ),
             ),
             _mainBody(context)
           ],
@@ -98,7 +134,7 @@ class PDGAInfoPanel extends StatelessWidget {
           final PDGAPlayerInfo playerInfo = state.pdgaPlayerInfo!;
           return Container(
               padding: const EdgeInsets.all(8),
-              color: Colors.white,
+              color: MyPuttColors.gray[50],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,30 +143,143 @@ class PDGAInfoPanel extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Text('Class',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text(state.pdgaPlayerInfo?.classification ?? 'N/A',
-                                style: Theme.of(context).textTheme.bodyLarge)
+                            AutoSizeText(
+                                state.pdgaPlayerInfo?.classification ?? 'N/A',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Class',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text('Rating',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.rating ?? 'N/A'}',
-                                style: Theme.of(context).textTheme.bodyLarge)
+                            AutoSizeText('${playerInfo.rating ?? 'N/A'}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Rating',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            Text('Since',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text(playerInfo.memberSince ?? 'N/A',
-                                style: Theme.of(context).textTheme.bodyLarge)
+                            AutoSizeText(playerInfo.memberSince ?? 'N/A',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Since',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            AutoSizeText('${playerInfo.careerEvents ?? 'N/A'}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Events',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            AutoSizeText('${playerInfo.careerWins ?? 'N/A'}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Wins',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            AutoSizeText(
+                                playerInfo.careerEarnings != null
+                                    ? '\$${playerInfo.careerEarnings}'
+                                    : 'N/A',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 16,
+                                        color: MyPuttColors.gray[800]),
+                                maxLines: 1),
+                            AutoSizeText('Earnings',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        fontSize: 12,
+                                        color: MyPuttColors.gray[400]),
+                                maxLines: 1),
                           ],
                         ),
                       ),
@@ -140,54 +289,21 @@ class PDGAInfoPanel extends StatelessWidget {
                     height: 5,
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Events',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.careerEvents ?? 'N/A'}',
-                                style: Theme.of(context).textTheme.bodyLarge)
-                          ],
-                        ),
+                      AutoSizeText(
+                        'Next event: ',
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontSize: 16, color: MyPuttColors.gray[800]),
+                        maxLines: 1,
                       ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Wins',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text('${playerInfo.careerWins ?? 'N/A'}',
-                                style: Theme.of(context).textTheme.bodyLarge)
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text('Earnings',
-                                style: Theme.of(context).textTheme.headline6),
-                            Text(
-                              playerInfo.careerEarnings != null
-                                  ? '\$${playerInfo.careerEarnings}'
-                                  : 'N/A',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      Text('Next event: ',
-                          style: Theme.of(context).textTheme.headline6),
-                      Text(
-                        playerInfo.nextEvent ?? 'N/A',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      )
+                      AutoSizeText(playerInfo.nextEvent ?? 'N/A',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  fontSize: 12, color: MyPuttColors.gray[400]),
+                          maxLines: 1)
                     ],
                   )
                 ],

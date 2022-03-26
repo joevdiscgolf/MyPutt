@@ -55,7 +55,7 @@ class _AnimatedArrowsState extends State<AnimatedArrows>
               }))
         .toList();
 
-    startAnimation();
+    // startAnimation();
 
     super.initState();
   }

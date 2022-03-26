@@ -17,12 +17,9 @@ class LineChartPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool overallIncrease = data.points.isEmpty
-        ? false
-        : data.points.first.decimal < data.points.last.decimal;
-    // final List<Color> colors = overallIncrease
-    //     ? const [MyPuttColors.lightGreen, MyPuttColors.lightBlue]
-    //     : const [Colors.orange, Colors.red];
+    // final bool overallIncrease = data.points.isEmpty
+    //     ? false
+    //     : data.points.first.decimal < data.points.last.decimal;
     const List<Color> colors = [
       MyPuttColors.lightGreen,
       MyPuttColors.lightBlue

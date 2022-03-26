@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
@@ -38,6 +39,9 @@ class _MainWrapperState extends State<MainWrapper> {
         currentIndex: _currentIndex,
         enableFeedback: true,
         onTap: (int index) {
+          if (index == 2) {
+            BlocProvider.of<MyProfileCubit>(context).reload();
+          }
           setState(() => _currentIndex = index);
         },
         items: [

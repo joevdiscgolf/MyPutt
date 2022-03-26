@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
+import 'package:myputt/utils/colors.dart';
 
 class PerformanceChart extends StatelessWidget {
   const PerformanceChart({Key? key, required this.data}) : super(key: key);
@@ -45,13 +46,16 @@ class PerformanceChart extends StatelessWidget {
           leftTitle: AxisTitle(
         margin: 0,
         textAlign: TextAlign.center,
-        showTitle: true,
+        showTitle: false,
         titleText: '%',
       )),
-      gridData:
-          FlGridData(show: true, verticalInterval: 10, horizontalInterval: 20),
+      gridData: FlGridData(
+          show: true,
+          drawHorizontalLine: true,
+          horizontalInterval: 20,
+          drawVerticalLine: false),
       titlesData: LineTitles.getTitleData(),
-      borderData: FlBorderData(show: true),
+      borderData: FlBorderData(show: false),
       minX: 0,
       maxX: chartData.points.length.toDouble() - 1,
       minY: 0,
@@ -65,15 +69,10 @@ class PerformanceChart extends StatelessWidget {
                   double.parse((entry.value.decimal * 100).toStringAsFixed(4))))
               .toList(),
           isCurved: true,
-          colors: [Colors.blue],
-          barWidth: 2,
+          colors: [MyPuttColors.darkBlue],
+          barWidth: 3,
           isStrokeCapRound: true,
           dotData: FlDotData(show: false),
-          belowBarData: BarAreaData(
-            show: true,
-            colors:
-                [Colors.blue].map((color) => color.withOpacity(0.3)).toList(),
-          ),
         ),
       ],
     );
@@ -87,7 +86,7 @@ class LineTitles {
         showTitles: false,
       ),
       leftTitles: SideTitles(
-          showTitles: true,
+          showTitles: false,
           getTextStyles: (value, context) => const TextStyle(
                 fontSize: 10,
               ),

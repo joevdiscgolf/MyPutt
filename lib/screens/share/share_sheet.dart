@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/putting_session.dart';
@@ -35,17 +36,11 @@ class _ShareSheetState extends State<ShareSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
-      color: Colors.grey[100],
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      color: MyPuttColors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _panelSlidingIndicator(context),
-            ],
-          ),
           Row(
             children: [
               Text(
@@ -56,12 +51,14 @@ class _ShareSheetState extends State<ShareSheet> {
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 24),
               ),
               const Spacer(),
-              IconButton(
-                  onPressed: () => _shareWithLink(),
-                  icon: const Icon(
-                    FlutterRemix.link,
-                    color: MyPuttColors.lightBlue,
-                  )),
+              MyPuttButton(
+                onPressed: () => _shareWithLink(),
+                color: MyPuttColors.white,
+                textColor: MyPuttColors.blue,
+                iconData: FlutterRemix.link,
+                iconColor: MyPuttColors.blue,
+                title: 'Send link',
+              )
             ],
           ),
           const SizedBox(height: 15),
@@ -79,17 +76,6 @@ class _ShareSheetState extends State<ShareSheet> {
                   onComplete: widget.onComplete,
                   session: widget.session))
         ],
-      ),
-    );
-  }
-
-  Widget _panelSlidingIndicator(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 4,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(100)),
-        color: Colors.grey[400],
       ),
     );
   }
@@ -127,7 +113,7 @@ class _ShareSheetState extends State<ShareSheet> {
         counter: const Offstage(),
       ),
       onChanged: (String username) async {
-        if (DateTime.now().millisecondsSinceEpoch - lastUpdated > 200) {}
+        if (DateTime.now().millisecondsSinceEpoch - lastUpdated > 500) {}
         setState(() {
           lastUpdated = DateTime.now().millisecondsSinceEpoch;
         });

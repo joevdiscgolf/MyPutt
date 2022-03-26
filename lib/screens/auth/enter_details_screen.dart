@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/locator.dart';
@@ -23,17 +25,17 @@ class EnterDetailsScreen extends StatefulWidget {
 
 class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   final SigninService _signinService = locator.get<SigninService>();
-  final AuthService _authService = locator.get<AuthService>();
   final formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController pdgaNumberController = TextEditingController();
 
   bool _loading = false;
-  bool _disabled = true;
-  UsernameStatus _usernameStatus = UsernameStatus.none;
+  bool _usernameValid = false;
   Timer? checkUsernameOnStoppedTyping;
-  String? displayName;
+  String? username;
+  String? _displayName;
+  String? _pdgaNumber;
 
   @override
   void dispose() {
@@ -48,14 +50,10 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
-          title: Text(
-            'Finish setup',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline4,
-          ),
           leading: IconButton(
             color: Colors.transparent,
             icon: const Icon(
@@ -67,53 +65,20 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
             },
           ),
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Flexible(
-                    child: ListView(
-                      physics: const ClampingScrollPhysics(),
-                      children: <Widget>[
-                        _header(context, HeaderType.username),
-                        const SizedBox(height: 10),
-                        _usernameField(context),
-                        const SizedBox(height: 4),
-                        _availabilityLabel(context),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Flexible(
-                    child: ListView(
-                      physics: const ClampingScrollPhysics(),
-                      children: <Widget>[
-                        _header(context, HeaderType.displayName),
-                        const SizedBox(height: 10),
-                        _displayNameField(context),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    child: ListView(
-                      physics: const ClampingScrollPhysics(),
-                      children: <Widget>[
-                        _header(context, HeaderType.pdgaNumber),
-                        const SizedBox(height: 10),
-                        _pdgaNumberField(context),
-                      ],
-                    ),
-                  ),
-                  _submitButton(context),
-                ],
-              ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 32, right: 32, bottom: 16),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _header(context),
+                const SizedBox(
+                  height: 24,
+                ),
+                _mainBody(context),
+              ],
             ),
           ),
         ),
@@ -121,191 +86,104 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
     );
   }
 
-  Widget _header(BuildContext context, HeaderType type) {
-    String text;
-    switch (type) {
-      case HeaderType.username:
-        text = 'Choose your username';
-        break;
-      case HeaderType.displayName:
-        text = 'Choose your display name';
-        break;
-      case HeaderType.pdgaNumber:
-        text = 'Enter your PDGA number (optional)';
-        break;
-    }
-    return Text(text,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        style: Theme.of(context).textTheme.headline6);
-  }
-
-  Widget _usernameField(BuildContext context) {
-    return TextFormField(
-      controller: usernameController,
-      enabled: !_loading,
-      autocorrect: false,
-      maxLines: 1,
-      maxLength: 24,
-      style: Theme.of(context)
-          .textTheme
-          .subtitle1!
-          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      keyboardType: TextInputType.text,
-      decoration: InputDecoration(
-        hintText: 'Enter username',
-        contentPadding:
-            const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
-        isDense: true,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-        enabledBorder: Theme.of(context).inputDecorationTheme.border,
-        focusedBorder: Theme.of(context).inputDecorationTheme.border,
-        prefixIcon: const Icon(
-          FlutterRemix.at_line,
-          color: TWUIColors.gray,
-          size: 22,
-        ),
-        counter: const Offstage(),
-      ),
-      onChanged: _usernameHandler,
-    );
-  }
-
-  Widget _displayNameField(BuildContext context) {
-    return TextFormField(
-      controller: displayNameController,
-      enabled: !_loading,
-      autocorrect: false,
-      maxLines: 1,
-      maxLength: 24,
-      style: Theme.of(context)
-          .textTheme
-          .subtitle1!
-          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      keyboardType: TextInputType.text,
-      decoration: InputDecoration(
-        hintText: 'Enter display name',
-        contentPadding:
-            const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
-        isDense: true,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-        enabledBorder: Theme.of(context).inputDecorationTheme.border,
-        focusedBorder: Theme.of(context).inputDecorationTheme.border,
-        prefixIcon: const Icon(
-          FlutterRemix.user_line,
-          color: TWUIColors.gray,
-          size: 22,
-        ),
-        counter: const Offstage(),
-      ),
-      onChanged: (text) {
-        setState(() {
-          displayName = text;
-        });
-      },
-    );
-  }
-
-  Widget _pdgaNumberField(BuildContext context) {
-    return TextFormField(
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(6),
-      ],
-      controller: pdgaNumberController,
-      enabled: !_loading,
-      autocorrect: false,
-      maxLines: 1,
-      maxLength: 24,
-      style: Theme.of(context)
-          .textTheme
-          .subtitle1!
-          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-      keyboardType: const TextInputType.numberWithOptions(),
-      decoration: InputDecoration(
-        hintText: 'PDGA number',
-        contentPadding:
-            const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
-        isDense: true,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-        enabledBorder: Theme.of(context).inputDecorationTheme.border,
-        focusedBorder: Theme.of(context).inputDecorationTheme.border,
-        prefixIcon: const Icon(
-          FlutterRemix.user_line,
-          color: TWUIColors.gray,
-          size: 22,
-        ),
-        counter: const Offstage(),
-      ),
-    );
-  }
-
-  Widget _availabilityLabel(BuildContext context) {
-    switch (_usernameStatus) {
-      case UsernameStatus.available:
-        return Text(
-          'This username is available 🎉',
-          maxLines: 3,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontWeight: FontWeight.w600,
-                color: TWUIColors.gray[400],
-              ),
-        );
-      case UsernameStatus.unavailable:
-        return Text(
-          'This username is already taken 😔',
-          maxLines: 3,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontWeight: FontWeight.w600,
-                color: TWUIColors.gray[400],
-              ),
-        );
-      case UsernameStatus.checking:
-        return Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Row(
+  Widget _mainBody(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(width: 6),
-              Text(
-                'Checking availability...',
-                maxLines: 3,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: TWUIColors.gray[400],
-                    ),
+            children: [
+              UsernameField(
+                textEditingController: usernameController,
+                enabled: !_loading,
+                onChanged: (String text) {
+                  setState(() {
+                    _usernameValid = false;
+                    username = text;
+                  });
+                },
+                onValidityChanged: (bool valid) =>
+                    setState(() => _usernameValid = valid),
+              ),
+              const SizedBox(height: 24),
+              DetailsTextField(
+                  iconData: FlutterRemix.user_line,
+                  textEditingController: displayNameController,
+                  hint: 'Display name',
+                  enabled: !_loading,
+                  onChanged: (String text) =>
+                      setState(() => _displayName = text)),
+              const SizedBox(
+                height: 24,
+              ),
+              DetailsTextField(
+                iconData: FlutterRemix.hashtag,
+                textEditingController: pdgaNumberController,
+                hint: 'PDGA # (optional)',
+                enabled: !_loading,
+                onChanged: (String text) => setState(() => _pdgaNumber = text),
+                numberInput: true,
               ),
             ],
           ),
-        );
-      case UsernameStatus.none:
-      default:
-        return Text(
-          'Enter a valid username',
-          maxLines: 3,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontWeight: FontWeight.w600,
-                color: TWUIColors.gray[400],
+          const Spacer(),
+          _submitButton(context),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 24,
               ),
-        );
-    }
+              Text("Already have an account?",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(color: MyPuttColors.gray[400])),
+              const SizedBox(
+                height: 16,
+              ),
+              MyPuttButton(
+                title: 'Sign in',
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                color: Colors.transparent,
+                textColor: MyPuttColors.blue,
+              ),
+              const SizedBox(
+                height: 16,
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _header(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Create an account',
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(color: MyPuttColors.blue, fontSize: 32),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(
+          'Please fill out the information below',
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
+        ),
+      ],
+    );
   }
 
   Widget _submitButton(BuildContext context) {
@@ -313,30 +191,117 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
       label: 'Submit',
       fontSize: 20,
       loading: _loading,
-      disabled: _disabled || displayName == '' || displayName == null,
+      disabled: checkDisabled(),
+      height: 60,
       backgroundColor: TWUIColors.blue,
-      height: 48,
       width: double.infinity,
       onPressed: () async {
         setState(() => _loading = true);
-        if (int.tryParse(pdgaNumberController.value.text) != null) {
+        if (_pdgaNumber == '' || _pdgaNumber == null) {
+          await _signinService.setupNewUser(
+            usernameController.value.text,
+            displayNameController.value.text,
+          );
+        } else if (int.tryParse(_pdgaNumber!) != null) {
           await _signinService.setupNewUser(
               usernameController.value.text, displayNameController.value.text,
               pdgaNumber: int.parse(pdgaNumberController.value.text));
-        } else {
-          await _signinService.setupNewUser(
-              usernameController.value.text, displayNameController.value.text);
         }
         setState(() => _loading = false);
       },
     );
   }
 
+  bool checkDisabled() {
+    return !_usernameValid || _displayName == '';
+  }
+}
+
+class UsernameField extends StatefulWidget {
+  const UsernameField({
+    Key? key,
+    required this.textEditingController,
+    required this.enabled,
+    required this.onChanged,
+    required this.onValidityChanged,
+  }) : super(key: key);
+
+  final TextEditingController textEditingController;
+  final bool enabled;
+  final Function onChanged;
+  final Function onValidityChanged;
+
+  @override
+  State<UsernameField> createState() => _UsernameFieldState();
+}
+
+class _UsernameFieldState extends State<UsernameField> {
+  final AuthService authService = locator.get<AuthService>();
+  UsernameStatus _usernameStatus = UsernameStatus.none;
+  Timer? checkUsernameOnStoppedTyping;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: MyPuttColors.gray[200],
+      ),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: widget.textEditingController,
+                enabled: widget.enabled,
+                autocorrect: false,
+                maxLines: 1,
+                maxLength: 24,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.only(top: 18, bottom: 12),
+                  border: InputBorder.none,
+                  hintText: 'username',
+                  // contentPadding:
+                  //     const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+                  isDense: true,
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .subtitle1!
+                      .copyWith(color: TWUIColors.gray[500], fontSize: 18),
+                  enabledBorder: Theme.of(context).inputDecorationTheme.border,
+                  focusedBorder: Theme.of(context).inputDecorationTheme.border,
+                  prefixIcon: Icon(
+                    FlutterRemix.at_line,
+                    color: TWUIColors.gray[600]!,
+                    size: 22,
+                  ),
+                  counter: const Offstage(),
+                ),
+                onChanged: _usernameHandler,
+              ),
+            ),
+            _availabilityIcon(context),
+            const SizedBox(
+              width: 24,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   void _usernameHandler(String value) {
-    setState(() => _disabled = true);
+    widget.onChanged(value);
     const duration = Duration(
         milliseconds:
-            800); // set the duration that you want call search() after that.
+            400); // set the duration that you want call search() after that.
     if (checkUsernameOnStoppedTyping != null) {
       setState(() => checkUsernameOnStoppedTyping?.cancel()); // clear timer
     }
@@ -345,17 +310,109 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   }
 
   void _checkUsernameAvailability(String username) async {
+    setState(() => _usernameStatus = UsernameStatus.checking);
     if (validUsername(username)) {
-      setState(() => _usernameStatus = UsernameStatus.checking);
-      final bool available = await _authService.usernameIsAvailable(username);
+      final bool available = await authService.usernameIsAvailable(username);
       setState(() {
         _usernameStatus =
             available ? UsernameStatus.available : UsernameStatus.unavailable;
-        _disabled = !validUsername(usernameController.value.text) ||
-            _usernameStatus != UsernameStatus.available;
       });
+      widget.onValidityChanged(true);
     } else {
+      widget.onValidityChanged(true);
       setState(() => _usernameStatus = UsernameStatus.none);
     }
+  }
+
+  Widget _availabilityIcon(BuildContext context) {
+    switch (_usernameStatus) {
+      case UsernameStatus.available:
+        return Icon(
+          FlutterRemix.check_line,
+          color: MyPuttColors.gray[400],
+          size: 20,
+        );
+      case UsernameStatus.unavailable:
+        return Icon(
+          FlutterRemix.close_line,
+          color: MyPuttColors.gray[400],
+          size: 20,
+        );
+      case UsernameStatus.checking:
+        return SizedBox(
+          height: 20,
+          width: 20,
+          child: CircularProgressIndicator(
+            color: MyPuttColors.gray[400],
+          ),
+        );
+      default:
+        return Container();
+    }
+  }
+}
+
+class DetailsTextField extends StatelessWidget {
+  const DetailsTextField(
+      {Key? key,
+      required this.iconData,
+      required this.textEditingController,
+      required this.hint,
+      required this.enabled,
+      required this.onChanged,
+      this.numberInput = false})
+      : super(key: key);
+
+  final IconData iconData;
+  final String hint;
+  final TextEditingController textEditingController;
+  final bool enabled;
+  final Function onChanged;
+  final bool numberInput;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: MyPuttColors.gray[200],
+      ),
+      child: Center(
+        child: TextFormField(
+          controller: textEditingController,
+          enabled: enabled,
+          autocorrect: false,
+          maxLines: 1,
+          maxLength: 24,
+          style: Theme.of(context)
+              .textTheme
+              .subtitle1!
+              .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+          keyboardType: numberInput ? TextInputType.number : TextInputType.text,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.only(top: 18, bottom: 12),
+            border: InputBorder.none,
+            hintText: hint,
+            // contentPadding:
+            //     const EdgeInsets.only(left: 12, right: 12, top: 18, bottom: 18),
+            isDense: true,
+            hintStyle: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(color: TWUIColors.gray[500], fontSize: 18),
+            enabledBorder: Theme.of(context).inputDecorationTheme.border,
+            focusedBorder: Theme.of(context).inputDecorationTheme.border,
+            prefixIcon: Icon(
+              iconData,
+              color: TWUIColors.gray[600]!,
+              size: 22,
+            ),
+            counter: const Offstage(),
+          ),
+          onChanged: (String text) => onChanged(text),
+        ),
+      ),
+    );
   }
 }

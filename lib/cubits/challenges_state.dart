@@ -116,3 +116,18 @@ class NoCurrentChallenge extends ChallengesState {
             pendingChallenges: pendingChallenges,
             completedChallenges: completedChallenges);
 }
+
+class ChallengeFinished extends ChallengesState {
+  ChallengeFinished(
+      {required PuttingChallenge? currentChallenge,
+      required List<PuttingChallenge> activeChallenges,
+      required List<PuttingChallenge> pendingChallenges,
+      required List<PuttingChallenge> completedChallenges,
+      required this.finishedChallenge})
+      : super(
+            currentChallenge: currentChallenge,
+            activeChallenges: activeChallenges,
+            pendingChallenges: pendingChallenges,
+            completedChallenges: completedChallenges);
+  final PuttingChallenge finishedChallenge;
+}

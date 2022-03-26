@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
+import 'package:myputt/utils/colors.dart';
 
 class ConfirmDialog extends StatefulWidget {
   const ConfirmDialog(
@@ -44,10 +46,14 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          AutoSizeText(
             widget.title,
-            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: MyPuttColors.gray[800]!, fontSize: 24),
             textAlign: TextAlign.center,
+            maxLines: 1,
           ),
           const SizedBox(
             height: 16,

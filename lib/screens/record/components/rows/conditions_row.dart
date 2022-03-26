@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/misc/circular_icon_container.dart';
+import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
+
+class ConditionsRow extends StatefulWidget {
+  const ConditionsRow(
+      {Key? key,
+      required this.iconData,
+      required this.onPressed,
+      required this.label,
+      required this.type})
+      : super(key: key);
+
+  final IconData iconData;
+  final Function onPressed;
+  final String label;
+  final ConditionsType type;
+
+  @override
+  State<ConditionsRow> createState() => _ConditionsRowState();
+}
+
+class _ConditionsRowState extends State<ConditionsRow> {
+  late final List<dynamic> _conditionOptions;
+  int _index = 0;
+
+  @override
+  void initState() {
+    _conditionOptions = getConditionOptions();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Bounceable(
+      onTap: () {
+        Vibrate.feedback(FeedbackType.light);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              blurRadius: 2,
+              color: MyPuttColors.gray[400]!)
+        ]),
+        child: Row(
+          children: [
+            CircularIconContainer(
+              icon: Icon(
+                widget.iconData,
+                color: MyPuttColors.blue,
+                size: 32,
+              ),
+              size: 60,
+              padding: 12,
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Text(
+              widget.label,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+            ),
+            const Spacer(),
+            MyPuttButton(
+              width: MediaQuery.of(context).size.width / 4,
+              height: 32,
+              title: getTitle(),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              onPressed: () {
+                widget.onPressed(_conditionOptions[_index]);
+                if (_index < _conditionOptions.length - 1) {
+                  setState(() => _index++);
+                } else {
+                  setState(() => _index = 0);
+                }
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<dynamic> getConditionOptions() {
+    switch (widget.type) {
+      case ConditionsType.wind:
+        return windConditions;
+      case ConditionsType.weather:
+        return weatherConditions;
+      default:
+        return distanceOptions;
+    }
+  }
+
+  String getTitle() {
+    switch (widget.type) {
+      case ConditionsType.wind:
+        return windConditionsEnumMap[_conditionOptions[_index]]!;
+      case ConditionsType.weather:
+        return weatherConditionsEnumMap[_conditionOptions[_index]]!;
+      default:
+        return '${distanceOptions[_index].toString()} ft';
+    }
+  }
+}

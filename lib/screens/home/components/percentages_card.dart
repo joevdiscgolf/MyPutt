@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/screens/home/components/enums.dart';
-import 'package:myputt/screens/home/components/putting_stat_row.dart';
-import 'package:myputt/services/stats_service.dart';
-import 'package:myputt/locator.dart';
+import 'package:myputt/screens/home/components/rows/putting_stat_row.dart';
+import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 
 class PercentagesCard extends StatelessWidget {
-  PercentagesCard(
+  const PercentagesCard(
       {Key? key,
       this.allSessions = const [],
       this.timeRange = TimeRange.allTime,
@@ -20,41 +20,38 @@ class PercentagesCard extends StatelessWidget {
   final Circles? circle;
   final Map<int, num?> percentages;
   final Map<int, num?> allTimePercentages;
-  final StatsService _statsService = locator.get<StatsService>();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          fit: FlexFit.loose,
-          child: ListView(
-              children: percentages.entries
-                  .map((entry) => Builder(builder: (context) {
-                        final points =
-                            _statsService.getPointsWithDistanceAndLimit(
-                                allSessions, [], entry.key, timeRange);
-                        return Column(
-                          children: [
-                            Divider(
-                              thickness: 2,
-                              color: Colors.grey[100]!,
-                            ),
-                            PuttingStatRow(
-                                chartPoints: points,
-                                distance: entry.key,
-                                percentage: entry.value,
-                                allTimePercentage:
-                                    allTimePercentages[entry.key] ?? 0.5),
-                            if (entry.key == 30 || entry.key == 60)
-                              Divider(thickness: 2, color: Colors.grey[100]!),
-                          ],
-                        );
-                      }))
-                  .toList()),
-        ),
-      ],
+    List<int> distancesInOrder = [];
+
+    for (MapEntry entry in percentages.entries) {
+      if (entry.value != null) {
+        distancesInOrder.add(entry.key);
+      }
+    }
+
+    for (MapEntry entry in percentages.entries) {
+      if (!distancesInOrder.contains(entry.key)) {
+        distancesInOrder.add(entry.key);
+      }
+    }
+
+    List<PuttingStatRow> children = distancesInOrder
+        .asMap()
+        .entries
+        .map((MapEntry entry) => PuttingStatRow(
+              distance: entry.value,
+              allTimePercentage: allTimePercentages[entry.value],
+              percentage: percentages[entry.value],
+              backgroundColor: entry.key % 2 == 0
+                  ? MyPuttColors.white
+                  : MyPuttColors.gray[50]!,
+            ))
+        .toList();
+
+    return ListView(
+      children: children,
     );
   }
 }

@@ -60,7 +60,7 @@ class AuthService {
     }
   }
 
-  Future<bool?> signInWithEmail(String inputEmail, String inputPassword) async {
+  Future<bool> signInWithEmail(String inputEmail, String inputPassword) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -79,6 +79,28 @@ class AuthService {
       return false;
     }
   }
+
+  // Future<bool> signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //
+  //     // Obtain the auth details from the request
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await googleUser?.authentication;
+  //
+  //     // Create a new credential
+  //     final oauthCredential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth?.accessToken,
+  //       idToken: googleAuth?.idToken,
+  //     );
+  //
+  //     return FirebaseAuth.instance
+  //         .signInWithCredential(oauthCredential)
+  //         .then((credential) => credential.user != null);
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
   Future<bool> usernameIsAvailable(String username) async {
     try {
@@ -162,8 +184,6 @@ class AuthService {
         !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       return false;
     } else {
-      // final MyPuttUser currentMyPuttUser =
-      //     MyPuttUser.fromJson(userDoc.data() as Map<String, dynamic>);
       return true;
     }
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/misc/default_profile_circle.dart';
+import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 
@@ -30,9 +30,12 @@ class UserListItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Flexible(
+            Flexible(
               flex: 1,
-              child: DefaultProfileCircle(),
+              child: FrisbeeCircleIcon(
+                size: 16,
+                frisbeeAvatar: user.frisbeeAvatar,
+              ),
             ),
             Flexible(
                 flex: 2,

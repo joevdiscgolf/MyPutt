@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:flutter/services.dart';
 
@@ -35,10 +36,14 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 80,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
+        height: 120,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(color: MyPuttColors.gray[50]!, boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              color: MyPuttColors.gray[400]!,
+              blurRadius: 2)
+        ]),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,
           key: widget.sslKey,
@@ -54,7 +59,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
           allowAnotherDirection: true,
           dynamicSizeEquation: (displacement) {
             const threshold = 0;
-            const maxDisplacement = 600;
+            const maxDisplacement = 500;
             if (displacement >= threshold) {
               const slope = 1 / (-maxDisplacement);
               return slope * displacement + (1 - slope * threshold);
@@ -75,34 +80,55 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   }
 
   Widget _buildListItem(BuildContext context, int index) {
-    Color? iconColor;
-    Color backgroundColor;
-    if (index == 0) {
-      iconColor = focusedIndex == index ? Colors.red : Colors.grey[400]!;
-      backgroundColor = Colors.transparent;
-    } else {
-      backgroundColor =
-          index <= focusedIndex ? const Color(0xff00d162) : Colors.grey[200]!;
-    }
-    return Container(
-      decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Colors.grey[600]!)),
-      width: 80,
-      child: Center(
-          child: index == 0
-              ? Icon(
-                  FlutterRemix.close_circle_line,
-                  color: iconColor ?? Colors.white,
-                  size: 40,
-                )
-              : Text((index).toString(),
-                  style: TextStyle(
-                      color:
-                          index <= focusedIndex ? Colors.white : Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold))),
-    );
+    return Builder(builder: (context) {
+      Color? iconColor;
+      Color backgroundColor;
+      if (index == 0) {
+        iconColor = focusedIndex == index ? Colors.red : Colors.grey[400]!;
+        backgroundColor =
+            focusedIndex == index ? MyPuttColors.gray[50]! : MyPuttColors.white;
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 4,
+                color: MyPuttColors.gray[100]!,
+              )),
+          child: Icon(
+            FlutterRemix.close_circle_line,
+            color: iconColor,
+            size: 40,
+          ),
+        );
+      } else {
+        backgroundColor = index <= focusedIndex
+            ? MyPuttColors.white
+            : MyPuttColors.gray[200]!;
+        return Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                    offset: const Offset(0, 4),
+                    blurRadius: 2,
+                    color: MyPuttColors.gray[300]!)
+              ],
+              color: backgroundColor,
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 4,
+                color: MyPuttColors.lightBlue,
+              )),
+          child: Center(
+              child: Text((index).toString(),
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                      fontSize: 20, color: MyPuttColors.gray[800]!))),
+        );
+      }
+    });
   }
 }

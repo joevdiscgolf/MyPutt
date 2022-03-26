@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/calculators.dart';
 
 import 'animated_arrows.dart';
 
@@ -33,16 +31,11 @@ class ChallengeDirectorPanel extends StatelessWidget {
 
   Widget _mainBody(
       BuildContext context, PuttingChallenge currentChallenge, int index) {
-    final int puttsMadeDifference =
-        getDifferenceFromChallenge(currentChallenge);
     final int distance = currentChallenge.challengeStructure[index].distance;
     final int setLength = currentChallenge.challengeStructure[index].setLength;
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
-        // border: Border.all(
-        //     color: puttsMadeDifference >= 0 ? MyPuttColors.green : Colors.red,
-        //     width: 4),
         color: Colors.white,
       ),
       child: Column(
@@ -68,45 +61,6 @@ class ChallengeDirectorPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Builder(builder: (context) {
-              final TextStyle? style = Theme.of(context).textTheme.headline6;
-              if (puttsMadeDifference > 0) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("You're ahead by ", style: style),
-                    Text('$puttsMadeDifference ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.copyWith(color: MyPuttColors.lightGreen)),
-                    Text(puttsMadeDifference == 1 ? 'putt' : 'putts',
-                        style: style),
-                  ],
-                );
-              } else if (puttsMadeDifference < 0) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("You're behind by ", style: style),
-                    Text('${puttsMadeDifference.abs()} ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            ?.copyWith(color: Colors.red)),
-                    Text(puttsMadeDifference == -1 ? 'putt' : 'putts',
-                        style: style),
-                  ],
-                );
-              } else {
-                return Text(
-                  'All tied up',
-                  style: style,
-                );
-              }
-            }),
-          )
         ],
       ),
     );

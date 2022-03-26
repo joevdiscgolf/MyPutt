@@ -1,96 +1,108 @@
 import 'dart:async';
+import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SigninService {
-  late StreamController<LoginState> controller;
-  late Stream<LoginState> siginStream;
+  final SharedPreferencesService _sharedPreferencesService =
+      locator.get<SharedPreferencesService>();
+  final ScreenController _screenController = locator.get<ScreenController>();
+  late StreamController<AppScreenState> controller;
+  late Stream<AppScreenState> siginStream;
   final AuthService _authService = locator.get<AuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
+
   late final String _version;
-  LoginState currentLoginState = LoginState.none;
+  String errorMessage = '';
+
+  AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
+
   SigninService() {
-    controller = StreamController<LoginState>();
-    siginStream = controller.stream;
+    controller = _screenController.controller;
   }
 
   Future<void> init() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     _version = packageInfo.version;
-    if (_authService.getCurrentUserId() != null) {
-      if (!(await _authService.userIsSetup())) {
-        controller.add(LoginState.setup);
-        currentLoginState = LoginState.setup;
-      } else {
-        final String? minimumVersion = await getMinimumAppVersion();
-        if (minimumVersion == null) {
-          controller.add(LoginState.loggedIn);
-          return;
-        }
-        if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-          controller.add(LoginState.forceUpgrade);
-          return;
-        }
-        await fetchRepositoryData();
-        controller.add(LoginState.loggedIn);
-        currentLoginState = LoginState.loggedIn;
-      }
+    final bool? isFirstRun =
+        await _sharedPreferencesService.getBooleanValue('isFirstRun');
+    if (isFirstRun == null || isFirstRun) {
+      controller.add(AppScreenState.firstRun);
     } else {
-      controller.add(LoginState.none);
-      currentLoginState = LoginState.none;
+      if (_authService.getCurrentUserId() != null) {
+        if (!(await _authService.userIsSetup())) {
+          controller.add(AppScreenState.setup);
+          currentAppScreenState = AppScreenState.setup;
+        } else {
+          final String? minimumVersion = await getMinimumAppVersion();
+          if (minimumVersion == null) {
+            controller.add(AppScreenState.loggedIn);
+            return;
+          }
+          if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
+            controller.add(AppScreenState.forceUpgrade);
+            return;
+          }
+          await fetchRepositoryData().timeout(const Duration(seconds: 3));
+          controller.add(AppScreenState.loggedIn);
+          currentAppScreenState = AppScreenState.loggedIn;
+        }
+      } else {
+        controller.add(AppScreenState.notLoggedIn);
+        currentAppScreenState = AppScreenState.notLoggedIn;
+      }
     }
   }
 
-  Future<bool> attemptSignUp(String email, String password) async {
-    final bool? signUpSuccess =
-        await _authService.signUpWithEmail(email, password);
-    if (signUpSuccess == null ||
-        !signUpSuccess ||
-        _authService.getCurrentUserId() == null) {
+  Future<bool> attemptSignUpWithEmail(String email, String password) async {
+    bool signUpSuccess = false;
+    try {
+      signUpSuccess = await _authService
+          .signUpWithEmail(email, password)
+          .timeout(const Duration(seconds: 4));
+    } on TimeoutException catch (_) {
+      errorMessage = 'Failed to connect';
       return false;
     }
-    final String? minimumVersion = await getMinimumAppVersion();
-    if (minimumVersion != null) {
-      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-        controller.add(LoginState.forceUpgrade);
-        return true;
-      }
+    if (!signUpSuccess || _authService.getCurrentUserId() == null) {
+      errorMessage = _authService.exception;
+      return false;
     }
     final bool fetchUserSuccess = await _userRepository.fetchCurrentUser();
     if (fetchUserSuccess) {
       return false;
     }
-    await fetchRepositoryData();
-    controller.add(LoginState.setup);
-    currentLoginState = LoginState.setup;
+    await fetchRepositoryData().timeout(const Duration(seconds: 3));
+    controller.add(AppScreenState.setup);
+    currentAppScreenState = AppScreenState.setup;
     return true;
   }
 
-  Future<bool> attemptSignIn(String email, String password) async {
-    final bool? signInSuccess =
-        await _authService.signInWithEmail(email, password);
-    if (signInSuccess == null ||
-        !signInSuccess ||
-        _authService.getCurrentUserId() == null) {
+  Future<bool> attemptSignInWithEmail(String email, String password) async {
+    bool signInSuccess = false;
+    try {
+      signInSuccess = await _authService
+          .signInWithEmail(email, password)
+          .timeout(const Duration(seconds: 3));
+    } on TimeoutException catch (_) {
+      errorMessage = 'Failed to connect';
       return false;
     }
-    final String? minimumVersion = await getMinimumAppVersion();
-    if (minimumVersion != null) {
-      if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-        controller.add(LoginState.forceUpgrade);
-        return true;
-      }
+    if (!signInSuccess || _authService.getCurrentUserId() == null) {
+      errorMessage = _authService.exception;
+      return false;
     }
-    await fetchRepositoryData();
-    controller.add(LoginState.loggedIn);
-    currentLoginState = LoginState.loggedIn;
+    await fetchRepositoryData().timeout(const Duration(seconds: 3));
+    controller.add(AppScreenState.loggedIn);
+    currentAppScreenState = AppScreenState.loggedIn;
     return true;
   }
 
@@ -100,8 +112,8 @@ class SigninService {
         .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
     if (await _authService.userIsSetup() && newUser != null) {
       _userRepository.currentUser = newUser;
-      controller.add(LoginState.loggedIn);
-      currentLoginState = LoginState.loggedIn;
+      controller.add(AppScreenState.loggedIn);
+      currentAppScreenState = AppScreenState.loggedIn;
       return true;
     } else {
       return false;
@@ -111,7 +123,7 @@ class SigninService {
   void signOut() {
     clearRepositoryData();
     _authService.logOut();
-    controller.add(LoginState.none);
-    currentLoginState = LoginState.none;
+    controller.add(AppScreenState.notLoggedIn);
+    currentAppScreenState = AppScreenState.notLoggedIn;
   }
 }
