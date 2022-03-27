@@ -309,12 +309,10 @@ class StatsService {
     final AuthService _authService = locator.get<AuthService>();
     final String? currentUid = _authService.getCurrentUserId();
 
-    // print(limit);
     if (currentUid == null) {
       return [];
     }
     List<ChartPoint> points = [];
-    List<ChartPoint> finalPoints = [];
 
     challenges = filterDuplicateChallenges(sessions, challenges);
 
