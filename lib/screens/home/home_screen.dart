@@ -36,11 +36,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     _scrollController = ScrollController();
     _rangeTabController = TabController(length: 4, vsync: this);
-    _rangeTabController.addListener(() {
-      BlocProvider.of<HomeScreenCubit>(context)
-          .updateTimeRangeIndex(_rangeTabController.index);
-      BlocProvider.of<HomeScreenCubit>(context).reloadStats();
-    });
     _circlesController = TabController(length: 2, vsync: this);
     super.initState();
   }
