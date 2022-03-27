@@ -20,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  int _sessionRangeIndex = 0;
   final PerformanceViewMode _performanceViewMode = PerformanceViewMode.chart;
   late final TabController _rangeTabController;
   late final TabController _circlesController;
@@ -43,6 +42,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _rangeTabController.dispose();
     _circlesController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -50,8 +50,6 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _sessionRangeIndex = _rangeTabController.index;
-    BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     return Scaffold(
         backgroundColor: Colors.grey[100]!,
         appBar: AppBar(
@@ -93,7 +91,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           children: [
                             // _calendarChartButtons(context),
                             _performanceViewMode == PerformanceViewMode.chart
-                                ? const PerformanceChartPanel()
+                                ? PerformanceChartPanel(
+                                    rangeTabController: _rangeTabController,
+                                  )
                                 : const PerformanceCalendarPanel(),
                           ],
                         )),
@@ -106,12 +106,12 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           body: TabBarView(controller: _circlesController, children: [
             PuttingStatsPage(
               circle: Circles.circle1,
-              timeRange: indexToTimeRange[_sessionRangeIndex] ?? 5,
+              timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
               screenType: 'home',
             ),
             PuttingStatsPage(
               circle: Circles.circle2,
-              timeRange: indexToTimeRange[_sessionRangeIndex] ?? 5,
+              timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
               screenType: 'home',
             ),
           ]),

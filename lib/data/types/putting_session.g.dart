@@ -7,7 +7,7 @@ part of 'putting_session.dart';
 // **************************************************************************
 
 PuttingSession _$PuttingSessionFromJson(Map json) => PuttingSession(
-      dateStarted: json['dateStarted'] as String,
+      id: json['id'] as String,
       timeStamp: json['timeStamp'] as int,
     )..sets = (json['sets'] as List<dynamic>)
         .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -15,7 +15,7 @@ PuttingSession _$PuttingSessionFromJson(Map json) => PuttingSession(
 
 Map<String, dynamic> _$PuttingSessionToJson(PuttingSession instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'timeStamp': instance.timeStamp,
-      'dateStarted': instance.dateStarted,
       'sets': instance.sets.map((e) => e.toJson()).toList(),
     };

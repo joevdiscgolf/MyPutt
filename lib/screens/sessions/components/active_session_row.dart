@@ -7,6 +7,7 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/helpers.dart';
+import 'package:myputt/utils/string_helpers.dart';
 
 class ActiveSessionRow extends StatelessWidget {
   const ActiveSessionRow(
@@ -46,7 +47,7 @@ class ActiveSessionRow extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text(session.dateStarted,
+                    child: Text(timestampToDate(session.timeStamp),
                         style: Theme.of(context).textTheme.headline6?.copyWith(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),

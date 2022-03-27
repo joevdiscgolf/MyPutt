@@ -5,9 +5,9 @@ part 'putting_session.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSession {
-  PuttingSession({required this.dateStarted, required this.timeStamp});
+  PuttingSession({required this.id, required this.timeStamp});
+  final String id;
   final int timeStamp;
-  final String dateStarted;
   List<PuttingSet> sets = [];
 
   num get totalPuttsMade {
@@ -28,13 +28,6 @@ class PuttingSession {
 
   void addSet(PuttingSet set) {
     sets.add(set);
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'dateStarted': dateStarted,
-      'sets': sets,
-    };
   }
 
   factory PuttingSession.fromJson(Map<String, dynamic> json) =>

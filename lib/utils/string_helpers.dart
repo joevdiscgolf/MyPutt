@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 int versionToNumber(String version) {
   final withoutDots = version.replaceAll(RegExp('\\.'), ''); // abc
   return int.parse(withoutDots);
@@ -25,4 +27,8 @@ String getMessageFromDifference(int difference) {
   } else {
     return 'Draw';
   }
+}
+
+String timestampToDate(int timestamp) {
+  return '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(timestamp)).toString()}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(timestamp)).toString()}';
 }

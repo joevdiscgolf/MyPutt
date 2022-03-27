@@ -11,9 +11,9 @@ class PuttingSet {
       required this.distance,
       this.timeStamp});
   final int? timeStamp;
-  final num puttsMade;
-  final num puttsAttempted;
-  final num distance;
+  final int puttsMade;
+  final int puttsAttempted;
+  final int distance;
   Conditions? conditions;
 
   factory PuttingSet.fromJson(Map<String, dynamic> json) =>

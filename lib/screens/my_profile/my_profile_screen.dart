@@ -261,7 +261,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         Builder(builder: (context) {
                           final double? c1XPercentage =
-                              _statsService.getPercentagesWithCutoff(
+                              _statsService.getPercentageWithCutoff(
                                   _sessionRepository.allSessions,
                                   _challengesRepository.completedChallenges,
                                   Cutoffs.c1x);
@@ -280,7 +280,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentagesWithCutoff(
+                                _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
                                     Cutoffs.c2);
@@ -300,7 +300,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentagesWithCutoff(
+                                _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
                                     Cutoffs.none);
@@ -349,7 +349,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Total putts',
                   subtitle:
-                      '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(removeDuplicateChallenges(_challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(removeDuplicateChallenges(_challengesRepository.completedChallenges), false)}'),
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, true) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.allSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.allSessions, false) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.allSessions, _challengesRepository.completedChallenges), false)}'),
               const SizedBox(
                 height: 4,
               ),

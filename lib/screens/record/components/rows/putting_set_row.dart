@@ -35,10 +35,9 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       decoration: BoxDecoration(
-        color: MyPuttColors.white,
-        border: Border.symmetric(
-            horizontal: BorderSide(color: MyPuttColors.gray[50]!, width: 2)),
-      ),
+          color: MyPuttColors.white,
+          border: Border(
+              bottom: BorderSide(color: MyPuttColors.gray[50]!, width: 2))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

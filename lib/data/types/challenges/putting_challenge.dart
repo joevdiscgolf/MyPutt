@@ -9,19 +9,19 @@ part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingChallenge {
-  PuttingChallenge(
-      {required this.status,
-      required this.creationTimeStamp,
-      required this.id,
-      this.opponentUser,
-      required this.currentUser,
-      required this.challengerUser,
-      required this.recipientUser,
-      required this.challengeStructure,
-      required this.opponentSets,
-      required this.currentUserSets,
-      this.completionTimeStamp,
-      this.createdFromSession});
+  PuttingChallenge({
+    required this.status,
+    required this.creationTimeStamp,
+    required this.id,
+    this.opponentUser,
+    required this.currentUser,
+    required this.challengerUser,
+    required this.recipientUser,
+    required this.challengeStructure,
+    required this.opponentSets,
+    required this.currentUserSets,
+    this.completionTimeStamp,
+  });
 
   String status;
   final int creationTimeStamp;
@@ -34,7 +34,6 @@ class PuttingChallenge {
   final List<ChallengeStructureItem> challengeStructure;
   List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
-  final bool? createdFromSession;
 
   factory PuttingChallenge.fromStorageChallenge(
       StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
@@ -47,47 +46,47 @@ class PuttingChallenge {
       recipientUser = currentUser;
 
       return PuttingChallenge(
-          status: storageChallenge.status,
-          creationTimeStamp: storageChallenge.creationTimeStamp,
-          id: storageChallenge.id,
-          opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
-              ? recipientUser
-              : storageChallenge.challengerUser,
-          currentUser: recipientUser.uid == currentUser.uid
-              ? recipientUser
-              : storageChallenge.challengerUser,
-          challengeStructure: storageChallenge.challengeStructure,
-          opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
-              ? storageChallenge.recipientSets
-              : storageChallenge.challengerSets,
-          currentUserSets: recipientUser.uid == currentUser.uid
-              ? storageChallenge.recipientSets
-              : storageChallenge.challengerSets,
-          challengerUser: storageChallenge.challengerUser,
-          recipientUser: recipientUser,
-          completionTimeStamp: storageChallenge.completionTimeStamp,
-          createdFromSession: storageChallenge.createdFromSession);
-    }
-    return PuttingChallenge(
         status: storageChallenge.status,
         creationTimeStamp: storageChallenge.creationTimeStamp,
         id: storageChallenge.id,
         opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
-            ? storageChallenge.recipientUser
+            ? recipientUser
             : storageChallenge.challengerUser,
-        currentUser: storageChallenge.recipientUser!.uid == currentUser.uid
-            ? storageChallenge.recipientUser!
+        currentUser: recipientUser.uid == currentUser.uid
+            ? recipientUser
             : storageChallenge.challengerUser,
         challengeStructure: storageChallenge.challengeStructure,
         opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
             ? storageChallenge.recipientSets
             : storageChallenge.challengerSets,
-        currentUserSets: storageChallenge.recipientUser!.uid == currentUser.uid
+        currentUserSets: recipientUser.uid == currentUser.uid
             ? storageChallenge.recipientSets
             : storageChallenge.challengerSets,
         challengerUser: storageChallenge.challengerUser,
-        recipientUser: storageChallenge.recipientUser,
-        createdFromSession: storageChallenge.createdFromSession);
+        recipientUser: recipientUser,
+        completionTimeStamp: storageChallenge.completionTimeStamp,
+      );
+    }
+    return PuttingChallenge(
+      status: storageChallenge.status,
+      creationTimeStamp: storageChallenge.creationTimeStamp,
+      id: storageChallenge.id,
+      opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
+          ? storageChallenge.recipientUser
+          : storageChallenge.challengerUser,
+      currentUser: storageChallenge.recipientUser!.uid == currentUser.uid
+          ? storageChallenge.recipientUser!
+          : storageChallenge.challengerUser,
+      challengeStructure: storageChallenge.challengeStructure,
+      opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
+          ? storageChallenge.recipientSets
+          : storageChallenge.challengerSets,
+      currentUserSets: storageChallenge.recipientUser!.uid == currentUser.uid
+          ? storageChallenge.recipientSets
+          : storageChallenge.challengerSets,
+      challengerUser: storageChallenge.challengerUser,
+      recipientUser: storageChallenge.recipientUser,
+    );
   }
 
   factory PuttingChallenge.fromJson(Map<String, dynamic> json) =>

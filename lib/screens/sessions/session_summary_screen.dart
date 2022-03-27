@@ -6,6 +6,7 @@ import 'package:myputt/screens/home/components/putting_stats_page.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/string_helpers.dart';
 
 class SessionSummaryScreen extends StatefulWidget {
   const SessionSummaryScreen({
@@ -76,7 +77,7 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
                   children: [
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(widget.session.dateStarted,
+                        child: Text(timestampToDate(widget.session.timeStamp),
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold))),
                     Align(

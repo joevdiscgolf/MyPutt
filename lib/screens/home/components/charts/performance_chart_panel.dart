@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/charts/performance_chart.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 import 'package:myputt/locator.dart';
@@ -12,7 +14,10 @@ import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class PerformanceChartPanel extends StatefulWidget {
-  const PerformanceChartPanel({Key? key}) : super(key: key);
+  const PerformanceChartPanel({Key? key, required this.rangeTabController})
+      : super(key: key);
+
+  final TabController rangeTabController;
 
   @override
   _PerformanceChartPanelState createState() => _PerformanceChartPanelState();
@@ -25,7 +30,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
-  late final TabController _rangeTabController;
   int _sessionRangeIndex = 0;
   final double _sliderValue = 0;
   double _smoothnessSliderValue = 0.5;
@@ -37,9 +41,11 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
 
   @override
   void initState() {
-    _rangeTabController = TabController(length: 4, vsync: this);
-    _rangeTabController.addListener(() {
-      setState(() => _sessionRangeIndex = _rangeTabController.index);
+    widget.rangeTabController.addListener(() {
+      setState(() => _sessionRangeIndex = widget.rangeTabController.index);
+      BlocProvider.of<HomeScreenCubit>(context)
+          .updateTimeRangeIndex(widget.rangeTabController.index);
+      BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     });
     _totalSets = _statsService.getTotalPuttingSets(
         _sessionRepository.allSessions,
@@ -57,7 +63,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
 
   @override
   void dispose() {
-    _rangeTabController.dispose();
     super.dispose();
   }
 
@@ -121,7 +126,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       child: TabBar(
         indicator: const UnderlineTabIndicator(
             borderSide: BorderSide(color: MyPuttColors.darkBlue)),
-        controller: _rangeTabController,
+        controller: widget.rangeTabController,
         labelPadding: const EdgeInsets.all(0),
         indicatorPadding: const EdgeInsets.all(0),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
