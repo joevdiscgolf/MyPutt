@@ -14,7 +14,10 @@ import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class PerformanceChartPanel extends StatefulWidget {
-  const PerformanceChartPanel({Key? key}) : super(key: key);
+  const PerformanceChartPanel({Key? key, required this.rangeTabController})
+      : super(key: key);
+
+  final TabController rangeTabController;
 
   @override
   _PerformanceChartPanelState createState() => _PerformanceChartPanelState();
@@ -27,7 +30,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
-  late final TabController _rangeTabController;
   int _sessionRangeIndex = 0;
   final double _sliderValue = 0;
   double _smoothnessSliderValue = 0.5;
@@ -39,11 +41,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
 
   @override
   void initState() {
-    _rangeTabController = TabController(length: 4, vsync: this);
-    _rangeTabController.addListener(() {
-      setState(() => _sessionRangeIndex = _rangeTabController.index);
+    widget.rangeTabController.addListener(() {
+      setState(() => _sessionRangeIndex = widget.rangeTabController.index);
       BlocProvider.of<HomeScreenCubit>(context)
-          .updateTimeRangeIndex(_rangeTabController.index);
+          .updateTimeRangeIndex(widget.rangeTabController.index);
       BlocProvider.of<HomeScreenCubit>(context).reloadStats();
     });
     _totalSets = _statsService.getTotalPuttingSets(
@@ -62,7 +63,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
 
   @override
   void dispose() {
-    _rangeTabController.dispose();
     super.dispose();
   }
 
@@ -126,7 +126,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       child: TabBar(
         indicator: const UnderlineTabIndicator(
             borderSide: BorderSide(color: MyPuttColors.darkBlue)),
-        controller: _rangeTabController,
+        controller: widget.rangeTabController,
         labelPadding: const EdgeInsets.all(0),
         indicatorPadding: const EdgeInsets.all(0),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
