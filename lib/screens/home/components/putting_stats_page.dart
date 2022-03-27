@@ -39,8 +39,8 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                             : state.stats.circleTwoPercentages ?? {},
                         timeRange: widget.timeRange,
                         allTimePercentages: widget.circle == Circles.circle1
-                            ? state.stats.circleOneAverages ?? {}
-                            : state.stats.circleTwoAverages ?? {},
+                            ? state.stats.circleOneOverall ?? {}
+                            : state.stats.circleTwoOverall ?? {},
                         allSessions: state.allSessions,
                       );
                     } else {
@@ -56,8 +56,8 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                             ? state.stats.circleOnePercentages ?? {}
                             : state.stats.circleTwoPercentages ?? {},
                         allTimePercentages: widget.circle == Circles.circle1
-                            ? state.stats.circleOneAverages ?? {}
-                            : state.stats.circleTwoAverages ?? {},
+                            ? state.stats.circleOneOverall ?? {}
+                            : state.stats.circleTwoOverall ?? {},
                       );
                     } else {
                       return const CircularProgressIndicator();

@@ -7,16 +7,16 @@ part 'stats.g.dart';
 class Stats {
   Stats(
       {this.circleOnePercentages,
-      this.circleOneAverages,
-      this.circleTwoAverages,
       this.circleTwoPercentages,
+      this.circleOneOverall,
+      this.circleTwoOverall,
       this.generalStats});
 
   final Map<int, num?>? circleOnePercentages;
-  final Map<int, num?>? circleOneAverages;
+  final Map<int, num?>? circleOneOverall;
 
   final Map<int, num?>? circleTwoPercentages;
-  final Map<int, num?>? circleTwoAverages;
+  final Map<int, num?>? circleTwoOverall;
 
   final GeneralStats? generalStats;
 

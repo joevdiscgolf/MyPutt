@@ -23,7 +23,8 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   }
 
   void reloadStats() {
-    print(timeRangeIndex);
+    // print(timeRangeIndex);
+    // print(indexToTimeRange[timeRangeIndex]);
     final Stats stats = _statsService.getStatsForRange(
       indexToTimeRange[timeRangeIndex]!,
       _sessionRepository.allSessions,

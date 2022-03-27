@@ -20,7 +20,6 @@ class StatsService {
     List<PuttingSession> sessions,
     List<PuttingChallenge> challenges,
   ) {
-    print(limit);
     // filtering out challenges that were generated from a session of the user.
     challenges = filterDuplicateChallenges(sessions, challenges);
 
@@ -60,13 +59,9 @@ class StatsService {
 
     int totalAttempts = 0;
     int totalMade = 0;
-    num limitIndex = 0;
 
-    for (int index = 0;
-        index <
-            (limit == 0 ? timestamps.length : min(limit, timestamps.length));
-        index++) {
-      int timestamp = timestamps[index];
+    for (int index = 0; index < timestamps.length; index++) {
+      final int timestamp = timestamps[index];
       final dynamic value = timestampToSessionOrChallenge[timestamp];
       List<PuttingSet> sets = [];
       if (value is PuttingSession) {
@@ -90,7 +85,7 @@ class StatsService {
             ? set.puttsMade
             : overallPuttsMade[distance]! + set.puttsMade;
 
-        if (limitIndex < limit || limit == 0) {
+        if (index < limit || limit == 0) {
           rangePuttsAttempted[distance] = rangePuttsAttempted[distance] == null
               ? set.puttsAttempted
               : rangePuttsAttempted[distance]! + set.puttsAttempted;
@@ -100,7 +95,6 @@ class StatsService {
               : rangePuttsMade[distance]! + set.puttsMade;
         }
       }
-      limitIndex += 1;
     }
 
     for (var entry in rangePuttsAttempted.entries) {
@@ -130,8 +124,8 @@ class StatsService {
     return Stats(
         circleOnePercentages: circleOneRangeFractions,
         circleTwoPercentages: circleTwoRangeFractions,
-        circleOneAverages: circleOneOverallFractions,
-        circleTwoAverages: circleTwoOverallFractions,
+        circleOneOverall: circleOneOverallFractions,
+        circleTwoOverall: circleTwoOverallFractions,
         generalStats: GeneralStats(
           totalAttempts: totalAttempts,
           totalMade: totalMade,
@@ -222,8 +216,8 @@ class StatsService {
     return Stats(
         circleOnePercentages: circleOneFocusFractions,
         circleTwoPercentages: circleTwoFocusFractions,
-        circleOneAverages: circleOneOverallFractions,
-        circleTwoAverages: circleTwoOverallFractions,
+        circleOneOverall: circleOneOverallFractions,
+        circleTwoOverall: circleTwoOverallFractions,
         generalStats: GeneralStats(
           totalAttempts: totalAttempts,
           totalMade: totalMade,
@@ -261,23 +255,23 @@ class StatsService {
     return total;
   }
 
-  double? getPercentagesWithCutoff(List<PuttingSession> sessions,
+  double? getPercentageWithCutoff(List<PuttingSession> sessions,
       List<PuttingChallenge> challenges, int cutoff) {
     double totalMade = 0;
     double totalAttmpted = 0;
     for (var session in sessions) {
       for (var set in session.sets) {
         if (set.distance > cutoff) {
-          totalMade += set.puttsMade.toInt();
-          totalAttmpted += set.puttsAttempted.toInt();
+          totalMade += set.puttsMade;
+          totalAttmpted += set.puttsAttempted;
         }
       }
     }
     for (var challenge in challenges) {
       for (var set in challenge.currentUserSets) {
         if (set.distance > cutoff) {
-          totalMade += set.puttsMade.toInt();
-          totalAttmpted += set.puttsAttempted.toInt();
+          totalMade += set.puttsMade;
+          totalAttmpted += set.puttsAttempted;
         }
       }
     }
@@ -315,6 +309,7 @@ class StatsService {
     final AuthService _authService = locator.get<AuthService>();
     final String? currentUid = _authService.getCurrentUserId();
 
+    // print(limit);
     if (currentUid == null) {
       return [];
     }
@@ -373,19 +368,8 @@ class StatsService {
           ? timestampDifference
           : p1.index.compareTo(p2.index);
     });
-    List<ChartPoint> reversedPoints = List.from(points.reversed);
-    if (limit == null) {
-      finalPoints = reversedPoints;
-    } else {
-      for (var index = 0; index < limit; index++) {
-        if (index >= reversedPoints.length) {
-          break;
-        }
-        finalPoints.add(reversedPoints[index]);
-      }
-    }
 
-    return List.from(finalPoints.reversed);
+    return List.from(points);
   }
 
   int getTotalPuttingSets(List<PuttingSession> sessions,

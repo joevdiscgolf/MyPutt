@@ -261,7 +261,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         Builder(builder: (context) {
                           final double? c1XPercentage =
-                              _statsService.getPercentagesWithCutoff(
+                              _statsService.getPercentageWithCutoff(
                                   _sessionRepository.allSessions,
                                   _challengesRepository.completedChallenges,
                                   Cutoffs.c1x);
@@ -280,7 +280,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentagesWithCutoff(
+                                _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
                                     Cutoffs.c2);
@@ -300,7 +300,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentagesWithCutoff(
+                                _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
                                     Cutoffs.none);

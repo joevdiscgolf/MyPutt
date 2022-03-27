@@ -55,7 +55,6 @@ class SessionsCubit extends Cubit<SessionsState> {
               _sessionRepository.allSessions,
               _sessionRepository.currentSession!)));
       final bool success = await _sessionRepository.startNewSession(newSession);
-      print(success);
       if (success) {
         emit(SessionInProgressState(
             sessions: _sessionRepository.allSessions,
