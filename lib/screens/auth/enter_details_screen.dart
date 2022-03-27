@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
@@ -129,33 +128,9 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
           ),
           const Spacer(),
           _submitButton(context),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 24,
-              ),
-              Text("Already have an account?",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      ?.copyWith(color: MyPuttColors.gray[400])),
-              const SizedBox(
-                height: 16,
-              ),
-              MyPuttButton(
-                title: 'Sign in',
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                color: Colors.transparent,
-                textColor: MyPuttColors.blue,
-              ),
-              const SizedBox(
-                height: 16,
-              )
-            ],
-          ),
+          const SizedBox(
+            height: 16,
+          )
         ],
       ),
     );

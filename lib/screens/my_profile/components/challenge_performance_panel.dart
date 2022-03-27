@@ -233,7 +233,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 28, color: MyPuttColors.gray[800]),
+                    ?.copyWith(fontSize: 28, color: MyPuttColors.darkGray),
                 maxLines: 1,
               );
             } else if (_challengeResult == ChallengeResult.none) {
@@ -274,8 +274,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                                 .textTheme
                                 .headline6
                                 ?.copyWith(
-                                    fontSize: 28,
-                                    color: MyPuttColors.gray[800]),
+                                    fontSize: 28, color: MyPuttColors.darkGray),
                             maxLines: 2,
                             textAlign: TextAlign.center,
                           ),
@@ -285,8 +284,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                                 .textTheme
                                 .headline6
                                 ?.copyWith(
-                                    fontSize: 16,
-                                    color: MyPuttColors.gray[800]),
+                                    fontSize: 16, color: MyPuttColors.darkGray),
                             maxLines: 2,
                             textAlign: TextAlign.center,
                           ),

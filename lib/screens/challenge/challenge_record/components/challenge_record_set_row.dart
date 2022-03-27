@@ -67,7 +67,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .headline6
-              ?.copyWith(color: MyPuttColors.gray[800], fontSize: 14),
+              ?.copyWith(color: MyPuttColors.darkGray, fontSize: 14),
         ),
         const SizedBox(
           height: 12,
@@ -90,7 +90,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline6
-                  ?.copyWith(color: MyPuttColors.gray[800], fontSize: 20),
+                  ?.copyWith(color: MyPuttColors.darkGray, fontSize: 20),
             ),
             const SizedBox(
               width: 4,

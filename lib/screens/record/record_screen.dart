@@ -33,8 +33,6 @@ class _RecordScreenState extends State<RecordScreen> {
   int _setLength = 10;
   int _focusedIndex = 10;
   late int _distance;
-  WeatherCondition _weatherCondition = WeatherCondition.sunny;
-  WindCondition _windCondition = WindCondition.calm;
 
   @override
   void initState() {
@@ -52,8 +50,8 @@ class _RecordScreenState extends State<RecordScreen> {
     return Scaffold(
         backgroundColor: MyPuttColors.white,
         appBar: AppBar(
-          iconTheme: IconThemeData(
-            color: MyPuttColors.gray[800]!,
+          iconTheme: const IconThemeData(
+            color: MyPuttColors.darkGray,
           ),
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
@@ -63,7 +61,7 @@ class _RecordScreenState extends State<RecordScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: MyPuttButton(
                 color: Colors.transparent,
-                textColor: MyPuttColors.gray[800]!,
+                textColor: MyPuttColors.darkGray,
                 onPressed: () {
                   showDialog(
                       context: context,
@@ -76,7 +74,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 },
                 title: 'Finish',
                 iconData: FlutterRemix.check_line,
-                iconColor: MyPuttColors.gray[800]!,
+                iconColor: MyPuttColors.darkGray,
               ),
             ),
           ],
@@ -120,7 +118,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                 .textTheme
                                 .headline6
                                 ?.copyWith(
-                                    color: MyPuttColors.gray[800],
+                                    color: MyPuttColors.darkGray,
                                     fontSize: 20)),
                         Align(
                           alignment: Alignment.centerRight,
@@ -187,7 +185,7 @@ class _RecordScreenState extends State<RecordScreen> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 20, color: MyPuttColors.gray[800]!),
+                ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
           ),
         ),
         const SizedBox(
@@ -228,7 +226,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 32, color: MyPuttColors.gray[800]),
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
               ),
               onPressed: () {
                 puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
@@ -248,7 +246,7 @@ class _RecordScreenState extends State<RecordScreen> {
               style: Theme.of(context)
                   .textTheme
                   .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+                  ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
             ),
             const SizedBox(width: 5),
             ElevatedButton(
@@ -257,7 +255,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 32, color: MyPuttColors.gray[800]),
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
               ),
               onPressed: () {
                 setState(() {

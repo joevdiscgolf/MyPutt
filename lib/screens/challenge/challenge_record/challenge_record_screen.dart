@@ -96,7 +96,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     },
                     icon: Icon(
                       FlutterRemix.arrow_left_s_line,
-                      color: MyPuttColors.gray[800],
+                      color: MyPuttColors.darkGray,
                     )),
               ),
             ),
@@ -282,7 +282,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                               .textTheme
                               .headline6
                               ?.copyWith(
-                                  fontSize: 20, color: MyPuttColors.gray[800])),
+                                  fontSize: 20, color: MyPuttColors.darkGray)),
                     ),
                     const Align(
                       alignment: Alignment.centerRight,

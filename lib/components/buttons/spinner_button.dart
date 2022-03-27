@@ -6,18 +6,45 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
-class RetryButton extends StatefulWidget {
-  const RetryButton({Key? key, this.repeat = true, required this.onPressed})
+class SpinnerButton extends StatefulWidget {
+  const SpinnerButton(
+      {Key? key,
+      this.height = 32,
+      this.width,
+      this.disabled = false,
+      this.repeat = true,
+      required this.onPressed,
+      required this.title,
+      this.iconData,
+      this.iconColor = MyPuttColors.darkGray,
+      this.iconSize = 16,
+      this.backgroundColor = MyPuttColors.blue,
+      this.shadowColor,
+      this.textSize = 14,
+      this.textColor = MyPuttColors.darkGray,
+      this.padding})
       : super(key: key);
 
-  final bool repeat;
+  final double height;
+  final double? width;
   final Function onPressed;
+  final String title;
+  final IconData? iconData;
+  final Color iconColor;
+  final double iconSize;
+  final Color backgroundColor;
+  final Color? shadowColor;
+  final double textSize;
+  final Color textColor;
+  final EdgeInsetsGeometry? padding;
+  final bool disabled;
+  final bool repeat;
 
   @override
-  _RetryButtonState createState() => _RetryButtonState();
+  _SpinnerButtonState createState() => _SpinnerButtonState();
 }
 
-class _RetryButtonState extends State<RetryButton>
+class _SpinnerButtonState extends State<SpinnerButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<double> _rotation;
@@ -54,13 +81,17 @@ class _RetryButtonState extends State<RetryButton>
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
-        _animationController.forward(from: 0);
-        widget.onPressed();
+        if (!widget.disabled) {
+          _animationController.forward(from: 0);
+          widget.onPressed();
+        }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        height: widget.height,
+        width: widget.width,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-            color: MyPuttColors.gray[100]!,
+            color: widget.backgroundColor,
             borderRadius: BorderRadius.circular(24)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -71,22 +102,20 @@ class _RetryButtonState extends State<RetryButton>
               builder: (BuildContext context, Widget? child) =>
                   Transform.rotate(
                 angle: _rotation.value,
-                child: Icon(
-                  FlutterRemix.refresh_line,
-                  size: 20,
-                  color: MyPuttColors.darkGray,
-                ),
+                child: Icon(FlutterRemix.refresh_line,
+                    size: widget.iconSize, color: widget.iconColor),
               ),
             ),
             const SizedBox(
-              width: 8,
+              width: 4,
             ),
-            AutoSizeText('Retry',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
-                maxLines: 1)
+            AutoSizeText(
+              widget.title,
+              style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                  color: widget.textColor,
+                  fontSize: widget.textSize,
+                  fontWeight: FontWeight.w500),
+            )
           ],
         ),
       ),

@@ -25,14 +25,16 @@ class MyProfileCubit extends Cubit<MyProfileState> {
   Future<void> reload() async {
     if (_userRepository.currentUser != null) {
       final PDGAPlayerInfo? playerInfo = await _webScraperService
-          .getPDGAData(_userRepository.currentUser?.pdgaNum);
+          .getPDGAData(_userRepository.currentUser?.pdgaNum)
+          .timeout(const Duration(seconds: 3));
       emit(MyProfileLoaded(
           myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
     } else {
       await _userRepository.fetchCurrentUser();
       if (_userRepository.currentUser != null) {
         final PDGAPlayerInfo? playerInfo = await _webScraperService
-            .getPDGAData(_userRepository.currentUser?.pdgaNum);
+            .getPDGAData(_userRepository.currentUser?.pdgaNum)
+            .timeout(const Duration(seconds: 3));
         emit(MyProfileLoaded(
             myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
       } else {

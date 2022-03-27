@@ -128,7 +128,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                                       ?.copyWith(
                                           fontSize: 20,
                                           color: difference == 0
-                                              ? MyPuttColors.gray[800]!
+                                              ? MyPuttColors.darkGray
                                               : MyPuttColors.blue)),
                               const SizedBox(
                                 width: 16,
@@ -236,7 +236,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                   style: Theme.of(context)
                       .textTheme
                       .headline6
-                      ?.copyWith(fontSize: 20, color: MyPuttColors.gray[800]),
+                      ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
                   textAlign: TextAlign.center,
                 ),
               ),
