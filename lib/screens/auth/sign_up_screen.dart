@@ -139,19 +139,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Widget _signInWithGoogleButton(BuildContext context) {
-  //   return PrimaryButton(
-  //     label: 'Sign in with Google',
-  //     iconColor: MyPuttColors.green,
-  //     app_icon: FlutterRemix.google_fill,
-  //     backgroundColor: MyPuttColors.gray[800]!,
-  //     width: 310,
-  //     onPressed: () {
-  //       _authService.signInWithGoogle();
-  //     },
-  //   );
-  // }
-
   Widget _signUpButton(BuildContext context) {
     return PrimaryButton(
         loading: _loading,
@@ -179,7 +166,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _errorText = _authService.exception;
               });
             } else {
-              Navigator.pop(context);
+              int count = 0;
+              Navigator.popUntil(context, (route) {
+                return count++ == 2;
+              });
             }
           }
         });

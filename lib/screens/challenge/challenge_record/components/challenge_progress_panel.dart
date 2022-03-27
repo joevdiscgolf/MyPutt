@@ -129,7 +129,7 @@ class ChallengeProgressPanel extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+                  ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
             ),
           ],
         ),

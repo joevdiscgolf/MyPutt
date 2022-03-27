@@ -45,7 +45,7 @@ class PuttingStatRow extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .headline6
-                      ?.copyWith(color: MyPuttColors.gray[800]!, fontSize: 24)),
+                      ?.copyWith(color: MyPuttColors.darkGray, fontSize: 24)),
             ),
             Builder(builder: (context) {
               if (allTimePercentage != null && percentage != null) {

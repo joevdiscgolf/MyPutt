@@ -68,6 +68,7 @@ dependencies:
   table_calendar: ^3.0.4
   introduction_screen: ^3.0.0
   shared_preferences: ^2.0.13
+  smooth_page_indicator: ^1.0.0+2
 
 dev_dependencies:
   flutter_test:

@@ -176,7 +176,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(color: MyPuttColors.gray[800], fontSize: 16),
+                ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             maxLines: 1,
           ),
         ),

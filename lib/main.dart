@@ -6,9 +6,8 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/screens/introduction/introduction_screen.dart';
+import 'package:myputt/screens/introduction/intro_screen.dart';
 import 'package:myputt/screens/upgrade/force_upgrade_screen.dart';
-import 'package:myputt/screens/auth/landing_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
@@ -68,12 +67,11 @@ class MyApp extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.data == AppScreenState.loggedIn) {
                 return const MainWrapper();
-              } else if (snapshot.data == AppScreenState.notLoggedIn) {
-                return const LandingScreen();
+              } else if (snapshot.data == AppScreenState.notLoggedIn ||
+                  snapshot.data == AppScreenState.firstRun) {
+                return const IntroScreen();
               } else if (snapshot.data == AppScreenState.forceUpgrade) {
                 return const ForceUpgradeScreen();
-              } else if (snapshot.data == AppScreenState.firstRun) {
-                return MyPuttIntroductionScreen();
               } else {
                 return const EnterDetailsScreen();
               }

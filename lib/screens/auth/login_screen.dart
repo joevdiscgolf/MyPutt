@@ -4,23 +4,23 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
+import 'package:myputt/components/buttons/spinner_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
-class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key, this.isFirstRun = false}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key, this.isFirstRun = false}) : super(key: key);
 
   final bool isFirstRun;
 
   @override
-  State<LandingScreen> createState() => _LandingScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LandingScreenState extends State<LandingScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -57,10 +57,26 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body:
-            _connected ? _connectedBody(context) : _disconnectedBody(context));
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(
+                FlutterRemix.arrow_left_s_line,
+                color: MyPuttColors.darkGray,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+          ),
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.white,
+          body: _connected
+              ? _connectedBody(context)
+              : _disconnectedBody(context)),
+    );
   }
 
   Widget _disconnectedBody(BuildContext context) {
@@ -70,59 +86,51 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _connectedBody(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.center,
-                child: Center(
-                  child: _header(context),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            _header(context),
+            Column(
+              children: [
+                _emailField(context),
+                _passwordField(context),
+                const SizedBox(height: 8),
+                _signInButton(context, true),
+                const SizedBox(height: 36),
+                _error
+                    ? SizedBox(
+                        height: 50,
+                        child: Text(_errorText,
+                            style: const TextStyle(color: Colors.red)),
+                      )
+                    : Container(height: 50),
+                Text("Don't have an account?",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: MyPuttColors.gray[400])),
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
-              Column(
-                children: [
-                  _emailField(context),
-                  _passwordField(context),
-                  const SizedBox(height: 8),
-                  _signInButton(context, true),
-                  const SizedBox(height: 36),
-                  _error
-                      ? SizedBox(
-                          height: 50,
-                          child: Text(_errorText,
-                              style: const TextStyle(color: Colors.red)),
-                        )
-                      : Container(height: 50),
-                  Text("Don't have an account?",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(color: MyPuttColors.gray[400])),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  MyPuttButton(
-                    title: 'Sign up',
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const SignUpScreen()));
-                    },
-                    color: Colors.transparent,
-                    textColor: MyPuttColors.blue,
-                  )
-                ],
-              ),
-            ],
-          ),
+                MyPuttButton(
+                  title: 'Sign up',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const SignUpScreen()));
+                  },
+                  color: Colors.transparent,
+                  textColor: MyPuttColors.blue,
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -136,27 +144,31 @@ class _LandingScreenState extends State<LandingScreen> {
         children: <Widget>[
           RichText(
             text: TextSpan(
+              style: Theme.of(context).textTheme.headline4,
               children: [
                 TextSpan(
                     text: 'My',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: MyPuttColors.gray[800]!, fontSize: 64)),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color: MyPuttColors.darkBlue,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 40)),
                 TextSpan(
                     text: 'Putt',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineLarge
-                        ?.copyWith(color: MyPuttColors.blue, fontSize: 64)),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color: MyPuttColors.darkGray,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 40)),
               ],
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Master your game',
-            style: Theme.of(context).textTheme.headline6!.copyWith(
-                color: Colors.grey[400],
-                fontWeight: FontWeight.w500,
-                fontSize: 20),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+                  color: MyPuttColors.gray[400]!,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ]);
   }
@@ -241,46 +253,18 @@ class _LandingScreenState extends State<LandingScreen> {
   }
 
   Widget _signInButton(BuildContext context, bool signIn) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        PrimaryButton(
-            loading: _loading,
-            disabled: _email == null || _email == '' || _checkDisabled(),
-            label: 'Sign in',
-            fontSize: 20,
-            backgroundColor: Colors.blue,
-            height: 48,
-            width: 260,
-            onPressed: () async {
-              if (_email == null || _password == null) {
-                setState(() {
-                  _error = true;
-                  _errorText = 'Missing username or password';
-                });
-              } else {
-                setState(() {
-                  _loading = true;
-                });
-                final signinSuccess = await _signinService
-                    .attemptSignInWithEmail(_email!, _password!)
-                    .timeout(const Duration(seconds: 3));
-                if (!signinSuccess) {
-                  setState(() {
-                    _loading = false;
-                    _error = true;
-                    _errorText = _signinService.errorMessage;
-                  });
-                } else {
-                  if (widget.isFirstRun) {
-                    Navigator.pop(context);
-                  }
-                }
-              }
-            }),
-      ],
+    return SpinnerButton(
+      repeat: _loading,
+      disabled: _checkDisabled(),
+      title: 'Sign in',
+      textSize: 20,
+      textColor: MyPuttColors.white,
+      backgroundColor: Colors.blue,
+      iconColor: MyPuttColors.white,
+      iconSize: 20,
+      height: 48,
+      width: 260,
+      onPressed: _onLogin,
     );
   }
 
@@ -289,5 +273,30 @@ class _LandingScreenState extends State<LandingScreen> {
         _password!.length < 8 ||
         _email == null ||
         _email!.isEmpty;
+  }
+
+  void _onLogin() async {
+    if (_email == null || _password == null) {
+      setState(() {
+        _error = true;
+        _errorText = 'Missing username or password';
+      });
+    } else {
+      setState(() {
+        _loading = true;
+      });
+      final signinSuccess = await _signinService
+          .attemptSignInWithEmail(_email!, _password!)
+          .timeout(const Duration(seconds: 3));
+      if (!signinSuccess) {
+        setState(() {
+          _loading = false;
+          _error = true;
+          _errorText = _signinService.errorMessage;
+        });
+      } else {
+        Navigator.pop(context);
+      }
+    }
   }
 }

@@ -125,8 +125,10 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
               )),
           child: Center(
               child: Text((index).toString(),
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
-                      fontSize: 20, color: MyPuttColors.gray[800]!))),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray))),
         );
       }
     });

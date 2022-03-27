@@ -1,40 +1,34 @@
-import 'package:introduction_screen/introduction_screen.dart';
-import 'package:flutter/material.dart';
+import 'components/carousel_item.dart';
 
-final List<PageViewModel> kIntroPages = [
-  PageViewModel(
-      title: 'Take your putting to the next level',
-      body: "Record your putting sessions from anywhere in a few taps.",
-      image: const Image(
-        image: AssetImage(kSessionsScreenScreenshot),
-      )),
-  PageViewModel(
-      title: 'Challenge your friends',
-      body: 'Compete head-to-head or when you have time.',
-      image: const Image(
-        image: AssetImage(kChallengeRecordScreenshot),
-      )),
-  PageViewModel(
+const List<CarouselItem> kCarouselItems = [
+  CarouselItem(
+    assetPath: kSessionsScreenScreenshotSrc,
+    title: 'Take your putting to the next level',
+    limitWidth: true,
+    subtitle: "Record your putting sessions from anywhere in a few taps",
+  ),
+  CarouselItem(
+    assetPath: kChallengeRecordScreenshotSrc,
+    title: 'Challenge your friends',
+    limitWidth: true,
+    subtitle: 'Compete head-to-head or when you have time',
+  ),
+  CarouselItem(
+    assetPath: kHomeScreenScreenshotSrc,
     title: 'Track your progress',
-    image: const Image(
-      image: AssetImage(kHomeScreenScreenshot),
-    ),
-    body: 'Watch your practice pay off',
+    subtitle: 'Watch your practice pay off',
   ),
-  PageViewModel(
-    title: 'Lifetime stats',
-    body: 'View detailed stats for challenges and practice sessions.',
-    image: const Image(
-      image: AssetImage(kLifetimeStatsScreenshots),
-    ),
-  ),
+  CarouselItem(
+      title: 'View lifetime stats',
+      subtitle: 'View your stats for challenges and sessions',
+      assetPath: kLifetimeStatsScreenshotsSrc)
 ];
 
-const String kLifetimeStatsScreenshots =
+const String kLifetimeStatsScreenshotsSrc =
     'assets/introduction_screen/lifetime_stats_sim_screenshot.png';
-const String kSessionsScreenScreenshot =
+const String kSessionsScreenScreenshotSrc =
     'assets/introduction_screen/session_screen_cutout.png';
-const String kChallengeRecordScreenshot =
+const String kChallengeRecordScreenshotSrc =
     'assets/introduction_screen/challenge_record_screenshot.png';
-const String kHomeScreenScreenshot =
+const String kHomeScreenScreenshotSrc =
     'assets/introduction_screen/home_screen_cutout.png';

@@ -47,7 +47,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                   .headline6
                                   ?.copyWith(
                                     fontSize: 16,
-                                    color: MyPuttColors.gray[800],
+                                    color: MyPuttColors.darkGray,
                                   ),
                               textAlign: TextAlign.center,
                               maxLines: 1,
@@ -150,7 +150,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Class',
                                 style: Theme.of(context)
@@ -172,7 +172,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Rating',
                                 style: Theme.of(context)
@@ -194,7 +194,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Since',
                                 style: Theme.of(context)
@@ -223,7 +223,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Events',
                                 style: Theme.of(context)
@@ -245,7 +245,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Wins',
                                 style: Theme.of(context)
@@ -270,7 +270,7 @@ class PDGAInfoPanel extends StatelessWidget {
                                     .headline6
                                     ?.copyWith(
                                         fontSize: 16,
-                                        color: MyPuttColors.gray[800]),
+                                        color: MyPuttColors.darkGray),
                                 maxLines: 1),
                             AutoSizeText('Earnings',
                                 style: Theme.of(context)
@@ -294,7 +294,7 @@ class PDGAInfoPanel extends StatelessWidget {
                       AutoSizeText(
                         'Next event: ',
                         style: Theme.of(context).textTheme.headline6?.copyWith(
-                            fontSize: 16, color: MyPuttColors.gray[800]),
+                            fontSize: 16, color: MyPuttColors.darkGray),
                         maxLines: 1,
                       ),
                       AutoSizeText(playerInfo.nextEvent ?? 'N/A',

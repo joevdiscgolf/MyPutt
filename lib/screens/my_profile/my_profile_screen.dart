@@ -45,7 +45,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         body: BlocBuilder<MyProfileCubit, MyProfileState>(
           builder: (context, state) {
             if (state is MyProfileLoaded) {
-              final List<Widget> bodyChidren = [
+              final List<Widget> bodyChildren = [
                 _basicInfoPanel(context),
                 _percentagesPanel(context),
                 const SizedBox(height: 8),
@@ -73,8 +73,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   slivers: [
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
-                          (context, index) => bodyChidren[index],
-                          childCount: bodyChidren.length),
+                          (context, index) => bodyChildren[index],
+                          childCount: bodyChildren.length),
                     ),
                   ],
                 ),
@@ -102,9 +102,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         height: 50,
         title: 'Log out',
         iconData: FlutterRemix.logout_box_line,
-        iconColor: MyPuttColors.gray[800]!,
+        iconColor: MyPuttColors.darkGray,
         color: Colors.transparent,
-        textColor: MyPuttColors.gray[800]!,
+        textColor: MyPuttColors.darkGray,
       ),
     );
   }
@@ -191,7 +191,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   .textTheme
                                   .headline6
                                   ?.copyWith(
-                                      color: MyPuttColors.gray[800],
+                                      color: MyPuttColors.darkGray,
                                       fontSize: 16),
                             )
                           ],
@@ -241,7 +241,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+                ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
           ),
         ),
         Container(
@@ -338,7 +338,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   style: Theme.of(context)
                       .textTheme
                       .headline6
-                      ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+                      ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                 ),
               ),
               LifetimeStatRow(

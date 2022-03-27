@@ -242,7 +242,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
     final Uri uri =
         await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
-    print(uri);
     return '${currentUser.displayName} is challenging you to a putting competition! $uri';
   }
 
@@ -268,7 +267,6 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     await locator.get<DatabaseService>().setUnclaimedChallenge(newChallenge);
     final Uri uri =
         await _dynamicLinkService.generateDynamicLinkFromId(newChallenge.id);
-    print(uri);
     return '${currentUser.displayName} is challenging you to a putting competition! $uri';
   }
 
