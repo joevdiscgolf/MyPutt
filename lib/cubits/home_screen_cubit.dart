@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
+import 'package:myputt/screens/home/components/calendar_view/utils.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
@@ -19,19 +21,24 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   int timeRangeIndex = 0;
 
   HomeScreenCubit() : super(HomeScreenLoading()) {
-    reloadStats();
+    reload();
   }
 
-  void reloadStats() {
+  void reload() {
     final Stats stats = _statsService.getStatsForRange(
       indexToTimeRange[timeRangeIndex]!,
       _sessionRepository.allSessions,
       _challengesRepository.completedChallenges,
     );
+    final List<Event> events = _statsService.getCalendarEvents(
+        _sessionRepository.allSessions,
+        _challengesRepository.completedChallenges);
     emit(HomeScreenLoaded(
         stats: stats,
         sessionRange: timeRangeIndex,
-        allSessions: _sessionRepository.allSessions));
+        allSessions: _sessionRepository.allSessions,
+        allChallenges: _challengesRepository.completedChallenges,
+        events: events));
   }
 
   void updateTimeRangeIndex(int newIndex) {

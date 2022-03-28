@@ -30,7 +30,7 @@ class UndoButton extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(48)),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     FlutterRemix.arrow_go_back_line,
                     color: MyPuttColors.darkGray,

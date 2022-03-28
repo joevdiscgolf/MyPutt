@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/utils/colors.dart';
+
+import 'components/shadow_circular_indicator.dart';
 
 class PuttingStatRow extends StatelessWidget {
   const PuttingStatRow({

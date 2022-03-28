@@ -94,7 +94,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       Vibrate.feedback(FeedbackType.light);
                       Navigator.pop(context);
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       FlutterRemix.arrow_left_s_line,
                       color: MyPuttColors.darkGray,
                     )),

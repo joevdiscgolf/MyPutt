@@ -112,7 +112,7 @@ class _SessionsState extends State<SessionsScreen> {
                     delete: () {
                       BlocProvider.of<SessionsCubit>(context)
                           .deleteSession(entry.value);
-                      BlocProvider.of<HomeScreenCubit>(context).reloadStats();
+                      BlocProvider.of<HomeScreenCubit>(context).reload();
                     },
                     isCurrentSession: false,
                     onTap: () {

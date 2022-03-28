@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 
 class PuttingSetRow extends StatefulWidget {
   const PuttingSetRow({
@@ -84,9 +84,6 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
           const Spacer(),
           ShadowCircularIndicator(
             size: 60,
-            // color: colorFromDecimal(widget.set.puttsMade.toDouble() /
-            //     widget.set.puttsAttempted.toDouble()),
-            // backgroundColor: Colors.grey[200],
             decimal: widget.set.puttsMade / widget.set.puttsAttempted,
             // strokeWidth: 5,
           ),

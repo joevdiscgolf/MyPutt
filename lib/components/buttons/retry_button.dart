@@ -71,7 +71,7 @@ class _RetryButtonState extends State<RetryButton>
               builder: (BuildContext context, Widget? child) =>
                   Transform.rotate(
                 angle: _rotation.value,
-                child: Icon(
+                child: const Icon(
                   FlutterRemix.refresh_line,
                   size: 20,
                   color: MyPuttColors.darkGray,
