@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
@@ -39,6 +40,7 @@ class _PerformanceCalendarPanelState extends State<PerformanceCalendarPanel> {
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
+      Vibrate.feedback(FeedbackType.light);
       widget.onDateChanged(selectedDay);
       setState(() {
         _selectedDay = selectedDay;
