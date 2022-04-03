@@ -13,13 +13,15 @@ class ConditionsRow extends StatefulWidget {
       required this.iconData,
       required this.onPressed,
       required this.label,
-      required this.type})
+      required this.type,
+      this.initialIndex = 0})
       : super(key: key);
 
   final IconData iconData;
   final Function onPressed;
   final String label;
   final ConditionsType type;
+  final int initialIndex;
 
   @override
   State<ConditionsRow> createState() => _ConditionsRowState();
@@ -27,10 +29,11 @@ class ConditionsRow extends StatefulWidget {
 
 class _ConditionsRowState extends State<ConditionsRow> {
   late final List<dynamic> _conditionOptions;
-  int _index = 0;
+  late int _index;
 
   @override
   void initState() {
+    _index = widget.initialIndex;
     _conditionOptions = getConditionOptions();
     super.initState();
   }
@@ -78,12 +81,12 @@ class _ConditionsRowState extends State<ConditionsRow> {
               title: getTitle(),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               onPressed: () {
-                widget.onPressed(_conditionOptions[_index]);
                 if (_index < _conditionOptions.length - 1) {
                   setState(() => _index++);
                 } else {
                   setState(() => _index = 0);
                 }
+                widget.onPressed(_conditionOptions[_index]);
               },
             )
           ],

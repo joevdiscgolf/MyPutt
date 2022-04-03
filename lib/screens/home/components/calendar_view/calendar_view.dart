@@ -75,7 +75,7 @@ class _CalendarViewState extends State<CalendarView>
                             padding: const EdgeInsets.only(top: 8),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                  end: const Alignment(1, 0),
+                                  end: const Alignment(0.8, 0),
                                   transform:
                                       const GradientRotation(3 * math.pi / 2),
                                   colors: [

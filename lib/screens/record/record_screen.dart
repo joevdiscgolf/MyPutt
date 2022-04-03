@@ -7,6 +7,7 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
@@ -206,6 +207,7 @@ class _RecordScreenState extends State<RecordScreen> {
         //   type: ConditionsType.weather,
         // ),
         ConditionsRow(
+          initialIndex: distanceToIndex[_distance]!,
           onPressed: (int dist) => setState(() => _distance = dist),
           iconData: FlutterRemix.map_pin_2_line,
           label: 'Distance',
