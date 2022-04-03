@@ -51,6 +51,17 @@ const Map<WeatherCondition, String> weatherConditionsEnumMap = {
 
 const List<int> distanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
 
+const Map<int, int> distanceToIndex = {
+  10: 0,
+  15: 1,
+  20: 2,
+  25: 3,
+  30: 4,
+  40: 5,
+  50: 6,
+  60: 7
+};
+
 List<ConnectivityResult> validConnectivityResults = [
   ConnectivityResult.wifi,
   ConnectivityResult.mobile

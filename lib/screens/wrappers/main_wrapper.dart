@@ -42,7 +42,7 @@ class _MainWrapperState extends State<MainWrapper> {
         enableFeedback: true,
         onTap: (int index) {
           if (index == 0) {
-            BlocProvider.of<HomeScreenCubit>(context).reloadStats();
+            BlocProvider.of<HomeScreenCubit>(context).reload();
           } else if (index == 1) {
             BlocProvider.of<SessionsCubit>(context).reload();
           } else if (index == 3) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/screens/home/components/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 
 class ChallengeRecordSetRow extends StatelessWidget {
   const ChallengeRecordSetRow(

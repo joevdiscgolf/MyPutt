@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/putting_session.dart';
-import 'package:myputt/screens/home/components/rows/putting_stat_row.dart';
+import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';

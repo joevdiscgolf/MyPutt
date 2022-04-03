@@ -7,6 +7,7 @@ import 'package:myputt/data/types/putting_session.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/putting_set.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/home/components/calendar_view/utils.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
@@ -385,5 +386,26 @@ class StatsService {
       totalSets += setsWithDistance.length;
     }
     return totalSets;
+  }
+
+  List<Event> getCalendarEvents(
+      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+    List<Event> events = [];
+
+    for (PuttingSession session in sessions) {
+      events.add(Event(
+          dateTime: DateTime.fromMillisecondsSinceEpoch(session.timeStamp),
+          item: session));
+    }
+    challenges = challenges
+        .where((challenge) => challenge.completionTimeStamp != null)
+        .toList();
+    for (PuttingChallenge challenge in challenges) {
+      events.add(Event(
+          dateTime: DateTime.fromMillisecondsSinceEpoch(
+              challenge.completionTimeStamp!),
+          item: challenge));
+    }
+    return events;
   }
 }

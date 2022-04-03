@@ -65,10 +65,12 @@ dependencies:
   connectivity_plus: ^2.2.1
   syncfusion_flutter_charts: ^19.4.56
   fade_shimmer: ^2.0.1
-  table_calendar: ^3.0.4
+  table_calendar:
+    path: ./custom_plugins/table_calendar-3.0.5
   introduction_screen: ^3.0.0
   shared_preferences: ^2.0.13
   smooth_page_indicator: ^1.0.0+2
+  syncfusion_flutter_calendar: ^19.4.56
 
 dev_dependencies:
   flutter_test:

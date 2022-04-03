@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:myputt/screens/home/components/calendar/performance_calendar_panel.dart';
-import 'package:myputt/screens/home/components/charts/performance_chart_panel.dart';
-import 'package:myputt/screens/home/components/putting_stats_page.dart';
+import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/screens/home/components/stats_view/stats_view.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
+
+import 'components/calendar_view/calendar_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,39 +17,30 @@ class HomeScreen extends StatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  final PerformanceViewMode _performanceViewMode = PerformanceViewMode.chart;
-  late final TabController _rangeTabController;
-  late final TabController _circlesController;
-  late ScrollController _scrollController;
-
-  Map<int, int> indexToTimeRange = {
-    0: TimeRange.lastFive,
-    1: TimeRange.lastTwenty,
-    2: TimeRange.lastFifty,
-    3: TimeRange.allTime,
-  };
+class HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  PerformanceViewMode _performanceViewMode = PerformanceViewMode.chart;
+  late final TabController _calendarChartTabController;
 
   @override
   void initState() {
-    _scrollController = ScrollController();
-    _rangeTabController = TabController(length: 4, vsync: this);
-    _circlesController = TabController(length: 2, vsync: this);
+    _calendarChartTabController = TabController(length: 2, vsync: this);
+    _calendarChartTabController.addListener(() => setState(() =>
+        _performanceViewMode = _calendarChartTabController.index == 0
+            ? PerformanceViewMode.chart
+            : PerformanceViewMode.calendar));
     super.initState();
   }
 
   @override
   void dispose() {
-    _rangeTabController.dispose();
-    _circlesController.dispose();
-    _scrollController.dispose();
+    _calendarChartTabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[100]!,
         appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
@@ -66,147 +57,42 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ),
         ),
-        body: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (BuildContext context, bool value) {
-            return [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    Container(
-                        padding: const EdgeInsets.only(top: 8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              end: const Alignment(1, 0),
-                              transform:
-                                  const GradientRotation(3 * math.pi / 2),
-                              colors: [
-                                MyPuttColors.blue.withOpacity(0.8),
-                                MyPuttColors.white,
-                              ]),
-                        ),
-                        child: Column(
-                          children: [
-                            // _calendarChartButtons(context),
-                            _performanceViewMode == PerformanceViewMode.chart
-                                ? PerformanceChartPanel(
-                                    rangeTabController: _rangeTabController,
-                                  )
-                                : const PerformanceCalendarPanel(),
-                          ],
-                        )),
-                    _circlesTabBar(context)
-                  ],
-                ),
-              ),
-            ];
-          },
-          body: TabBarView(controller: _circlesController, children: [
-            PuttingStatsPage(
-              circle: Circles.circle1,
-              timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
-              screenType: 'home',
-            ),
-            PuttingStatsPage(
-              circle: Circles.circle2,
-              timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
-              screenType: 'home',
-            ),
-          ]),
+        body: Column(
+          children: [
+            _calendarChartTabBar(context),
+            Expanded(
+                child: TabBarView(
+              controller: _calendarChartTabController,
+              children: const [
+                StatsView(),
+                CalendarView(),
+              ],
+            ))
+          ],
         ));
   }
-  //
-  // Widget _calendarChartButtons(BuildContext context) {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.end,
-  //     children: [
-  //       Bounceable(
-  //           onTap: () {
-  //             Vibrate.feedback(FeedbackType.light);
-  //             setState(() => _performanceViewMode = PerformanceViewMode.chart);
-  //           },
-  //           child: Container(
-  //               decoration: BoxDecoration(
-  //                   borderRadius: BorderRadius.circular(12),
-  //                   color: _performanceViewMode == PerformanceViewMode.chart
-  //                       ? MyPuttColors.gray[200]
-  //                       : Colors.transparent),
-  //               padding: const EdgeInsets.all(8),
-  //               child: const Icon(FlutterRemix.line_chart_line))),
-  //       const SizedBox(
-  //         width: 8,
-  //       ),
-  //       Bounceable(
-  //         onTap: () {
-  //           Vibrate.feedback(FeedbackType.light);
-  //           setState(() => _performanceViewMode = PerformanceViewMode.calendar);
-  //         },
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(12),
-  //               color: _performanceViewMode == PerformanceViewMode.calendar
-  //                   ? MyPuttColors.gray[200]
-  //                   : Colors.transparent),
-  //           padding: const EdgeInsets.all(8),
-  //           child: const Icon(FlutterRemix.calendar_line),
-  //         ),
-  //       ),
-  //       const SizedBox(
-  //         width: 8,
-  //       )
-  //     ],
-  //   );
-  // }
 
-  Widget _circlesTabBar(BuildContext context) {
-    return Container(
-      color: MyPuttColors.white,
-      height: 60,
-      child: TabBar(
-        controller: _circlesController,
-        labelPadding: const EdgeInsets.all(0),
-        indicatorPadding: const EdgeInsets.all(0),
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        labelColor: Colors.blue,
-        unselectedLabelColor: Colors.black,
-        indicator: const UnderlineTabIndicator(
-            borderSide: BorderSide(color: MyPuttColors.blue)),
-        tabs: const [
-          HomeScreenTab(
-            label: 'Circle 1',
-          ),
-          HomeScreenTab(label: 'Circle 2'),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeScreenTab extends StatelessWidget {
-  const HomeScreenTab({
-    Key? key,
-    required this.label,
-    this.icon,
-  }) : super(key: key);
-
-  final String label;
-  final Icon? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        // margin: const EdgeInsets.all(4),
-        padding: const EdgeInsets.all(4),
-        child: Tab(
-            icon: icon,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(label),
-              ],
-            )),
-      ),
+  Widget _calendarChartTabBar(BuildContext context) {
+    return TabBar(
+      controller: _calendarChartTabController,
+      indicator: const UnderlineTabIndicator(
+          borderSide: BorderSide(color: MyPuttColors.darkGray)),
+      tabs: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          child: Icon(FlutterRemix.line_chart_line,
+              color: _performanceViewMode == PerformanceViewMode.chart
+                  ? MyPuttColors.darkBlue
+                  : MyPuttColors.gray[400]),
+        ),
+        Container(
+          padding: const EdgeInsets.all(8),
+          child: Icon(FlutterRemix.calendar_line,
+              color: _performanceViewMode == PerformanceViewMode.calendar
+                  ? MyPuttColors.darkBlue
+                  : MyPuttColors.gray[400]),
+        ),
+      ],
     );
   }
 }

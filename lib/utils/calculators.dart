@@ -33,11 +33,13 @@ double weightedAverageOfAdjacent(
     List<ChartPoint> points, int range, int focusIndex) {
   double sumOfWeightings = 0;
   double weightedTotal = 0;
-  sumOfWeightings *= 2;
+
   for (var index = 1; index < range + 1; index++) {
+    // Make sure it doesn't take a negative index.
     if (focusIndex - index < 0) {
       break;
     } else {
+      // weighting decreases as index increases.
       num weighting = range - (index - 1);
       sumOfWeightings += weighting;
       weightedTotal += weighting * points[focusIndex - index].decimal;
@@ -45,15 +47,17 @@ double weightedAverageOfAdjacent(
   }
 
   for (var index = 1; index < range + 1; index++) {
+    // Make sure it doesn't take an index greater than the chart length
     if (focusIndex + index > points.length - 1) {
       break;
     } else {
+      // weighting decreases as index increases.
       num weighting = range - (index - 1);
       sumOfWeightings += weighting;
       weightedTotal += weighting * points[focusIndex + index].decimal;
     }
   }
-  return sumOfWeightings.toDouble() == 0
+  return sumOfWeightings == 0
       ? 1
       : double.parse((weightedTotal.toDouble() / sumOfWeightings.toDouble())
           .toStringAsFixed(4));
@@ -108,7 +112,7 @@ int totalAttemptsFromSets(List<PuttingSet> sets) {
 int totalMadeFromSubset(List<PuttingSet> sets, int limit) {
   int total = 0;
   for (int i = 0; i < limit; i++) {
-    total += sets[i].puttsMade.toInt();
+    total += sets[i].puttsMade;
   }
   return total;
 }
@@ -116,7 +120,7 @@ int totalMadeFromSubset(List<PuttingSet> sets, int limit) {
 int totalAttemptsFromSubset(List<PuttingSet> sets, int limit) {
   int total = 0;
   for (int i = 0; i < limit; i++) {
-    total += sets[i].puttsAttempted.toInt();
+    total += sets[i].puttsAttempted;
   }
   return total;
 }
