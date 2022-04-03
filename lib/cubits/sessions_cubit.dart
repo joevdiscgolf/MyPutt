@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:myputt/data/types/putting_set.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/stats_service.dart';

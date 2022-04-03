@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/challenge_record_set_row.dart';

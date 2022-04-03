@@ -30,7 +30,6 @@ class _ChallengesState extends State<ChallengesScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    BlocProvider.of<ChallengesCubit>(context).reload();
     return DefaultTabController(
         length: 3,
         child: Scaffold(

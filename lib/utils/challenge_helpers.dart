@@ -1,5 +1,5 @@
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
 
 bool currentUserSetsComplete(PuttingChallenge challenge) {

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
 part 'putting_challenge.g.dart';

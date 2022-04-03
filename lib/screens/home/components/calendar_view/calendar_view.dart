@@ -9,7 +9,7 @@ import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
 import 'package:myputt/screens/home/components/calendar_view/performance_calendar_panel.dart';
 import 'package:myputt/screens/home/components/home_screen_tab.dart';

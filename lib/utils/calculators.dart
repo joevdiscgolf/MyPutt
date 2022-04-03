@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
 
 PerformanceChartData smoothChart(
