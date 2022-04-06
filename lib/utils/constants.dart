@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
@@ -140,3 +142,17 @@ const redFrisbeeImageIcon = SizedBox(
     image: AssetImage('assets/icons/frisbee_emoji_red.png'),
   ),
 );
+
+final kTestEvents = [
+  MyPuttEvent(
+      id: 'id',
+      code: 123,
+      name: 'Summer Sizzler',
+      challengeStructure: [],
+      divisions: [Division.mpo],
+      eventType: EventType.tournament,
+      endTimestamp: 0,
+      status: EventStatus.active,
+      creationTimestamp: 1,
+      completionTimestamp: 2)
+];

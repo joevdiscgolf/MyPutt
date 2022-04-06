@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
 
 import 'components/event_category_tab.dart';
+import 'components/events_list.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
@@ -24,6 +29,9 @@ class _EventsState extends State<EventsScreen>
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+            floatingActionButton: _newEventButton(context),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             backgroundColor: MyPuttColors.white,
             appBar: AppBar(
               title: Text(
@@ -62,11 +70,9 @@ class _EventsState extends State<EventsScreen>
     //       : c1.creationTimeStamp.compareTo(c2.creationTimeStamp);
     // });
     return TabBarView(children: [
+      EventsList(events: kTestEvents),
       Container(),
-      Container(),
-      // EventsList(
-      //     category: EventCategory.active,
-      //     Events: List.from(state.activeEvents.reversed)),
+
       // EventsList(
       //     category: EventCategory.pending,
       //     Events: List.from(state.pendingEvents.reversed)),
@@ -101,26 +107,22 @@ class _EventsState extends State<EventsScreen>
     );
   }
 
-  // Widget _newEventButton(BuildContext context) {
-  //   return Bounceable(
-  //       onTap: () {
-  //         Vibrate.feedback(FeedbackType.light);
-  //       },
-  //       child: Container(
-  //         padding: const EdgeInsets.symmetric(horizontal: 16),
-  //         child: MyPuttButton(
-  //           onPressed: () {
-  //             showDialog(
-  //                 context: context,
-  //                 builder: (BuildContext context) =>
-  //                     const SelectPresetDialog());
-  //           },
-  //           title: 'New Event',
-  //           iconData: FlutterRemix.add_line,
-  //           color: MyPuttColors.blue,
-  //           padding: const EdgeInsets.all(16),
-  //           width: MediaQuery.of(context).size.width / 2,
-  //           shadowColor: MyPuttColors.gray[400],
-  //         ),
-  //       ));
+  Widget _newEventButton(BuildContext context) {
+    return Bounceable(
+        onTap: () {
+          Vibrate.feedback(FeedbackType.light);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: MyPuttButton(
+            onPressed: () {},
+            title: 'New Event',
+            iconData: FlutterRemix.add_line,
+            color: MyPuttColors.blue,
+            padding: const EdgeInsets.all(16),
+            width: MediaQuery.of(context).size.width / 2,
+            shadowColor: MyPuttColors.gray[400],
+          ),
+        ));
+  }
 }
