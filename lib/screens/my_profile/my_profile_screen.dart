@@ -17,7 +17,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
 import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';
-import 'package:myputt/screens/my_profile/components/lifetime_stat_row.dart';
+import 'package:myputt/screens/my_profile/components/stat_row.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
@@ -341,7 +341,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                 ),
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Image(
                     image: AssetImage(blueFrisbeeIconSrc),
                     height: 24,
@@ -353,7 +353,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(
                 height: 4,
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Icon(
                     FlutterRemix.bar_chart_2_fill,
                     color: MyPuttColors.blue,
@@ -364,7 +364,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(
                 height: 4,
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Icon(
                     FlutterRemix.sword_fill,
                     color: MyPuttColors.blue,

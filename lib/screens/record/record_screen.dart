@@ -79,7 +79,11 @@ class _RecordScreenState extends State<RecordScreen> {
               ),
             ),
           ],
-          title: const Text('Record'),
+          title: Text('Record',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
         ),
         body: _mainBody(context));
   }
