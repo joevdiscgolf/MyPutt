@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/utils/colors.dart';
 import 'package:simple_gesture_detector/simple_gesture_detector.dart';
 
 import 'customization/calendar_builders.dart';
@@ -654,7 +653,7 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
       width: 14,
       height: 14,
       decoration: widget.calendarStyle.markerDecoration,
-      child: Center(
+      child: const Center(
           // child: Text(
           //   '$numEvents',
           //   textAlign: TextAlign.center,

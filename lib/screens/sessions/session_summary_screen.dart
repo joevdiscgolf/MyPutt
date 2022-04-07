@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
-import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.dart';
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
@@ -123,7 +122,7 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
               StatRow(
                   title: 'Date',
                   icon: const Icon(
-                    FlutterRemix.calendar_check_line,
+                    FlutterRemix.calendar_check_fill,
                     color: MyPuttColors.blue,
                     size: 28,
                   ),

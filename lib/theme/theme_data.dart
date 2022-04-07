@@ -10,7 +10,7 @@ ThemeData lightTheme(BuildContext context) {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     highlightColor: Colors.transparent,
     splashColor: Colors.transparent,
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       headline1: TextStyle(
         fontFamily: 'Inter',
         color: MyPuttColors.darkGray,

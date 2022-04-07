@@ -62,7 +62,7 @@ class CustomColor extends ColorSwatch<int> {
   }
 }
 
-class MyPuttColors {
+abstract class MyPuttColors {
   static const CustomColor gray = CustomColor(_grayPrimaryValue, {
     50: Color(0xffF7F7F7),
     100: Color(0xffEBEBEB),

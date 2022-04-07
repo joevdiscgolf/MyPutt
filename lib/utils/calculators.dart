@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/data/types/chart/chart_point.dart';
@@ -129,6 +130,15 @@ int totalAttemptsFromStructure(List<ChallengeStructureItem> structure) {
   int total = 0;
   for (var item in structure) {
     total += item.setLength;
+  }
+  return total;
+}
+
+int totalAttemptsFromPresetInstructions(
+    List<GeneratedChallengeItem> instructions) {
+  int total = 0;
+  for (GeneratedChallengeItem instruction in instructions) {
+    total += instruction.numSets * 10;
   }
   return total;
 }
