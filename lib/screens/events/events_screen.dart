@@ -91,14 +91,14 @@ class _EventsState extends State<EventsScreen>
           EventCategoryTab(
             label: 'Club',
             icon: Icon(
-              FlutterRemix.play_mini_line,
+              FlutterRemix.group_fill,
               size: 15,
             ),
           ),
           EventCategoryTab(
             label: 'Tournaments',
             icon: Icon(
-              FlutterRemix.repeat_line,
+              FlutterRemix.trophy_fill,
               size: 15,
             ),
           ),

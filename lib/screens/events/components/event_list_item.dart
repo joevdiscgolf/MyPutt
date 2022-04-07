@@ -37,7 +37,7 @@ class EventListItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.only(top: 12),
+                        padding: const EdgeInsets.only(top: 8),
                         child: Text(
                           event.name,
                           style: Theme.of(context)
