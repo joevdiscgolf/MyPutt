@@ -26,9 +26,9 @@ class _MainWrapperState extends State<MainWrapper> {
 
   final List<Widget> screens = <Widget>[
     const HomeScreen(),
-    const ChallengesScreen(),
     const SessionsScreen(),
-    const EventsScreen(),
+    const ChallengesScreen(),
+    // const EventsScreen(),
     const MyProfileScreen(),
   ];
 
@@ -59,6 +59,12 @@ class _MainWrapperState extends State<MainWrapper> {
             icon: Icon(FlutterRemix.home_2_fill),
             label: 'Home',
           ),
+          const BottomNavigationBarItem(
+            icon: Icon(
+              FlutterRemix.record_circle_fill,
+            ),
+            label: 'Record',
+          ),
           BottomNavigationBarItem(
             icon: BlocBuilder<ChallengesCubit, ChallengesState>(
               builder: (context, state) {
@@ -77,17 +83,10 @@ class _MainWrapperState extends State<MainWrapper> {
             ),
             label: 'Challenge',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(
-              FlutterRemix.record_circle_fill,
-              size: 32,
-            ),
-            label: 'Record',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.medal_2_fill),
-            label: 'Events',
-          ),
+          // const BottomNavigationBarItem(
+          //   icon: Icon(FlutterRemix.medal_2_fill),
+          //   label: 'Events',
+          // ),
           const BottomNavigationBarItem(
             icon: Icon(FlutterRemix.user_fill),
             label: 'Profile',
