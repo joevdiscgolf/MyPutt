@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;

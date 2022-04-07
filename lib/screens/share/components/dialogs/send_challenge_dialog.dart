@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/screens/share/share_sheet.dart';

@@ -1,6 +1,6 @@
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';

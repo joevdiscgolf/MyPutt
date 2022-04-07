@@ -3,7 +3,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/data/types/putting_session.dart';
+import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/data/types/stats/stats.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/helpers.dart';

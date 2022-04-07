@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/utils/colors.dart';
 
 class FinishSessionDialog extends StatefulWidget {

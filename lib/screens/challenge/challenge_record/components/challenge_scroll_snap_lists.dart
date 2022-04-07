@@ -4,7 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:myputt/data/types/putting_set.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ChallengeScrollSnapList extends StatefulWidget {
