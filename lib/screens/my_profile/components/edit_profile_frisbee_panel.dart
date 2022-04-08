@@ -40,8 +40,8 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
   @override
   Widget build(BuildContext context) {
     return BottomSheetPanel(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           'Edit icon',
@@ -54,18 +54,18 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
       const SizedBox(
         height: 16,
       ),
+      FrisbeeCircleIcon(
+        frisbeeAvatar: FrisbeeAvatar(
+            backgroundColorHex: _selectedBackgroundColorHex,
+            frisbeeIconColor: _frisbeeIconColor),
+        iconSize: 64,
+        size: 80,
+      ),
       Container(
         padding: const EdgeInsets.all(24),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FrisbeeCircleIcon(
-              frisbeeAvatar: FrisbeeAvatar(
-                  backgroundColorHex: _selectedBackgroundColorHex,
-                  frisbeeIconColor: _frisbeeIconColor),
-              iconSize: 64,
-              size: 100,
-            ),
             const SizedBox(
               width: 16,
             ),
@@ -96,32 +96,64 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
       child: Column(
         children: [
           Row(
-              children: frisbeeIconColorToSrc.entries
-                  .map((entry) => ColorMarker(
-                      onTap: () =>
-                          setState(() => _frisbeeIconColor = entry.key),
-                      isSelected: _frisbeeIconColor == entry.key,
-                      size: 24,
-                      color: frisbeeIconColorToColor[entry.key] ??
-                          MyPuttColors.blue))
-                  .toList()),
+            children: [
+              SizedBox(
+                height: 32,
+                width: 32,
+                child: Image(
+                  height: 32,
+                  width: 32,
+                  image: AssetImage(frisbeeIconColorToSrc[_frisbeeIconColor] ??
+                      redFrisbeeIconSrc),
+                ),
+              ),
+              const SizedBox(width: 24),
+              Row(
+                  children: frisbeeIconColorToSrc.entries
+                      .map((entry) => ColorMarker(
+                          onTap: () =>
+                              setState(() => _frisbeeIconColor = entry.key),
+                          isSelected: _frisbeeIconColor == entry.key,
+                          size: 24,
+                          color: frisbeeIconColorToColor[entry.key] ??
+                              MyPuttColors.blue))
+                      .toList()),
+            ],
+          ),
           const SizedBox(
-            width: 16,
+            width: 24,
           ),
           Row(
-              children: backgroundAvatarColors
-                  .map(
-                    (Color color) => ColorMarker(
-                        isSelected: _selectedBackgroundColorHex ==
-                            (myPuttColorToHex[color] ?? '2196F3'),
-                        size: 24,
-                        color: color,
-                        margin: const EdgeInsets.all(4),
-                        onTap: () => setState(() =>
-                            _selectedBackgroundColorHex =
-                                myPuttColorToHex[color]!)),
-                  )
-                  .toList())
+            children: [
+              Container(
+                height: 32,
+                width: 32,
+                padding: const EdgeInsets.all(4),
+                child: Container(
+                  height: 24,
+                  width: 24,
+                  decoration: BoxDecoration(
+                      color: HexColor(_selectedBackgroundColorHex),
+                      shape: BoxShape.circle),
+                ),
+              ),
+              const SizedBox(width: 24),
+              Row(
+                  children: backgroundAvatarColors
+                      .map(
+                        (Color color) => ColorMarker(
+                            isSelected: _selectedBackgroundColorHex ==
+                                (myPuttColorToHex[color] ?? '2196F3'),
+                            size: 24,
+                            color: color,
+                            margin: const EdgeInsets.all(4),
+                            onTap: () => setState(() =>
+                                _selectedBackgroundColorHex =
+                                    myPuttColorToHex[color]!)),
+                      )
+                      .toList()),
+            ],
+          )
         ],
       ),
     );

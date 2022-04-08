@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -23,7 +24,7 @@ import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'components/pdga_info_panel.dart';
+import 'components/pdga_info/pdga_info_cards.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -60,7 +61,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const PDGAInfoPanel(),
+                const PDGAInfoCards(),
                 const SizedBox(
                   height: 16,
                 )
@@ -101,7 +102,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         padding: const EdgeInsets.all(8),
         height: 50,
         title: 'Log out',
-        iconData: FlutterRemix.logout_box_line,
         iconColor: MyPuttColors.darkGray,
         color: Colors.transparent,
         textColor: MyPuttColors.darkGray,
@@ -199,21 +199,23 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         const SizedBox(
                           height: 12,
                         ),
-                        Text(
+                        AutoSizeText(
                           state.myUser.displayName,
                           style: Theme.of(context)
                               .textTheme
                               .headline6
                               ?.copyWith(
                                   color: MyPuttColors.lightBlue, fontSize: 40),
+                          maxLines: 1,
                         ),
-                        Text(
+                        AutoSizeText(
                           '@${state.myUser.username}',
                           style: Theme.of(context)
                               .textTheme
                               .headline6
                               ?.copyWith(
                                   color: MyPuttColors.gray[300], fontSize: 16),
+                          maxLines: 1,
                         ),
                       ],
                     )),
@@ -344,8 +346,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               StatRow(
                   icon: const Image(
                     image: AssetImage(blueFrisbeeIconSrc),
-                    height: 24,
-                    width: 24,
+                    height: 32,
+                    width: 32,
                   ),
                   title: 'Total putts',
                   subtitle:

@@ -99,10 +99,10 @@ const List<String> defeatSubtitles = [
 ];
 
 const Map<FrisbeeIconColor, String> frisbeeIconColorToSrc = {
+  FrisbeeIconColor.pink: pinkFrisbeeIconSrc,
   FrisbeeIconColor.purple: purpleFrisbeeIconSrc,
   FrisbeeIconColor.blue: blueFrisbeeIconSrc,
   FrisbeeIconColor.green: greenFrisbeeIconSrc,
-  FrisbeeIconColor.pink: pinkFrisbeeIconSrc,
   FrisbeeIconColor.red: redFrisbeeIconSrc,
 };
 

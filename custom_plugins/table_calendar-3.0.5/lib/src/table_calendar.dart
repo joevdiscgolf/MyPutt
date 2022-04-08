@@ -653,14 +653,6 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
       width: 14,
       height: 14,
       decoration: widget.calendarStyle.markerDecoration,
-      child: const Center(
-          // child: Text(
-          //   '$numEvents',
-          //   textAlign: TextAlign.center,
-          //   style: const TextStyle(
-          //       color: MyPuttColors.white, fontWeight: FontWeight.w600),
-          // ),
-          ),
     );
   }
 

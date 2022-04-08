@@ -4,6 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
@@ -108,11 +109,18 @@ class SessionListRow extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (BuildContext context) => ConfirmDialog(
-                        actionPressed: delete,
-                        title: 'Delete session',
-                        buttonlabel: 'Delete',
-                        confirmColor: MyPuttColors.red,
-                      ));
+                      actionPressed: delete,
+                      title: 'Delete session',
+                      message: 'Are you sure you want to delete this session?',
+                      buttonlabel: 'Delete',
+                      buttonColor: MyPuttColors.red,
+                      icon: const ShadowIcon(
+                        icon: Icon(
+                          FlutterRemix.alert_line,
+                          color: MyPuttColors.red,
+                          size: 60,
+                        ),
+                      )));
             },
             child: const Icon(
               FlutterRemix.delete_bin_line,

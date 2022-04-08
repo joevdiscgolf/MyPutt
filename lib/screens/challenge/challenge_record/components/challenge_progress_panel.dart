@@ -125,7 +125,7 @@ class ChallengeProgressPanel extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Set $setNumber',
+              'Set $setNumber / $maxSets',
               style: Theme.of(context)
                   .textTheme
                   .headline6

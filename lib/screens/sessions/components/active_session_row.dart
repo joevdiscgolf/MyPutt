@@ -86,8 +86,10 @@ class ActiveSessionRow extends StatelessWidget {
                               builder: (context) => ConfirmDialog(
                                     title: 'Delete Session',
                                     actionPressed: delete,
-                                    confirmColor: Colors.red,
                                     buttonlabel: 'Delete',
+                                    buttonColor: Colors.red,
+                                    icon: const Icon(
+                                        FlutterRemix.error_warning_fill),
                                   ));
                         }),
                   ],

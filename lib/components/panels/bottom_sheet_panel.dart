@@ -41,24 +41,10 @@ class BottomSheetPanel extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-                alignment: Alignment.topCenter,
-                child: _panelSlidingIndicator(context)),
-            const SizedBox(height: 22),
+            const SizedBox(height: 24),
             child,
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _panelSlidingIndicator(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 4,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(100)),
-        color: MyPuttColors.gray[200],
       ),
     );
   }

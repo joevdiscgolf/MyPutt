@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/utils/colors.dart';
@@ -87,33 +88,41 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
             decimal: widget.set.puttsMade / widget.set.puttsAttempted,
             // strokeWidth: 5,
           ),
-          widget.deletable
-              ? SizedBox(
-                  width: 50,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      child: const Icon(
-                        FlutterRemix.close_line,
-                        color: Colors.red,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => ConfirmDialog(
-                                actionPressed: widget.delete,
-                                buttonlabel: 'Delete',
-                                confirmColor: Colors.red,
-                                title: 'Delete set'));
-                      },
-                    ),
+          if (widget.deletable)
+            SizedBox(
+              width: 50,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  child: const Icon(
+                    FlutterRemix.close_line,
+                    color: Colors.red,
                   ),
-                )
-              : Container()
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => ConfirmDialog(
+                            actionPressed: widget.delete,
+                            title: 'Delete set',
+                            message:
+                                'Are you sure you want to delete this set?',
+                            buttonlabel: 'Delete',
+                            buttonColor: MyPuttColors.red,
+                            icon: const ShadowIcon(
+                              icon: Icon(
+                                FlutterRemix.alert_line,
+                                color: MyPuttColors.red,
+                                size: 60,
+                              ),
+                            )));
+                  },
+                ),
+              ),
+            )
         ],
       ),
     );
