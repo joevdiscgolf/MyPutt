@@ -9,8 +9,8 @@ import 'package:myputt/screens/my_profile/components/pdga_info/pdga_number_dialo
 import 'package:myputt/screens/my_profile/components/pdga_info/pdga_stat_tile.dart';
 import 'package:myputt/utils/colors.dart';
 
-class PDGAInfoCards extends StatelessWidget {
-  const PDGAInfoCards({Key? key}) : super(key: key);
+class PDGAInfoTiles extends StatelessWidget {
+  const PDGAInfoTiles({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

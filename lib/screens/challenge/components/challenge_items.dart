@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -19,70 +17,52 @@ import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
-class ChallengeItem extends StatefulWidget {
-  const ChallengeItem({
+class ChallengeItem extends StatelessWidget {
+  ChallengeItem({
     Key? key,
     required this.challenge,
     this.accept,
     this.decline,
+    required this.minLength,
+    required this.difference,
+    required this.currentUserPuttsMade,
+    required this.currentUserPuttsAttempted,
+    required this.opponentPuttsMade,
+    required this.opponentPuttsAttempted,
+    required this.activeChallenge,
   }) : super(key: key);
+
+  final UserRepository _userRepository = locator.get<UserRepository>();
 
   final PuttingChallenge challenge;
   final Function? accept;
   final Function? decline;
 
-  @override
-  _ChallengeItemState createState() => _ChallengeItemState();
-}
-
-class _ChallengeItemState extends State<ChallengeItem> {
-  final UserRepository _userRepository = locator.get<UserRepository>();
-
-  late final int difference;
-  late final String titleText;
-  late final int currentUserPuttsMade;
-  late final int currentUserPuttsAttempted;
-  late final int opponentPuttsMade;
-  late final int opponentPuttsAttempted;
-  late final Color color;
-  late final bool activeChallenge;
-
-  @override
-  void initState() {
-    activeChallenge = widget.challenge.status == ChallengeStatus.active;
-    final int minLength = min(
-      widget.challenge.currentUserSets.length,
-      widget.challenge.opponentSets.length,
-    );
-    currentUserPuttsMade =
-        totalMadeFromSubset(widget.challenge.currentUserSets, minLength);
-    currentUserPuttsAttempted =
-        totalAttemptsFromSubset(widget.challenge.currentUserSets, minLength);
-    opponentPuttsMade =
-        totalMadeFromSubset(widget.challenge.opponentSets, minLength);
-    opponentPuttsAttempted =
-        totalAttemptsFromSubset(widget.challenge.opponentSets, minLength);
-
-    difference = currentUserPuttsMade - opponentPuttsMade;
-
-    super.initState();
-  }
+  final int minLength;
+  final int difference;
+  final int currentUserPuttsMade;
+  final int currentUserPuttsAttempted;
+  final int opponentPuttsMade;
+  final int opponentPuttsAttempted;
+  final bool activeChallenge;
 
   @override
   Widget build(BuildContext context) {
     return Bounceable(
         onTap: () {
           Vibrate.feedback(FeedbackType.light);
-          if (widget.challenge.status == ChallengeStatus.active) {
-            BlocProvider.of<ChallengesCubit>(context)
-                .openChallenge(widget.challenge);
+          if (challenge.status == ChallengeStatus.active) {
+            BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ChallengeRecordScreen(challengeId: challenge.id)))
+                .then(
+                    (_) => BlocProvider.of<ChallengesCubit>(context).reload());
+          } else if (challenge.status == ChallengeStatus.complete) {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) =>
-                    ChallengeRecordScreen(challengeId: widget.challenge.id)));
-          } else if (widget.challenge.status == ChallengeStatus.complete) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    ChallengeSummaryScreen(challenge: widget.challenge)));
+                    ChallengeSummaryScreen(challenge: challenge)));
           }
         },
         child: Container(
@@ -99,7 +79,7 @@ class _ChallengeItemState extends State<ChallengeItem> {
                 ]),
             child: Column(
               children: [
-                if (widget.challenge.status == ChallengeStatus.complete) ...[
+                if (challenge.status == ChallengeStatus.complete) ...[
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -133,19 +113,18 @@ class _ChallengeItemState extends State<ChallengeItem> {
                       flex: 1,
                       child: _profileColumn(
                           context,
-                          widget.challenge.currentUser.displayName,
+                          challenge.currentUser.displayName,
                           _userRepository.currentUser?.frisbeeAvatar),
                     ),
                     Flexible(
                         flex: 2,
-                        child: _centerColumn(context, widget.challenge.status)),
+                        child: _centerColumn(context, challenge.status)),
                     Flexible(
                       flex: 1,
                       child: _profileColumn(
                           context,
-                          widget.challenge.opponentUser?.displayName ??
-                              'Unknown',
-                          widget.challenge.opponentUser?.frisbeeAvatar),
+                          challenge.opponentUser?.displayName ?? 'Unknown',
+                          challenge.opponentUser?.frisbeeAvatar),
                     ),
                   ],
                 ),
@@ -185,7 +164,7 @@ class _ChallengeItemState extends State<ChallengeItem> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              '${widget.challenge.challengeStructure.length} sets, ${totalAttemptsFromStructure(widget.challenge.challengeStructure)} putts',
+              '${challenge.challengeStructure.length} sets, ${totalAttemptsFromStructure(challenge.challengeStructure)} putts',
               style: Theme.of(context)
                   .textTheme
                   .headline6
@@ -196,8 +175,8 @@ class _ChallengeItemState extends State<ChallengeItem> {
             ),
             MyPuttButton(
               onPressed: () {
-                if (widget.accept != null) {
-                  widget.accept!();
+                if (accept != null) {
+                  accept!();
                 }
               },
               title: 'Accept',
@@ -211,8 +190,8 @@ class _ChallengeItemState extends State<ChallengeItem> {
             ),
             MyPuttButton(
               onPressed: () {
-                if (widget.decline != null) {
-                  widget.decline!();
+                if (decline != null) {
+                  decline!();
                 }
               },
               title: 'Decline',
@@ -227,7 +206,7 @@ class _ChallengeItemState extends State<ChallengeItem> {
         return Column(
           children: [
             Text(
-              '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.creationTimeStamp))}',
+              '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}',
               style: Theme.of(context)
                   .textTheme
                   .headline6

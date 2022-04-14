@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
@@ -9,7 +6,6 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.isFirstRun = false}) : super(key: key);
@@ -21,14 +17,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-
   final SigninService _signinService = locator.get<SigninService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  bool _connected = true;
 
   String? _email;
   String? _password;
@@ -38,12 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    _connectivitySubscription = _connectivity.onConnectivityChanged
-        .listen((ConnectivityResult _updatedStatus) {
-      setState(() {
-        _connected = validConnectivityResults.contains(_updatedStatus);
-      });
-    });
     super.initState();
   }
 
@@ -51,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -73,15 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
-          body: _connected
-              ? _connectedBody(context)
-              : _disconnectedBody(context)),
-    );
-  }
-
-  Widget _disconnectedBody(BuildContext context) {
-    return const Center(
-      child: Text('There was an error connecting'),
+          body: _connectedBody(context)),
     );
   }
 

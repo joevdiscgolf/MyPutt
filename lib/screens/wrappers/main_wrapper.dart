@@ -87,7 +87,7 @@ class _MainWrapperState extends State<MainWrapper> {
           //   label: 'Events',
           // ),
           const BottomNavigationBarItem(
-            icon: Icon(FlutterRemix.user_fill),
+            icon: Icon(FlutterRemix.user_3_fill),
             label: 'Profile',
           ),
         ],

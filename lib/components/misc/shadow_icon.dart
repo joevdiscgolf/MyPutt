@@ -21,7 +21,7 @@ class ShadowIcon extends StatelessWidget {
       height: 8,
       decoration: BoxDecoration(
           color: MyPuttColors.gray[200],
-          borderRadius: BorderRadius.all(const Radius.elliptical(600, 80))),
+          borderRadius: const BorderRadius.all(Radius.elliptical(600, 80))),
     );
   }
 }

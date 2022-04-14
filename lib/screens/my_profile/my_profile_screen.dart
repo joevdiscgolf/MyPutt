@@ -24,7 +24,7 @@ import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'components/pdga_info/pdga_info_cards.dart';
+import 'components/pdga_info/pdga_info_tiles.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -61,7 +61,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const PDGAInfoCards(),
+                const PDGAInfoTiles(),
                 const SizedBox(
                   height: 16,
                 )

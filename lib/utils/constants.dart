@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
@@ -63,11 +62,6 @@ const Map<int, int> distanceToIndex = {
   50: 6,
   60: 7
 };
-
-List<ConnectivityResult> validConnectivityResults = [
-  ConnectivityResult.wifi,
-  ConnectivityResult.mobile
-];
 
 const Map<int, int> indexToTimeRange = {
   0: TimeRange.lastFive,

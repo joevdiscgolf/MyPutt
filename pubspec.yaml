@@ -60,9 +60,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
   fl_chart: ^0.45.0
   package_info_plus: ^1.4.0
-  another_flushbar: ^1.10.28
   auto_size_text: ^3.0.0
-  connectivity_plus: ^2.2.1
   syncfusion_flutter_charts: ^19.4.56
   fade_shimmer: ^2.0.1
   table_calendar:
