@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
@@ -64,11 +63,6 @@ const Map<int, int> distanceToIndex = {
   60: 7
 };
 
-List<ConnectivityResult> validConnectivityResults = [
-  ConnectivityResult.wifi,
-  ConnectivityResult.mobile
-];
-
 const Map<int, int> indexToTimeRange = {
   0: TimeRange.lastFive,
   1: TimeRange.lastTwenty,
@@ -99,10 +93,10 @@ const List<String> defeatSubtitles = [
 ];
 
 const Map<FrisbeeIconColor, String> frisbeeIconColorToSrc = {
+  FrisbeeIconColor.pink: pinkFrisbeeIconSrc,
   FrisbeeIconColor.purple: purpleFrisbeeIconSrc,
   FrisbeeIconColor.blue: blueFrisbeeIconSrc,
   FrisbeeIconColor.green: greenFrisbeeIconSrc,
-  FrisbeeIconColor.pink: pinkFrisbeeIconSrc,
   FrisbeeIconColor.red: redFrisbeeIconSrc,
 };
 

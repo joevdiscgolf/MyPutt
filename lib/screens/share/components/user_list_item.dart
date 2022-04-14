@@ -4,6 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/utils/colors.dart';
 
 class UserListItem extends StatelessWidget {
   const UserListItem(
@@ -24,47 +25,68 @@ class UserListItem extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(width: 2, color: Colors.grey[400]!)),
+        decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              blurRadius: 2,
+              color: MyPuttColors.gray[400]!)
+        ]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Flexible(
-              flex: 1,
+              flex: 4,
               child: FrisbeeCircleIcon(
-                size: 16,
+                size: 60,
                 frisbeeAvatar: user.frisbeeAvatar,
               ),
             ),
             Flexible(
-                flex: 2,
+                flex: 9,
                 child: Column(
                   children: [
                     Text(
                       'Username',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: MyPuttColors.darkGray,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                     ),
-                    const SizedBox(height: 5),
-                    FittedBox(child: Text(user.username)),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                        child: Text(user.username,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    color: MyPuttColors.darkGray,
+                                    fontSize: 12))),
                   ],
                 )),
             Flexible(
-                flex: 2,
+                flex: 9,
                 child: Column(
                   children: [
                     Text(
                       'Display name',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                          color: MyPuttColors.darkGray,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                     ),
-                    const SizedBox(height: 5),
-                    FittedBox(child: Text(user.displayName)),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                        child: Text(user.displayName,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                    color: MyPuttColors.darkGray,
+                                    fontSize: 12))),
                   ],
                 )),
             const Flexible(
-                flex: 2, child: Icon(FlutterRemix.arrow_right_s_line))
+                flex: 3, child: Icon(FlutterRemix.arrow_right_s_line))
           ],
         ),
       ),

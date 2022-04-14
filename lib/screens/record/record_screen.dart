@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -66,20 +68,34 @@ class _RecordScreenState extends State<RecordScreen> {
                 onPressed: () {
                   showDialog(
                       context: context,
-                      builder: (dialogContext) =>
-                          FinishSessionDialog(stopSession: () {
-                            setState(() {
-                              sessionInProgress = false;
-                            });
-                          })).then((value) => dialogCallBack());
+                      builder: (dialogContext) => ConfirmDialog(
+                            title: 'Finish session',
+                            icon: const ShadowIcon(
+                              icon: Icon(
+                                FlutterRemix.medal_2_fill,
+                                size: 80,
+                                color: MyPuttColors.black,
+                              ),
+                            ),
+                            buttonlabel: 'Finish',
+                            buttonColor: MyPuttColors.blue,
+                            actionPressed: () {
+                              setState(() {
+                                sessionInProgress = false;
+                              });
+                            },
+                          )).then((value) => dialogCallBack());
                 },
                 title: 'Finish',
-                iconData: FlutterRemix.check_line,
                 iconColor: MyPuttColors.darkGray,
               ),
             ),
           ],
-          title: const Text('Record'),
+          title: Text('Record',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
         ),
         body: _mainBody(context));
   }

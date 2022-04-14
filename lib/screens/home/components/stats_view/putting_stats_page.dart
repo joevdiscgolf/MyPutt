@@ -51,6 +51,25 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
               : BlocBuilder<SessionSummaryCubit, SessionSummaryState>(
                   builder: (context, state) {
                     if (state is SessionSummaryLoaded) {
+                      final Map<int, num> c1Percentages = {};
+                      final Map<int, num> c2Percentages = {};
+                      if (state.stats.circleOnePercentages != null) {
+                        for (MapEntry entry
+                            in state.stats.circleOnePercentages!.entries) {
+                          if (entry.value != null) {
+                            c1Percentages[entry.key] = entry.value!;
+                          }
+                        }
+                      }
+                      if (state.stats.circleTwoPercentages != null) {
+                        for (MapEntry entry
+                            in state.stats.circleTwoPercentages!.entries) {
+                          if (entry.value != null) {
+                            c2Percentages[entry.key] = entry.value!;
+                          }
+                        }
+                      }
+
                       return PercentagesCard(
                         percentages: widget.circle == Circles.circle1
                             ? state.stats.circleOnePercentages ?? {}

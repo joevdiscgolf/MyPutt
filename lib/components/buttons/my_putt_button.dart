@@ -16,7 +16,9 @@ class MyPuttButton extends StatelessWidget {
       this.textColor = Colors.white,
       this.textSize = 16,
       this.padding = const EdgeInsets.all(8),
-      this.shadowColor})
+      this.shadowColor,
+      this.borderColor,
+      this.loading = false})
       : super(key: key);
 
   final String title;
@@ -28,8 +30,10 @@ class MyPuttButton extends StatelessWidget {
   final Color iconColor;
   final Color textColor;
   final Color? shadowColor;
+  final Color? borderColor;
   final double textSize;
   final EdgeInsetsGeometry? padding;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -44,37 +48,48 @@ class MyPuttButton extends StatelessWidget {
         width: width,
         padding: padding,
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                offset: const Offset(0, 2),
-                color: shadowColor ?? Colors.transparent,
-                blurRadius: 4)
-          ],
-          borderRadius: BorderRadius.circular(24),
-          color: color,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (iconData != null) ...[
-              Icon(
-                iconData,
-                color: iconColor,
-                size: 20,
-              ),
-              const SizedBox(width: 10)
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(0, 2),
+                  color: shadowColor ?? Colors.transparent,
+                  blurRadius: 4)
             ],
-            AutoSizeText(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(color: textColor, fontSize: textSize),
-              maxLines: 1,
-            ),
-          ],
-        ),
+            borderRadius: BorderRadius.circular(24),
+            border:
+                Border.all(color: borderColor ?? Colors.transparent, width: 1),
+            color: color),
+        child: loading
+            ? SizedBox(
+                height: 32,
+                width: 32,
+                child: FittedBox(
+                  child: CircularProgressIndicator(
+                    color: borderColor,
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (iconData != null) ...[
+                    Icon(
+                      iconData,
+                      color: iconColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10)
+                  ],
+                  AutoSizeText(
+                    title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: textColor, fontSize: textSize),
+                    maxLines: 1,
+                  ),
+                ],
+              ),
       ),
     );
   }

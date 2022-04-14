@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -17,13 +18,13 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
 import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';
-import 'package:myputt/screens/my_profile/components/lifetime_stat_row.dart';
+import 'package:myputt/screens/my_profile/components/stat_row.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'components/pdga_info_panel.dart';
+import 'components/pdga_info/pdga_info_tiles.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
@@ -60,7 +61,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const PDGAInfoPanel(),
+                const PDGAInfoTiles(),
                 const SizedBox(
                   height: 16,
                 )
@@ -101,7 +102,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         padding: const EdgeInsets.all(8),
         height: 50,
         title: 'Log out',
-        iconData: FlutterRemix.logout_box_line,
         iconColor: MyPuttColors.darkGray,
         color: Colors.transparent,
         textColor: MyPuttColors.darkGray,
@@ -199,21 +199,23 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         const SizedBox(
                           height: 12,
                         ),
-                        Text(
+                        AutoSizeText(
                           state.myUser.displayName,
                           style: Theme.of(context)
                               .textTheme
                               .headline6
                               ?.copyWith(
                                   color: MyPuttColors.lightBlue, fontSize: 40),
+                          maxLines: 1,
                         ),
-                        Text(
+                        AutoSizeText(
                           '@${state.myUser.username}',
                           style: Theme.of(context)
                               .textTheme
                               .headline6
                               ?.copyWith(
                                   color: MyPuttColors.gray[300], fontSize: 16),
+                          maxLines: 1,
                         ),
                       ],
                     )),
@@ -341,11 +343,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                 ),
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Image(
                     image: AssetImage(blueFrisbeeIconSrc),
-                    height: 24,
-                    width: 24,
+                    height: 32,
+                    width: 32,
                   ),
                   title: 'Total putts',
                   subtitle:
@@ -353,7 +355,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(
                 height: 4,
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Icon(
                     FlutterRemix.bar_chart_2_fill,
                     color: MyPuttColors.blue,
@@ -364,7 +366,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               const SizedBox(
                 height: 4,
               ),
-              LifetimeStatRow(
+              StatRow(
                   icon: const Icon(
                     FlutterRemix.sword_fill,
                     color: MyPuttColors.blue,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
@@ -35,48 +36,50 @@ class _ShareSheetState extends State<ShareSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      color: MyPuttColors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          color: MyPuttColors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'Send Challenge',
                 style: Theme.of(context)
                     .textTheme
                     .headline6!
-                    .copyWith(fontWeight: FontWeight.w500, fontSize: 24),
+                    .copyWith(fontWeight: FontWeight.w500, fontSize: 32),
               ),
-              const Spacer(),
               MyPuttButton(
                 onPressed: () => _shareWithLink(),
                 color: MyPuttColors.white,
                 textColor: MyPuttColors.blue,
+                textSize: 20,
                 iconData: FlutterRemix.link,
                 iconColor: MyPuttColors.blue,
                 title: 'Send link',
-              )
+              ),
+              const SizedBox(height: 8),
+              const ShadowIcon(
+                  icon: Icon(
+                FlutterRemix.sword_fill,
+                color: MyPuttColors.black,
+                size: 80,
+              )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: _usernameField(context),
+              ),
             ],
           ),
-          const SizedBox(height: 15),
-          Text(
-            'Search by username',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontWeight: FontWeight.w400),
-          ),
-          _usernameField(context),
-          Expanded(
-              child: UserListView(
-                  preset: widget.preset,
-                  onComplete: widget.onComplete,
-                  session: widget.session))
-        ],
-      ),
+        ),
+        Expanded(
+            child: UserListView(
+                preset: widget.preset,
+                onComplete: widget.onComplete,
+                session: widget.session)),
+      ],
     );
   }
 

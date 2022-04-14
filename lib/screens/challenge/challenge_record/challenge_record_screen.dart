@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -173,17 +174,22 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                       builder: (dialogContext) => BlocProvider.value(
                           value: BlocProvider.of<ChallengesCubit>(context),
                           child: ConfirmDialog(
-                            actionPressed: () async {
-                              setState(() {
-                                sessionInProgress = false;
-                              });
-                              await BlocProvider.of<ChallengesCubit>(context)
-                                  .finishChallenge();
-                            },
-                            buttonlabel: 'Finish',
-                            title: 'Finish challenge?',
-                            confirmColor: MyPuttColors.lightGreen,
-                          )));
+                              actionPressed: () async {
+                                setState(() {
+                                  sessionInProgress = false;
+                                });
+                                await BlocProvider.of<ChallengesCubit>(context)
+                                    .finishChallenge();
+                              },
+                              buttonlabel: 'Finish',
+                              title: 'Finish challenge',
+                              buttonColor: MyPuttColors.lightGreen,
+                              icon: const ShadowIcon(
+                                  icon: Icon(
+                                FlutterRemix.sword_fill,
+                                color: MyPuttColors.black,
+                                size: 80,
+                              )))));
                 });
           } else if (state is CurrentUserComplete &&
               state.currentChallenge != null) {

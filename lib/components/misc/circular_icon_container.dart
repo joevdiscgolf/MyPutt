@@ -21,12 +21,8 @@ class CircularIconContainer extends StatelessWidget {
             offset: const Offset(0, 4),
             color: MyPuttColors.gray[300]!,
             blurRadius: 6),
-        // BoxShadow(
-        //     offset: const Offset(0, 0),
-        //     color: MyPuttColors.gray[300]!,
-        //     blurRadius: 1)
       ], shape: BoxShape.circle, color: MyPuttColors.gray[50]),
-      child: icon,
+      child: Center(child: icon),
     );
   }
 }

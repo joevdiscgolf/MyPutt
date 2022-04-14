@@ -4,8 +4,8 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
 import 'package:myputt/utils/colors.dart';
 
-class LifetimeStatRow extends StatelessWidget {
-  const LifetimeStatRow(
+class StatRow extends StatelessWidget {
+  const StatRow(
       {Key? key,
       required this.icon,
       required this.title,
