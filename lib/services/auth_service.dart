@@ -179,7 +179,8 @@ class AuthService {
     final DocumentSnapshot<dynamic> userDoc = await FirebaseFirestore.instance
         .collection('Users')
         .doc(_auth.currentUser!.uid)
-        .get();
+        .get()
+        .timeout(const Duration(seconds: 3));
     if (userDoc.data() == null ||
         !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
       return false;

@@ -3,8 +3,8 @@ import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/utils.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 
 part 'storage_putting_challenge.g.dart';

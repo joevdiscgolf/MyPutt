@@ -1,3 +1,4 @@
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
@@ -19,5 +20,14 @@ List<PuttingChallenge> filterDuplicateChallenges(
     List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
   return challenges
       .where((challenge) => !isDuplicateChallenge(sessions, challenge))
+      .toList();
+}
+
+List<ChallengeStructureItem> challengeStructureFromSession(
+    PuttingSession session) {
+  return session.sets
+      .map((set) => ChallengeStructureItem(
+          distance: set.distance.toInt(),
+          setLength: set.puttsAttempted.toInt()))
       .toList();
 }

@@ -4,11 +4,8 @@ import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/firebase/app_info_data_loader.dart';
-import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class SigninService {
   final ScreenController _screenController = locator.get<ScreenController>();
@@ -17,40 +14,12 @@ class SigninService {
   final AuthService _authService = locator.get<AuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
-  late final String _version;
   String errorMessage = '';
 
   AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
 
   SigninService() {
     controller = _screenController.controller;
-  }
-
-  Future<void> init() async {
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    _version = packageInfo.version;
-    if (_authService.getCurrentUserId() != null) {
-      if (!(await _authService.userIsSetup())) {
-        controller.add(AppScreenState.setup);
-        currentAppScreenState = AppScreenState.setup;
-      } else {
-        final String? minimumVersion = await getMinimumAppVersion();
-        if (minimumVersion == null) {
-          controller.add(AppScreenState.loggedIn);
-          return;
-        }
-        if (versionToNumber(minimumVersion) > versionToNumber(_version)) {
-          controller.add(AppScreenState.forceUpgrade);
-          return;
-        }
-        await fetchRepositoryData().timeout(const Duration(seconds: 3));
-        controller.add(AppScreenState.loggedIn);
-        currentAppScreenState = AppScreenState.loggedIn;
-      }
-    } else {
-      controller.add(AppScreenState.notLoggedIn);
-      currentAppScreenState = AppScreenState.notLoggedIn;
-    }
   }
 
   Future<bool> attemptSignUpWithEmail(String email, String password) async {

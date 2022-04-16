@@ -7,23 +7,23 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class SpinnerButton extends StatefulWidget {
-  const SpinnerButton(
-      {Key? key,
-      this.height = 32,
-      this.width,
-      this.disabled = false,
-      this.repeat = true,
-      required this.onPressed,
-      required this.title,
-      this.iconData,
-      this.iconColor = MyPuttColors.darkGray,
-      this.iconSize = 16,
-      this.backgroundColor = MyPuttColors.blue,
-      this.shadowColor,
-      this.textSize = 14,
-      this.textColor = MyPuttColors.darkGray,
-      this.padding})
-      : super(key: key);
+  const SpinnerButton({
+    Key? key,
+    this.height = 32,
+    this.width,
+    this.disabled = false,
+    this.repeat = true,
+    required this.onPressed,
+    required this.title,
+    this.iconData,
+    this.iconColor = MyPuttColors.darkGray,
+    this.iconSize = 16,
+    this.backgroundColor = MyPuttColors.blue,
+    this.shadowColor,
+    this.textSize = 14,
+    this.textColor = MyPuttColors.darkGray,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  }) : super(key: key);
 
   final double height;
   final double? width;
@@ -89,7 +89,7 @@ class _SpinnerButtonState extends State<SpinnerButton>
       child: Container(
         height: widget.height,
         width: widget.width,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: widget.padding,
         decoration: BoxDecoration(
             color: widget.backgroundColor,
             borderRadius: BorderRadius.circular(24)),

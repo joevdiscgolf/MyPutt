@@ -6,6 +6,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/init_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
@@ -25,8 +26,9 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<SessionRepository>(SessionRepository());
   locator.registerSingleton<PresetsRepository>(PresetsRepository());
   locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
-  locator.registerSingleton<StatsService>(StatsService());
-  locator.registerSingleton<SigninService>(SigninService());
-  locator.registerSingleton<WebScraperService>(WebScraperService());
+  locator.registerLazySingleton(() => StatsService());
+  locator.registerLazySingleton(() => SigninService());
+  locator.registerLazySingleton(() => InitService());
+  locator.registerLazySingleton(() => WebScraperService());
   locator.registerLazySingleton(() => DynamicLinkService());
 }
