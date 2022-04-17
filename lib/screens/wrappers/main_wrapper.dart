@@ -48,7 +48,7 @@ class _MainWrapperState extends State<MainWrapper> {
             BlocProvider.of<ChallengesCubit>(context).reload();
           } else if (index == 1) {
             BlocProvider.of<SessionsCubit>(context).reload();
-          } else if (index == 4) {
+          } else if (index == 3) {
             BlocProvider.of<MyProfileCubit>(context).reload();
           }
           setState(() => _currentIndex = index);
