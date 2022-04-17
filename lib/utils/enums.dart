@@ -52,7 +52,7 @@ enum AppScreenState {
   setup,
   firstRun,
   forceUpgrade,
-  error
+  connectionError,
 }
 
 enum FrisbeeIconColor {

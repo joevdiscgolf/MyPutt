@@ -15,7 +15,6 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
-import 'components/dialogs/finish_session_dialog.dart';
 import 'components/rows/conditions_row.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -80,6 +79,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             buttonlabel: 'Finish',
                             buttonColor: MyPuttColors.blue,
                             actionPressed: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .completeSession();
                               setState(() {
                                 sessionInProgress = false;
                               });

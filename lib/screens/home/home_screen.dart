@@ -42,16 +42,19 @@ class HomeScreenState extends State<HomeScreen>
         appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
-          title: RichText(
-            text: TextSpan(
-              style: Theme.of(context).textTheme.headline4,
-              children: [
-                const TextSpan(
-                    text: 'My', style: TextStyle(color: Colors.blue)),
-                TextSpan(
-                    text: 'Putt',
-                    style: TextStyle(color: MyPuttColors.gray[400])),
-              ],
+          title: Center(
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: Theme.of(context).textTheme.headline4,
+                children: [
+                  const TextSpan(
+                      text: 'My', style: TextStyle(color: Colors.blue)),
+                  TextSpan(
+                      text: 'Putt',
+                      style: TextStyle(color: MyPuttColors.gray[400])),
+                ],
+              ),
             ),
           ),
         ),

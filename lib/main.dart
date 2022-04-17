@@ -6,8 +6,9 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/screens/errors/connection_error_screen.dart';
 import 'package:myputt/screens/introduction/intro_screen.dart';
-import 'package:myputt/screens/upgrade/force_upgrade_screen.dart';
+import 'package:myputt/screens/errors/force_upgrade_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
@@ -15,7 +16,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
-import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/services/init_service.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/enums.dart';
 import 'cubits/my_profile_cubit.dart';
@@ -27,7 +28,7 @@ void main() async {
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
-  await locator.get<SigninService>().init();
+  await locator.get<InitService>().init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
@@ -72,6 +73,8 @@ class MyApp extends StatelessWidget {
                 return const IntroScreen();
               } else if (snapshot.data == AppScreenState.forceUpgrade) {
                 return const ForceUpgradeScreen();
+              } else if (snapshot.data == AppScreenState.connectionError) {
+                return const ConnectionErrorScreen();
               } else {
                 return const EnterDetailsScreen();
               }
