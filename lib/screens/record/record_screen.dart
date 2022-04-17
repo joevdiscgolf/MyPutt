@@ -79,6 +79,8 @@ class _RecordScreenState extends State<RecordScreen> {
                             buttonlabel: 'Finish',
                             buttonColor: MyPuttColors.blue,
                             actionPressed: () {
+                              BlocProvider.of<SessionsCubit>(context)
+                                  .completeSession();
                               setState(() {
                                 sessionInProgress = false;
                               });
