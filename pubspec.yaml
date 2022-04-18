@@ -71,6 +71,7 @@ dependencies:
   expandable: ^5.0.1
   flutter_native_splash: ^2.1.5
   rename: ^2.0.1
+  speech_to_text: ^5.4.3
 
 dev_dependencies:
   flutter_test:

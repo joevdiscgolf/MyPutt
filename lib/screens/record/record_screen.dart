@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -8,6 +10,7 @@ import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/speech_recognition_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
@@ -16,6 +19,8 @@ import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'components/rows/conditions_row.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -28,6 +33,9 @@ class RecordScreen extends StatefulWidget {
 
 class _RecordScreenState extends State<RecordScreen> {
   final UserRepository _userRepository = locator.get<UserRepository>();
+  final SpeechRecognitionService _speechRecognitionService =
+      SpeechRecognitionService();
+  final SpeechToText _speechToText = SpeechToText();
 
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
 
@@ -35,6 +43,8 @@ class _RecordScreenState extends State<RecordScreen> {
   int _setLength = 10;
   int _focusedIndex = 10;
   late int _distance;
+  String speechRecognitionText = '';
+  bool _listening = false;
 
   @override
   void initState() {
@@ -122,6 +132,71 @@ class _RecordScreenState extends State<RecordScreen> {
                   .reversed);
           return ListView(
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: MyPuttButton(
+                  color: _listening ? MyPuttColors.red : MyPuttColors.blue,
+                  onPressed: () async {
+                    if (_listening) {
+                      _speechToText.stop();
+                      setState(() {
+                        _listening = false;
+                      });
+                      return;
+                    }
+                    final bool _speechEnabled =
+                        await _speechToText.initialize();
+                    if (!_speechEnabled) {
+                      return;
+                    }
+                    _speechToText.listen(
+                        onResult: (SpeechRecognitionResult result) {
+                      print(result.recognizedWords);
+                      final double? inputNumber =
+                          double.tryParse(result.recognizedWords.toLowerCase());
+                      if (inputNumber != null) {
+                        puttsMadePickerKey.currentState
+                            ?.focusToItem(inputNumber.toInt());
+                        setState(() {
+                          _listening = false;
+                          speechRecognitionText = result.recognizedWords;
+                        });
+                        _speechToText.stop();
+                        return;
+                      } else if (kWordToNumber[
+                              result.recognizedWords.toLowerCase()] !=
+                          null) {
+                        puttsMadePickerKey.currentState?.focusToItem(
+                            kWordToNumber[
+                                result.recognizedWords.toLowerCase()]!);
+                        setState(() {
+                          _listening = false;
+                          speechRecognitionText = kWordToNumber[
+                                  result.recognizedWords.toLowerCase()]!
+                              .toString();
+                        });
+                        _speechToText.stop();
+                      }
+                    });
+                    await Future.delayed(const Duration(milliseconds: 300), () {
+                      setState(() => _listening = true);
+                    });
+                    await Future.delayed(
+                        const Duration(seconds: 3), () => _speechToText.stop());
+                  },
+                  title: 'Voice input',
+                ),
+              ),
+              SizedBox(
+                  height: 100,
+                  child: Center(
+                      child: Text(
+                    speechRecognitionText,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: MyPuttColors.darkGray, fontSize: 40),
+                  ))),
               _detailsPanel(context),
               const SizedBox(height: 16),
               Column(

@@ -56,5 +56,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>MyPutt would like to access the microphone for voice input</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>MyPutt would like to use speech recognition for voice input</string>
 </dict>
 </plist>
