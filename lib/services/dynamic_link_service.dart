@@ -14,7 +14,9 @@ class DynamicLinkService {
             'https://www.myputt.com/challenge?challengeId=$challengeId'),
         uriPrefix: 'https://myputt.page.link',
         iosParameters: const IOSParameters(
-            bundleId: 'com.joev.myputtapp', minimumVersion: '1'));
+            bundleId: 'com.joevdiscgolf.myputt', minimumVersion: '1'),
+        androidParameters:
+            const AndroidParameters(packageName: 'com.joevdiscgolf.myputt'));
     return FirebaseDynamicLinks.instance.buildLink(parameters);
   }
 

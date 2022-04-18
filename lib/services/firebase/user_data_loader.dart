@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/firebase/fb_constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -18,6 +20,11 @@ class FBUserDataLoader {
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
+    final AuthService authService = locator.get<AuthService>();
+    final String? currentUid = authService.getCurrentUserId();
+    if (currentUid == null) {
+      return [];
+    }
     QuerySnapshot querySnapshot = await firestore
         .collection(usersCollection)
         .where('keywords', arrayContains: username)
@@ -37,7 +44,7 @@ class FBUserDataLoader {
     List<MyPuttUser> existingUsers = [];
 
     for (var user in users) {
-      if (user != null) {
+      if (user != null && user.uid != currentUid) {
         existingUsers.add(user);
       }
     }

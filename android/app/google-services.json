@@ -29,6 +29,57 @@
             {
               "client_id": "727184721057-fla9s9oa2eib2efn0ngva7io2nv9dk97.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "727184721057-533lak3smi9qv85ttd36gpb31ptkp7lf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joev.myputtapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727184721057:android:14c7037c1746d3ab9d9ce0",
+        "android_client_info": {
+          "package_name": "com.joevdiscgolf.myputt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "727184721057-qfogiurto2ro296cr35iq0mssimbgdnf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joevdiscgolf.myputt",
+            "certificate_hash": "64ced55441852b9db83ab0b29ed22065c22f1f21"
+          }
+        },
+        {
+          "client_id": "727184721057-fla9s9oa2eib2efn0ngva7io2nv9dk97.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUavZJgKetlob8fVgtahpWbRa6EXmPcVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727184721057-fla9s9oa2eib2efn0ngva7io2nv9dk97.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "727184721057-533lak3smi9qv85ttd36gpb31ptkp7lf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joev.myputtapp"
+              }
             }
           ]
         }
