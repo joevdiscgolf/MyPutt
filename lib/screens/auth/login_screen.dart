@@ -261,9 +261,19 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _loading = true;
       });
-      final signinSuccess = await _signinService
-          .attemptSignInWithEmail(_email!, _password!)
-          .timeout(const Duration(seconds: 3));
+
+      bool signinSuccess;
+      try {
+        signinSuccess = await _signinService
+            .attemptSignInWithEmail(_email!, _password!)
+            .timeout(const Duration(seconds: 3));
+      } catch (e) {
+        signinSuccess = false;
+        setState(() {
+          _errorText = 'Something went wrong, please try again.';
+        });
+      }
+
       if (!signinSuccess) {
         setState(() {
           _loading = false;
