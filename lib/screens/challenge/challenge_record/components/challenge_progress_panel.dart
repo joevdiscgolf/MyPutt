@@ -48,9 +48,11 @@ class ChallengeProgressPanel extends StatelessWidget {
           final int currentUserPuttsMade = challenge.currentUserSets.isNotEmpty
               ? challenge.currentUserSets.last.puttsMade.toInt()
               : 0;
-          final int? opponentPuttsMade = challenge.opponentSets.length >=
-                      challenge.currentUserSets.length &&
-                  challenge.opponentSets.isNotEmpty
+          print(challenge.opponentSets);
+          print(challenge.currentUserSets);
+          final int? opponentPuttsMade = challenge.opponentSets.isNotEmpty &&
+                  challenge.opponentSets.length >
+                      challenge.currentUserSets.length
               ? challenge
                   .opponentSets[challenge.currentUserSets.length -
                       (challengeComplete ? 1 : 0)]
