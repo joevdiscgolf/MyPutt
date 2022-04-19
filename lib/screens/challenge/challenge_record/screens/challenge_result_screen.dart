@@ -39,7 +39,7 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
 
   @override
   void initState() {
-    getDifferenceFromChallenge(widget.challenge);
+    _difference = getDifferenceFromChallenge(widget.challenge);
     if (_difference >= 0) {
       _iconData = FlutterRemix.medal_2_fill;
     } else {
