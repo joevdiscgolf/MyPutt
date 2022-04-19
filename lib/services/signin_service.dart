@@ -32,15 +32,31 @@ class SigninService {
       errorMessage = 'Failed to connect';
       return false;
     }
+
     if (!signUpSuccess || _authService.getCurrentUserId() == null) {
       errorMessage = _authService.exception;
       return false;
     }
-    final bool fetchUserSuccess = await _userRepository.fetchCurrentUser();
+
+    bool fetchUserSuccess;
+    try {
+      fetchUserSuccess = await _userRepository
+          .fetchCurrentUser()
+          .timeout(const Duration(seconds: 3));
+    } catch (e) {
+      print(e);
+      errorMessage = 'Failed to connect';
+      fetchUserSuccess = false;
+    }
     if (fetchUserSuccess) {
       return false;
     }
-    await fetchRepositoryData().timeout(const Duration(seconds: 3));
+
+    try {
+      await fetchRepositoryData().timeout(const Duration(seconds: 3));
+    } catch (e) {
+      print(e);
+    }
     controller.add(AppScreenState.setup);
     currentAppScreenState = AppScreenState.setup;
     return true;
@@ -52,15 +68,21 @@ class SigninService {
       signInSuccess = await _authService
           .signInWithEmail(email, password)
           .timeout(const Duration(seconds: 3));
-    } on TimeoutException catch (_) {
+    } on Exception catch (_) {
       errorMessage = 'Failed to connect';
       return false;
     }
+
     if (!signInSuccess || _authService.getCurrentUserId() == null) {
       errorMessage = _authService.exception;
       return false;
     }
-    await fetchRepositoryData().timeout(const Duration(seconds: 3));
+
+    try {
+      await fetchRepositoryData().timeout(const Duration(seconds: 3));
+    } catch (e) {
+      print('failed to fetch repository data: $e');
+    }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;
     return true;
