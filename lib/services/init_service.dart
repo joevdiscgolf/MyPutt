@@ -29,7 +29,7 @@ class InitService {
       bool isSetup = false;
       try {
         isSetup = await _authService.userIsSetup().timeout(
-            const Duration(seconds: 2),
+            const Duration(seconds: 5),
             onTimeout: () => failedToConnect = true);
       } catch (e) {
         return;
