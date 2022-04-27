@@ -130,7 +130,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
             .asMap()
             .entries
             .map((entry) => ChallengeRecordSetRow(
-                  setNumber: entry.key,
+                  setNumber: entry.key + 1,
                   currentUserPuttsMade: entry.value.puttsMade.toInt(),
                   opponentPuttsMade:
                       opponentSets.length >= currentUserSets.length
