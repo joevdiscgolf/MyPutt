@@ -35,7 +35,7 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
             children: [
               const Text(
                 'Finish Putting Session',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(
                 height: 24,

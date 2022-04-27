@@ -1,0 +1,4 @@
+enum MotionState {
+  static,
+  ascending,
+}

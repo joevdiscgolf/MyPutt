@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
@@ -10,6 +11,7 @@ import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/screens/record/record_screen_enums.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
@@ -18,9 +20,8 @@ import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'components/dialogs/voice_input_dialog.dart';
 import 'components/rows/conditions_row.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -33,7 +34,6 @@ class RecordScreen extends StatefulWidget {
 
 class _RecordScreenState extends State<RecordScreen> {
   final UserRepository _userRepository = locator.get<UserRepository>();
-  final SpeechToText _speechToText = SpeechToText();
 
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
 
@@ -41,28 +41,25 @@ class _RecordScreenState extends State<RecordScreen> {
   int _setLength = 10;
   int _focusedIndex = 10;
   late int _distance;
-  String speechRecognitionText = '';
-  bool _listening = false;
+  MotionState _motionState = MotionState.static;
+
+  int? _lastMotionAt;
+  int? _motionStartedAt;
+  double _angleMoved = 0;
+  bool _dialogMounted = false;
 
   late StreamSubscription<GyroscopeEvent> _gyroSubscription;
-  List<double> _gyroscopeValues = [0, 0, 0];
+  static const double _movementThreshold = 1;
 
   @override
   void initState() {
-    _gyroSubscription = gyroscopeEvents.listen(
-      (GyroscopeEvent event) {
-        setState(() {
-          _gyroscopeValues = <double>[event.x, event.y, event.z];
-          print(_gyroscopeValues);
-        });
-      },
-    );
     _distance = _userRepository
             .currentUser?.userSettings?.sessionSettings?.preferredDistance ??
         20;
     _setLength = _userRepository.currentUser?.userSettings?.sessionSettings
             ?.preferredPuttsPickerLength ??
         10;
+    _setUpGyro();
     super.initState();
   }
 
@@ -70,6 +67,47 @@ class _RecordScreenState extends State<RecordScreen> {
   void dispose() {
     _gyroSubscription.cancel();
     super.dispose();
+  }
+
+  Future<void> _setUpGyro() async {
+    _gyroSubscription = gyroscopeEvents.listen(
+      (GyroscopeEvent event) async {
+        if (_dialogMounted) {
+          return;
+        }
+        final int now = DateTime.now().millisecondsSinceEpoch;
+        switch (_motionState) {
+          case MotionState.static:
+            if (event.x > _movementThreshold) {
+              setState(() {
+                _lastMotionAt = now;
+                _motionStartedAt = now;
+                _motionState = MotionState.ascending;
+                _angleMoved += event.x;
+              });
+            }
+            break;
+          case MotionState.ascending:
+            if (event.x > _movementThreshold) {
+              setState(() {
+                _lastMotionAt = now;
+                _angleMoved += event.x;
+              });
+            }
+            if (_lastMotionAt == null || _motionStartedAt == null) {
+              return;
+            } else if (now - _lastMotionAt! > 100 &&
+                now - _motionStartedAt! > 100 &&
+                _angleMoved > 90) {
+              setState(() {
+                _motionState = MotionState.static;
+                _angleMoved = 0;
+              });
+              _voiceInput();
+            }
+        }
+      },
+    );
   }
 
   @override
@@ -147,24 +185,6 @@ class _RecordScreenState extends State<RecordScreen> {
                   .reversed);
           return ListView(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: MyPuttButton(
-                  color: _listening ? MyPuttColors.red : MyPuttColors.blue,
-                  onPressed: () => _onVoiceListen,
-                  title: 'Voice input',
-                ),
-              ),
-              SizedBox(
-                  height: 100,
-                  child: Center(
-                      child: Text(
-                    speechRecognitionText,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(color: MyPuttColors.darkGray, fontSize: 40),
-                  ))),
               _detailsPanel(context),
               const SizedBox(height: 16),
               Column(
@@ -232,45 +252,16 @@ class _RecordScreenState extends State<RecordScreen> {
     );
   }
 
-  Future<void> _onVoiceListen() async {
-    if (_listening) {
-      _speechToText.stop();
-      setState(() {
-        _listening = false;
-      });
-      return;
-    }
-    final bool _speechEnabled = await _speechToText.initialize();
-    if (!_speechEnabled) {
-      return;
-    }
-    _speechToText.listen(onResult: (SpeechRecognitionResult result) {
-      final double? inputNumber =
-          double.tryParse(result.recognizedWords.split(' ')[0].toLowerCase());
-      if (inputNumber != null) {
-        puttsMadePickerKey.currentState?.focusToItem(inputNumber.toInt());
-        setState(() {
-          _listening = false;
-          speechRecognitionText = result.recognizedWords;
-        });
-        _speechToText.stop();
-        return;
-      } else if (kWordToNumber[result.recognizedWords.toLowerCase()] != null) {
-        puttsMadePickerKey.currentState
-            ?.focusToItem(kWordToNumber[result.recognizedWords.toLowerCase()]!);
-        setState(() {
-          _listening = false;
-          speechRecognitionText =
-              kWordToNumber[result.recognizedWords.toLowerCase()]!.toString();
-        });
-        _speechToText.stop();
-      }
-    });
-    await Future.delayed(const Duration(milliseconds: 300), () {
-      setState(() => _listening = true);
-    });
-    await Future.delayed(
-        const Duration(seconds: 3), () => _speechToText.stop());
+  Future<void> _voiceInput() async {
+    setState(() => _dialogMounted = true);
+    showDialog(
+        context: context,
+        builder: (dialogContext) => VoiceInputDialog(
+              onNumberDetected: (int number) {
+                setState(() => _focusedIndex = number);
+                puttsMadePickerKey.currentState?.focusToItem(number);
+              },
+            )).then((_) => setState(() => _dialogMounted = false));
   }
 
   Widget _detailsPanel(BuildContext context) {
@@ -282,12 +273,29 @@ class _RecordScreenState extends State<RecordScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Details',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Details',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  setState(() => _dialogMounted = true);
+                  _voiceInput();
+                },
+                icon: const Icon(
+                  FlutterRemix.mic_fill,
+                  size: 16,
+                ),
+              )
+            ],
           ),
         ),
         const SizedBox(
