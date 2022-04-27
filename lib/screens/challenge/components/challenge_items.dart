@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -139,12 +140,14 @@ class ChallengeItem extends StatelessWidget {
   ) {
     return Column(
       children: [
-        Text(
+        AutoSizeText(
           displayName,
           style: Theme.of(context)
               .textTheme
               .headline6
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[500]),
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(
           height: 8,
