@@ -21,6 +21,9 @@ MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
           ? null
           : UserSettings.fromJson(
               Map<String, dynamic>.from(json['userSettings'] as Map)),
+      eventIds: (json['eventIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
@@ -32,4 +35,5 @@ Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
       'pdgaNum': instance.pdgaNum,
       'frisbeeAvatar': instance.frisbeeAvatar?.toJson(),
       'userSettings': instance.userSettings?.toJson(),
+      'eventIds': instance.eventIds,
     };

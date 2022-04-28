@@ -143,10 +143,15 @@ final kTestEvents = [
       code: 123,
       name: 'Summer Sizzler',
       challengeStructure: [],
-      divisions: [Division.mpo],
+      divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
       eventType: EventType.tournament,
-      endTimestamp: 0,
+      endTimestamp: 1651109507018,
+      startTimestamp: 1650945600000,
       status: EventStatus.active,
-      creationTimestamp: 1,
       completionTimestamp: 2)
 ];
+
+const Map<EventType, String> eventTypeToName = {
+  EventType.club: 'Club',
+  EventType.tournament: 'Tournament'
+};

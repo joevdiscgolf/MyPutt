@@ -27,7 +27,7 @@ class _EventsState extends State<EventsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
             floatingActionButton: _newEventButton(context),
             floatingActionButtonLocation:
@@ -72,7 +72,7 @@ class _EventsState extends State<EventsScreen>
     return TabBarView(children: [
       EventsList(events: kTestEvents),
       Container(),
-
+      Container()
       // EventsList(
       //     category: EventCategory.pending,
       //     Events: List.from(state.pendingEvents.reversed)),
@@ -89,18 +89,18 @@ class _EventsState extends State<EventsScreen>
         unselectedLabelColor: Colors.black,
         tabs: [
           EventCategoryTab(
+              label: 'Search',
+              icon: Icon(
+                FlutterRemix.search_line,
+                size: 16,
+              )),
+          EventCategoryTab(
             label: 'Club',
-            icon: Icon(
-              FlutterRemix.group_fill,
-              size: 15,
-            ),
+            icon: Icon(FlutterRemix.group_fill, size: 16),
           ),
           EventCategoryTab(
             label: 'Tournaments',
-            icon: Icon(
-              FlutterRemix.trophy_fill,
-              size: 15,
-            ),
+            icon: Icon(FlutterRemix.trophy_fill, size: 16),
           ),
         ],
       ),

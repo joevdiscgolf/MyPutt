@@ -14,9 +14,9 @@ class MyPuttEvent {
     required this.challengeStructure,
     required this.divisions,
     required this.eventType,
+    required this.startTimestamp,
     required this.endTimestamp,
     required this.status,
-    required this.creationTimestamp,
     required this.completionTimestamp,
   });
 
@@ -26,9 +26,9 @@ class MyPuttEvent {
   final List<ChallengeStructureItem> challengeStructure;
   final List<Division> divisions;
   final EventType eventType;
+  final int startTimestamp;
   final int endTimestamp;
   final EventStatus status;
-  final int creationTimestamp;
   final int completionTimestamp;
 
   factory MyPuttEvent.fromJson(Map<String, dynamic> json) =>

@@ -4,6 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
@@ -27,7 +28,7 @@ class _MainWrapperState extends State<MainWrapper> {
     const HomeScreen(),
     const SessionsScreen(),
     const ChallengesScreen(),
-    // const EventsScreen(),
+    const EventsScreen(),
     const MyProfileScreen(),
   ];
 
@@ -48,7 +49,7 @@ class _MainWrapperState extends State<MainWrapper> {
             BlocProvider.of<ChallengesCubit>(context).reload();
           } else if (index == 1) {
             BlocProvider.of<SessionsCubit>(context).reload();
-          } else if (index == 3) {
+          } else if (index == 4) {
             BlocProvider.of<MyProfileCubit>(context).reload();
           }
           setState(() => _currentIndex = index);
@@ -82,10 +83,10 @@ class _MainWrapperState extends State<MainWrapper> {
             ),
             label: 'Challenge',
           ),
-          // const BottomNavigationBarItem(
-          //   icon: Icon(FlutterRemix.medal_2_fill),
-          //   label: 'Events',
-          // ),
+          const BottomNavigationBarItem(
+            icon: Icon(FlutterRemix.medal_2_fill),
+            label: 'Events',
+          ),
           const BottomNavigationBarItem(
             icon: Icon(FlutterRemix.user_3_fill),
             label: 'Profile',

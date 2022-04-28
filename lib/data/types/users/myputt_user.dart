@@ -13,7 +13,8 @@ class MyPuttUser {
       required this.uid,
       this.pdgaNum,
       this.frisbeeAvatar,
-      this.userSettings});
+      this.userSettings,
+      this.eventIds});
   final String username;
   final List<String> keywords;
   final String displayName;
@@ -21,6 +22,7 @@ class MyPuttUser {
   int? pdgaNum;
   FrisbeeAvatar? frisbeeAvatar;
   UserSettings? userSettings;
+  final List<String>? eventIds;
 
   factory MyPuttUser.fromJson(Map<String, dynamic> json) =>
       _$MyPuttUserFromJson(json);
