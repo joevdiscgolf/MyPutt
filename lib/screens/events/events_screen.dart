@@ -72,7 +72,7 @@ class _EventsState extends State<EventsScreen>
     return TabBarView(children: [
       EventsList(events: kTestEvents),
       Container(),
-      Container()
+      EventsList(events: kTestEvents),
       // EventsList(
       //     category: EventCategory.pending,
       //     Events: List.from(state.pendingEvents.reversed)),
