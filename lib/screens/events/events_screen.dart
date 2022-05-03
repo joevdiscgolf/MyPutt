@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -44,6 +45,7 @@ class _EventsState extends State<EventsScreen>
               centerTitle: true,
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
+              leading: const AppBarBackButton(),
             ),
             // floatingActionButton: _newEventButton(context),
             // floatingActionButtonLocation:

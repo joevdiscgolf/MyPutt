@@ -225,6 +225,59 @@ class StatsService {
         ));
   }
 
+  Stats statsFromSets(List<PuttingSet> sets) {
+    Map<int, num> puttsAttempted = {};
+    Map<int, num> puttsMade = {};
+
+    Map<int, num?> circleOneFractions = {
+      10: null,
+      15: null,
+      20: null,
+      25: null,
+      30: null
+    };
+    Map<int, num?> circleTwoFractions = {
+      40: null,
+      50: null,
+      60: null,
+    };
+
+    int totalAttempts = 0;
+    int totalMade = 0;
+
+    for (var set in sets) {
+      final distance = set.distance;
+      totalAttempts += set.puttsAttempted;
+      totalMade += set.puttsMade;
+      puttsAttempted[distance] = (puttsAttempted[distance] == null
+              ? set.puttsAttempted
+              : puttsAttempted[distance]! + set.puttsAttempted)
+          .toDouble();
+
+      puttsMade[distance] = puttsMade[distance] == null
+          ? set.puttsMade
+          : puttsMade[distance]! + set.puttsMade;
+    }
+
+    for (var entry in puttsAttempted.entries) {
+      if (puttsMade[entry.key] != null) {
+        if (entry.key < 40) {
+          circleOneFractions[entry.key] = puttsMade[entry.key]! / entry.value;
+        } else {
+          circleTwoFractions[entry.key] = puttsMade[entry.key]! / entry.value;
+        }
+      }
+    }
+
+    return Stats(
+        circleOnePercentages: circleOneFractions,
+        circleTwoPercentages: circleTwoFractions,
+        generalStats: GeneralStats(
+          totalAttempts: totalAttempts,
+          totalMade: totalMade,
+        ));
+  }
+
   Map<String, Stats> generateSessionsStatsMap(
       List<PuttingSession> allSessions) {
     Map<String, Stats> statsMap = {};
