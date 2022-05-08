@@ -15,7 +15,7 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return GetEventStandingsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
-      return GetEventStandingsResponse(eventStandings: []);
+      return GetEventStandingsResponse();
     });
   }
 }

@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/data/endpoints/events/event_endpoints.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/division_indicator.dart';
-import 'package:myputt/screens/events/event_detail_screen.dart';
-import 'package:myputt/services/firebase/events_service.dart';
+import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/date_helpers.dart';
 
 class EventListItem extends StatelessWidget {
-  EventListItem({
+  const EventListItem({
     Key? key,
     required this.event,
   }) : super(key: key);

@@ -9,8 +9,10 @@ import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_detail_app_bar.dart';
-import 'package:myputt/screens/events/components/player_data_row.dart';
-import 'package:myputt/services/firebase/events_service.dart';
+import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
+import 'package:myputt/screens/events/event_detail/components/player_data_row.dart';
+import 'package:myputt/screens/events/event_detail/components/player_list.dart';
+import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EventDetailScreen extends StatefulWidget {
@@ -24,69 +26,65 @@ class EventDetailScreen extends StatefulWidget {
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
   final EventsService _eventsService = locator.get<EventsService>();
-  late Future<void> _fetchData;
+  // late Future<void> _fetchData;
   late List<EventPlayerData>? _eventStandings;
 
   Division division = Division.mpo;
 
-  @override
-  void initState() {
-    _fetchData = _initData();
-    super.initState();
-  }
-
-  Future<void> _initData() async {
-    await _eventsService
-        .getEventStandings(widget.event.id)
-        .then((response) => _eventStandings = response.eventStandings);
-  }
+  // @override
+  // void initState() {
+  //   _fetchData = _initData();
+  //   super.initState();
+  // }
+  //
+  // Future<void> _initData() async {
+  //   await _eventsService
+  //       .getEventStandings(widget.event.id)
+  //       .then((response) => _eventStandings = response.eventStandings);
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: EventDetailAppBar(
-      //   title: widget.event.name,
-      // ),
+      appBar: EventDetailAppBar(
+        title: widget.event.name,
+      ),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, _) => [
-                SliverAppBar(
-                  leading: const Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: AppBarBackButton(),
+                SliverToBoxAdapter(
+                  child: EventDetailsPanel(
+                    event: widget.event,
+                    onDivisionUpdate: (Division updatedDivision) {
+                      setState(() => division = updatedDivision);
+                    },
+                    division: division,
                   ),
-                  toolbarHeight: 100,
-                  backgroundColor: Colors.white,
-                  elevation: 0.3,
-                  title: Text('Title'),
-                  // title: CollapsingAppBarTitle(
-                  //   child: Text(
-                  //     'Transaction history',
-                  //     style: Theme.of(context).appBarTheme.titleTextStyle,
-                  //   ),
-                  // ),
-                  // expandedHeight: 200,
-                  // collapsedHeight: 100,
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 16,
+                  ),
                 )
+                // const SliverAppBar(
+                //   leading: Padding(
+                //     padding: EdgeInsets.only(left: 16),
+                //     child: AppBarBackButton(),
+                //   ),
+                //   toolbarHeight: 100,
+                //   backgroundColor: Colors.white,
+                //   elevation: 0.3,
+                //   title: Text('Title'),
+                //   title: CollapsingAppBarTitle(
+                //     child: Text(
+                //       'Transaction history',
+                //       style: Theme.of(context).appBarTheme.titleTextStyle,
+                //     ),
+                //   ),
+                //   expandedHeight: 200,
+                //   collapsedHeight: 100,
+                // )
               ],
-          body: FutureBuilder<void>(
-            future: _fetchData,
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.done:
-                  {
-                    if (snapshot.hasError || _eventStandings == null) {
-                      return EmptyState(onRetry: _initData);
-                    }
-                    return _mainBody(context);
-                  }
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                case ConnectionState.active:
-                default:
-                  return const LoadingScreen();
-              }
-            },
-          )),
+          body: _mainBody(context)),
     );
   }
 
@@ -94,11 +92,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     List<Widget> children = [
       _descriptionRow(context),
       const SizedBox(
-        height: 20,
+        height: 16,
+      ),
+      PlayerList(
+        division: Division.mpo,
+        event: widget.event,
       )
     ];
-    children.addAll(_eventStandings!.map(
-        (eventPlayerData) => PlayerDataRow(eventPlayerData: eventPlayerData)));
+    // children.addAll(_eventStandings!.map(
+    //     (eventPlayerData) => PlayerDataRow(eventPlayerData: eventPlayerData)));
     return Column(
       children: children,
     );

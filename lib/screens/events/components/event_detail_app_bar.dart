@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
+import 'package:myputt/utils/colors.dart';
 
 class EventDetailAppBar extends StatelessWidget implements PreferredSizeWidget {
   const EventDetailAppBar({Key? key, required this.title}) : super(key: key);
@@ -17,7 +18,13 @@ class EventDetailAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Align(
                 alignment: Alignment.centerLeft, child: AppBarBackButton()),
           ),
-          Text(title),
+          Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
+          ),
           const Spacer()
         ],
       ),

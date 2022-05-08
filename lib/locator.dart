@@ -6,7 +6,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';
-import 'package:myputt/services/firebase/events_service.dart';
+import 'package:myputt/services/events_service.dart';
 import 'package:myputt/services/init_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/services/signin_service.dart';
