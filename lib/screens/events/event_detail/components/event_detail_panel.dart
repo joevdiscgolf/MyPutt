@@ -36,7 +36,7 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,8 +55,6 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
                 .headline6
                 ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
           ),
-          const SizedBox(height: 16),
-          _changeDivisionButton(context)
         ],
       ),
     );
@@ -83,29 +81,5 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
           '${DateFormat.MMMM('en_US').format(startDate)} ${DateFormat.d('en_US').format(startDate)} - ${DateFormat.d('en_US').format(endDate)}, ${startDate.year}';
     }
     return dateText;
-  }
-
-  Widget _changeDivisionButton(BuildContext context) {
-    return Bounceable(
-        onTap: () => displayBottomSheet(
-            context,
-            UpdateDivisionPanel(
-                currentDivision: _currentDivision,
-                availableDivisions: widget.event.divisions,
-                onDivisionUpdate: (Division division) =>
-                    setState(() => _currentDivision = division))),
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: MyPuttColors.darkBlue)),
-          child: Text(
-            _currentDivision.name.toUpperCase(),
-            style: Theme.of(context).textTheme.headline6?.copyWith(
-                color: MyPuttColors.darkBlue,
-                fontSize: 14,
-                fontWeight: FontWeight.bold),
-          ),
-        ));
   }
 }

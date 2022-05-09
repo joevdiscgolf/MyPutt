@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
-import 'package:myputt/data/endpoints/events/event_endpoints.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
@@ -39,38 +38,46 @@ class _PlayerListState extends State<PlayerList> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: FutureBuilder<void>(
-        future: _fetchData,
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              {
-                if (snapshot.hasError || _eventStandings == null) {
-                  return EmptyState(onRetry: _initData);
-                }
-                return _mainBody(context);
+    return FutureBuilder<void>(
+      future: _fetchData,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            {
+              if (snapshot.hasError || _eventStandings == null) {
+                return EmptyState(onRetry: _initData);
               }
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-            default:
-              return const LoadingScreen();
-          }
-        },
-      ),
+              return _mainBody(context);
+            }
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+          default:
+            return const LoadingScreen();
+        }
+      },
     );
   }
 
   Widget _mainBody(BuildContext context) {
-    return Container(
+    List<EventPlayerData> standings = [];
+    for (int i = 0; i < 50; i++) {
+      standings.add(EventPlayerData(
+          usermetadata: _eventStandings![0].usermetadata,
+          sets: [],
+          lockedIn: false));
+    }
+    return ListView(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Column(
-        children: _eventStandings!
-            .map((eventPlayerData) =>
-                PlayerDataRow(eventPlayerData: eventPlayerData))
-            .toList(),
-      ),
+      children: standings
+          .asMap()
+          .entries
+          .map((entry) => PlayerDataRow(
+                isFirst: entry.key == 0,
+                isLast: entry.key == _eventStandings?.length,
+                eventPlayerData: entry.value,
+              ))
+          .toList(),
     );
   }
 }
