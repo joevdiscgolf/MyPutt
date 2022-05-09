@@ -1,24 +1,23 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/screens/events/event_detail/components/panels/update_division_panel.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/date_helpers.dart';
-import 'package:myputt/utils/panel_helpers.dart';
 
 class EventDetailsPanel extends StatefulWidget {
   const EventDetailsPanel(
       {Key? key,
       required this.event,
       required this.onDivisionUpdate,
-      required this.division})
+      required this.division,
+      this.textColor = MyPuttColors.darkGray})
       : super(key: key);
 
   final MyPuttEvent event;
   final Function onDivisionUpdate;
   final Division division;
+  final Color textColor;
 
   @override
   State<EventDetailsPanel> createState() => _EventDetailsPanelState();
@@ -43,7 +42,7 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
           Text(
             widget.event.name,
             style: Theme.of(context).textTheme.headline6?.copyWith(
-                color: MyPuttColors.darkGray,
+                color: widget.textColor,
                 fontSize: 24,
                 fontWeight: FontWeight.w600),
           ),
@@ -53,7 +52,7 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
+                ?.copyWith(fontSize: 16, color: widget.textColor),
           ),
         ],
       ),
