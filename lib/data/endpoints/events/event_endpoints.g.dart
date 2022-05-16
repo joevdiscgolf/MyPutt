@@ -6,14 +6,12 @@ part of 'event_endpoints.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GetEventStandingsRequest _$GetEventStandingsRequestFromJson(Map json) =>
-    GetEventStandingsRequest(
+GetEventRequest _$GetEventRequestFromJson(Map json) => GetEventRequest(
       eventId: json['eventId'] as String,
       division: _$enumDecodeNullable(_$DivisionEnumMap, json['division']),
     );
 
-Map<String, dynamic> _$GetEventStandingsRequestToJson(
-        GetEventStandingsRequest instance) =>
+Map<String, dynamic> _$GetEventRequestToJson(GetEventRequest instance) =>
     <String, dynamic>{
       'eventId': instance.eventId,
       'division': _$DivisionEnumMap[instance.division],
@@ -72,17 +70,39 @@ const _$DivisionEnumMap = {
   Division.junior: 'junior',
 };
 
-GetEventStandingsResponse _$GetEventStandingsResponseFromJson(Map json) =>
-    GetEventStandingsResponse(
+GetEventResponse _$GetEventResponseFromJson(Map json) => GetEventResponse(
+      inEvent: json['inEvent'] as bool,
       eventStandings: (json['eventStandings'] as List<dynamic>?)
           ?.map((e) =>
               EventPlayerData.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
     );
 
-Map<String, dynamic> _$GetEventStandingsResponseToJson(
-        GetEventStandingsResponse instance) =>
+Map<String, dynamic> _$GetEventResponseToJson(GetEventResponse instance) =>
     <String, dynamic>{
+      'inEvent': instance.inEvent,
       'eventStandings':
           instance.eventStandings?.map((e) => e.toJson()).toList(),
+    };
+
+JoinEventWithCodeRequest _$JoinEventWithCodeRequestFromJson(Map json) =>
+    JoinEventWithCodeRequest(
+      code: json['code'] as int,
+      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+    );
+
+Map<String, dynamic> _$JoinEventWithCodeRequestToJson(
+        JoinEventWithCodeRequest instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'division': _$DivisionEnumMap[instance.division],
+    };
+
+JoinEventResponse _$JoinEventResponseFromJson(Map json) => JoinEventResponse(
+      success: json['success'] as bool,
+    );
+
+Map<String, dynamic> _$JoinEventResponseToJson(JoinEventResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
     };

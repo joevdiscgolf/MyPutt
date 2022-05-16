@@ -101,67 +101,6 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
     );
   }
 
-  // Widget _mainBody(BuildContext context) {
-  //   return Container(
-  //     padding: const EdgeInsets.all(10),
-  //     width: double.infinity,
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.start,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Text(
-  //           widget.title,
-  //           style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(
-  //           height: 16,
-  //         ),
-  //         _pdgaNumField(context),
-  //         const SizedBox(height: 24),
-  //         SizedBox(
-  //           width: double.infinity,
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //             children: [
-  //               PrimaryButton(
-  //                   width: 100,
-  //                   height: 50,
-  //                   label: 'Cancel',
-  //                   fontSize: 18,
-  //                   labelColor: Colors.grey[600]!,
-  //                   backgroundColor: Colors.grey[200]!,
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                   }),
-  //               PrimaryButton(
-  //                 label: 'Submit',
-  //                 fontSize: 18,
-  //                 loading: _loading,
-  //                 width: 100,
-  //                 height: 50,
-  //                 backgroundColor: MyPuttColors.green,
-  //                 onPressed: () async {
-  //                   setState(() {
-  //                     _loading = true;
-  //                   });
-  //                   if (await widget.onSubmit(_pdgaNum)) {
-  //                     Navigator.pop(context);
-  //                   }
-  //                   setState(() {
-  //                     _loading = false;
-  //                   });
-  //                 },
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _pdgaNumField(BuildContext context) {
     return TextFormField(
       controller: _pdgaNumFieldController,

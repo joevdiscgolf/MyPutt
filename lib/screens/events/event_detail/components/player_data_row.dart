@@ -28,10 +28,7 @@ class PlayerDataRow extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.transparent,
             border: Border(
-                top: BorderSide(
-                    width: 1,
-                    color:
-                        isFirst ? Colors.transparent : MyPuttColors.gray[100]!),
+                // top: BorderSide(width: 1, color: MyPuttColors.gray[100]!),
                 bottom: BorderSide(
                     width: 1,
                     color: isLast

@@ -3,15 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/screens/events/event_detail/components/event_detail_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/player_list.dart';
+import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/panel_helpers.dart';
 
+import 'components/dialogs/join_event_dialog.dart';
 import 'components/panels/update_division_panel.dart';
 
 class EventDetailScreen extends StatefulWidget {
@@ -24,29 +32,93 @@ class EventDetailScreen extends StatefulWidget {
 }
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
-  Division division = Division.mpo;
+  final EventsService _eventsService = locator.get<EventsService>();
+  Division _division = Division.mpo;
+  List<EventPlayerData>? _eventStandings;
+  late Future<void> _fetchData;
+  bool _inEvent = false;
+  bool _showJoinButton = false;
+
+  @override
+  void initState() {
+    _fetchData = _initData();
+    super.initState();
+  }
+
+  Future<void> _initData() async {
+    await _eventsService
+        .getEvent(widget.event.id, division: _division)
+        .then((response) => setState(() {
+              _eventStandings = response.eventStandings;
+              _inEvent = response.inEvent;
+              _showJoinButton = !response.inEvent;
+            }));
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
+        floatingActionButton: _inEvent ? _addSetsButton(context) : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, _) => [
                   _sliverAppBar(context),
                 ],
-            body: _mainBody(context)),
+            body: FutureBuilder<void>(
+              future: _fetchData,
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                // return const EventDetailLoadingScreen();
+                switch (snapshot.connectionState) {
+                  case ConnectionState.done:
+                    if (_eventStandings == null) {
+                      return EmptyState(
+                          onRetry: () => _fetchData = _initData());
+                    }
+                    if (_eventStandings!.isEmpty) {
+                      return EmptyState(
+                        title: 'Nothing here yet',
+                        subtitle: 'Please try again later',
+                        icon: Icon(
+                          FlutterRemix.stack_line,
+                          color: MyPuttColors.gray[400]!,
+                          size: 40,
+                        ),
+                      );
+                    }
+                    return PlayerList(eventStandings: _eventStandings!);
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                  default:
+                    return const EventDetailLoadingScreen();
+                }
+              },
+            )),
       ),
     );
   }
 
-  Widget _mainBody(BuildContext context) {
-    return PlayerList(event: widget.event, division: division);
-  }
-
   SliverAppBar _sliverAppBar(BuildContext context) {
     return SliverAppBar(
+      actions: [
+        if (_showJoinButton)
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => JoinEventDialog(
+                          event: widget.event,
+                          onEventJoin: () => setState(() => _inEvent = true),
+                        ));
+              },
+              icon: const Icon(
+                FlutterRemix.user_add_line,
+                color: MyPuttColors.white,
+              ))
+      ],
       backgroundColor: Colors.white,
       leading: const Padding(
         padding: EdgeInsets.only(left: 16),
@@ -55,7 +127,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       automaticallyImplyLeading: false,
       pinned: true,
       floating: true,
-      elevation: 0.3,
+      elevation: 0,
       toolbarHeight: 48,
       leadingWidth: 48,
       expandedHeight: true ? 300 : 250,
@@ -79,9 +151,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     EventDetailsPanel(
                       event: widget.event,
                       onDivisionUpdate: (Division updatedDivision) {
-                        setState(() => division = updatedDivision);
+                        setState(() => _division = updatedDivision);
                       },
-                      division: division,
+                      division: _division,
                       textColor: MyPuttColors.white,
                     ),
                   ],
@@ -95,9 +167,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   EventDetailsPanel(
                     event: widget.event,
                     onDivisionUpdate: (Division updatedDivision) {
-                      setState(() => division = updatedDivision);
+                      setState(() => _division = updatedDivision);
                     },
-                    division: division,
+                    division: _division,
                   ),
                 ],
               ),
@@ -174,12 +246,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       preferredSize: const Size.fromHeight(100),
       child: Container(
         padding: const EdgeInsets.only(top: 16, bottom: 16),
-        color: MyPuttColors.white,
+        decoration: BoxDecoration(
+            color: MyPuttColors.white,
+            border: Border(bottom: BorderSide(color: MyPuttColors.gray[200]!))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 12),
+                padding: const EdgeInsets.only(left: 12, bottom: 12),
                 child: _changeDivisionButton(context)),
             const SizedBox(height: 8),
             _descriptionRow(context),
@@ -194,10 +268,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         onTap: () => displayBottomSheet(
             context,
             UpdateDivisionPanel(
-                currentDivision: division,
+                currentDivision: _division,
                 availableDivisions: widget.event.divisions,
-                onDivisionUpdate: (Division division) =>
-                    setState(() => division = division))),
+                onDivisionUpdate: (Division division) {
+                  setState(() => _division = division);
+                  _fetchData = _initData();
+                })),
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -207,7 +283,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                division.name.toUpperCase(),
+                _division.name.toUpperCase(),
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                     color: MyPuttColors.darkBlue,
                     fontSize: 14,
@@ -216,6 +292,29 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               const Icon(FlutterRemix.arrow_down_s_line,
                   color: MyPuttColors.darkBlue, size: 16)
             ],
+          ),
+        ));
+  }
+
+  Widget _addSetsButton(BuildContext context) {
+    return Bounceable(
+        onTap: () {
+          Vibrate.feedback(FeedbackType.light);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: MyPuttButton(
+            onPressed: () {
+              // showDialog(
+              //     context: context,
+              //     builder: (BuildContext context) =>
+              //         const SelectPresetDialog());
+            },
+            title: 'Compete',
+            iconData: FlutterRemix.sword_fill,
+            color: MyPuttColors.blue,
+            width: MediaQuery.of(context).size.width / 2,
+            shadowColor: MyPuttColors.gray[400],
           ),
         ));
   }
