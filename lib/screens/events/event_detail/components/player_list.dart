@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/screens/events/event_detail/components/player_data_row.dart';
 

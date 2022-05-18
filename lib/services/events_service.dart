@@ -1,6 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:myputt/data/endpoints/events/event_endpoints.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 
 class EventsService {
   Future<GetEventResponse> getEvent(String eventId, {Division? division}) {
@@ -30,6 +31,37 @@ class EventsService {
       return JoinEventResponse.fromJson(response.data);
     }).catchError((e, trace) async {
       return JoinEventResponse(success: false);
+    });
+  }
+
+  Future<SearchEventsResponse> searchEvents(String keyword) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('searchEvents');
+
+    final SearchEventsRequest request = SearchEventsRequest(keyword: keyword);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return SearchEventsResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      return SearchEventsResponse(events: []);
+    });
+  }
+
+  Future<UpdatePlayerSetsResponse> updatePlayerSets(
+      String eventId, List<PuttingSet> sets,
+      {bool lockedIn = false}) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('searchEvents');
+
+    final UpdatePlayerSetsRequest request = UpdatePlayerSetsRequest(
+        eventId: eventId, sets: sets, lockedIn: lockedIn);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return UpdatePlayerSetsResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      return UpdatePlayerSetsResponse(success: false);
     });
   }
 }

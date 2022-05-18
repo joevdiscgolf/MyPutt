@@ -72,7 +72,6 @@ dependencies:
   flutter_native_splash: ^2.1.5
   rename: ^2.0.1
   cloud_functions: ^3.2.13
-  firebase_crashlytics: ^2.7.1
 
 dev_dependencies:
   flutter_test:

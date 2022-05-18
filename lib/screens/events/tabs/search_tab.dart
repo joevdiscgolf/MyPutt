@@ -39,7 +39,7 @@ class _SearchTabState extends State<SearchTab> {
 
   PreferredSizeWidget _searchBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(1),
+      preferredSize: const Size.fromHeight(1),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: TextFormField(

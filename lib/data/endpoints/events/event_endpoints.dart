@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 
 part 'event_endpoints.g.dart';
 
@@ -59,4 +60,51 @@ class JoinEventResponse {
       _$JoinEventResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$JoinEventResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class SearchEventsRequest {
+  SearchEventsRequest({required this.keyword});
+  final String keyword;
+
+  factory SearchEventsRequest.fromJson(Map<String, dynamic> json) =>
+      _$SearchEventsRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SearchEventsRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class SearchEventsResponse {
+  SearchEventsResponse({required this.events});
+  final List<MyPuttEvent> events;
+
+  factory SearchEventsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SearchEventsResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SearchEventsResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class UpdatePlayerSetsRequest {
+  UpdatePlayerSetsRequest(
+      {required this.eventId, required this.sets, this.lockedIn});
+  final String eventId;
+  final List<PuttingSet> sets;
+  final bool? lockedIn;
+
+  factory UpdatePlayerSetsRequest.fromJson(Map<String, dynamic> json) =>
+      _$UpdatePlayerSetsRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UpdatePlayerSetsRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class UpdatePlayerSetsResponse {
+  UpdatePlayerSetsResponse({required this.success});
+  final bool success;
+
+  factory UpdatePlayerSetsResponse.fromJson(Map<String, dynamic> json) =>
+      _$UpdatePlayerSetsResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UpdatePlayerSetsResponseToJson(this);
 }

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
+import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -27,6 +28,7 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<SessionRepository>(SessionRepository());
   locator.registerSingleton<PresetsRepository>(PresetsRepository());
   locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
+  locator.registerSingleton<EventsRepository>(EventsRepository());
   locator.registerLazySingleton(() => StatsService());
   locator.registerLazySingleton(() => SigninService());
   locator.registerLazySingleton(() => InitService());

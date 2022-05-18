@@ -16,8 +16,8 @@ class MyPuttEvent {
     required this.eventType,
     required this.startTimestamp,
     required this.endTimestamp,
+    this.completionTimestamp,
     required this.status,
-    required this.completionTimestamp,
   });
 
   final String id;
@@ -29,7 +29,7 @@ class MyPuttEvent {
   final int startTimestamp;
   final int endTimestamp;
   final EventStatus status;
-  final int completionTimestamp;
+  final int? completionTimestamp;
 
   factory MyPuttEvent.fromJson(Map<String, dynamic> json) =>
       _$MyPuttEventFromJson(json);

@@ -20,8 +20,8 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
       eventType: _$enumDecode(_$EventTypeEnumMap, json['eventType']),
       startTimestamp: json['startTimestamp'] as int,
       endTimestamp: json['endTimestamp'] as int,
+      completionTimestamp: json['completionTimestamp'] as int?,
       status: _$enumDecode(_$EventStatusEnumMap, json['status']),
-      completionTimestamp: json['completionTimestamp'] as int,
     );
 
 Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>

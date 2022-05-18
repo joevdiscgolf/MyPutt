@@ -33,7 +33,7 @@ class EventDetailScreen extends StatefulWidget {
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
   final EventsService _eventsService = locator.get<EventsService>();
-  Division _division = Division.mpo;
+  late Division _division;
   List<EventPlayerData>? _eventStandings;
   late Future<void> _fetchData;
   bool _inEvent = false;
@@ -41,6 +41,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void initState() {
+    _division = widget.event.divisions.first;
     _fetchData = _initData();
     super.initState();
   }
@@ -112,7 +113,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     builder: (BuildContext context) => JoinEventDialog(
                           event: widget.event,
                           onEventJoin: () => setState(() => _inEvent = true),
-                        ));
+                        )).then((_) => _fetchData = _initData());
               },
               icon: const Icon(
                 FlutterRemix.user_add_line,

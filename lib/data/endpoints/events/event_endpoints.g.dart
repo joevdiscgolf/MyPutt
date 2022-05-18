@@ -106,3 +106,55 @@ Map<String, dynamic> _$JoinEventResponseToJson(JoinEventResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
     };
+
+SearchEventsRequest _$SearchEventsRequestFromJson(Map json) =>
+    SearchEventsRequest(
+      keyword: json['keyword'] as String,
+    );
+
+Map<String, dynamic> _$SearchEventsRequestToJson(
+        SearchEventsRequest instance) =>
+    <String, dynamic>{
+      'keyword': instance.keyword,
+    };
+
+SearchEventsResponse _$SearchEventsResponseFromJson(Map json) =>
+    SearchEventsResponse(
+      events: (json['events'] as List<dynamic>)
+          .map((e) => MyPuttEvent.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
+    );
+
+Map<String, dynamic> _$SearchEventsResponseToJson(
+        SearchEventsResponse instance) =>
+    <String, dynamic>{
+      'events': instance.events.map((e) => e.toJson()).toList(),
+    };
+
+UpdatePlayerSetsRequest _$UpdatePlayerSetsRequestFromJson(Map json) =>
+    UpdatePlayerSetsRequest(
+      eventId: json['eventId'] as String,
+      sets: (json['sets'] as List<dynamic>)
+          .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
+      lockedIn: json['lockedIn'] as bool?,
+    );
+
+Map<String, dynamic> _$UpdatePlayerSetsRequestToJson(
+        UpdatePlayerSetsRequest instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+      'sets': instance.sets.map((e) => e.toJson()).toList(),
+      'lockedIn': instance.lockedIn,
+    };
+
+UpdatePlayerSetsResponse _$UpdatePlayerSetsResponseFromJson(Map json) =>
+    UpdatePlayerSetsResponse(
+      success: json['success'] as bool,
+    );
+
+Map<String, dynamic> _$UpdatePlayerSetsResponseToJson(
+        UpdatePlayerSetsResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+    };

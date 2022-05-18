@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
-import 'package:myputt/screens/events/tabs/search_tab.dart';
+import 'package:myputt/components/empty_state/empty_state.dart';
+import 'package:myputt/components/screens/loading_screen.dart';
+import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';
@@ -23,6 +28,8 @@ class EventsScreen extends StatefulWidget {
 
 class _EventsState extends State<EventsScreen>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  final EventsService _eventsService = locator.get<EventsService>();
+
   @override
   bool get wantKeepAlive => true;
 
@@ -30,6 +37,18 @@ class _EventsState extends State<EventsScreen>
   final TextEditingController _searchBarController = TextEditingController();
   String? _searchBarText;
   bool _showSearchBar = true;
+  bool _loading = false;
+  List<MyPuttEvent>? _events;
+
+  Timer? _searchOnStoppedTyping;
+
+  Future<void> _searchEvents(String keyword) async {
+    setState(() => _loading = true);
+    _events = await _eventsService
+        .searchEvents(keyword)
+        .then((response) => response.events);
+    setState(() => _loading = false);
+  }
 
   @override
   void initState() {
@@ -49,6 +68,7 @@ class _EventsState extends State<EventsScreen>
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         appBar: AppBar(
+          toolbarHeight: 100,
           title: Text(
             'Events',
             style: Theme.of(context)
@@ -59,7 +79,7 @@ class _EventsState extends State<EventsScreen>
           centerTitle: true,
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          bottom: _tabBar(context),
+          bottom: _appBarBottom(context),
         ),
         // floatingActionButton: _newEventButton(context),
         // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -123,7 +143,20 @@ class _EventsState extends State<EventsScreen>
     //       : c1.creationTimeStamp.compareTo(c2.creationTimeStamp);
     // });
     return TabBarView(controller: _tabController, children: [
-      EventsList(events: kTestEvents),
+      Builder(builder: (BuildContext context) {
+        if (_loading) {
+          return const LoadingScreen();
+        } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
+          // User hasn't searched yet
+          return Container();
+        } else if (_events?.isNotEmpty != true || _events == null) {
+          // No search results found
+          return const EmptyState();
+        }
+
+        return EventsList(events: _events!);
+      }),
+      // EventsList(events: kTestEvents),
       // SearchTab(),
       Container(),
       EventsList(events: kTestEvents),
@@ -133,7 +166,7 @@ class _EventsState extends State<EventsScreen>
     ]);
   }
 
-  PreferredSizeWidget _sliverBarBottom(BuildContext context) {
+  PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
         child: Column(
           children: [_tabBar(context), if (_showSearchBar) _searchBar(context)],
@@ -199,7 +232,7 @@ class _EventsState extends State<EventsScreen>
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
           counter: const Offstage(),
         ),
-        onChanged: (String text) => setState(() => _searchBarText = text),
+        onChanged: (String text) => _searchHandler(text),
       ),
     );
   }
@@ -221,5 +254,22 @@ class _EventsState extends State<EventsScreen>
             shadowColor: MyPuttColors.gray[400],
           ),
         ));
+  }
+
+  void _searchHandler(String? value) {
+    setState(() {
+      _searchBarText = value;
+      _loading = _searchBarText?.isNotEmpty == true;
+    });
+
+    if (_searchOnStoppedTyping != null) {
+      setState(() => _searchOnStoppedTyping?.cancel());
+    }
+    setState(() =>
+        _searchOnStoppedTyping = Timer(const Duration(milliseconds: 250), () {
+          if (value != null && value.isNotEmpty) {
+            _searchEvents(value);
+          }
+        }));
   }
 }
