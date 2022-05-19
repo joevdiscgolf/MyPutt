@@ -18,6 +18,9 @@ class MyPuttEvent {
     required this.endTimestamp,
     this.completionTimestamp,
     required this.status,
+    required this.verificationRequired,
+    this.bannerImgUrl =
+        'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
   });
 
   final String id;
@@ -30,6 +33,8 @@ class MyPuttEvent {
   final int endTimestamp;
   final EventStatus status;
   final int? completionTimestamp;
+  final bool verificationRequired;
+  final String? bannerImgUrl;
 
   factory MyPuttEvent.fromJson(Map<String, dynamic> json) =>
       _$MyPuttEventFromJson(json);

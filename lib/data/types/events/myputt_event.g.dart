@@ -22,6 +22,8 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
       endTimestamp: json['endTimestamp'] as int,
       completionTimestamp: json['completionTimestamp'] as int?,
       status: _$enumDecode(_$EventStatusEnumMap, json['status']),
+      verificationRequired: json['verificationRequired'] as bool,
+      bannerImgUrl: json['bannerImgUrl'] as String?,
     );
 
 Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
@@ -37,6 +39,8 @@ Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
       'endTimestamp': instance.endTimestamp,
       'status': _$EventStatusEnumMap[instance.status],
       'completionTimestamp': instance.completionTimestamp,
+      'verificationRequired': instance.verificationRequired,
+      'bannerImgUrl': instance.bannerImgUrl,
     };
 
 K _$enumDecode<K, V>(

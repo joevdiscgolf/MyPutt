@@ -65,18 +65,4 @@ class ChallengeDirectorPanel extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _textAnimation(double endValue) {
-  //   return TweenAnimationBuilder<double>(
-  //     tween: Tween<double>(
-  //       begin: 0.0,
-  //       end: endValue,
-  //     ),
-  //     duration: const Duration(milliseconds: 300),
-  //     builder: (context, value, _) => Text(
-  //       value.toInt().toString(),
-  //       style: Theme.of(context).textTheme.bodyLarge,
-  //     ),
-  //   );
-  // }
 }

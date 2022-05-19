@@ -9,7 +9,7 @@ part of 'event_player_data.dart';
 EventPlayerData _$EventPlayerDataFromJson(Map json) => EventPlayerData(
       usermetadata: MyPuttUserMetadata.fromJson(
           Map<String, dynamic>.from(json['usermetadata'] as Map)),
-      division: _$enumDecodeNullable(_$DivisionEnumMap, json['division']),
+      division: _$enumDecode(_$DivisionEnumMap, json['division']),
       sets: (json['sets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
@@ -50,17 +50,6 @@ K _$enumDecode<K, V>(
       return MapEntry(unknownValue, enumValues.values.first);
     },
   ).key;
-}
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$DivisionEnumMap = {

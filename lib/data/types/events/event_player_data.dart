@@ -9,12 +9,12 @@ part 'event_player_data.g.dart';
 class EventPlayerData {
   EventPlayerData(
       {required this.usermetadata,
-      this.division,
+      required this.division,
       required this.sets,
       this.verificationImg,
       required this.lockedIn});
   final MyPuttUserMetadata usermetadata;
-  final Division? division;
+  final Division division;
   final List<PuttingSet> sets;
   final String? verificationImg;
   final bool lockedIn;

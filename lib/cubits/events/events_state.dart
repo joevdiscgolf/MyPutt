@@ -5,14 +5,16 @@ abstract class EventsState {}
 
 class EventsInitial extends EventsState {}
 
+class EventsLoading extends EventsState {}
+
 class EventErrorState extends EventsState {
   EventErrorState({this.error});
   final String? error;
 }
 
 class ActiveEventState extends EventsState {
-  ActiveEventState({required this.event, this.sets});
+  ActiveEventState({required this.event, required this.eventPlayerData});
 
   final MyPuttEvent event;
-  final List<PuttingSet>? sets;
+  final EventPlayerData eventPlayerData;
 }

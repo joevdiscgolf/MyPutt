@@ -44,6 +44,7 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return SearchEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      print(e);
       return SearchEventsResponse(events: []);
     });
   }
