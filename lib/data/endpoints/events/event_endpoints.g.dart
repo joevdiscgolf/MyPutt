@@ -158,3 +158,21 @@ Map<String, dynamic> _$UpdatePlayerSetsResponseToJson(
     <String, dynamic>{
       'success': instance.success,
     };
+
+ExitEventRequest _$ExitEventRequestFromJson(Map json) => ExitEventRequest(
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$ExitEventRequestToJson(ExitEventRequest instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+    };
+
+ExitEventResponse _$ExitEventResponseFromJson(Map json) => ExitEventResponse(
+      success: json['success'] as bool,
+    );
+
+Map<String, dynamic> _$ExitEventResponseToJson(ExitEventResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+    };

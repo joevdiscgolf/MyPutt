@@ -13,6 +13,7 @@ MyPuttUser _$MyPuttUserFromJson(Map json) => MyPuttUser(
       displayName: json['displayName'] as String,
       uid: json['uid'] as String,
       pdgaNum: json['pdgaNum'] as int?,
+      pdgaRating: json['pdgaRating'] as int?,
       frisbeeAvatar: json['frisbeeAvatar'] == null
           ? null
           : FrisbeeAvatar.fromJson(
@@ -33,6 +34,7 @@ Map<String, dynamic> _$MyPuttUserToJson(MyPuttUser instance) =>
       'displayName': instance.displayName,
       'uid': instance.uid,
       'pdgaNum': instance.pdgaNum,
+      'pdgaRating': instance.pdgaRating,
       'frisbeeAvatar': instance.frisbeeAvatar?.toJson(),
       'userSettings': instance.userSettings?.toJson(),
       'eventIds': instance.eventIds,
@@ -43,6 +45,7 @@ MyPuttUserMetadata _$MyPuttUserMetadataFromJson(Map json) => MyPuttUserMetadata(
       displayName: json['displayName'] as String,
       uid: json['uid'] as String,
       pdgaNum: json['pdgaNum'] as int?,
+      pdgaRating: json['pdgaRating'] as int?,
       frisbeeAvatar: json['frisbeeAvatar'] == null
           ? null
           : FrisbeeAvatar.fromJson(
@@ -55,5 +58,6 @@ Map<String, dynamic> _$MyPuttUserMetadataToJson(MyPuttUserMetadata instance) =>
       'displayName': instance.displayName,
       'uid': instance.uid,
       'pdgaNum': instance.pdgaNum,
+      'pdgaRating': instance.pdgaRating,
       'frisbeeAvatar': instance.frisbeeAvatar?.toJson(),
     };

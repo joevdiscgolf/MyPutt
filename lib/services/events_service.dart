@@ -34,6 +34,20 @@ class EventsService {
     });
   }
 
+  Future<ExitEventResponse> exitEvent(String eventId) async {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('exitEvent');
+
+    final ExitEventRequest request = ExitEventRequest(eventId: eventId);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return ExitEventResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      return ExitEventResponse(success: false);
+    });
+  }
+
   Future<SearchEventsResponse> searchEvents(String keyword) {
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('searchEvents');

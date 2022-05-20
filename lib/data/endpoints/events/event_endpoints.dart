@@ -108,3 +108,25 @@ class UpdatePlayerSetsResponse {
 
   Map<String, dynamic> toJson() => _$UpdatePlayerSetsResponseToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class ExitEventRequest {
+  ExitEventRequest({required this.eventId});
+  final String eventId;
+
+  factory ExitEventRequest.fromJson(Map<String, dynamic> json) =>
+      _$ExitEventRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExitEventRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class ExitEventResponse {
+  ExitEventResponse({required this.success});
+  final bool success;
+
+  factory ExitEventResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExitEventResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExitEventResponseToJson(this);
+}

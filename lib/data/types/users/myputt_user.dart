@@ -12,6 +12,7 @@ class MyPuttUser {
       required this.displayName,
       required this.uid,
       this.pdgaNum,
+      this.pdgaRating,
       this.frisbeeAvatar,
       this.userSettings,
       this.eventIds});
@@ -20,6 +21,7 @@ class MyPuttUser {
   final String displayName;
   final String uid;
   int? pdgaNum;
+  int? pdgaRating;
   FrisbeeAvatar? frisbeeAvatar;
   UserSettings? userSettings;
   final List<String>? eventIds;
@@ -37,12 +39,14 @@ class MyPuttUserMetadata {
     required this.displayName,
     required this.uid,
     this.pdgaNum,
+    this.pdgaRating,
     this.frisbeeAvatar,
   });
   final String username;
   final String displayName;
   final String uid;
   int? pdgaNum;
+  int? pdgaRating;
   FrisbeeAvatar? frisbeeAvatar;
 
   factory MyPuttUserMetadata.fromJson(Map<String, dynamic> json) =>

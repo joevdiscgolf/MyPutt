@@ -33,47 +33,51 @@ class EventDirector extends StatelessWidget {
 
   Widget _mainBody(BuildContext context, int distance, int setLength,
       ActiveEventState state) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: MyPuttColors.gray[50]!,
+          ),
+          child: Column(
             children: [
-              Text(
-                '$distance ft',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline4
-                    ?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const AnimatedArrows(),
-              Text(
-                '$setLength putts',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5
-                    ?.copyWith(fontWeight: FontWeight.w600),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$distance ft',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 32),
+                  ),
+                  const AnimatedArrows(),
+                  Text(
+                    '$setLength putts',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 24),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          _percentCompleteIndicator(
-            context,
-            totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
-                totalAttemptsFromStructure(state.event.challengeStructure)
-                    .toDouble(),
-            (totalAttemptsFromSubset(state.eventPlayerData.sets,
-                        state.eventPlayerData.sets.length)
-                    .toDouble()) /
-                totalAttemptsFromStructure(state.event.challengeStructure)
-                    .toDouble(),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+        _percentCompleteIndicator(
+          context,
+          totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
+              totalAttemptsFromStructure(state.event.challengeStructure)
+                  .toDouble(),
+          (totalAttemptsFromSubset(state.eventPlayerData.sets,
+                      state.eventPlayerData.sets.length)
+                  .toDouble()) /
+              totalAttemptsFromStructure(state.event.challengeStructure)
+                  .toDouble(),
+        ),
+      ],
     );
   }
 

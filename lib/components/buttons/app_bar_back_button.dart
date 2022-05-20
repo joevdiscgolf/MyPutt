@@ -11,19 +11,20 @@ class AppBarBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
       child: Container(
-          height: 32,
-          width: 32,
-          padding: const EdgeInsets.only(right: 2),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: MyPuttColors.gray[50]!, shape: BoxShape.circle),
-          child: const Center(
-            child: Icon(
-              FlutterRemix.arrow_left_s_line,
-              color: MyPuttColors.black,
-              size: 26,
-            ),
-          )),
+        height: 32,
+        width: 32,
+        padding: const EdgeInsets.only(right: 2),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            color: MyPuttColors.gray[50]!, shape: BoxShape.circle),
+        child: const Center(
+          child: Icon(
+            FlutterRemix.arrow_left_s_line,
+            color: MyPuttColors.black,
+            size: 26,
+          ),
+        ),
+      ),
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
         Navigator.of(context).pop();

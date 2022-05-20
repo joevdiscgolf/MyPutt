@@ -9,11 +9,9 @@ class EventDataLoader {
     final challengeRef = firestore
         .doc('$eventsCollection/$eventId/$participantsCollection/$uid');
     return challengeRef.get().then((snapshot) {
-      print('snapshot revceived');
       if (!snapshot.exists || snapshot.data() == null) {
         return null;
       }
-      print(snapshot.data());
       return EventPlayerData.fromJson(snapshot.data()!);
     }).catchError((error) => null);
   }

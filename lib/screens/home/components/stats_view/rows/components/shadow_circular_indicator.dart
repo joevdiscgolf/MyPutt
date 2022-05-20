@@ -4,11 +4,16 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ShadowCircularIndicator extends StatelessWidget {
-  const ShadowCircularIndicator({Key? key, this.decimal, this.size = 90})
-      : super(key: key);
+  const ShadowCircularIndicator({
+    Key? key,
+    this.decimal,
+    this.size = 90,
+    this.animate = false,
+  }) : super(key: key);
 
   final double? decimal;
   final double size;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class ShadowCircularIndicator extends StatelessWidget {
             BoxShadow(
                 offset: const Offset(0, 4),
                 blurRadius: 6,
-                color: MyPuttColors.gray[400]!)
+                color: MyPuttColors.gray[300]!)
           ]),
           child: SizedBox(
               height: size,
@@ -39,14 +44,28 @@ class ShadowCircularIndicator extends StatelessWidget {
                   ),
                   Center(
                     child: SizedBox(
-                      height: size,
-                      width: size,
-                      child: CircularProgressIndicator(
-                        value: decimal ?? 0,
-                        color: MyPuttColors.lightBlue,
-                        backgroundColor: MyPuttColors.gray[200],
-                      ),
-                    ),
+                        height: size,
+                        width: size,
+                        child: /*animate
+                          ? */
+                            TweenAnimationBuilder<double>(
+                          curve: Curves.decelerate,
+                          duration: const Duration(milliseconds: 1000),
+                          tween: Tween<double>(begin: 0, end: decimal ?? 0),
+                          builder: (BuildContext context, double value, _) =>
+                              CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: value,
+                            color: MyPuttColors.lightBlue,
+                            backgroundColor: MyPuttColors.gray[200],
+                          ),
+                        )
+                        /*: CircularProgressIndicator(
+                              value: decimal ?? 0,
+                              color: MyPuttColors.lightBlue,
+                              backgroundColor: MyPuttColors.gray[200],
+                            ),*/
+                        ),
                   ),
                   Center(
                       child: SizedBox(
@@ -57,7 +76,7 @@ class ShadowCircularIndicator extends StatelessWidget {
                                       .textTheme
                                       .headline6
                                       ?.copyWith(
-                                          color: MyPuttColors.gray,
+                                          color: MyPuttColors.gray[400],
                                           fontSize: 12),
                                 )
                               : const Text('-- %')))

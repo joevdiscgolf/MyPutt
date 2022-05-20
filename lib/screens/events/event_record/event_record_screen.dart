@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
-import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/screens/events/event_record/components/event_banner.dart';
 import 'package:myputt/screens/events/event_record/components/event_director.dart';
+import 'package:myputt/screens/events/event_record/components/event_record_title.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
@@ -52,60 +49,6 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: MyPuttColors.white,
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(
-            color: MyPuttColors.darkGray,
-          ),
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          actions: [
-            Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: MyPuttButton(
-                color: Colors.transparent,
-                textColor: MyPuttColors.darkGray,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (dialogContext) => ConfirmDialog(
-                            title: 'Lock in',
-                            icon: const ShadowIcon(
-                              icon: Icon(
-                                FlutterRemix.medal_2_fill,
-                                size: 80,
-                                color: MyPuttColors.black,
-                              ),
-                            ),
-                            buttonlabel: 'Lock in',
-                            buttonColor: MyPuttColors.blue,
-                            actionPressed: () {
-                              BlocProvider.of<SessionsCubit>(context)
-                                  .completeSession();
-                              setState(() {
-                                sessionInProgress = false;
-                              });
-                            },
-                          )).then((value) => dialogCallBack());
-                },
-                title: 'Lock in',
-                iconColor: MyPuttColors.darkGray,
-              ),
-            ),
-          ],
-          title: Text('Record',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
-        ),
-        body: _mainBody(context));
-  }
-
-  Widget _mainBody(BuildContext context) {
     return BlocBuilder<EventsCubit, EventsState>(
       builder: (context, state) {
         if (state is EventsLoading) {
@@ -132,48 +75,54 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                 ))
             .toList()
             .reversed);
-        return ListView(
-          children: [
-            EventBanner(event: widget.event),
-            const SizedBox(height: 16),
-            const EventDirector(),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Putts made',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6
-                              ?.copyWith(
-                                  color: MyPuttColors.darkGray, fontSize: 20)),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: _putterCountPicker(context),
-                      ),
-                    ],
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom > 0 ? 48 : 12,
+          ),
+          child: ListView(
+            children: [
+              const EventRecordTitle(),
+              const EventDirector(),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Putts made',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                    color: MyPuttColors.darkGray,
+                                    fontSize: 20)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _putterCountPicker(context),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                PuttsMadePicker(
-                    length: _setLength,
-                    initialIndex: _setLength.toDouble(),
-                    challengeMode: false,
-                    sslKey: puttsMadePickerKey,
-                    onUpdate: (int newIndex) {
-                      setState(() {
-                        _focusedIndex = newIndex;
-                      });
-                    }),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: MyPuttButton(
+                  const SizedBox(height: 4),
+                  PuttsMadePicker(
+                      length: _setLength,
+                      initialIndex: _setLength.toDouble(),
+                      challengeMode: false,
+                      sslKey: puttsMadePickerKey,
+                      onUpdate: (int newIndex) {
+                        setState(() {
+                          _focusedIndex = newIndex;
+                        });
+                      }),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width / 4),
+                child: MyPuttButton(
                   title: 'Add set',
                   width: MediaQuery.of(context).size.width / 2,
                   height: 50,
@@ -184,11 +133,13 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                         puttsMade: _focusedIndex,
                         puttsAttempted: _setLength,
                         distance: _distance));
-                  }),
-            ),
-            const SizedBox(height: 10),
-            ...previousSetsChildren,
-          ],
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...previousSetsChildren,
+            ],
+          ),
         );
       },
     );

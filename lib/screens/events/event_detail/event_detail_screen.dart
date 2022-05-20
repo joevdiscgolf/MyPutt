@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +16,8 @@ import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/events_repository.dart';
+import 'package:myputt/screens/events/event_detail/components/dialogs/exit_event_dialog.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/player_list.dart';
@@ -36,18 +40,31 @@ class EventDetailScreen extends StatefulWidget {
 }
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
+  final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final EventsService _eventsService = locator.get<EventsService>();
   late Division _division;
   List<EventPlayerData>? _eventStandings;
   late Future<void> _fetchData;
   bool _inEvent = false;
-  bool _showJoinButton = true;
+  late final StreamSubscription? _scoreUpdatesSubscription;
 
   @override
   void initState() {
+    _eventsRepository.initializeEventStream(widget.event.id);
     _division = widget.event.divisions.first;
     _fetchData = _initData();
+    _scoreUpdatesSubscription = _eventsRepository.playerDataStream
+        ?.listen((List<EventPlayerData> standings) {
+      setState(() => _eventStandings = standings);
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scoreUpdatesSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _initData() async {
@@ -56,7 +73,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         .then((response) => setState(() {
               _eventStandings = response.eventStandings;
               _inEvent = response.inEvent;
-              // _showJoinButton = !response.inEvent;
             }));
   }
 
@@ -65,7 +81,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        floatingActionButton: _inEvent ? _addSetsButton(context) : null,
+        floatingActionButton: _inEvent ? _competeButton(context) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         body: NestedScrollView(
@@ -93,7 +109,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         ),
                       );
                     }
-                    return PlayerList(eventStandings: _eventStandings!);
+                    return PlayerList(
+                        eventStandings: _eventStandings!,
+                        challengeStructure: widget.event.challengeStructure);
                   case ConnectionState.none:
                   case ConnectionState.waiting:
                   case ConnectionState.active:
@@ -109,20 +127,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   SliverAppBar _sliverAppBar(BuildContext context) {
     return SliverAppBar(
       actions: [
-        if (_showJoinButton)
-          IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) => JoinEventDialog(
-                          event: widget.event,
-                          onEventJoin: () => setState(() => _inEvent = true),
-                        )).then((_) => _fetchData = _initData());
-              },
-              icon: const Icon(
-                FlutterRemix.user_add_line,
-                color: MyPuttColors.white,
-              ))
+        _joinLeaveButton(context),
       ],
       backgroundColor: Colors.white,
       leading: const Padding(
@@ -135,7 +140,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       elevation: 0,
       toolbarHeight: 48,
       leadingWidth: 48,
-      expandedHeight: true ? 300 : 250,
+      expandedHeight: 300,
       collapsedHeight: 56,
       flexibleSpace: FlexibleSpaceBar(
           background: Container(
@@ -208,8 +213,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 'POS',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                     color: MyPuttColors.darkGray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
                 textAlign: TextAlign.center,
                 maxLines: 1,
               ),
@@ -224,8 +229,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 'NAME',
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                     color: MyPuttColors.darkGray,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
                 maxLines: 1,
               ),
             ),
@@ -239,7 +244,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                       color: MyPuttColors.darkGray,
                       fontSize: 12,
-                      fontWeight: FontWeight.w600),
+                      fontWeight: FontWeight.w400),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                 ),
@@ -294,9 +299,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Text(
                 _division.name.toUpperCase(),
                 style: Theme.of(context).textTheme.headline6?.copyWith(
-                    color: MyPuttColors.darkBlue,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
+                      color: MyPuttColors.darkBlue,
+                      fontSize: 14,
+                    ),
               ),
               const Icon(FlutterRemix.arrow_down_s_line,
                   color: MyPuttColors.darkBlue, size: 16)
@@ -305,26 +310,105 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         ));
   }
 
-  Widget _addSetsButton(BuildContext context) {
-    return Bounceable(
-        onTap: () {
-          Vibrate.feedback(FeedbackType.light);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: MyPuttButton(
-            onPressed: () {
-              BlocProvider.of<EventsCubit>(context).openEvent(widget.event);
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      EventRecordScreen(event: widget.event)));
+  Widget _competeButton(BuildContext context) {
+    return BlocBuilder<EventsCubit, EventsState>(
+      builder: (context, state) {
+        if (state is! ActiveEventState) {
+          return Container();
+        }
+        final double percentComplete =
+            state.eventPlayerData.sets.length.toDouble() /
+                state.event.challengeStructure.length.toDouble();
+
+        return Bounceable(
+            onTap: () {
+              Vibrate.feedback(FeedbackType.light);
             },
-            title: 'Compete',
-            iconData: FlutterRemix.sword_fill,
-            color: MyPuttColors.blue,
-            width: MediaQuery.of(context).size.width / 2,
-            shadowColor: MyPuttColors.gray[400],
-          ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 48,
+                    width: MediaQuery.of(context).size.width / 2,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        color: MyPuttColors.gray[100]!),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Transform.translate(
+                    offset: Offset(
+                        MediaQuery.of(context).size.width /
+                            2 *
+                            -((1 - percentComplete) / 2),
+                        0),
+                    child: Container(
+                      height: 48,
+                      width: MediaQuery.of(context).size.width /
+                          2 *
+                          percentComplete,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          color: MyPuttColors.skyBlue),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: MyPuttButton(
+                      onPressed: () {
+                        BlocProvider.of<EventsCubit>(context)
+                            .openEvent(widget.event);
+                        displayBottomSheet(
+                          context,
+                          EventRecordScreen(event: widget.event),
+                          dismissibleOnTap: true,
+                          enableDrag: false,
+                          onDismiss: () => _fetchData = _initData(),
+                        );
+                      },
+                      title:
+                          '${((state.eventPlayerData.sets.length.toDouble() / state.event.challengeStructure.length.toDouble()) * 100).toStringAsFixed(0)}% complete',
+                      iconData: FlutterRemix.sword_fill,
+                      color: Colors.transparent,
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: 48,
+                      textColor: MyPuttColors.darkGray,
+                      shadowColor: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ],
+            ));
+      },
+    );
+  }
+
+  Widget _joinLeaveButton(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                if (!_inEvent) {
+                  return JoinEventDialog(
+                    event: widget.event,
+                    onEventJoin: () => setState(() => _inEvent = true),
+                  );
+                }
+                return ExitEventDialog(
+                    event: widget.event,
+                    onEventExit: () => setState(() => _inEvent = false));
+              }).then((_) => _fetchData = _initData());
+        },
+        icon: Icon(
+          _inEvent ? FlutterRemix.logout_box_line : FlutterRemix.user_add_line,
+          color: MyPuttColors.white,
         ));
   }
 }

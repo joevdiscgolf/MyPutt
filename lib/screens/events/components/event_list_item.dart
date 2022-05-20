@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -29,26 +30,28 @@ class EventListItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-                color: MyPuttColors.gray[50],
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                      offset: const Offset(0, 2),
-                      color: MyPuttColors.gray[400]!,
-                      blurRadius: 2)
-                ]),
+              color: MyPuttColors.gray[50],
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                    offset: const Offset(0, 2),
+                    color: MyPuttColors.gray[400]!,
+                    blurRadius: 2)
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AutoSizeText(
                         event.name,
                         style: Theme.of(context)
                             .textTheme
                             .headline6
                             ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
+                        maxLines: 1,
                       ),
                     ),
                     Text(

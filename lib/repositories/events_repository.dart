@@ -16,12 +16,15 @@ class EventsRepository {
   EventPlayerData? currentPlayerData;
   Stream<List<EventPlayerData>>? playerDataStream;
   StreamController<List<EventPlayerData>>? controller;
+  StreamSubscription? documentSubscription;
 
   void initializeEventStream(String eventId) {
-    controller ??= StreamController<List<EventPlayerData>>();
+    documentSubscription?.cancel();
+    controller ??= StreamController<List<EventPlayerData>>.broadcast();
+    playerDataStream = controller?.stream;
     final CollectionReference reference = firestore
         .collection('$eventsCollection/$eventId/$participantsCollection');
-    reference.snapshots().listen((querySnapshot) {
+    documentSubscription = reference.snapshots().listen((querySnapshot) {
       List<EventPlayerData> playerData = [];
       for (var snapshot in querySnapshot.docs) {
         if (!snapshot.exists || snapshot.data() == null) {

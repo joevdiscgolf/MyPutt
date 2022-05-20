@@ -5,7 +5,7 @@ import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/date_helpers.dart';
 
-class EventDetailsPanel extends StatefulWidget {
+class EventDetailsPanel extends StatelessWidget {
   const EventDetailsPanel(
       {Key? key,
       required this.event,
@@ -20,19 +20,6 @@ class EventDetailsPanel extends StatefulWidget {
   final Color textColor;
 
   @override
-  State<EventDetailsPanel> createState() => _EventDetailsPanelState();
-}
-
-class _EventDetailsPanelState extends State<EventDetailsPanel> {
-  late Division _currentDivision;
-
-  @override
-  void initState() {
-    _currentDivision = widget.division;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -40,11 +27,9 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.event.name,
+            event.name,
             style: Theme.of(context).textTheme.headline6?.copyWith(
-                color: widget.textColor,
-                fontSize: 24,
-                fontWeight: FontWeight.w600),
+                color: textColor, fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -52,7 +37,7 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 16, color: widget.textColor),
+                ?.copyWith(fontSize: 16, color: textColor),
           ),
         ],
       ),
@@ -62,9 +47,9 @@ class _EventDetailsPanelState extends State<EventDetailsPanel> {
   String _dateLabel(BuildContext context) {
     String dateText;
     final DateTime startDate =
-        DateTime.fromMillisecondsSinceEpoch(widget.event.startTimestamp);
+        DateTime.fromMillisecondsSinceEpoch(event.startTimestamp);
     final DateTime endDate =
-        DateTime.fromMillisecondsSinceEpoch(widget.event.endTimestamp);
+        DateTime.fromMillisecondsSinceEpoch(event.endTimestamp);
 
     if (isSameDate(startDate, endDate)) {
       dateText =

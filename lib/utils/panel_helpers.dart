@@ -9,7 +9,8 @@ void displayBottomSheet(
   bool backgroundBarrierColor = true,
   Duration duration = const Duration(milliseconds: 200),
   Function? onDismiss,
-  bool dismissible = true,
+  bool dismissibleOnTap = true,
+  bool enableDrag = true,
 }) {
   showBarModalBottomSheet(
       barrierColor: backgroundBarrierColor
@@ -17,8 +18,8 @@ void displayBottomSheet(
           : Colors.transparent,
       context: context,
       duration: duration,
-      enableDrag: dismissible,
-      isDismissible: dismissible,
+      enableDrag: enableDrag,
+      isDismissible: dismissibleOnTap,
       topControl: Container(),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

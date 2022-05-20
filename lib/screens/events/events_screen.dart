@@ -68,13 +68,13 @@ class _EventsState extends State<EventsScreen>
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         appBar: AppBar(
-          toolbarHeight: 100,
+          toolbarHeight: 84,
           title: Text(
             'Events',
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 40, color: MyPuttColors.blue),
+                ?.copyWith(fontSize: 24, color: MyPuttColors.blue),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,

@@ -3,18 +3,24 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
+import 'package:myputt/screens/events/event_detail/components/expanded_player_data.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PlayerDataRow extends StatelessWidget {
-  const PlayerDataRow(
-      {Key? key,
-      required this.eventPlayerData,
-      required this.isFirst,
-      required this.isLast})
-      : super(key: key);
+  const PlayerDataRow({
+    Key? key,
+    required this.position,
+    required this.challengeStructure,
+    required this.eventPlayerData,
+    required this.isFirst,
+    required this.isLast,
+  }) : super(key: key);
 
+  final String position;
+  final List<ChallengeStructureItem> challengeStructure;
   final EventPlayerData eventPlayerData;
   final bool isFirst;
   final bool isLast;
@@ -24,18 +30,14 @@ class PlayerDataRow extends StatelessWidget {
     return Bounceable(
       onTap: () {},
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-            color: Colors.transparent,
+            color: Colors.white,
             border: Border(
-                // top: BorderSide(width: 1, color: MyPuttColors.gray[100]!),
-                bottom: BorderSide(
-                    width: 1,
-                    color: isLast
-                        ? Colors.transparent
-                        : MyPuttColors.gray[100]!))),
+                bottom: BorderSide(width: 1, color: MyPuttColors.gray[100]!))),
         child: ExpandableTheme(
           data: const ExpandableThemeData(
+            animationDuration: Duration(milliseconds: 200),
             tapBodyToExpand: true,
             iconPadding: EdgeInsets.only(left: 8, right: 24),
             headerAlignment: ExpandablePanelHeaderAlignment.center,
@@ -48,14 +50,10 @@ class PlayerDataRow extends StatelessWidget {
             child: ExpandablePanel(
               header: _mainRow(context),
               collapsed: const SizedBox(height: 0),
-              expanded: Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  color: MyPuttColors.white,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [])),
+              expanded: ExpandedPlayerData(
+                challengeStructure: challengeStructure,
+                playerData: eventPlayerData,
+              ),
             ),
           ),
         ),
@@ -66,64 +64,82 @@ class PlayerDataRow extends StatelessWidget {
   Widget _mainRow(BuildContext context) {
     final int puttsAttempted = totalAttemptsFromSets(eventPlayerData.sets);
     final int puttsMade = totalMadeFromSets(eventPlayerData.sets);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 32,
-          child: Center(
-            child: AutoSizeText(
-              '1',
-              style: Theme.of(context).textTheme.headline6?.copyWith(
-                  color: MyPuttColors.darkGray,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        FrisbeeCircleIcon(
-          size: 40,
-          iconSize: 20,
-          frisbeeAvatar: eventPlayerData.usermetadata.frisbeeAvatar,
-        ),
-        const SizedBox(width: 8),
-        SizedBox(
-          width: 48,
-          child: Column(
-            children: [
-              AutoSizeText(
-                eventPlayerData.usermetadata.displayName,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 32,
+            child: Center(
+              child: AutoSizeText(
+                position,
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                     color: MyPuttColors.darkGray,
                     fontSize: 16,
                     fontWeight: FontWeight.w600),
-                maxLines: 1,
+                textAlign: TextAlign.center,
               ),
-              AutoSizeText(
-                '@${eventPlayerData.usermetadata.username}',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
-                      color: MyPuttColors.gray[400],
-                      fontSize: 12,
-                    ),
-                maxLines: 1,
-              )
-            ],
+            ),
           ),
-        ),
-        const Spacer(),
-        SizedBox(
-            width: 64,
-            child: Text(
-              '$puttsMade/$puttsAttempted',
-              style: Theme.of(context).textTheme.headline6?.copyWith(
-                    color: MyPuttColors.darkGray,
-                    fontSize: 16,
+          const SizedBox(width: 8),
+          FrisbeeCircleIcon(
+            size: 40,
+            iconSize: 20,
+            frisbeeAvatar: eventPlayerData.usermetadata.frisbeeAvatar,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SizedBox(
+              width: 48,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoSizeText(
+                    eventPlayerData.usermetadata.displayName,
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color: MyPuttColors.darkGray,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600),
+                    maxLines: 1,
                   ),
-              textAlign: TextAlign.center,
-            ))
-      ],
+                  AutoSizeText(
+                    '@${eventPlayerData.usermetadata.username}',
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                          color: MyPuttColors.gray[400],
+                          fontSize: 12,
+                        ),
+                    maxLines: 1,
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+              width: 64,
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '$puttsMade/',
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            color: MyPuttColors.darkBlue,
+                            fontSize: 14,
+                          ),
+                    ),
+                    TextSpan(
+                      text: '$puttsAttempted',
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            color: MyPuttColors.darkGray,
+                            fontSize: 14,
+                          ),
+                    )
+                  ],
+                ),
+              ))
+        ],
+      ),
     );
   }
 }

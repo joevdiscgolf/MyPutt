@@ -13,7 +13,7 @@ class DivisionIndicator extends StatelessWidget {
       margin: const EdgeInsets.all(4),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16), color: MyPuttColors.skyBlue),
+          borderRadius: BorderRadius.circular(8), color: MyPuttColors.skyBlue),
       child: Text(
         divisionName,
         style: Theme.of(context)
