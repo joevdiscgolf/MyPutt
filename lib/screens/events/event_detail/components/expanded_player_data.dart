@@ -15,7 +15,6 @@ class ExpandedPlayerData extends StatelessWidget {
 
   final EventPlayerData playerData;
   final List<ChallengeStructureItem> challengeStructure;
-  final StatsService _statsService = locator.get<StatsService>();
 
   @override
   Widget build(BuildContext context) {

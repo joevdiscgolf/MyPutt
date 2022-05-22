@@ -3,7 +3,6 @@ import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/ordered_standing.dart';
 import 'package:myputt/screens/events/event_detail/components/player_data_row.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/utils/event_helpers.dart';
 
 class PlayerList extends StatelessWidget {
@@ -18,15 +17,6 @@ class PlayerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<EventPlayerData> standings = [];
-    // for (int i = 0; i < 20; i++) {
-    //   standings.add(EventPlayerData(
-    //       usermetadata: eventStandings[0].usermetadata,
-    //       sets: eventStandings[0].sets,
-    //       lockedIn: false,
-    //       division: Division.mpo));
-    // }
-
     List<OrderedStanding> orderedStandings =
         getOrderedStandings(eventStandings);
 
