@@ -150,7 +150,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         width: MediaQuery.of(context).size.width,
         onPressed: () async {
           Vibrate.feedback(FeedbackType.light);
-          if (_email == null || _password == null) {
+          final String? email = _emailController.text;
+          final String? password = _passwordController.text;
+          if (email == null || password == null) {
             setState(() {
               _errorText = 'Missing username or password';
             });
@@ -158,8 +160,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             setState(() {
               _loading = true;
             });
-            final signUpSuccess = await _signinService.attemptSignUpWithEmail(
-                _email!, _password!);
+            final signUpSuccess =
+                await _signinService.attemptSignUpWithEmail(email, email);
             if (!signUpSuccess) {
               setState(() {
                 _loading = false;

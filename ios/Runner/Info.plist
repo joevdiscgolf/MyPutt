@@ -58,5 +58,11 @@
 	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>MyPutt would like to access the camera.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>MyPutt would like to access your gallery.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>MyPutt would like to access the microphone.</string>
 </dict>
 </plist>

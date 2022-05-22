@@ -349,10 +349,10 @@ class DetailsTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: MyPuttColors.gray[200],
+        color: MyPuttColors.gray[100],
       ),
       child: Center(
         child: TextFormField(
@@ -367,7 +367,7 @@ class DetailsTextField extends StatelessWidget {
               .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           keyboardType: numberInput ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(top: 18, bottom: 12),
+            contentPadding: const EdgeInsets.only(top: 12, bottom: 12),
             border: InputBorder.none,
             hintText: hint,
             // contentPadding:

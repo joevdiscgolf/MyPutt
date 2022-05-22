@@ -6,9 +6,11 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
+import 'package:myputt/components/navigation/animated_route.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/events/create_event/event_basic_info_form.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -20,7 +22,7 @@ import 'components/events_list.dart';
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/Events_screen';
+  static String routeName = '/events_screen';
 
   @override
   _EventsState createState() => _EventsState();
@@ -245,7 +247,11 @@ class _EventsState extends State<EventsScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: MyPuttButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                AnimatedRoute(const EventBasicInfoForm()),
+              );
+            },
             title: 'New Event',
             iconData: FlutterRemix.add_line,
             color: MyPuttColors.blue,
