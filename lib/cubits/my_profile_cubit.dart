@@ -23,24 +23,24 @@ class MyProfileCubit extends Cubit<MyProfileState> {
   }
 
   Future<void> reload() async {
-    if (_userRepository.currentUser != null) {
-      final PDGAPlayerInfo? playerInfo = await _webScraperService
-          .getPDGAData(_userRepository.currentUser?.pdgaNum)
-          .timeout(const Duration(seconds: 3));
-      emit(MyProfileLoaded(
-          myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
-    } else {
+    if (_userRepository.currentUser == null) {
       await _userRepository.fetchCurrentUser();
-      if (_userRepository.currentUser != null) {
-        final PDGAPlayerInfo? playerInfo = await _webScraperService
-            .getPDGAData(_userRepository.currentUser?.pdgaNum)
-            .timeout(const Duration(seconds: 3));
-        emit(MyProfileLoaded(
-            myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
-      } else {
+      if (_userRepository.currentUser == null) {
         emit(NoProfileLoaded());
+        return;
       }
     }
+
+    final PDGAPlayerInfo? playerInfo = await _webScraperService
+        .getPDGAData(_userRepository.currentUser?.pdgaNum)
+        .timeout(const Duration(seconds: 3));
+    if (playerInfo?.rating != null) {
+      updateUserPDGARating(playerInfo!.rating!);
+    }
+    emit(
+      MyProfileLoaded(
+          myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo),
+    );
   }
 
   Future<void> updateFrisbeeAvatar(FrisbeeAvatar frisbeeAvatar) async {
@@ -68,5 +68,20 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       }
     }
     return false;
+  }
+
+  void updateUserPDGARating(int rating) {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) {
+      return;
+    }
+    _userRepository.currentUser = MyPuttUser(
+        username: currentUser.username,
+        keywords: currentUser.keywords,
+        displayName: currentUser.displayName,
+        uid: currentUser.uid,
+        pdgaNum: currentUser.pdgaNum,
+        pdgaRating: rating);
+    _userService.setUserWithPayload(currentUser);
   }
 }

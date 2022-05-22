@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/controllers/screen_controller.dart';
+import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -26,6 +29,10 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+  if (kDebugMode) {
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+    // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  }
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<InitService>().init();
@@ -47,9 +54,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => SessionSummaryCubit()),
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
-        BlocProvider(
-          create: (_) => SearchUserCubit(),
-        )
+        BlocProvider(create: (_) => SearchUserCubit()),
+        BlocProvider(create: (_) => EventsCubit())
       ],
       child: MaterialApp(
         builder: (context, child) {

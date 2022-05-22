@@ -37,7 +37,6 @@ class MyPuttButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(width);
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);

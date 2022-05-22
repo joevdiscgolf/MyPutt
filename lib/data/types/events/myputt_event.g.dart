@@ -18,10 +18,13 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
           .map((e) => _$enumDecode(_$DivisionEnumMap, e))
           .toList(),
       eventType: _$enumDecode(_$EventTypeEnumMap, json['eventType']),
+      startTimestamp: json['startTimestamp'] as int,
       endTimestamp: json['endTimestamp'] as int,
+      completionTimestamp: json['completionTimestamp'] as int?,
       status: _$enumDecode(_$EventStatusEnumMap, json['status']),
-      creationTimestamp: json['creationTimestamp'] as int,
-      completionTimestamp: json['completionTimestamp'] as int,
+      verificationRequired: json['verificationRequired'] as bool,
+      bannerImgUrl: json['bannerImgUrl'] as String? ??
+          'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
     );
 
 Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
@@ -33,10 +36,12 @@ Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
           instance.challengeStructure.map((e) => e.toJson()).toList(),
       'divisions': instance.divisions.map((e) => _$DivisionEnumMap[e]).toList(),
       'eventType': _$EventTypeEnumMap[instance.eventType],
+      'startTimestamp': instance.startTimestamp,
       'endTimestamp': instance.endTimestamp,
       'status': _$EventStatusEnumMap[instance.status],
-      'creationTimestamp': instance.creationTimestamp,
       'completionTimestamp': instance.completionTimestamp,
+      'verificationRequired': instance.verificationRequired,
+      'bannerImgUrl': instance.bannerImgUrl,
     };
 
 K _$enumDecode<K, V>(

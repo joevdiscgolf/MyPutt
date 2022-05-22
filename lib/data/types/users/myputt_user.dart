@@ -12,18 +12,45 @@ class MyPuttUser {
       required this.displayName,
       required this.uid,
       this.pdgaNum,
+      this.pdgaRating,
       this.frisbeeAvatar,
-      this.userSettings});
+      this.userSettings,
+      this.eventIds});
   final String username;
   final List<String> keywords;
   final String displayName;
   final String uid;
   int? pdgaNum;
+  int? pdgaRating;
   FrisbeeAvatar? frisbeeAvatar;
   UserSettings? userSettings;
+  final List<String>? eventIds;
 
   factory MyPuttUser.fromJson(Map<String, dynamic> json) =>
       _$MyPuttUserFromJson(json);
 
   Map<String, dynamic> toJson() => _$MyPuttUserToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class MyPuttUserMetadata {
+  MyPuttUserMetadata({
+    required this.username,
+    required this.displayName,
+    required this.uid,
+    this.pdgaNum,
+    this.pdgaRating,
+    this.frisbeeAvatar,
+  });
+  final String username;
+  final String displayName;
+  final String uid;
+  int? pdgaNum;
+  int? pdgaRating;
+  FrisbeeAvatar? frisbeeAvatar;
+
+  factory MyPuttUserMetadata.fromJson(Map<String, dynamic> json) =>
+      _$MyPuttUserMetadataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MyPuttUserMetadataToJson(this);
 }

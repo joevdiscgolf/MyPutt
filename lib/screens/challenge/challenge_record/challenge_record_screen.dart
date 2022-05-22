@@ -12,7 +12,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/undo_button.dart';
 import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
-import 'package:myputt/services/firebase/fb_constants.dart';
+import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';

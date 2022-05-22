@@ -1,9 +1,13 @@
+import 'package:myputt/data/types/events/event_player_data.dart';
+import 'package:myputt/data/types/sessions/putting_set.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';
+import 'package:myputt/services/firebase/event_data_loader.dart';
+import 'package:myputt/services/firebase/event_data_writer.dart';
 import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
@@ -17,6 +21,8 @@ class DatabaseService {
   final FBChallengesDataWriter _challengesDataWriter = FBChallengesDataWriter();
   final FBChallengesDataLoader _challengesDataLoader = FBChallengesDataLoader();
   final FBUserDataLoader _userDataLoader = FBUserDataLoader();
+  final EventDataWriter _eventDataWriter = EventDataWriter();
+  final EventDataLoader _eventDataLoader = EventDataLoader();
 
   final AuthService _authService = locator.get<AuthService>();
 
@@ -154,5 +160,21 @@ class DatabaseService {
     }
     return _challengesDataWriter.deleteChallenge(
         currentUser.uid, challengeToDelete);
+  }
+
+  Future<bool> updatePlayerSets(String eventId, List<PuttingSet> sets) async {
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentUid == null) {
+      return false;
+    }
+    return _eventDataWriter.updatePlayerSets(currentUid, eventId, sets);
+  }
+
+  Future<EventPlayerData?> loadEventPlayerData(String eventId) async {
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentUid == null) {
+      return null;
+    }
+    return _eventDataLoader.loadEventPlayerData(currentUid, eventId);
   }
 }

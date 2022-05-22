@@ -14,10 +14,13 @@ class MyPuttEvent {
     required this.challengeStructure,
     required this.divisions,
     required this.eventType,
+    required this.startTimestamp,
     required this.endTimestamp,
+    this.completionTimestamp,
     required this.status,
-    required this.creationTimestamp,
-    required this.completionTimestamp,
+    required this.verificationRequired,
+    this.bannerImgUrl =
+        'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
   });
 
   final String id;
@@ -26,10 +29,12 @@ class MyPuttEvent {
   final List<ChallengeStructureItem> challengeStructure;
   final List<Division> divisions;
   final EventType eventType;
+  final int startTimestamp;
   final int endTimestamp;
   final EventStatus status;
-  final int creationTimestamp;
-  final int completionTimestamp;
+  final int? completionTimestamp;
+  final bool verificationRequired;
+  final String? bannerImgUrl;
 
   factory MyPuttEvent.fromJson(Map<String, dynamic> json) =>
       _$MyPuttEventFromJson(json);

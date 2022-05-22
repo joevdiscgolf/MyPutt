@@ -10,6 +10,7 @@ class PuttingSet {
       required this.puttsAttempted,
       required this.distance,
       this.timeStamp});
+
   final int? timeStamp;
   final int puttsMade;
   final int puttsAttempted;

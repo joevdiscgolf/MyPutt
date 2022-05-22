@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
@@ -139,14 +140,25 @@ const redFrisbeeImageIcon = SizedBox(
 
 final kTestEvents = [
   MyPuttEvent(
-      id: 'id',
+      id: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
       code: 123,
       name: 'Summer Sizzler',
-      challengeStructure: [],
-      divisions: [Division.mpo],
+      challengeStructure: [ChallengeStructureItem(distance: 10, setLength: 10)],
+      divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
       eventType: EventType.tournament,
-      endTimestamp: 0,
+      endTimestamp: 1651109507018,
+      startTimestamp: 1650945600000,
       status: EventStatus.active,
-      creationTimestamp: 1,
+      verificationRequired: false,
       completionTimestamp: 2)
 ];
+
+const Map<EventType, String> eventTypeToName = {
+  EventType.club: 'Club',
+  EventType.tournament: 'Tournament'
+};
+
+const defaultEventImgSrc =
+    'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg';
+
+const defaultEventImgPath = 'assets/images/simon_putt_bg.jpeg';
