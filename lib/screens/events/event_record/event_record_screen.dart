@@ -20,7 +20,7 @@ class EventRecordScreen extends StatefulWidget {
   const EventRecordScreen({Key? key, required this.event}) : super(key: key);
 
   final MyPuttEvent event;
-  static String routeName = '/record_screen';
+  static String routeName = '/event_record_screen';
 
   @override
   _EventRecordScreenState createState() => _EventRecordScreenState();
@@ -87,22 +87,15 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Putts made',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                ?.copyWith(
-                                    color: MyPuttColors.darkGray,
-                                    fontSize: 20)),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _putterCountPicker(context),
-                        ),
-                      ],
+                    padding: const EdgeInsets.only(left: 16, right: 4, top: 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('Putts made',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: MyPuttColors.darkGray, fontSize: 20)),
                     ),
                   ),
                   const SizedBox(height: 4),

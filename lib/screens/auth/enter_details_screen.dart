@@ -11,12 +11,13 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/utils/validators.dart';
 
 enum UsernameStatus { none, available, unavailable, checking }
+
 enum HeaderType { username, displayName, pdgaNumber }
 
 class EnterDetailsScreen extends StatefulWidget {
   const EnterDetailsScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/select_username';
+  static String routeName = '/enter_details';
 
   @override
   State<EnterDetailsScreen> createState() => _EnterDetailsScreenState();
