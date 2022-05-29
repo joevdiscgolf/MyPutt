@@ -176,3 +176,53 @@ Map<String, dynamic> _$ExitEventResponseToJson(ExitEventResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
     };
+
+CreateEventRequest _$CreateEventRequestFromJson(Map json) => CreateEventRequest(
+      eventCreateParams: EventCreateParams.fromJson(
+          Map<String, dynamic>.from(json['eventCreateParams'] as Map)),
+      clubId: json['clubId'] as String?,
+    );
+
+Map<String, dynamic> _$CreateEventRequestToJson(CreateEventRequest instance) =>
+    <String, dynamic>{
+      'eventCreateParams': instance.eventCreateParams.toJson(),
+      'clubId': instance.clubId,
+    };
+
+CreateEventResponse _$CreateEventResponseFromJson(Map json) =>
+    CreateEventResponse(
+      eventId: json['eventId'] as String?,
+    );
+
+Map<String, dynamic> _$CreateEventResponseToJson(
+        CreateEventResponse instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+    };
+
+EventCreateParams _$EventCreateParamsFromJson(Map json) => EventCreateParams(
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      verificationRequired: json['verificationRequired'] as bool,
+      divisions: (json['divisions'] as List<dynamic>)
+          .map((e) => _$enumDecode(_$DivisionEnumMap, e))
+          .toList(),
+      startDate: json['startDate'] as String,
+      endDate: json['endDate'] as String,
+      challengeStructure: (json['challengeStructure'] as List<dynamic>)
+          .map((e) => ChallengeStructureItem.fromJson(
+              Map<String, dynamic>.from(e as Map)))
+          .toList(),
+    );
+
+Map<String, dynamic> _$EventCreateParamsToJson(EventCreateParams instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'description': instance.description,
+      'verificationRequired': instance.verificationRequired,
+      'divisions': instance.divisions.map((e) => _$DivisionEnumMap[e]).toList(),
+      'startDate': instance.startDate,
+      'endDate': instance.endDate,
+      'challengeStructure':
+          instance.challengeStructure.map((e) => e.toJson()).toList(),
+    };

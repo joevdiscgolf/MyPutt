@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
-import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ExpandedPlayerData extends StatelessWidget {
-  ExpandedPlayerData({
+  const ExpandedPlayerData({
     Key? key,
     required this.playerData,
     required this.challengeStructure,

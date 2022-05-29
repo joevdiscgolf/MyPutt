@@ -7,14 +7,14 @@ class CustomField extends StatelessWidget {
       this.obscureText = false,
       required this.hint,
       required this.iconData,
-      required this.onChanged})
+      this.onInput})
       : super(key: key);
 
   final TextEditingController controller;
   final bool obscureText;
   final String hint;
   final IconData iconData;
-  final Function onChanged;
+  final Function? onInput;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,11 @@ class CustomField extends StatelessWidget {
           ),
           counter: const Offstage(),
         ),
-        onChanged: (String text) => onChanged(text),
+        onChanged: (String text) {
+          if (onInput != null) {
+            onInput!(text);
+          }
+        },
       ),
     );
   }

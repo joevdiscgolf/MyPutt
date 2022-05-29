@@ -10,7 +10,6 @@ import 'package:myputt/components/navigation/animated_route.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/screens/events/create_event/event_basic_info_form.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -18,6 +17,7 @@ import 'package:tailwind_colors/tailwind_colors.dart';
 
 import 'components/event_category_tab.dart';
 import 'components/events_list.dart';
+import 'create_event/create_event_screen.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
@@ -249,7 +249,9 @@ class _EventsState extends State<EventsScreen>
           child: MyPuttButton(
             onPressed: () {
               Navigator.of(context).push(
-                AnimatedRoute(const EventBasicInfoForm()),
+                AnimatedRoute(
+                  const CreateEventScreen(),
+                ),
               );
             },
             title: 'New Event',

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
@@ -129,4 +130,55 @@ class ExitEventResponse {
       _$ExitEventResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$ExitEventResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class CreateEventRequest {
+  CreateEventRequest({
+    required this.eventCreateParams,
+    this.clubId,
+  });
+  final EventCreateParams eventCreateParams;
+  final String? clubId;
+
+  factory CreateEventRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateEventRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreateEventRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class CreateEventResponse {
+  CreateEventResponse({this.eventId});
+  final String? eventId;
+
+  factory CreateEventResponse.fromJson(Map<String, dynamic> json) =>
+      _$CreateEventResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreateEventResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class EventCreateParams {
+  EventCreateParams({
+    required this.name,
+    required this.description,
+    required this.verificationRequired,
+    required this.divisions,
+    required this.startDate,
+    required this.endDate,
+    required this.challengeStructure,
+  });
+  final String name;
+  final String? description;
+  final bool verificationRequired;
+  final List<Division> divisions;
+  final String startDate;
+  final String endDate;
+  final List<ChallengeStructureItem> challengeStructure;
+
+  factory EventCreateParams.fromJson(Map<String, dynamic> json) =>
+      _$EventCreateParamsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventCreateParamsToJson(this);
 }

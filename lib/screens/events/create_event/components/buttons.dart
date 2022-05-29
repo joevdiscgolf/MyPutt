@@ -3,14 +3,16 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ContinueButton extends StatelessWidget {
-  const ContinueButton({Key? key, required this.onPressed}) : super(key: key);
+  const ContinueButton({Key? key, required this.onPressed, required this.text})
+      : super(key: key);
 
   final Function onPressed;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return MyPuttButton(
-      title: 'Continue',
+      title: text,
       onPressed: onPressed,
       width: double.infinity,
       textSize: 20,
@@ -19,17 +21,22 @@ class ContinueButton extends StatelessWidget {
   }
 }
 
-class CancelButton extends StatelessWidget {
-  const CancelButton({Key? key}) : super(key: key);
+class PreviousPageButton extends StatelessWidget {
+  const PreviousPageButton({
+    Key? key,
+    required this.onTap,
+  }) : super(key: key);
+
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     return MyPuttButton(
-      title: 'Cancel',
+      title: 'Back',
       textColor: MyPuttColors.gray[400]!,
       color: Colors.transparent,
       width: double.infinity,
-      onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+      onPressed: onTap,
     );
   }
 }

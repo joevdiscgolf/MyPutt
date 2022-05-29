@@ -50,7 +50,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void initState() {
-    _eventsRepository.initializeEventStream(widget.event.id);
+    _eventsRepository.initializeEventStream(widget.event.eventId);
     _division = widget.event.divisions.first;
     _fetchData = _initData();
     _scoreUpdatesSubscription = _eventsRepository.playerDataStream
@@ -69,7 +69,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   Future<void> _initData() async {
     await _eventsService
-        .getEvent(widget.event.id, division: _division)
+        .getEvent(widget.event.eventId, division: _division)
         .then((response) => setState(() {
               _eventStandings = response.eventStandings;
               _inEvent = response.inEvent;

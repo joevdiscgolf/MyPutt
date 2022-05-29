@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myputt/data/types/events/event_create_params.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
@@ -17,6 +18,7 @@ class EventsRepository {
   Stream<List<EventPlayerData>>? playerDataStream;
   StreamController<List<EventPlayerData>>? controller;
   StreamSubscription? documentSubscription;
+  EventCreateParams eventCreateParams = EventCreateParams();
 
   void initializeEventStream(String eventId) {
     documentSubscription?.cancel();
@@ -42,6 +44,6 @@ class EventsRepository {
       return false;
     }
     return _databaseService.updatePlayerSets(
-        currentEvent!.id, currentPlayerData!.sets);
+        currentEvent!.eventId, currentPlayerData!.sets);
   }
 }

@@ -104,12 +104,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
             controller: _emailController,
             hint: 'Email',
             iconData: FlutterRemix.mail_line,
-            onChanged: (String text) => setState(() => _email = text)),
+            onInput: (String text) => setState(() => _email = text)),
         CustomField(
           controller: _passwordController,
           hint: 'Password',
           iconData: FlutterRemix.lock_line,
-          onChanged: (String text) => setState(() => _password = text),
+          onInput: (String text) => setState(() => _password = text),
           obscureText: true,
         ),
         Column(

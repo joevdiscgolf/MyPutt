@@ -7,7 +7,7 @@ part of 'myputt_event.dart';
 // **************************************************************************
 
 MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
-      id: json['id'] as String,
+      eventId: json['eventId'] as String,
       code: json['code'] as int,
       name: json['name'] as String,
       challengeStructure: (json['challengeStructure'] as List<dynamic>)
@@ -29,7 +29,7 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
 
 Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'eventId': instance.eventId,
       'code': instance.code,
       'name': instance.name,
       'challengeStructure':

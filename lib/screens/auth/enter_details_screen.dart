@@ -112,7 +112,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                   textEditingController: displayNameController,
                   hint: 'Display name',
                   enabled: !_loading,
-                  onChanged: (String text) =>
+                  onInput: (String text) =>
                       setState(() => _displayName = text)),
               const SizedBox(
                 height: 24,
@@ -122,7 +122,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                 textEditingController: pdgaNumberController,
                 hint: 'PDGA # (optional)',
                 enabled: !_loading,
-                onChanged: (String text) => setState(() => _pdgaNumber = text),
+                onInput: (String text) => setState(() => _pdgaNumber = text),
                 numberInput: true,
               ),
             ],
@@ -335,7 +335,7 @@ class DetailsTextField extends StatelessWidget {
       required this.textEditingController,
       required this.hint,
       required this.enabled,
-      required this.onChanged,
+      this.onInput,
       this.numberInput = false})
       : super(key: key);
 
@@ -343,7 +343,7 @@ class DetailsTextField extends StatelessWidget {
   final String hint;
   final TextEditingController textEditingController;
   final bool enabled;
-  final Function onChanged;
+  final Function? onInput;
   final bool numberInput;
 
   @override
@@ -386,7 +386,11 @@ class DetailsTextField extends StatelessWidget {
             ),
             counter: const Offstage(),
           ),
-          onChanged: (String text) => onChanged(text),
+          onChanged: (String text) {
+            if (onInput != null) {
+              onInput!(text);
+            }
+          },
         ),
       ),
     );

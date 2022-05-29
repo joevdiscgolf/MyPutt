@@ -140,7 +140,7 @@ const redFrisbeeImageIcon = SizedBox(
 
 final kTestEvents = [
   MyPuttEvent(
-      id: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
+      eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
       code: 123,
       name: 'Summer Sizzler',
       challengeStructure: [ChallengeStructureItem(distance: 10, setLength: 10)],

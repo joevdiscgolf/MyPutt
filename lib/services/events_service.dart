@@ -79,4 +79,19 @@ class EventsService {
       return UpdatePlayerSetsResponse(success: false);
     });
   }
+
+  Future<CreateEventResponse> createEvent(CreateEventRequest request) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('createEvent');
+    print('request: ${request.toJson()}');
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      print(response.data);
+      return CreateEventResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      print(e);
+      return CreateEventResponse();
+    });
+  }
 }

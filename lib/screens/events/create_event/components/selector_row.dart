@@ -11,11 +11,13 @@ class SelectorRow extends StatelessWidget {
     required this.icon,
     required this.text,
     required this.onPressed,
+    this.showArrow = true,
   }) : super(key: key);
 
   final Widget icon;
   final String text;
   final Function onPressed;
+  final bool showArrow;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,11 @@ class SelectorRow extends StatelessWidget {
                     ?.copyWith(color: MyPuttColors.darkGray, fontSize: 14),
               ),
             ),
-            const Icon(
-              FlutterRemix.arrow_down_s_line,
-              size: 16,
-            ),
+            if (showArrow)
+              const Icon(
+                FlutterRemix.arrow_down_s_line,
+                size: 16,
+              ),
           ],
         ),
       ),

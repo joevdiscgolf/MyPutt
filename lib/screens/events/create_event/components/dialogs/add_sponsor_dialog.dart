@@ -68,23 +68,13 @@ class _AddSponsorDialogState extends State<AddSponsorDialog> {
             controller: _sponsorNameController,
             hint: 'Name',
             iconData: FlutterRemix.user_line,
-            onChanged: () {},
           ),
           const SizedBox(height: 16),
           CustomField(
             controller: _sponsorUrlController,
             hint: 'Website (optional)',
             iconData: FlutterRemix.global_line,
-            onChanged: () {},
           ),
-          // AutoSizeText(
-          //   'Add presenting sponsors to your event',
-          //   style: Theme.of(context)
-          //       .textTheme
-          //       .headline6
-          //       ?.copyWith(color: MyPuttColors.gray[400], fontSize: 16),
-          //   textAlign: TextAlign.center,
-          // ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
             height: 24,
