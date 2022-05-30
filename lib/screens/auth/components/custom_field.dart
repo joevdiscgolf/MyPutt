@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CustomField extends StatelessWidget {
-  const CustomField(
-      {Key? key,
-      required this.controller,
-      this.obscureText = false,
-      required this.hint,
-      required this.iconData,
-      this.onInput})
-      : super(key: key);
+  const CustomField({
+    Key? key,
+    required this.controller,
+    this.obscureText = false,
+    required this.hint,
+    required this.iconData,
+    this.onInput,
+    this.keyboardType,
+  }) : super(key: key);
 
   final TextEditingController controller;
   final bool obscureText;
   final String hint;
   final IconData iconData;
   final Function? onInput;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class CustomField extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       height: 60,
       child: TextFormField(
+        keyboardType: keyboardType,
         obscureText: obscureText,
         controller: controller,
         autocorrect: false,
