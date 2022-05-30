@@ -34,7 +34,7 @@ class EventListItem extends StatelessWidget {
         },
         child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
               color: MyPuttColors.gray[50],
               borderRadius: BorderRadius.circular(8),
@@ -48,50 +48,76 @@ class EventListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: AutoSizeText(
-                        event.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
-                        maxLines: 1,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AutoSizeText(
+                          event.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  fontSize: 20, color: MyPuttColors.blue),
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      eventTypeToName[event.eventType]!,
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                          fontSize: 16, color: MyPuttColors.darkGray),
-                    ),
-                  ],
+                      Text(
+                        eventTypeToName[event.eventType]!,
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontSize: 16, color: MyPuttColors.darkGray),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _dateLabel(context),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    _dateLabel(context),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
+                  ),
                 ),
                 const SizedBox(height: 16),
+                _image(context),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(child: _participantCountIndicator(context, 50)),
-                    Wrap(
-                      alignment: WrapAlignment.start,
-                      children: event.divisions
-                          .map((division) => DivisionIndicator(
-                                divisionName: division.name.toUpperCase(),
-                              ))
-                          .toList(),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      Expanded(child: _participantCountIndicator(context, 50)),
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        children: event.divisions
+                            .map((division) => DivisionIndicator(
+                                  divisionName: division.name.toUpperCase(),
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 )
               ],
             )));
+  }
+
+  Widget _image(BuildContext context) {
+    return Container(
+      height: 100,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.1), BlendMode.srcOver),
+          image: const AssetImage(kDefaultEventImgPath),
+        ),
+      ),
+    );
   }
 
   String _dateLabel(BuildContext context) {

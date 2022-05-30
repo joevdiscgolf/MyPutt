@@ -158,10 +158,7 @@ const Map<EventType, String> eventTypeToName = {
   EventType.tournament: 'Tournament'
 };
 
-const defaultEventImgSrc =
-    'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg';
-
-const defaultEventImgPath = 'assets/images/simon_putt_bg.jpeg';
+const kDefaultEventImgPath = 'assets/images/discgolf_wallpaper.jpeg';
 
 const List<Division> proDivisions = [
   Division.mpo,

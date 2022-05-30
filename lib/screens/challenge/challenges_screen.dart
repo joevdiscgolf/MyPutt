@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
-import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/screens/challenge/components/dialogs/select_preset_dialog.dart';
+import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/screens/challenge/components/challenges_list.dart';
@@ -65,7 +65,7 @@ class _ChallengesState extends State<ChallengesScreen>
         return EmptyState(
             onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
       } else if (state is ChallengesLoading || state is ChallengesInitial) {
-        return const LoadingScreen();
+        return const EventSearchLoadingScreen();
       }
       state.activeChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));

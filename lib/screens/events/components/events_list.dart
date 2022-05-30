@@ -14,20 +14,23 @@ class EventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(8),
-        child: events.isNotEmpty
-            ? ListView(
-                children:
-                    events.map((event) => EventListItem(event: event)).toList(),
-              )
-            : LayoutBuilder(
-                builder: (BuildContext context, constraints) =>
-                    ListView(children: [
-                  Container(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: const Center(child: Text('No events')))
-                ]),
-              ));
+      padding: const EdgeInsets.all(8),
+      child: events.isNotEmpty
+          ? ListView(
+              children:
+                  events.map((event) => EventListItem(event: event)).toList(),
+            )
+          : LayoutBuilder(
+              builder: (BuildContext context, constraints) =>
+                  ListView(children: [
+                Container(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: const Center(
+                    child: Text('No events'),
+                  ),
+                )
+              ]),
+            ),
+    );
   }
 }
