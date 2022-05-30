@@ -155,8 +155,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               : DecorationImage(
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.5), BlendMode.srcOver),
-                  image: const AssetImage(defaultEventImgPath)),
+                      Colors.black.withOpacity(0.3), BlendMode.srcOver),
+                  image: const AssetImage(kDefaultEventImgPath)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

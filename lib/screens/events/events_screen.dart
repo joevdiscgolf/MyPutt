@@ -7,9 +7,9 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
-import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -70,7 +70,7 @@ class _EventsState extends State<EventsScreen>
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         appBar: AppBar(
-          toolbarHeight: 84,
+          toolbarHeight: _showSearchBar ? 100 : 60,
           title: Text(
             'Events',
             style: Theme.of(context)
@@ -82,98 +82,50 @@ class _EventsState extends State<EventsScreen>
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           bottom: _appBarBottom(context),
+          elevation: 0.5,
         ),
-        // floatingActionButton: _newEventButton(context),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: NestedScrollView(
           body: _mainBody(context),
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              // SliverAppBar(
-              //   backgroundColor: MyPuttColors.white,
-              //   title: CollapsingAppBarTitle(
-              //     child: Text(
-              //       'Events',
-              //       style: Theme.of(context)
-              //           .textTheme
-              //           .headline6
-              //           ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
-              //     ),
-              //   ),
-              //   // floating: true,
-              //   pinned: true,
-              //   collapsedHeight: 80,
-              //   expandedHeight: 200,
-              //   flexibleSpace: FlexibleSpaceBar(
-              //       centerTitle: true,
-              //       title: Center(
-              //         child: Padding(
-              //           padding: const EdgeInsets.only(top: 24),
-              //           child: Text(
-              //             'Events',
-              //             style: Theme.of(context)
-              //                 .textTheme
-              //                 .headline6
-              //                 ?.copyWith(
-              //                     fontSize: 24, color: MyPuttColors.blue),
-              //           ),
-              //         ),
-              //       )),
-              //   shadowColor: Colors.transparent,
-              //   bottom: _sliverBarBottom(context),
-              // ),
-              // SliverToBoxAdapter(child: _tabBar(context)),
-              // if (_tabController.index == 0)
-              //   SliverToBoxAdapter(
-              //     child: _searchBar(context),
-              //   )
-            ];
-          },
+          headerSliverBuilder:
+              (BuildContext context, bool innerBoxIsScrolled) => [],
         ));
   }
 
   Widget _mainBody(BuildContext context) {
-    // state.activeEvents.sort(
-    //     (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
-    // state.pendingEvents.sort(
-    //     (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
-    // state.completedEvents.sort((c1, c2) {
-    //   final int dateCompletedComparison = (c1.completionTimeStamp ?? 0)
-    //       .compareTo(c2.completionTimeStamp ?? 0);
-    //   return dateCompletedComparison != 0
-    //       ? dateCompletedComparison
-    //       : c1.creationTimeStamp.compareTo(c2.creationTimeStamp);
-    // });
-    return TabBarView(controller: _tabController, children: [
-      Builder(builder: (BuildContext context) {
-        if (_loading) {
-          return const LoadingScreen();
-        } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
-          // User hasn't searched yet
-          return Container();
-        } else if (_events?.isNotEmpty != true || _events == null) {
-          // No search results found
-          return const EmptyState();
-        }
-
-        return EventsList(events: _events!);
-      }),
-      // EventsList(events: kTestEvents),
-      // SearchTab(),
-      Container(),
-      EventsList(events: kTestEvents),
-      // EventsList(
-      //     category: EventCategory.pending,
-      //     Events: List.from(state.pendingEvents.reversed)),
-    ]);
+    return TabBarView(
+      controller: _tabController,
+      children: [
+        Builder(
+          builder: (BuildContext context) {
+            if (_loading) {
+              return const EventSearchLoadingScreen();
+            } else if (_searchBarText == null ||
+                _searchBarText?.isEmpty == true) {
+              return Container();
+            } else if (_events?.isNotEmpty != true || _events == null) {
+              return const EmptyState();
+            }
+            return EventsList(events: _events!);
+          },
+        ),
+        EventsList(events: kTestEvents),
+        EventsList(events: kTestEvents),
+      ],
+    );
   }
 
   PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
         child: Column(
-          children: [_tabBar(context), if (_showSearchBar) _searchBar(context)],
+          children: [
+            _tabBar(context),
+            if (_showSearchBar) ...[
+              const SizedBox(height: 4),
+              _searchBar(context)
+            ]
+          ],
         ),
-        preferredSize: Size.fromHeight(_showSearchBar ? 80 : 80));
+        preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60));
   }
 
   PreferredSizeWidget _tabBar(BuildContext context) {
@@ -210,7 +162,7 @@ class _EventsState extends State<EventsScreen>
 
   Widget _searchBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: TextFormField(
         controller: _searchBarController,
         autocorrect: false,
@@ -222,7 +174,7 @@ class _EventsState extends State<EventsScreen>
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
-          hintText: 'Event name',
+          hintText: 'Search by name or code',
           contentPadding:
               const EdgeInsets.only(left: 4, right: 4, top: 12, bottom: 12),
           isDense: true,
@@ -230,8 +182,21 @@ class _EventsState extends State<EventsScreen>
               .textTheme
               .subtitle1!
               .copyWith(color: TWUIColors.gray[400], fontSize: 18),
-          enabledBorder: Theme.of(context).inputDecorationTheme.border,
-          focusedBorder: Theme.of(context).inputDecorationTheme.border,
+          enabledBorder: Theme.of(context)
+              .inputDecorationTheme
+              .border
+              ?.copyWith(
+                  borderSide: const BorderSide(color: MyPuttColors.gray)),
+          focusedBorder: Theme.of(context)
+              .inputDecorationTheme
+              .border
+              ?.copyWith(
+                  borderSide: const BorderSide(color: MyPuttColors.gray)),
+          suffixIcon: const Icon(
+            FlutterRemix.search_line,
+            color: MyPuttColors.darkGray,
+          ),
+          errorBorder: InputBorder.none,
           counter: const Offstage(),
         ),
         onChanged: (String text) => _searchHandler(text),
