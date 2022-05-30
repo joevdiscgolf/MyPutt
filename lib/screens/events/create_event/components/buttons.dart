@@ -3,11 +3,16 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ContinueButton extends StatelessWidget {
-  const ContinueButton({Key? key, required this.onPressed, required this.text})
-      : super(key: key);
+  const ContinueButton({
+    Key? key,
+    required this.onPressed,
+    required this.text,
+    this.loading = false,
+  }) : super(key: key);
 
   final Function onPressed;
   final String text;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +22,7 @@ class ContinueButton extends StatelessWidget {
       width: double.infinity,
       textSize: 20,
       shadowColor: MyPuttColors.gray[400],
+      loading: loading,
     );
   }
 }

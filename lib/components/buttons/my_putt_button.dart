@@ -61,17 +61,18 @@ class MyPuttButton extends StatelessWidget {
             color: color),
         child: loading
             ? SizedBox(
-                height: 32,
-                width: 32,
+                height: 24,
+                width: 24,
                 child: FittedBox(
                   child: CircularProgressIndicator(
-                    color: borderColor,
+                    color: textColor,
                   ),
                 ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (iconData != null) ...[
                     Icon(

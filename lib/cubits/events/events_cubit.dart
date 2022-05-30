@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:myputt/data/endpoints/events/event_endpoints.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
@@ -78,26 +77,16 @@ class EventsCubit extends Cubit<EventsState> {
   }
 
   Future<bool> createEventRequest({
-    required String? eventName,
+    required String eventName,
     String? eventDescription,
     required bool verificationSignature,
     required List<Division> divisions,
-    required DateTime? startDate,
+    required DateTime startDate,
     TimeOfDay? startTime,
-    required DateTime? endDate,
+    required DateTime endDate,
     TimeOfDay? endTime,
     required List<ChallengeStructureItem> challengeStructure,
   }) async {
-    if (eventName == null ||
-        // divisions.isEmpty ||
-        startDate == null ||
-        endDate == null) {
-      print(eventName);
-      print(startDate);
-      print(endDate);
-      return false;
-    }
-
     if (startTime != null) {
       startDate.add(Duration(hours: startTime.hour, minutes: startTime.minute));
     }

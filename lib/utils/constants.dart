@@ -179,32 +179,3 @@ const List<Division> amateurDivisions = [
   Division.fa3,
   Division.junior,
 ];
-/*
-enum Division {
-  @JsonValue('mpo')
-  mpo,
-  @JsonValue('mp40')
-  mp40,
-  @JsonValue('mp50')
-  mp50,
-  @JsonValue('ma1')
-  ma1,
-  @JsonValue('ma2')
-  ma2,
-  @JsonValue('ma3')
-  ma3,
-  @JsonValue('ma4')
-  ma4,
-  @JsonValue('ma5')
-  ma5,
-  @JsonValue('fpo')
-  fpo,
-  @JsonValue('fa1')
-  fa1,
-  @JsonValue('fa2')
-  fa2,
-  @JsonValue('fa3')
-  fa3,
-  @JsonValue('junior')
-  junior,
-}*/

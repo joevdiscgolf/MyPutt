@@ -241,27 +241,25 @@ class _EventsState extends State<EventsScreen>
 
   Widget _newEventButton(BuildContext context) {
     return Bounceable(
-        onTap: () {
-          Vibrate.feedback(FeedbackType.light);
+      onTap: () {
+        Vibrate.feedback(FeedbackType.light);
+      },
+      child: MyPuttButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            AnimatedRoute(
+              const CreateEventScreen(),
+            ),
+          );
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: MyPuttButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                AnimatedRoute(
-                  const CreateEventScreen(),
-                ),
-              );
-            },
-            title: 'New Event',
-            iconData: FlutterRemix.add_line,
-            color: MyPuttColors.blue,
-            padding: const EdgeInsets.all(16),
-            width: MediaQuery.of(context).size.width / 2,
-            shadowColor: MyPuttColors.gray[400],
-          ),
-        ));
+        title: 'New Event',
+        iconData: FlutterRemix.add_line,
+        color: MyPuttColors.blue,
+        textSize: 16,
+        width: MediaQuery.of(context).size.width / 2,
+        shadowColor: MyPuttColors.gray[400],
+      ),
+    );
   }
 
   void _searchHandler(String? value) {

@@ -168,7 +168,7 @@ class _DateLayoutFormState extends State<DateLayoutForm> {
     if (_endTime != null) {
       endDate.add(Duration(hours: _endTime!.hour, minutes: _endTime!.minute));
     }
-    return endDate.millisecondsSinceEpoch > start.millisecondsSinceEpoch;
+    return endDate.millisecondsSinceEpoch >= start.millisecondsSinceEpoch;
   }
 
   String _formatTime(TimeOfDay time) {

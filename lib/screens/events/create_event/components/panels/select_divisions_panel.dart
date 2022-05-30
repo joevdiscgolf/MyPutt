@@ -34,6 +34,21 @@ class _SelectDivisionsPanelState extends State<SelectDivisionsPanel> {
     List<Widget> children = [
       const PanelHeader(title: 'Select divisions'),
       const SizedBox(height: 16),
+      DivisionRow(
+        division: Division.everyone,
+        selected: _selectedDivisions.contains(Division.everyone),
+        onPressed: () => setState(
+          () {
+            if (_selectedDivisions.contains(Division.everyone)) {
+              _selectedDivisions.remove(Division.everyone);
+            } else {
+              _selectedDivisions.add(Division.everyone);
+            }
+            widget.onDivisionSelected(_selectedDivisions);
+          },
+        ),
+      ),
+      const SizedBox(height: 16),
       Text(
         'Professional',
         style: Theme.of(context).textTheme.headline6?.copyWith(
@@ -42,22 +57,24 @@ class _SelectDivisionsPanelState extends State<SelectDivisionsPanel> {
               fontWeight: FontWeight.bold,
             ),
       ),
-      const SizedBox(height: 16)
+      const SizedBox(height: 16),
     ];
+
     final List<Widget> professional = proDivisions
         .map(
           (Division division) => DivisionRow(
             division: division,
             selected: _selectedDivisions.contains(division),
-            onPressed: () => setState(() {
-              print(_selectedDivisions);
-              if (_selectedDivisions.contains(division)) {
-                _selectedDivisions.remove(division);
-              } else {
-                _selectedDivisions.add(division);
-              }
-              widget.onDivisionSelected(_selectedDivisions);
-            }),
+            onPressed: () => setState(
+              () {
+                if (_selectedDivisions.contains(division)) {
+                  _selectedDivisions.remove(division);
+                } else {
+                  _selectedDivisions.add(division);
+                }
+                widget.onDivisionSelected(_selectedDivisions);
+              },
+            ),
           ),
         )
         .toList();

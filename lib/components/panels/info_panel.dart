@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
+import 'package:myputt/components/panels/panel_header.dart';
 import 'package:myputt/utils/colors.dart';
 
 class InfoPanel extends StatelessWidget {
@@ -15,20 +16,18 @@ class InfoPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            headerText,
-            style: Theme.of(context).textTheme.headline6?.copyWith(
-                color: MyPuttColors.darkGray,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
-          ),
+          PanelHeader(title: headerText),
           const SizedBox(height: 16),
-          Text(
-            bodyText,
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              bodyText,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(color: MyPuttColors.gray[600], fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),

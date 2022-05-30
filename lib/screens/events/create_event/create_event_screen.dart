@@ -41,16 +41,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   DateTime? _endDate;
   TimeOfDay? _endTime;
 
+  bool _loading = false;
+
   @override
   void initState() {
     _eventNameController.addListener(() {
       if (_eventNameController.text.isNotEmpty) {
-        _eventName = _eventNameController.text;
+        setState(() => _eventName = _eventNameController.text);
       }
     });
     _descriptionController.addListener(() {
       if (_descriptionController.text.isNotEmpty) {
-        _eventDescription = _descriptionController.text;
+        setState(() => _eventDescription = _descriptionController.text);
       }
     });
     super.initState();
@@ -179,22 +181,36 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: ContinueButton(
+            loading: _loading,
             text: _currentPage == 2 ? 'Submit' : 'Continue',
             onPressed: () async {
               if (_currentPage == 2) {
-                await BlocProvider.of<EventsCubit>(context).createEventRequest(
-                  eventName: _eventName,
+                setState(() => _errorText = null);
+                if (!_validateSubmit()) {
+                  return;
+                }
+                setState(() => _loading = true);
+                final bool createSuccess =
+                    await BlocProvider.of<EventsCubit>(context)
+                        .createEventRequest(
+                  eventName: _eventName!,
                   eventDescription: _eventDescription,
                   verificationSignature: _signatureVerification,
                   divisions: _selectedDivisions,
-                  startDate: _startDate,
+                  startDate: _startDate!,
                   startTime: _startTime,
-                  endDate: _endDate,
+                  endDate: _endDate!,
                   endTime: _endTime,
                   challengeStructure: [],
                 );
-              }
-              if (validateInputs()) {
+                setState(() => _loading = false);
+                if (!createSuccess) {
+                  setState(() =>
+                      _errorText = 'Failed to create event. Please try again');
+                  return;
+                }
+                Navigator.of(context).pop();
+              } else if (validateInputs()) {
                 _nextPage();
               } else {
                 setState(() => _errorText = 'Please fill all required fields');
@@ -205,6 +221,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         const SizedBox(width: 16),
         PreviousPageButton(
           onTap: () {
+            if (_currentPage == 0) {
+              return;
+            }
             setState(() {
               _currentPage--;
               _errorText = null;
@@ -246,5 +265,22 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         curve: Curves.easeIn,
       );
     }
+  }
+
+  bool _validateSubmit() {
+    if (_eventName == null) {
+      setState(() => _errorText = 'Please enter an event name');
+      return false;
+    } else if (_selectedDivisions.isEmpty) {
+      setState(() => _errorText = 'Please enter an event format structure');
+      return false;
+    } else if (_startDate == null) {
+      setState(() => _errorText = 'Please enter an start date');
+      return false;
+    } else if (_endDate == null) {
+      setState(() => _errorText = 'Please enter an end date');
+      return false;
+    }
+    return true;
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
-import 'package:myputt/screens/events/create_event/components/create_event_header.dart';
 
 class EventBasicInfoForm extends StatelessWidget {
   const EventBasicInfoForm({
