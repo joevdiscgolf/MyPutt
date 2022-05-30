@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/forms/date_layout_form.dart';
@@ -41,7 +42,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   DateTime? _endDate;
   TimeOfDay? _endTime;
 
-  bool _loading = false;
+  ButtonState _buttonState = ButtonState.normal;
 
   @override
   void initState() {
@@ -181,7 +182,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: ContinueButton(
-            loading: _loading,
+            buttonState: _buttonState,
             text: _currentPage == 2 ? 'Submit' : 'Continue',
             onPressed: () async {
               if (_currentPage == 2) {
@@ -189,7 +190,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 if (!_validateSubmit()) {
                   return;
                 }
-                setState(() => _loading = true);
+                setState(() => _buttonState = ButtonState.loading);
+                // await Future.delayed(
+                //     const Duration(seconds: 1), () => false);
                 final bool createSuccess =
                     await BlocProvider.of<EventsCubit>(context)
                         .createEventRequest(
@@ -203,13 +206,15 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   endTime: _endTime,
                   challengeStructure: [],
                 );
-                setState(() => _loading = false);
-                if (!createSuccess) {
+                setState(() => _buttonState =
+                    createSuccess ? ButtonState.success : ButtonState.retry);
+                if (createSuccess) {
+                  await Future.delayed(const Duration(milliseconds: 500),
+                      () => Navigator.of(context).pop());
+                } else {
                   setState(() =>
                       _errorText = 'Failed to create event. Please try again');
-                  return;
                 }
-                Navigator.of(context).pop();
               } else if (validateInputs()) {
                 _nextPage();
               } else {
@@ -225,6 +230,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               return;
             }
             setState(() {
+              _buttonState = ButtonState.normal;
               _currentPage--;
               _errorText = null;
             });

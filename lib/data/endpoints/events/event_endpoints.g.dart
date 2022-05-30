@@ -119,15 +119,13 @@ Map<String, dynamic> _$SearchEventsRequestToJson(
       'keyword': instance.keyword,
     };
 
-SearchEventsResponse _$SearchEventsResponseFromJson(Map json) =>
-    SearchEventsResponse(
+GetEventsResponse _$GetEventsResponseFromJson(Map json) => GetEventsResponse(
       events: (json['events'] as List<dynamic>)
           .map((e) => MyPuttEvent.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
     );
 
-Map<String, dynamic> _$SearchEventsResponseToJson(
-        SearchEventsResponse instance) =>
+Map<String, dynamic> _$GetEventsResponseToJson(GetEventsResponse instance) =>
     <String, dynamic>{
       'events': instance.events.map((e) => e.toJson()).toList(),
     };

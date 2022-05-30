@@ -7,12 +7,12 @@ class ContinueButton extends StatelessWidget {
     Key? key,
     required this.onPressed,
     required this.text,
-    this.loading = false,
+    this.buttonState = ButtonState.normal,
   }) : super(key: key);
 
   final Function onPressed;
   final String text;
-  final bool loading;
+  final ButtonState buttonState;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class ContinueButton extends StatelessWidget {
       width: double.infinity,
       textSize: 20,
       shadowColor: MyPuttColors.gray[400],
-      loading: loading,
+      buttonState: buttonState,
     );
   }
 }

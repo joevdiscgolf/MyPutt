@@ -84,7 +84,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
                 _loading = false;
               });
             },
-            loading: _loading,
+            buttonState: _loading ? ButtonState.loading : ButtonState.normal,
           ),
           MyPuttButton(
               width: 100,

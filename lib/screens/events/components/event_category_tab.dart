@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:myputt/utils/colors.dart';
 
 class EventCategoryTab extends StatelessWidget {
   const EventCategoryTab({
@@ -8,19 +10,23 @@ class EventCategoryTab extends StatelessWidget {
   }) : super(key: key);
 
   final String label;
-  final Icon icon;
+  final Widget icon;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Tab(
-          icon: icon,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(label),
-            ],
-          )),
+        icon: icon,
+        child: AutoSizeText(
+          label,
+          style: Theme.of(context).textTheme.headline6?.copyWith(
+                color: MyPuttColors.darkGray,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+          maxLines: 1,
+        ),
+      ),
     );
   }
 }

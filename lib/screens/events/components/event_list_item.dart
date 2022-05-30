@@ -17,20 +17,17 @@ class EventListItem extends StatelessWidget {
   const EventListItem({
     Key? key,
     required this.event,
+    required this.onPressed,
   }) : super(key: key);
 
   final MyPuttEvent event;
+  final Function(MyPuttEvent) onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Bounceable(
         onTap: () async {
-          BlocProvider.of<EventsCubit>(context).openEvent(event);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => EventDetailScreen(event: event),
-            ),
-          );
+          onPressed(event);
         },
         child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),

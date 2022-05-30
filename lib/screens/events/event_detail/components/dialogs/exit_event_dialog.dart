@@ -79,7 +79,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
           const SizedBox(height: 16),
           MyPuttButton(
             padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 8),
-            loading: _loading,
+            buttonState: _loading ? ButtonState.loading : ButtonState.normal,
             title: 'Exit',
             textSize: 18,
             height: 40,

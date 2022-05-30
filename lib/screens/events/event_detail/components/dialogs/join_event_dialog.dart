@@ -73,11 +73,6 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
                           setState(() => _selectedDivision = division),
                       selected: _selectedDivision == division))
                   .toList()),
-          // const Icon(
-          //   FlutterRemix.user_add_line,
-          //   color: MyPuttColors.blue,
-          //   size: 40,
-          // ),
           const SizedBox(height: 16),
           _codeField(context),
           const SizedBox(height: 8),
@@ -91,7 +86,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
           const SizedBox(height: 16),
           MyPuttButton(
             padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 8),
-            loading: _loading,
+            buttonState: _loading ? ButtonState.loading : ButtonState.normal,
             title: 'Join',
             textSize: 18,
             height: 40,
