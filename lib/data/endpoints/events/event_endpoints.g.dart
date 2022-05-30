@@ -68,6 +68,7 @@ const _$DivisionEnumMap = {
   Division.fa2: 'fa2',
   Division.fa3: 'fa3',
   Division.junior: 'junior',
+  Division.everyone: 'everyone',
 };
 
 GetEventResponse _$GetEventResponseFromJson(Map json) => GetEventResponse(
