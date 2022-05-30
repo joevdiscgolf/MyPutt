@@ -35,7 +35,7 @@ class SessionListRow extends StatelessWidget {
       onTap: () => onTap(),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(

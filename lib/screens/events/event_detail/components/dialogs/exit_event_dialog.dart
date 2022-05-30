@@ -107,7 +107,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
   void _exitPressed() async {
     setState(() => _loading = true);
     final bool success = await _eventsService
-        .exitEvent(widget.event.id)
+        .exitEvent(widget.event.eventId)
         .then((response) => response.success);
     if (success) {
       widget.onEventExit();

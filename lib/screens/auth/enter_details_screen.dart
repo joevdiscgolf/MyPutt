@@ -112,7 +112,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                   textEditingController: displayNameController,
                   hint: 'Display name',
                   enabled: !_loading,
-                  onChanged: (String text) =>
+                  onInput: (String text) =>
                       setState(() => _displayName = text)),
               const SizedBox(
                 height: 24,
@@ -122,7 +122,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                 textEditingController: pdgaNumberController,
                 hint: 'PDGA # (optional)',
                 enabled: !_loading,
-                onChanged: (String text) => setState(() => _pdgaNumber = text),
+                onInput: (String text) => setState(() => _pdgaNumber = text),
                 numberInput: true,
               ),
             ],
@@ -335,7 +335,7 @@ class DetailsTextField extends StatelessWidget {
       required this.textEditingController,
       required this.hint,
       required this.enabled,
-      required this.onChanged,
+      this.onInput,
       this.numberInput = false})
       : super(key: key);
 
@@ -343,16 +343,16 @@ class DetailsTextField extends StatelessWidget {
   final String hint;
   final TextEditingController textEditingController;
   final bool enabled;
-  final Function onChanged;
+  final Function? onInput;
   final bool numberInput;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: MyPuttColors.gray[200],
+        color: MyPuttColors.gray[100],
       ),
       child: Center(
         child: TextFormField(
@@ -367,7 +367,7 @@ class DetailsTextField extends StatelessWidget {
               .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           keyboardType: numberInput ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(top: 18, bottom: 12),
+            contentPadding: const EdgeInsets.only(top: 12, bottom: 12),
             border: InputBorder.none,
             hintText: hint,
             // contentPadding:
@@ -386,7 +386,11 @@ class DetailsTextField extends StatelessWidget {
             ),
             counter: const Offstage(),
           ),
-          onChanged: (String text) => onChanged(text),
+          onChanged: (String text) {
+            if (onInput != null) {
+              onInput!(text);
+            }
+          },
         ),
       ),
     );

@@ -40,7 +40,7 @@ class _ChallengesState extends State<ChallengesScreen>
                 style: Theme.of(context)
                     .textTheme
                     .headline6
-                    ?.copyWith(fontSize: 40, color: MyPuttColors.blue),
+                    ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
               ),
               centerTitle: true,
               backgroundColor: Colors.transparent,
@@ -135,25 +135,25 @@ class _ChallengesState extends State<ChallengesScreen>
 
   Widget _newChallengeButton(BuildContext context) {
     return Bounceable(
-        onTap: () {
-          Vibrate.feedback(FeedbackType.light);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: MyPuttButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      const SelectPresetDialog());
-            },
-            title: 'New challenge',
-            iconData: FlutterRemix.add_line,
-            color: MyPuttColors.blue,
-            padding: const EdgeInsets.all(16),
-            width: MediaQuery.of(context).size.width / 2,
-            shadowColor: MyPuttColors.gray[400],
-          ),
-        ));
+      onTap: () {
+        Vibrate.feedback(FeedbackType.light);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: MyPuttButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => const SelectPresetDialog());
+          },
+          title: 'New challenge',
+          iconData: FlutterRemix.add_line,
+          color: MyPuttColors.blue,
+          textSize: 16,
+          width: MediaQuery.of(context).size.width / 2,
+          shadowColor: MyPuttColors.gray[400],
+        ),
+      ),
+    );
   }
 }

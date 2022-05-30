@@ -44,28 +44,23 @@ class ShadowCircularIndicator extends StatelessWidget {
                   ),
                   Center(
                     child: SizedBox(
-                        height: size,
-                        width: size,
-                        child: /*animate
+                      height: size,
+                      width: size,
+                      child: /*animate
                           ? */
-                            TweenAnimationBuilder<double>(
-                          curve: Curves.decelerate,
-                          duration: const Duration(milliseconds: 1000),
-                          tween: Tween<double>(begin: 0, end: decimal ?? 0),
-                          builder: (BuildContext context, double value, _) =>
-                              CircularProgressIndicator(
-                            strokeWidth: 2,
-                            value: value,
-                            color: MyPuttColors.lightBlue,
-                            backgroundColor: MyPuttColors.gray[200],
-                          ),
-                        )
-                        /*: CircularProgressIndicator(
-                              value: decimal ?? 0,
-                              color: MyPuttColors.lightBlue,
-                              backgroundColor: MyPuttColors.gray[200],
-                            ),*/
+                          TweenAnimationBuilder<double>(
+                        curve: Curves.decelerate,
+                        duration: const Duration(milliseconds: 500),
+                        tween: Tween<double>(begin: 0, end: decimal ?? 0),
+                        builder: (BuildContext context, double value, _) =>
+                            CircularProgressIndicator(
+                          strokeWidth: 2,
+                          value: value,
+                          color: MyPuttColors.lightBlue,
+                          backgroundColor: MyPuttColors.gray[200],
                         ),
+                      ),
+                    ),
                   ),
                   Center(
                       child: SizedBox(

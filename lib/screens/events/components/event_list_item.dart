@@ -1,8 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
+import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/screens/events/components/division_indicator.dart';
 import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
@@ -23,8 +25,12 @@ class EventListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
         onTap: () async {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => EventDetailScreen(event: event)));
+          BlocProvider.of<EventsCubit>(context).openEvent(event);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EventDetailScreen(event: event),
+            ),
+          );
         },
         child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),

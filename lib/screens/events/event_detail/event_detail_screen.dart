@@ -50,7 +50,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   void initState() {
-    _eventsRepository.initializeEventStream(widget.event.id);
+    _eventsRepository.initializeEventStream(widget.event.eventId);
     _division = widget.event.divisions.first;
     _fetchData = _initData();
     _scoreUpdatesSubscription = _eventsRepository.playerDataStream
@@ -69,7 +69,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   Future<void> _initData() async {
     await _eventsService
-        .getEvent(widget.event.id, division: _division)
+        .getEvent(widget.event.eventId, division: _division)
         .then((response) => setState(() {
               _eventStandings = response.eventStandings;
               _inEvent = response.inEvent;
@@ -316,8 +316,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         if (state is! ActiveEventState) {
           return Container();
         }
-        final double percentComplete =
-            state.eventPlayerData.sets.length.toDouble() /
+        final double percentComplete = state.event.challengeStructure.isEmpty
+            ? 0
+            : state.eventPlayerData.sets.length.toDouble() /
                 state.event.challengeStructure.length.toDouble();
 
         return Bounceable(
@@ -347,9 +348,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         0),
                     child: Container(
                       height: 48,
-                      width: MediaQuery.of(context).size.width /
-                          2 *
-                          percentComplete,
+                      width: percentComplete == 0
+                          ? 0
+                          : MediaQuery.of(context).size.width /
+                              2 *
+                              percentComplete,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24),
                           color: MyPuttColors.skyBlue),
@@ -373,7 +376,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         );
                       },
                       title:
-                          '${((state.eventPlayerData.sets.length.toDouble() / state.event.challengeStructure.length.toDouble()) * 100).toStringAsFixed(0)}% complete',
+                          '${((percentComplete) * 100).toStringAsFixed(0)}% complete',
                       iconData: FlutterRemix.sword_fill,
                       color: Colors.transparent,
                       width: MediaQuery.of(context).size.width / 2,

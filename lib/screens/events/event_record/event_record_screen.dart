@@ -138,68 +138,6 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
     );
   }
 
-  Widget _putterCountPicker(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            ElevatedButton(
-              child: Text(
-                '-',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
-              ),
-              onPressed: () {
-                puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
-                if (_setLength > 1) {
-                  setState(() {
-                    _setLength -= 1;
-                    _focusedIndex = _setLength;
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.transparent, shadowColor: Colors.transparent),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              _setLength.toString(),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
-            ),
-            const SizedBox(width: 5),
-            ElevatedButton(
-              child: Text(
-                '+',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
-              ),
-              onPressed: () {
-                setState(() {
-                  _setLength += 1;
-                });
-                setState(() {
-                  _focusedIndex = _setLength + 1;
-                });
-                Future.delayed(const Duration(milliseconds: 25), () {
-                  puttsMadePickerKey.currentState?.focusToItem(_setLength + 1);
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.transparent, shadowColor: Colors.transparent),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   void dialogCallBack() {
     if (!sessionInProgress) {
       Navigator.pop(context);

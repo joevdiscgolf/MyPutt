@@ -140,7 +140,7 @@ const redFrisbeeImageIcon = SizedBox(
 
 final kTestEvents = [
   MyPuttEvent(
-      id: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
+      eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
       code: 123,
       name: 'Summer Sizzler',
       challengeStructure: [ChallengeStructureItem(distance: 10, setLength: 10)],
@@ -162,3 +162,20 @@ const defaultEventImgSrc =
     'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg';
 
 const defaultEventImgPath = 'assets/images/simon_putt_bg.jpeg';
+
+const List<Division> proDivisions = [
+  Division.mpo,
+  Division.mp40,
+  Division.mp50,
+  Division.fpo,
+];
+
+const List<Division> amateurDivisions = [
+  Division.ma1,
+  Division.ma2,
+  Division.ma3,
+  Division.fa1,
+  Division.fa2,
+  Division.fa3,
+  Division.junior,
+];

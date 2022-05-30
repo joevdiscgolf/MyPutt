@@ -18,6 +18,7 @@ class MyPuttButton extends StatelessWidget {
       this.padding = const EdgeInsets.all(8),
       this.shadowColor,
       this.borderColor,
+      this.borderRadius = 24,
       this.loading = false})
       : super(key: key);
 
@@ -33,6 +34,7 @@ class MyPuttButton extends StatelessWidget {
   final Color? borderColor;
   final double textSize;
   final EdgeInsetsGeometry? padding;
+  final double borderRadius;
   final bool loading;
 
   @override
@@ -53,23 +55,24 @@ class MyPuttButton extends StatelessWidget {
                   color: shadowColor ?? Colors.transparent,
                   blurRadius: 4)
             ],
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(borderRadius),
             border:
                 Border.all(color: borderColor ?? Colors.transparent, width: 1),
             color: color),
         child: loading
             ? SizedBox(
-                height: 32,
-                width: 32,
+                height: 24,
+                width: 24,
                 child: FittedBox(
                   child: CircularProgressIndicator(
-                    color: borderColor,
+                    color: textColor,
                   ),
                 ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (iconData != null) ...[
                     Icon(

@@ -13,7 +13,6 @@ class SearchTab extends StatefulWidget {
 
 class _SearchTabState extends State<SearchTab> {
   final TextEditingController _searchBarController = TextEditingController();
-  String? _searchBarText;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,6 @@ class _SearchTabState extends State<SearchTab> {
             focusedBorder: Theme.of(context).inputDecorationTheme.border,
             counter: const Offstage(),
           ),
-          onChanged: (String text) => setState(() => _searchBarText = text),
         ),
       ),
     );

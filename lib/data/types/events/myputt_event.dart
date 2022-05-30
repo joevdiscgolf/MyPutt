@@ -8,7 +8,7 @@ part 'myputt_event.g.dart';
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class MyPuttEvent {
   MyPuttEvent({
-    required this.id,
+    required this.eventId,
     required this.code,
     required this.name,
     required this.challengeStructure,
@@ -23,7 +23,7 @@ class MyPuttEvent {
         'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
   });
 
-  final String id;
+  final String eventId;
   final int code;
   final String name;
   final List<ChallengeStructureItem> challengeStructure;

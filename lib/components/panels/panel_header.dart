@@ -27,7 +27,7 @@ class PanelHeader extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .headline6!
-              .copyWith(fontWeight: FontWeight.w600, fontSize: 18),
+              .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
@@ -40,11 +40,13 @@ class PanelHeader extends StatelessWidget {
                 width: 32,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: darkMode ? MyPuttColors.gray[800] : MyPuttColors.gray[50],
+                  color:
+                      darkMode ? MyPuttColors.gray[800] : MyPuttColors.gray[50],
                 ),
                 child: Icon(
                   FlutterRemix.close_line,
-                  color: darkMode ? MyPuttColors.white : MyPuttColors.gray[800]!,
+                  color:
+                      darkMode ? MyPuttColors.white : MyPuttColors.gray[800]!,
                   size: 20,
                 ),
               ),

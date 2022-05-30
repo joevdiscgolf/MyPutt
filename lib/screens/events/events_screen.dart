@@ -6,6 +6,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
+import 'package:myputt/components/navigation/animated_route.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
@@ -16,11 +17,12 @@ import 'package:tailwind_colors/tailwind_colors.dart';
 
 import 'components/event_category_tab.dart';
 import 'components/events_list.dart';
+import 'create_event/create_event_screen.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/Events_screen';
+  static String routeName = '/events_screen';
 
   @override
   _EventsState createState() => _EventsState();
@@ -239,21 +241,25 @@ class _EventsState extends State<EventsScreen>
 
   Widget _newEventButton(BuildContext context) {
     return Bounceable(
-        onTap: () {
-          Vibrate.feedback(FeedbackType.light);
+      onTap: () {
+        Vibrate.feedback(FeedbackType.light);
+      },
+      child: MyPuttButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            AnimatedRoute(
+              const CreateEventScreen(),
+            ),
+          );
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: MyPuttButton(
-            onPressed: () {},
-            title: 'New Event',
-            iconData: FlutterRemix.add_line,
-            color: MyPuttColors.blue,
-            padding: const EdgeInsets.all(16),
-            width: MediaQuery.of(context).size.width / 2,
-            shadowColor: MyPuttColors.gray[400],
-          ),
-        ));
+        title: 'New Event',
+        iconData: FlutterRemix.add_line,
+        color: MyPuttColors.blue,
+        textSize: 16,
+        width: MediaQuery.of(context).size.width / 2,
+        shadowColor: MyPuttColors.gray[400],
+      ),
+    );
   }
 
   void _searchHandler(String? value) {

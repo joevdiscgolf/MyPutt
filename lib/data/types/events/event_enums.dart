@@ -27,6 +27,8 @@ enum Division {
   fa3,
   @JsonValue('junior')
   junior,
+  @JsonValue('everyone')
+  everyone,
 }
 
 enum EventType {

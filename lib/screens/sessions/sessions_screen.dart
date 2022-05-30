@@ -41,7 +41,7 @@ class _SessionsState extends State<SessionsScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .headline6
-                        ?.copyWith(fontSize: 40, color: MyPuttColors.blue),
+                        ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
                   ),
                   centerTitle: true,
                   backgroundColor: Colors.transparent,
@@ -65,7 +65,7 @@ class _SessionsState extends State<SessionsScreen> {
                                 .textTheme
                                 .headline6!
                                 .copyWith(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: MyPuttColors.gray[400]),
                             textAlign: TextAlign.center,
                           ),
@@ -88,20 +88,23 @@ class _SessionsState extends State<SessionsScreen> {
         if (state is SessionInProgressState || state is NoActiveSessionState) {
           List<Widget> listViewChildren = [];
           if (state is SessionInProgressState) {
-            listViewChildren.add(SessionListRow(
-              session: state.currentSession,
-              delete: () {
-                BlocProvider.of<SessionsCubit>(context).deleteCurrentSession();
-              },
-              onTap: () {
-                Vibrate.feedback(FeedbackType.light);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BlocProvider.value(
-                        value: BlocProvider.of<SessionsCubit>(context),
-                        child: const RecordScreen())));
-              },
-              isCurrentSession: true,
-            ));
+            listViewChildren.add(
+              SessionListRow(
+                session: state.currentSession,
+                delete: () {
+                  BlocProvider.of<SessionsCubit>(context)
+                      .deleteCurrentSession();
+                },
+                onTap: () {
+                  Vibrate.feedback(FeedbackType.light);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => BlocProvider.value(
+                          value: BlocProvider.of<SessionsCubit>(context),
+                          child: const RecordScreen())));
+                },
+                isCurrentSession: true,
+              ),
+            );
           }
           listViewChildren.addAll(List.from(state.sessions
               .asMap()
@@ -158,13 +161,18 @@ class _SessionsState extends State<SessionsScreen> {
           onPressed: () {
             if (state is! SessionInProgressState) {
               BlocProvider.of<SessionsCubit>(context).startNewSession();
-              Navigator.of(context).push(MaterialPageRoute(
+              Navigator.of(context).push(
+                MaterialPageRoute(
                   builder: (BuildContext context) => BlocProvider.value(
-                      value: BlocProvider.of<SessionsCubit>(context),
-                      child: const RecordScreen())));
+                    value: BlocProvider.of<SessionsCubit>(context),
+                    child: const RecordScreen(),
+                  ),
+                ),
+              );
             }
           },
           title: 'New session',
+          textSize: 16,
         );
       },
     );
