@@ -101,6 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomField(
+            keyboardType: TextInputType.emailAddress,
             controller: _emailController,
             hint: 'Email',
             iconData: FlutterRemix.mail_line,
@@ -150,9 +151,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         width: MediaQuery.of(context).size.width,
         onPressed: () async {
           Vibrate.feedback(FeedbackType.light);
-          final String? email = _emailController.text;
-          final String? password = _passwordController.text;
-          if (email == null || password == null) {
+          final String email = _emailController.text;
+          final String password = _passwordController.text;
+          if (email.isEmpty || password.isEmpty) {
             setState(() {
               _errorText = 'Missing username or password';
             });
@@ -165,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             if (!signUpSuccess) {
               setState(() {
                 _loading = false;
-                _errorText = _authService.exception;
+                _errorText = _signinService.errorMessage;
               });
             } else {
               int count = 0;

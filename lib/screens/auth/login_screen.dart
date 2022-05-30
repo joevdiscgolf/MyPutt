@@ -154,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: 260,
       height: 60,
       child: TextFormField(
+        keyboardType: TextInputType.emailAddress,
         controller: _emailController,
         autocorrect: false,
         maxLines: 1,
