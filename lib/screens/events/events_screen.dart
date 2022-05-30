@@ -172,7 +172,6 @@ class _EventsState extends State<EventsScreen>
             .textTheme
             .subtitle1!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-        keyboardType: TextInputType.number,
         decoration: InputDecoration(
           hintText: 'Search by name or code',
           contentPadding:
