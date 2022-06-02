@@ -48,7 +48,7 @@ class EventsService {
     });
   }
 
-  Future<SearchEventsResponse> searchEvents(String keyword) {
+  Future<GetEventsResponse> searchEvents(String keyword) {
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('searchEvents');
 
@@ -56,9 +56,20 @@ class EventsService {
 
     return callable(request.toJson())
         .then((HttpsCallableResult<dynamic> response) {
-      return SearchEventsResponse.fromJson(response.data);
+      return GetEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
-      return SearchEventsResponse(events: []);
+      return GetEventsResponse(events: []);
+    });
+  }
+
+  Future<GetEventsResponse> getMyEvents() {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getMyEvents');
+
+    return callable().then((HttpsCallableResult<dynamic> response) {
+      return GetEventsResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      return GetEventsResponse(events: []);
     });
   }
 

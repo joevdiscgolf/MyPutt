@@ -75,14 +75,14 @@ class SearchEventsRequest {
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class SearchEventsResponse {
-  SearchEventsResponse({required this.events});
+class GetEventsResponse {
+  GetEventsResponse({required this.events});
   final List<MyPuttEvent> events;
 
-  factory SearchEventsResponse.fromJson(Map<String, dynamic> json) =>
-      _$SearchEventsResponseFromJson(json);
+  factory GetEventsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetEventsResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SearchEventsResponseToJson(this);
+  Map<String, dynamic> toJson() => _$GetEventsResponseToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)

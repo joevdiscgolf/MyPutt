@@ -46,91 +46,6 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
             child: _mainBody(context)));
   }
 
-  // Widget _mainBody(BuildContext context) {
-  //   return Container(
-  //     padding: const EdgeInsets.all(24),
-  //     width: double.infinity,
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.start,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Column(
-  //           children: [
-  //             const Text(
-  //               'Send challenge to',
-  //               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-  //               textAlign: TextAlign.center,
-  //             ),
-  //             Text(
-  //               ' ${widget.recipientUser.displayName}',
-  //               style: const TextStyle(
-  //                   color: MyPuttColors.green,
-  //                   fontSize: 25,
-  //                   fontWeight: FontWeight.bold),
-  //               textAlign: TextAlign.center,
-  //             )
-  //           ],
-  //         ),
-  //         const SizedBox(
-  //           height: 16,
-  //         ),
-  //         Text(_dialogErrorText ?? ''),
-  //         const SizedBox(height: 24),
-  //         SizedBox(
-  //           width: double.infinity,
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //             children: [
-  //               PrimaryButton(
-  //                   width: 100,
-  //                   height: 50,
-  //                   label: 'Cancel',
-  //                   fontSize: 18,
-  //                   labelColor: Colors.grey[600]!,
-  //                   backgroundColor: Colors.grey[200]!,
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                   }),
-  //               SizedBox(
-  //                 width: 100,
-  //                 height: 50,
-  //                 child: ElevatedButton(
-  //                     style: ElevatedButton.styleFrom(
-  //                       primary: MyPuttColors.green,
-  //                       padding: const EdgeInsets.symmetric(
-  //                           vertical: 4, horizontal: 16),
-  //                       shape: RoundedRectangleBorder(
-  //                           borderRadius: BorderRadius.circular(48)),
-  //                       enableFeedback: true,
-  //                       shadowColor: Colors.transparent,
-  //                       elevation: 0,
-  //                       onPrimary: Colors.grey[100],
-  //                     ),
-  //                     onPressed: _sharePressed,
-  //                     child: Builder(builder: (context) {
-  //                       switch (_loadingState) {
-  //                         case LoadingState.static:
-  //                           return const Text('Send');
-  //                         case LoadingState.loading:
-  //                           return const CircularProgressIndicator(
-  //                             color: Colors.white,
-  //                           );
-  //                         case LoadingState.loaded:
-  //                           return const Icon(
-  //                             FlutterRemix.check_line,
-  //                             color: Colors.white,
-  //                           );
-  //                       }
-  //                     })),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget _mainBody(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -186,7 +101,9 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
             textColor: MyPuttColors.blue,
             shadowColor: MyPuttColors.gray[300]!,
             onPressed: _sharePressed,
-            loading: _loadingState == LoadingState.loading,
+            buttonState: _loadingState == LoadingState.loading
+                ? ButtonState.loading
+                : ButtonState.normal,
           ),
           MyPuttButton(
               width: 100,

@@ -1,26 +1,34 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
+enum ButtonState {
+  normal,
+  loading,
+  success,
+  retry,
+}
+
 class MyPuttButton extends StatelessWidget {
-  const MyPuttButton(
-      {Key? key,
-      required this.title,
-      required this.onPressed,
-      this.iconData,
-      this.height = 50,
-      this.width,
-      this.color = Colors.blue,
-      this.iconColor = Colors.white,
-      this.textColor = Colors.white,
-      this.textSize = 16,
-      this.padding = const EdgeInsets.all(8),
-      this.shadowColor,
-      this.borderColor,
-      this.borderRadius = 24,
-      this.loading = false})
-      : super(key: key);
+  const MyPuttButton({
+    Key? key,
+    required this.title,
+    required this.onPressed,
+    this.iconData,
+    this.height = 50,
+    this.width,
+    this.color = Colors.blue,
+    this.iconColor = Colors.white,
+    this.textColor = Colors.white,
+    this.textSize = 16,
+    this.padding = const EdgeInsets.all(8),
+    this.shadowColor,
+    this.borderColor,
+    this.borderRadius = 24,
+    this.buttonState = ButtonState.normal,
+  }) : super(key: key);
 
   final String title;
   final Function onPressed;
@@ -35,7 +43,7 @@ class MyPuttButton extends StatelessWidget {
   final double textSize;
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
-  final bool loading;
+  final ButtonState buttonState;
 
   @override
   Widget build(BuildContext context) {
@@ -51,48 +59,79 @@ class MyPuttButton extends StatelessWidget {
         decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                  offset: const Offset(0, 2),
-                  color: shadowColor ?? Colors.transparent,
-                  blurRadius: 4)
+                offset: const Offset(0, 2),
+                color: shadowColor ?? Colors.transparent,
+                blurRadius: 4,
+              )
             ],
             borderRadius: BorderRadius.circular(borderRadius),
             border:
                 Border.all(color: borderColor ?? Colors.transparent, width: 1),
             color: color),
-        child: loading
-            ? SizedBox(
-                height: 24,
-                width: 24,
-                child: FittedBox(
-                  child: CircularProgressIndicator(
-                    color: textColor,
-                  ),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (iconData != null) ...[
-                    Icon(
-                      iconData,
-                      color: iconColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10)
-                  ],
-                  AutoSizeText(
-                    title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(color: textColor, fontSize: textSize),
-                    maxLines: 1,
-                  ),
-                ],
-              ),
+        child: _buildChild(context),
       ),
     );
+  }
+
+  Widget _buildChild(BuildContext context) {
+    switch (buttonState) {
+      case ButtonState.normal:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (iconData != null) ...[
+              Icon(
+                iconData,
+                color: iconColor,
+                size: 20,
+              ),
+              const SizedBox(width: 10)
+            ],
+            AutoSizeText(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  ?.copyWith(color: textColor, fontSize: textSize),
+              maxLines: 1,
+            ),
+          ],
+        );
+      case ButtonState.loading:
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: FittedBox(
+            child: CircularProgressIndicator(
+              color: textColor,
+            ),
+          ),
+        );
+      case ButtonState.success:
+        return SizedBox(
+          height: 16,
+          width: 16,
+          child: FittedBox(
+            child: Icon(
+              FlutterRemix.check_line,
+              color: textColor,
+              size: 16,
+            ),
+          ),
+        );
+      case ButtonState.retry:
+        return SizedBox(
+          height: 16,
+          width: 16,
+          child: FittedBox(
+            child: Icon(
+              FlutterRemix.restart_line,
+              color: textColor,
+              size: 16,
+            ),
+          ),
+        );
+    }
   }
 }

@@ -85,41 +85,41 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
         body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, _) => [
-                  _sliverAppBar(context),
-                ],
-            body: FutureBuilder<void>(
-              future: _fetchData,
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                // return const EventDetailLoadingScreen();
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    if (_eventStandings == null) {
-                      return EmptyState(
-                          onRetry: () => _fetchData = _initData());
-                    }
-                    if (_eventStandings!.isEmpty) {
-                      return EmptyState(
-                        title: 'Nothing here yet',
-                        subtitle: 'Please try again later',
-                        icon: Icon(
-                          FlutterRemix.stack_line,
-                          color: MyPuttColors.gray[400]!,
-                          size: 40,
-                        ),
-                      );
-                    }
-                    return PlayerList(
-                        eventStandings: _eventStandings!,
-                        challengeStructure: widget.event.challengeStructure);
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                  case ConnectionState.active:
-                  default:
-                    return const EventDetailLoadingScreen();
-                }
-              },
-            )),
+          headerSliverBuilder: (BuildContext context, _) => [
+            _sliverAppBar(context),
+          ],
+          body: FutureBuilder<void>(
+            future: _fetchData,
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              // return const EventDetailLoadingScreen();
+              switch (snapshot.connectionState) {
+                case ConnectionState.done:
+                  if (_eventStandings == null) {
+                    return EmptyState(onRetry: () => _fetchData = _initData());
+                  }
+                  if (_eventStandings!.isEmpty) {
+                    return EmptyState(
+                      title: 'Nothing here yet',
+                      subtitle: 'Please try again later',
+                      icon: Icon(
+                        FlutterRemix.stack_line,
+                        color: MyPuttColors.gray[400]!,
+                        size: 40,
+                      ),
+                    );
+                  }
+                  return PlayerList(
+                      eventStandings: _eventStandings!,
+                      challengeStructure: widget.event.challengeStructure);
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                case ConnectionState.active:
+                default:
+                  return const EventDetailLoadingScreen();
+              }
+            },
+          ),
+        ),
       ),
     );
   }

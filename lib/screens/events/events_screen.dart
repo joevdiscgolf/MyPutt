@@ -1,15 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
+import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
+import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
+import 'package:myputt/screens/events/tabs/my_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -54,7 +58,7 @@ class _EventsState extends State<EventsScreen>
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this)
+    _tabController = TabController(length: 4, vsync: this)
       ..addListener(() {
         setState(() => _showSearchBar = _tabController.index == 0);
       });
@@ -66,29 +70,30 @@ class _EventsState extends State<EventsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-        floatingActionButton: _newEventButton(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          toolbarHeight: _showSearchBar ? 100 : 60,
-          title: Text(
-            'Events',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 24, color: MyPuttColors.blue),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          bottom: _appBarBottom(context),
-          elevation: 0.5,
+      floatingActionButton: _newEventButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      backgroundColor: MyPuttColors.white,
+      appBar: AppBar(
+        toolbarHeight: _showSearchBar ? 100 : 60,
+        title: Text(
+          'Events',
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(fontSize: 24, color: MyPuttColors.blue),
         ),
-        body: NestedScrollView(
-          body: _mainBody(context),
-          headerSliverBuilder:
-              (BuildContext context, bool innerBoxIsScrolled) => [],
-        ));
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        bottom: _appBarBottom(context),
+        elevation: 0.5,
+      ),
+      body: NestedScrollView(
+        body: _mainBody(context),
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>
+            [],
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {
@@ -105,11 +110,21 @@ class _EventsState extends State<EventsScreen>
             } else if (_events?.isNotEmpty != true || _events == null) {
               return const EmptyState();
             }
-            return EventsList(events: _events!);
+            return EventsList(
+              events: _events!,
+              onPressed: (MyPuttEvent event) => _openEvent(event),
+            );
           },
         ),
-        EventsList(events: kTestEvents),
-        EventsList(events: kTestEvents),
+        EventsList(
+          events: kTestEvents,
+          onPressed: (MyPuttEvent event) => _openEvent(event),
+        ),
+        EventsList(
+          events: kTestEvents,
+          onPressed: (MyPuttEvent event) => _openEvent(event),
+        ),
+        const MyEventsTab(),
       ],
     );
   }
@@ -141,11 +156,12 @@ class _EventsState extends State<EventsScreen>
           unselectedLabelColor: Colors.black,
           tabs: const [
             EventCategoryTab(
-                label: 'Search',
-                icon: Icon(
-                  FlutterRemix.search_line,
-                  size: 16,
-                )),
+              label: 'Search',
+              icon: Icon(
+                FlutterRemix.search_line,
+                size: 16,
+              ),
+            ),
             EventCategoryTab(
               label: 'Club',
               icon: Icon(FlutterRemix.group_fill, size: 16),
@@ -154,6 +170,7 @@ class _EventsState extends State<EventsScreen>
               label: 'Tournaments',
               icon: Icon(FlutterRemix.trophy_fill, size: 16),
             ),
+            EventCategoryTab(label: 'My Events', icon: blueFrisbeeImageIcon),
           ],
         ),
       ),
@@ -235,11 +252,24 @@ class _EventsState extends State<EventsScreen>
     if (_searchOnStoppedTyping != null) {
       setState(() => _searchOnStoppedTyping?.cancel());
     }
-    setState(() =>
-        _searchOnStoppedTyping = Timer(const Duration(milliseconds: 250), () {
+    setState(
+      () => _searchOnStoppedTyping = Timer(
+        const Duration(milliseconds: 250),
+        () {
           if (value != null && value.isNotEmpty) {
             _searchEvents(value);
           }
-        }));
+        },
+      ),
+    );
+  }
+
+  void _openEvent(MyPuttEvent event) {
+    BlocProvider.of<EventsCubit>(context).openEvent(event);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EventDetailScreen(event: event),
+      ),
+    );
   }
 }
