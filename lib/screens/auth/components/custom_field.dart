@@ -5,18 +5,21 @@ class CustomField extends StatelessWidget {
     Key? key,
     required this.controller,
     this.obscureText = false,
-    required this.hint,
-    required this.iconData,
+    this.hint,
+    this.iconData,
     this.onInput,
     this.keyboardType,
+    this.innerPadding =
+        const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
   }) : super(key: key);
 
   final TextEditingController controller;
   final bool obscureText;
-  final String hint;
-  final IconData iconData;
+  final String? hint;
+  final IconData? iconData;
   final Function? onInput;
   final TextInputType? keyboardType;
+  final EdgeInsets innerPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +39,7 @@ class CustomField extends StatelessWidget {
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: hint,
-          contentPadding:
-              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
+          contentPadding: innerPadding,
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
@@ -47,11 +49,13 @@ class CustomField extends StatelessWidget {
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(vertical: 18.0),
-            child: Icon(
-              iconData,
-              color: Colors.grey,
-              size: 22,
-            ),
+            child: iconData == null
+                ? null
+                : Icon(
+                    iconData,
+                    color: Colors.grey,
+                    size: 22,
+                  ),
           ),
           counter: const Offstage(),
         ),

@@ -4,6 +4,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/panels/info_panel.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/components/dialogs/add_sponsor_dialog.dart';
+import 'package:myputt/screens/events/create_event/components/panels/create_challenge_structure_panel.dart';
 import 'package:myputt/screens/events/create_event/components/panels/select_divisions_panel.dart';
 import 'package:myputt/screens/events/create_event/components/selector_row.dart';
 import 'package:myputt/utils/colors.dart';
@@ -67,7 +68,14 @@ class EventDetailsForm extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) => const AddSponsorDialog(),
                 ),
-              )
+              ),
+              const SizedBox(height: 32),
+              SelectorRow(
+                icon: const Icon(FlutterRemix.stack_line),
+                text: 'Enter event layout',
+                onPressed: () => displayBottomSheet(
+                    context, const CreateChallengeStructurePanel()),
+              ),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -21,7 +22,7 @@ class PanelHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         const Spacer(),
-        Text(
+        AutoSizeText(
           title,
           textAlign: TextAlign.center,
           style: Theme.of(context)
