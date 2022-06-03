@@ -1,15 +1,20 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/utils/colors.dart';
 
 class StructureDescriptionRow extends StatelessWidget {
-  const StructureDescriptionRow(
-      {Key? key, required this.generatedChallengeItem})
-      : super(key: key);
+  const StructureDescriptionRow({
+    Key? key,
+    required this.generatedChallengeInstruction,
+    this.onDelete,
+  }) : super(key: key);
 
-  final GeneratedChallengeItem generatedChallengeItem;
+  final GeneratedChallengeInstruction generatedChallengeInstruction;
+  final Function? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +25,23 @@ class StructureDescriptionRow extends StatelessWidget {
         children: [
           Expanded(
               child: _shadowChip(
-                  context, '${generatedChallengeItem.distance} ft')),
+                  context, '${generatedChallengeInstruction.distance} ft')),
           _multiplyIcon(context),
           Expanded(
               child: _shadowChip(
-                  context, '${generatedChallengeItem.numSets} sets')),
+                  context, '${generatedChallengeInstruction.setCount} sets')),
           _multiplyIcon(context),
-          Expanded(child: _shadowChip(context, '10 putts')),
+          Expanded(
+              child: _shadowChip(
+                  context, '${generatedChallengeInstruction.setLength} putts')),
+          if (onDelete != null)
+            CloseButton(
+              onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
+                onDelete!();
+              },
+              color: MyPuttColors.red,
+            )
         ],
       ),
     );

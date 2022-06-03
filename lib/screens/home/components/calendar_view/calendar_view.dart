@@ -57,49 +57,57 @@ class _CalendarViewState extends State<CalendarView>
                   DateTime.fromMillisecondsSinceEpoch(session.timeStamp)))
               .toList();
           final List<PuttingChallenge> challenges = state.allChallenges
-              .where((challenge) => isSameDay(
+              .where(
+                (challenge) => isSameDay(
                   _currentSelectedDate,
                   DateTime.fromMillisecondsSinceEpoch(
-                      challenge.completionTimeStamp ??
-                          challenge.creationTimeStamp)))
+                    challenge.completionTimeStamp ??
+                        challenge.creationTimeStamp,
+                  ),
+                ),
+              )
               .toList();
           return NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (BuildContext context, bool value) {
-                return [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            padding: const EdgeInsets.only(top: 8),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  end: const Alignment(0.8, 0),
-                                  transform:
-                                      const GradientRotation(3 * math.pi / 2),
-                                  colors: [
-                                    MyPuttColors.blue.withOpacity(0.8),
-                                    MyPuttColors.white,
-                                  ]),
-                            ),
-                            child: PerformanceCalendarPanel(
-                              onDateChanged: (DateTime date) =>
-                                  setState(() => _currentSelectedDate = date),
-                            )),
-                        _sessionsAndChallengesTabBar(context),
-                      ],
-                    ),
+            controller: _scrollController,
+            headerSliverBuilder: (BuildContext context, bool value) {
+              return [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.only(top: 8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                end: const Alignment(0.8, 0),
+                                transform:
+                                    const GradientRotation(3 * math.pi / 2),
+                                colors: [
+                                  MyPuttColors.blue.withOpacity(0.8),
+                                  MyPuttColors.white,
+                                ]),
+                          ),
+                          child: PerformanceCalendarPanel(
+                            onDateChanged: (DateTime date) =>
+                                setState(() => _currentSelectedDate = date),
+                          )),
+                      _sessionsAndChallengesTabBar(context),
+                    ],
                   ),
-                ];
-              },
-              body: TabBarView(controller: _viewTypeController, children: [
+                ),
+              ];
+            },
+            body: TabBarView(
+              controller: _viewTypeController,
+              children: [
                 _sessionsLists(context, sessions),
                 ChallengesList(
                   category: ChallengeCategory.complete,
                   challenges: challenges,
                 )
-              ]));
+              ],
+            ),
+          );
         } else if (state is HomeScreenInitial || state is HomeScreenLoading) {
           return const LoadingScreen();
         } else {
@@ -117,6 +125,7 @@ class _CalendarViewState extends State<CalendarView>
             child: Text('No sessions'),
           )
         : ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             children: sessions
                 .map((session) => SessionListRow(
                       session: session,

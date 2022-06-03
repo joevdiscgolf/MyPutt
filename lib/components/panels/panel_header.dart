@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PanelHeader extends StatelessWidget {
@@ -32,30 +33,10 @@ class PanelHeader extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
-        Expanded(
+        const Expanded(
           child: Align(
             alignment: Alignment.centerRight,
-            child: Bounceable(
-              child: Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color:
-                      darkMode ? MyPuttColors.gray[800] : MyPuttColors.gray[50],
-                ),
-                child: Icon(
-                  FlutterRemix.close_line,
-                  color:
-                      darkMode ? MyPuttColors.white : MyPuttColors.gray[800]!,
-                  size: 20,
-                ),
-              ),
-              onTap: () {
-                Vibrate.feedback(FeedbackType.light);
-                Navigator.of(context).pop();
-              },
-            ),
+            child: ExitButton(),
           ),
         ),
       ],

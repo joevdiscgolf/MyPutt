@@ -16,21 +16,22 @@ class PresetsRepository {
 
   Map<ChallengePreset, List<ChallengeStructureItem>> presetStructures = {};
 
-  Map<ChallengePreset, List<GeneratedChallengeItem>> presetInstructions = {
+  Map<ChallengePreset, List<GeneratedChallengeInstruction>> presetInstructions =
+      {
     ChallengePreset.c1Basics: [
-      GeneratedChallengeItem(distance: 20, numSets: 3),
-      GeneratedChallengeItem(distance: 25, numSets: 3),
-      GeneratedChallengeItem(distance: 20, numSets: 3),
-      GeneratedChallengeItem(distance: 25, numSets: 3)
+      GeneratedChallengeInstruction(distance: 20, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 25, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 20, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 25, setCount: 3, setLength: 10)
     ],
     ChallengePreset.stepPuttStation: [
-      GeneratedChallengeItem(distance: 35, numSets: 3),
-      GeneratedChallengeItem(distance: 40, numSets: 3),
-      GeneratedChallengeItem(distance: 35, numSets: 3),
-      GeneratedChallengeItem(distance: 40, numSets: 3)
+      GeneratedChallengeInstruction(distance: 35, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 40, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 35, setCount: 3, setLength: 10),
+      GeneratedChallengeInstruction(distance: 40, setCount: 3, setLength: 10)
     ],
     ChallengePreset.twentyFooterClinic: [
-      GeneratedChallengeItem(distance: 20, numSets: 10),
+      GeneratedChallengeInstruction(distance: 20, setCount: 10, setLength: 10),
     ]
   };
 
@@ -51,11 +52,11 @@ class PresetsRepository {
   List<ChallengeStructureItem> generateStructure(
       ChallengePreset preset, int setLength) {
     List<ChallengeStructureItem> items = [];
-    List<GeneratedChallengeItem> instructions =
+    List<GeneratedChallengeInstruction> instructions =
         presetInstructions[preset] ?? [];
     for (var instruction in instructions) {
       items.addAll([
-        for (var i = 0; i < instruction.numSets; i++)
+        for (var i = 0; i < instruction.setCount; i++)
           ChallengeStructureItem(
               distance: instruction.distance, setLength: setLength)
       ]);

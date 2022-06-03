@@ -37,6 +37,7 @@ class CustomField extends StatelessWidget {
             .textTheme
             .subtitle1!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
           hintText: hint,
           contentPadding: innerPadding,

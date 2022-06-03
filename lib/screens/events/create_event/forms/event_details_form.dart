@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/panels/info_panel.dart';
+import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/components/dialogs/add_sponsor_dialog.dart';
 import 'package:myputt/screens/events/create_event/components/panels/create_challenge_structure_panel.dart';
@@ -62,19 +63,24 @@ class EventDetailsForm extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               SelectorRow(
+                icon: const Icon(FlutterRemix.stack_line),
+                text: 'Enter event layout (required)',
+                onPressed: () => displayBottomSheet(
+                  context,
+                  CreateChallengeStructurePanel(
+                    updateInstructions:
+                        (List<GeneratedChallengeInstruction> instructions) {},
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              SelectorRow(
                 icon: const Icon(FlutterRemix.currency_line),
                 text: 'Add sponsor (optional)',
                 onPressed: () => showDialog(
                   context: context,
                   builder: (BuildContext context) => const AddSponsorDialog(),
                 ),
-              ),
-              const SizedBox(height: 32),
-              SelectorRow(
-                icon: const Icon(FlutterRemix.stack_line),
-                text: 'Enter event layout',
-                onPressed: () => displayBottomSheet(
-                    context, const CreateChallengeStructurePanel()),
               ),
             ],
           ),

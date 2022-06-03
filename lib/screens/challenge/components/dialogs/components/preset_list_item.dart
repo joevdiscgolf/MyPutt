@@ -21,7 +21,7 @@ class PresetListItem extends StatelessWidget {
   }) : super(key: key);
 
   final ChallengePreset presetType;
-  final List<GeneratedChallengeItem> presetInstructions;
+  final List<GeneratedChallengeInstruction> presetInstructions;
   final bool selected;
   final Function onTap;
 
@@ -30,13 +30,14 @@ class PresetListItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-          color: selected ? MyPuttColors.gray[300] : MyPuttColors.gray[50],
-          boxShadow: [
-            BoxShadow(
-                offset: const Offset(0, 2),
-                blurRadius: 2,
-                color: MyPuttColors.gray[400]!)
-          ]),
+        color: selected ? MyPuttColors.gray[300] : MyPuttColors.gray[50],
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              blurRadius: 2,
+              color: MyPuttColors.gray[400]!)
+        ],
+      ),
       child: ExpandableTheme(
         data: const ExpandableThemeData(
           iconPadding: EdgeInsets.only(left: 8, right: 24),
@@ -99,7 +100,7 @@ class PresetListItem extends StatelessWidget {
   List<Widget> _expandedColumnChildren(BuildContext context) {
     List<Widget> children = [];
     children.addAll(presetInstructions.map((instruction) =>
-        StructureDescriptionRow(generatedChallengeItem: instruction)));
+        StructureDescriptionRow(generatedChallengeInstruction: instruction)));
     children.addAll([
       const SizedBox(height: 8),
       Row(

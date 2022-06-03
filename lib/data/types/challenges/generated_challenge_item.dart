@@ -3,13 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 part 'generated_challenge_item.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class GeneratedChallengeItem {
-  GeneratedChallengeItem({required this.distance, required this.numSets});
+class GeneratedChallengeInstruction {
+  GeneratedChallengeInstruction({
+    required this.distance,
+    required this.setCount,
+    required this.setLength,
+  });
   final int distance;
-  final int numSets;
+  final int setCount;
+  final int setLength;
 
-  factory GeneratedChallengeItem.fromJson(Map<String, dynamic> json) =>
-      _$GeneratedChallengeItemFromJson(json);
+  factory GeneratedChallengeInstruction.fromJson(Map<String, dynamic> json) =>
+      _$GeneratedChallengeInstructionFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GeneratedChallengeItemToJson(this);
+  Map<String, dynamic> toJson() => _$GeneratedChallengeInstructionToJson(this);
 }
