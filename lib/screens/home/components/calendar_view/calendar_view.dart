@@ -127,23 +127,25 @@ class _CalendarViewState extends State<CalendarView>
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             children: sessions
-                .map((session) => SessionListRow(
-                      session: session,
-                      delete: () {
-                        BlocProvider.of<SessionsCubit>(context)
-                            .deleteSession(session);
-                        BlocProvider.of<HomeScreenCubit>(context).reload();
-                      },
-                      isCurrentSession: false,
-                      onTap: () {
-                        Vibrate.feedback(FeedbackType.light);
-                        BlocProvider.of<SessionSummaryCubit>(context)
-                            .openSessionSummary(session);
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                SessionSummaryScreen(session: session)));
-                      },
-                    ))
+                .map(
+                  (session) => SessionListRow(
+                    session: session,
+                    delete: () {
+                      BlocProvider.of<SessionsCubit>(context)
+                          .deleteSession(session);
+                      BlocProvider.of<HomeScreenCubit>(context).reload();
+                    },
+                    isCurrentSession: false,
+                    onTap: () {
+                      Vibrate.feedback(FeedbackType.light);
+                      BlocProvider.of<SessionSummaryCubit>(context)
+                          .openSessionSummary(session);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              SessionSummaryScreen(session: session)));
+                    },
+                  ),
+                )
                 .toList());
   }
 
