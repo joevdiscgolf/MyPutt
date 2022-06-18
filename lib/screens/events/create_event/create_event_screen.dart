@@ -9,6 +9,7 @@ import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/forms/date_layout_form.dart';
 import 'package:myputt/screens/events/create_event/forms/event_basic_info_form.dart';
 import 'package:myputt/screens/events/create_event/forms/event_details_form.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -200,8 +201,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 }
                 setState(() => _errorText = null);
                 setState(() => _buttonState = ButtonState.loading);
-                // await Future.delayed(
-                //     const Duration(seconds: 1), () => false);
                 final bool createSuccess =
                     await BlocProvider.of<EventsCubit>(context)
                         .createEventRequest(
@@ -213,7 +212,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   startTime: _startTime,
                   endDate: _endDate!,
                   endTime: _endTime,
-                  challengeStructure: [],
+                  challengeStructure: challengeStructureFromInstructions(
+                      _challengeInstructions),
                 );
                 setState(() => _buttonState =
                     createSuccess ? ButtonState.success : ButtonState.retry);
@@ -299,10 +299,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       setState(() => _errorText = 'Please enter an event name');
       return false;
     } else if (_selectedDivisions.isEmpty) {
-      setState(() => _errorText = 'Please enter an event format structure');
+      setState(() => _errorText = 'Please enter divisions');
       return false;
+    } else if (_challengeInstructions.isEmpty) {
+      setState(() => _errorText = 'Enter an event layout');
     } else if (_startDate == null) {
-      setState(() => _errorText = 'Please enter an start date');
+      setState(() => _errorText = 'Please enter a start date');
       return false;
     } else if (_endDate == null) {
       setState(() => _errorText = 'Please enter an end date');
