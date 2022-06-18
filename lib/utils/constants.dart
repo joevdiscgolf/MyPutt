@@ -139,18 +139,21 @@ const redFrisbeeImageIcon = SizedBox(
 );
 
 final kTestEvents = [
-  MyPuttEvent(
-      eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
-      code: 123,
-      name: 'Summer Sizzler',
-      challengeStructure: [ChallengeStructureItem(distance: 10, setLength: 10)],
-      divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
-      eventType: EventType.tournament,
-      endTimestamp: 1651109507018,
-      startTimestamp: 1650945600000,
-      status: EventStatus.active,
-      verificationRequired: false,
-      completionTimestamp: 2)
+  for (int i = 0; i < 4; i++)
+    MyPuttEvent(
+        eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
+        code: 123,
+        name: 'Summer Sizzler',
+        challengeStructure: [
+          ChallengeStructureItem(distance: 10, setLength: 10)
+        ],
+        divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
+        eventType: EventType.tournament,
+        endTimestamp: 1651109507018,
+        startTimestamp: 1650945600000,
+        status: EventStatus.active,
+        verificationRequired: false,
+        completionTimestamp: 2)
 ];
 
 const Map<EventType, String> eventTypeToName = {

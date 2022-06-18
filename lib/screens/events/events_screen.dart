@@ -88,11 +88,7 @@ class _EventsState extends State<EventsScreen>
         bottom: _appBarBottom(context),
         elevation: 0.5,
       ),
-      body: NestedScrollView(
-        body: _mainBody(context),
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) =>
-            [],
-      ),
+      body: _mainBody(context),
     );
   }
 
@@ -100,22 +96,7 @@ class _EventsState extends State<EventsScreen>
     return TabBarView(
       controller: _tabController,
       children: [
-        Builder(
-          builder: (BuildContext context) {
-            if (_loading) {
-              return const EventSearchLoadingScreen();
-            } else if (_searchBarText == null ||
-                _searchBarText?.isEmpty == true) {
-              return Container();
-            } else if (_events?.isNotEmpty != true || _events == null) {
-              return const EmptyState();
-            }
-            return EventsList(
-              events: _events!,
-              onPressed: (MyPuttEvent event) => _openEvent(event),
-            );
-          },
-        ),
+        _searchTab(context),
         EventsList(
           events: kTestEvents,
           onPressed: (MyPuttEvent event) => _openEvent(event),
@@ -174,6 +155,25 @@ class _EventsState extends State<EventsScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _searchTab(BuildContext context) {
+    if (_loading) {
+      return const EventSearchLoadingScreen();
+    } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
+      return Container();
+    } else if (_events?.isNotEmpty != true || _events == null) {
+      return const EmptyState();
+    }
+    return EventsList(
+      events: _events!,
+      onPressed: (MyPuttEvent event) => _openEvent(event),
+      onRefresh: () {
+        if (_searchBarText != null && _searchBarText!.isNotEmpty) {
+          _searchEvents(_searchBarText!);
+        }
+      },
     );
   }
 
