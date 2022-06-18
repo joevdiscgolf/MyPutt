@@ -1,13 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/screens/events/components/division_indicator.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';

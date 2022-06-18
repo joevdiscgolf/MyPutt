@@ -1,7 +1,10 @@
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
+import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
+
+import 'enums.dart';
 
 bool currentUserSetsComplete(PuttingChallenge challenge) {
   return challenge.currentUserSets.length ==
@@ -30,4 +33,17 @@ List<ChallengeStructureItem> challengeStructureFromSession(
           distance: set.distance.toInt(),
           setLength: set.puttsAttempted.toInt()))
       .toList();
+}
+
+List<ChallengeStructureItem> challengeStructureFromInstructions(
+    List<GeneratedChallengeInstruction> instructions) {
+  List<ChallengeStructureItem> items = [];
+  for (var instruction in instructions) {
+    items = [
+      for (var i = 0; i < instruction.setCount; i++)
+        ChallengeStructureItem(
+            distance: instruction.distance, setLength: instruction.setLength)
+    ];
+  }
+  return items;
 }

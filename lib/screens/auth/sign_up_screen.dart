@@ -6,7 +6,6 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/components/custom_field.dart';
-import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -19,7 +18,6 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final SigninService _signinService = locator.get<SigninService>();
-  final AuthService _authService = locator.get<AuthService>();
   final formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

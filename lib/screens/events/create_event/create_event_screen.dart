@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/forms/date_layout_form.dart';
 import 'package:myputt/screens/events/create_event/forms/event_basic_info_form.dart';
@@ -36,6 +37,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   List<Division> _selectedDivisions = [];
   bool _signatureVerification = true;
+  List<GeneratedChallengeInstruction> _challengeInstructions = [];
 
   DateTime? _startDate;
   TimeOfDay? _startTime;
@@ -116,10 +118,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       EventDetailsForm(
         selectedDivisions: _selectedDivisions,
         signatureVerification: _signatureVerification,
+        instructions: _challengeInstructions,
         onDivisionSelected: (List<Division> divisions) =>
             setState(() => _selectedDivisions = divisions),
         updateSignatureVerification: (bool verifySignature) =>
             setState(() => _signatureVerification = verifySignature),
+        updateChallengeInstructions:
+            (List<GeneratedChallengeInstruction> instructions) =>
+                setState(() => _challengeInstructions = instructions),
       ),
       DateLayoutForm(
         onSelectStartDate: (DateTime startDate) =>
@@ -185,11 +191,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             buttonState: _buttonState,
             text: _currentPage == 2 ? 'Submit' : 'Continue',
             onPressed: () async {
+              if (!validateInputs()) {
+                return;
+              }
               if (_currentPage == 2) {
-                setState(() => _errorText = null);
                 if (!_validateSubmit()) {
                   return;
                 }
+                setState(() => _errorText = null);
                 setState(() => _buttonState = ButtonState.loading);
                 // await Future.delayed(
                 //     const Duration(seconds: 1), () => false);
@@ -217,8 +226,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 }
               } else if (validateInputs()) {
                 _nextPage();
-              } else {
-                setState(() => _errorText = 'Please fill all required fields');
               }
             },
           ),
@@ -249,10 +256,24 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   bool validateInputs() {
     switch (_currentPage) {
       case 0:
+        if (_eventNameController.text.isEmpty) {
+          setState(() => _errorText = 'Enter an event name');
+        }
         return _eventNameController.text.isNotEmpty;
       case 1:
-        return _selectedDivisions.isNotEmpty;
+        if (_selectedDivisions.isEmpty) {
+          setState(() => _errorText = 'Enter divisions');
+        } else if (_challengeInstructions.isEmpty) {
+          setState(() => _errorText = 'Enter an event layout');
+        }
+        return _selectedDivisions.isNotEmpty &&
+            _challengeInstructions.isNotEmpty;
       case 2:
+        if (_startDate == null) {
+          setState(() => _errorText = 'Enter a start date');
+        } else if (_endDate == null) {
+          setState(() => _errorText = 'Enter an end date');
+        }
         return _startDate != null && _endDate != null;
       default:
         return false;

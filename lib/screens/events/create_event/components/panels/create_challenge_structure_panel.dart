@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
@@ -11,9 +12,11 @@ import 'package:myputt/utils/colors.dart';
 class CreateChallengeStructurePanel extends StatefulWidget {
   const CreateChallengeStructurePanel({
     Key? key,
+    required this.initialInstructions,
     required this.updateInstructions,
   }) : super(key: key);
 
+  final List<GeneratedChallengeInstruction> initialInstructions;
   final Function(List<GeneratedChallengeInstruction> instructions)
       updateInstructions;
 
@@ -24,13 +27,19 @@ class CreateChallengeStructurePanel extends StatefulWidget {
 
 class _CreateChallengeStructurePanelState
     extends State<CreateChallengeStructurePanel> {
-  final List<GeneratedChallengeInstruction> _challengeInstructions = [];
+  late final List<GeneratedChallengeInstruction> _challengeInstructions;
 
   final TextEditingController _distanceController = TextEditingController();
   final TextEditingController _setLengthController = TextEditingController();
   final TextEditingController _setCountController = TextEditingController();
 
   String? _errorText;
+
+  @override
+  void initState() {
+    _challengeInstructions = widget.initialInstructions;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +78,11 @@ class _CreateChallengeStructurePanelState
             Align(
               alignment: Alignment.bottomCenter,
               child: PrimaryButton(
-                  width: double.infinity,
-                  label: 'Done',
-                  onPressed: () => Navigator.of(context).pop()),
+                width: double.infinity,
+                label: 'Done',
+                icon: FlutterRemix.check_line,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ),
           ],
         ),
@@ -87,7 +98,19 @@ class _CreateChallengeStructurePanelState
             _descriptionRow(context),
             _inputRow(context),
             const SizedBox(height: 12),
-            _addButton(context),
+            Row(
+              children: [
+                Expanded(child: _addButton(context)),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {
+                    Vibrate.feedback(FeedbackType.light);
+                    _undo();
+                  },
+                  icon: const Icon(FlutterRemix.arrow_go_back_line),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
             SizedBox(
               height: 30,
@@ -111,10 +134,7 @@ class _CreateChallengeStructurePanelState
       children: _challengeInstructions
           .map(
             (instruction) => StructureDescriptionRow(
-              generatedChallengeInstruction: instruction,
-              onDelete: () =>
-                  setState(() => _challengeInstructions.remove(instruction)),
-            ),
+                generatedChallengeInstruction: instruction),
           )
           .toList(),
     );
@@ -125,7 +145,7 @@ class _CreateChallengeStructurePanelState
       children: [
         Expanded(
           child: Text(
-            'Dist (ft)',
+            'Feet',
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
@@ -135,7 +155,7 @@ class _CreateChallengeStructurePanelState
         ),
         Expanded(
           child: Text(
-            '# Putts',
+            'Attempts',
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
@@ -145,7 +165,7 @@ class _CreateChallengeStructurePanelState
         ),
         Expanded(
           child: Text(
-            '# Sets',
+            'Sets',
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
@@ -181,7 +201,6 @@ class _CreateChallengeStructurePanelState
         widget.updateInstructions(_challengeInstructions);
       },
       iconData: FlutterRemix.add_line,
-      width: double.infinity,
     );
   }
 
@@ -193,7 +212,7 @@ class _CreateChallengeStructurePanelState
             controller: _distanceController,
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
             innerPadding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                const EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 20),
           ),
         ),
         const SizedBox(width: 8),
@@ -216,5 +235,13 @@ class _CreateChallengeStructurePanelState
         ),
       ],
     );
+  }
+
+  void _undo() {
+    if (_challengeInstructions.isEmpty) {
+      return;
+    }
+    setState(() => _challengeInstructions.removeLast());
+    widget.updateInstructions(_challengeInstructions);
   }
 }

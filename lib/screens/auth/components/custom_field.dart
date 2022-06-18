@@ -40,8 +40,7 @@ class CustomField extends StatelessWidget {
         textAlign: TextAlign.center,
         decoration: InputDecoration(
           hintText: hint,
-          contentPadding: innerPadding,
-          isDense: true,
+          // contentPadding: innerPadding,
           hintStyle: Theme.of(context)
               .textTheme
               .subtitle1!

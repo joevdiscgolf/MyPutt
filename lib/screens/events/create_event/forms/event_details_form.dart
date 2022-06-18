@@ -4,7 +4,6 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/panels/info_panel.dart';
 import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/screens/events/create_event/components/dialogs/add_sponsor_dialog.dart';
 import 'package:myputt/screens/events/create_event/components/panels/create_challenge_structure_panel.dart';
 import 'package:myputt/screens/events/create_event/components/panels/select_divisions_panel.dart';
 import 'package:myputt/screens/events/create_event/components/selector_row.dart';
@@ -16,15 +15,19 @@ class EventDetailsForm extends StatelessWidget {
     Key? key,
     required this.selectedDivisions,
     required this.signatureVerification,
+    required this.instructions,
     required this.onDivisionSelected,
     required this.updateSignatureVerification,
+    required this.updateChallengeInstructions,
   }) : super(key: key);
 
   final List<Division> selectedDivisions;
   final bool signatureVerification;
-
+  final List<GeneratedChallengeInstruction> instructions;
   final Function(List<Division>) onDivisionSelected;
   final Function(bool) updateSignatureVerification;
+  final Function(List<GeneratedChallengeInstruction>)
+      updateChallengeInstructions;
 
   static String routeName = '/enter_details';
 
@@ -45,9 +48,9 @@ class EventDetailsForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              signatureVerificationHeader(context),
+              _signatureVerificationHeader(context),
               const SizedBox(height: 16),
-              signatureVerificationRow(context),
+              _signatureVerificationRow(context),
               const SizedBox(height: 32),
               SelectorRow(
                 icon: const Icon(FlutterRemix.user_add_line),
@@ -56,30 +59,25 @@ class EventDetailsForm extends StatelessWidget {
                 onPressed: () => displayBottomSheet(
                   context,
                   SelectDivisionsPanel(
-                      initialDivisions: selectedDivisions,
-                      onDivisionSelected: (List<Division> divisions) =>
-                          onDivisionSelected(divisions)),
-                ),
-              ),
-              const SizedBox(height: 32),
-              SelectorRow(
-                icon: const Icon(FlutterRemix.stack_line),
-                text: 'Enter event layout (required)',
-                onPressed: () => displayBottomSheet(
-                  context,
-                  CreateChallengeStructurePanel(
-                    updateInstructions:
-                        (List<GeneratedChallengeInstruction> instructions) {},
+                    initialDivisions: selectedDivisions,
+                    onDivisionSelected: (List<Division> divisions) =>
+                        onDivisionSelected(divisions),
                   ),
                 ),
               ),
               const SizedBox(height: 32),
               SelectorRow(
-                icon: const Icon(FlutterRemix.currency_line),
-                text: 'Add sponsor (optional)',
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (BuildContext context) => const AddSponsorDialog(),
+                icon: const Icon(FlutterRemix.stack_line),
+                text: instructions.isEmpty
+                    ? 'Enter event layout (required)'
+                    : 'Event layout (${instructions.length})',
+                onPressed: () => displayBottomSheet(
+                  context,
+                  CreateChallengeStructurePanel(
+                      initialInstructions: instructions,
+                      updateInstructions:
+                          (List<GeneratedChallengeInstruction> instructions) =>
+                              updateChallengeInstructions(instructions)),
                 ),
               ),
             ],
@@ -89,7 +87,7 @@ class EventDetailsForm extends StatelessWidget {
     );
   }
 
-  Widget signatureVerificationHeader(BuildContext context) {
+  Widget _signatureVerificationHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -115,7 +113,7 @@ class EventDetailsForm extends StatelessWidget {
     );
   }
 
-  Widget signatureVerificationRow(BuildContext context) {
+  Widget _signatureVerificationRow(BuildContext context) {
     return Row(
       children: [
         Expanded(
