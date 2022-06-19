@@ -1,16 +1,21 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_player_data.dart';
+import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
+import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ExpandedPlayerData extends StatelessWidget {
-  const ExpandedPlayerData({
+  ExpandedPlayerData({
     Key? key,
     required this.playerData,
     required this.challengeStructure,
   }) : super(key: key);
 
+  final StatsService _statsService = locator.get<StatsService>();
   final EventPlayerData playerData;
   final List<ChallengeStructureItem> challengeStructure;
 
@@ -50,35 +55,44 @@ class ExpandedPlayerData extends StatelessWidget {
               ),
             ),
           Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                children: [
-                  _setsRow(context),
-                  _scoreRow(context),
-                  _distRow(context),
-                  _statsRow(context),
-                ],
-              )),
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    children: [
+                      _setsRow(context),
+                      _scoreRow(context),
+                      _distRow(context)
+                    ],
+                  ),
+                ),
+                _statsRow(context),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _statsRow(BuildContext context) {
+    final EventStats eventStats = _statsService.getEventStats(playerData.sets);
     return Container(
       padding: const EdgeInsets.only(top: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _statsColumn(context, 0.6, 'Circle 1'),
-          _statsColumn(context, 0.6, 'Circle 2'),
-          _statsColumn(context, 0.6, 'Overall'),
+          _statsColumn(context, eventStats.c1Percentage, 'Circle 1'),
+          _statsColumn(context, eventStats.c2Percentage, 'Circle 2'),
+          _statsColumn(context, eventStats.overallPercentage, 'Overall'),
         ],
       ),
     );
   }
 
-  Widget _statsColumn(BuildContext context, double decimal, String message) {
+  Widget _statsColumn(BuildContext context, double? decimal, String message) {
     return Column(
       children: [
         ShadowCircularIndicator(

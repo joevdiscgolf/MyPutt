@@ -66,7 +66,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
           ),
           const SizedBox(height: 16),
           Wrap(
-              children: widget.event.divisions
+              children: widget.event.eventCustomizationData.divisions
                   .map((division) => DivisionChip(
                       division: division,
                       onPressed: (Division division) =>

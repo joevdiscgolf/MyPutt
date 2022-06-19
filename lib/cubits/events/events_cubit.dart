@@ -46,7 +46,8 @@ class EventsCubit extends Cubit<EventsState> {
       return;
     }
     if (_eventsRepository.currentPlayerData!.sets.length ==
-        _eventsRepository.currentEvent!.challengeStructure.length) {
+        _eventsRepository
+            .currentEvent!.eventCustomizationData.challengeStructure.length) {
       return;
     }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
@@ -141,19 +142,33 @@ const redFrisbeeImageIcon = SizedBox(
 final kTestEvents = [
   for (int i = 0; i < 4; i++)
     MyPuttEvent(
-      eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
-      code: 123,
-      name: 'Summer Sizzler',
-      challengeStructure: [ChallengeStructureItem(distance: 10, setLength: 10)],
-      divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
-      eventType: EventType.tournament,
-      endTimestamp: 1651109507018,
-      startTimestamp: 1650945600000,
-      status: EventStatus.active,
-      verificationRequired: false,
-      completionTimestamp: 2,
-      participantCount: 12,
-    )
+        eventId: 'e08d36dc-5df4-411d-9d26-8e68122044bb',
+        code: 123,
+        name: 'Summer Sizzler',
+        eventCustomizationData: EventCustomizationData(
+          challengeStructure: [
+            ChallengeStructureItem(distance: 10, setLength: 10)
+          ],
+          divisions: [Division.mpo, Division.fpo, Division.ma1, Division.fa1],
+          verificationRequired: false,
+        ),
+        eventType: EventType.tournament,
+        endTimestamp: 1651109507018,
+        startTimestamp: 1650945600000,
+        status: EventStatus.active,
+        completionTimestamp: 2,
+        participantCount: 12,
+        creator: MyPuttUserMetadata(
+            displayName: 'Joe v',
+            uid: 'BnisFzLsy0PnJuXv26BQ86HTVJk2',
+            username: 'joey'),
+        creatorUid: 'BnisFzLsy0PnJuXv26BQ86HTVJk2',
+        admins: [
+          MyPuttUserMetadata(displayName: 'Joe v', uid: '', username: 'joey')
+        ],
+        adminUids: [
+          'BnisFzLsy0PnJuXv26BQ86HTVJk2'
+        ])
 ];
 
 const Map<EventType, String> eventTypeToName = {

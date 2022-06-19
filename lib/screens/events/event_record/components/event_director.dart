@@ -18,7 +18,7 @@ class EventDirector extends StatelessWidget {
         return const Center(child: Text('Something went wrong'));
       }
       final List<ChallengeStructureItem> challengeStructure =
-          state.event.challengeStructure;
+          state.event.eventCustomizationData.challengeStructure;
       final List<PuttingSet> sets = state.eventPlayerData.sets;
 
       final int index = sets.length == challengeStructure.length
@@ -69,12 +69,14 @@ class EventDirector extends StatelessWidget {
         _percentCompleteIndicator(
           context,
           begin: totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
-              totalAttemptsFromStructure(state.event.challengeStructure)
+              totalAttemptsFromStructure(
+                      state.event.eventCustomizationData.challengeStructure)
                   .toDouble(),
           end: (totalAttemptsFromSubset(state.eventPlayerData.sets,
                       state.eventPlayerData.sets.length)
                   .toDouble()) /
-              totalAttemptsFromStructure(state.event.challengeStructure)
+              totalAttemptsFromStructure(
+                      state.event.eventCustomizationData.challengeStructure)
                   .toDouble(),
         ),
       ],

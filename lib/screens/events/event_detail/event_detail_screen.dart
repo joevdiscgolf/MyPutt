@@ -51,7 +51,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   @override
   void initState() {
     _eventsRepository.initializeEventStream(widget.event.eventId);
-    _division = widget.event.divisions.first;
+    _division = widget.event.eventCustomizationData.divisions.first;
     _fetchData = _initData();
     _scoreUpdatesSubscription = _eventsRepository.playerDataStream
         ?.listen((List<EventPlayerData> standings) {
@@ -110,7 +110,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   }
                   return PlayerList(
                       eventStandings: _eventStandings!,
-                      challengeStructure: widget.event.challengeStructure);
+                      challengeStructure: widget
+                          .event.eventCustomizationData.challengeStructure);
                 case ConnectionState.none:
                 case ConnectionState.waiting:
                 case ConnectionState.active:
@@ -283,7 +284,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             context,
             UpdateDivisionPanel(
                 currentDivision: _division,
-                availableDivisions: widget.event.divisions,
+                availableDivisions:
+                    widget.event.eventCustomizationData.divisions,
                 onDivisionUpdate: (Division division) {
                   setState(() => _division = division);
                   _fetchData = _initData();
@@ -316,10 +318,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         if (state is! ActiveEventState) {
           return Container();
         }
-        final double percentComplete = state.event.challengeStructure.isEmpty
-            ? 0
-            : state.eventPlayerData.sets.length.toDouble() /
-                state.event.challengeStructure.length.toDouble();
+        final double percentComplete =
+            state.event.eventCustomizationData.challengeStructure.isEmpty
+                ? 0
+                : state.eventPlayerData.sets.length.toDouble() /
+                    state.event.eventCustomizationData.challengeStructure.length
+                        .toDouble();
 
         return Bounceable(
           onTap: () {
@@ -402,12 +406,17 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               if (!_inEvent) {
                 return JoinEventDialog(
                   event: widget.event,
-                  onEventJoin: () => setState(() => _inEvent = true),
+                  onEventJoin: () {
+                    setState(() => _inEvent = true);
+                    BlocProvider.of<EventsCubit>(context)
+                        .openEvent(widget.event);
+                  },
                 );
               }
               return ExitEventDialog(
-                  event: widget.event,
-                  onEventExit: () => setState(() => _inEvent = false));
+                event: widget.event,
+                onEventExit: () => setState(() => _inEvent = false),
+              );
             }).then((_) => _fetchData = _initData());
       },
       icon: Icon(
