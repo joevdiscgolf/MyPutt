@@ -194,7 +194,7 @@ class ExpandedPlayerData extends StatelessWidget {
       SizedBox(
         width: 64,
         child: Text(
-          'Dist',
+          'Dist (ft)',
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.headline6?.copyWith(
               color: MyPuttColors.darkGray,
@@ -204,18 +204,22 @@ class ExpandedPlayerData extends StatelessWidget {
       )
     ];
 
-    children.addAll(challengeStructure.map((structureItem) => Container(
+    children.addAll(
+      challengeStructure.map(
+        (structureItem) => Container(
           margin: const EdgeInsets.symmetric(horizontal: 12),
           width: 40,
           child: Text(
-            '${structureItem.distance}ft',
+            '${structureItem.distance}',
             style: Theme.of(context)
                 .textTheme
                 .headline6
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             textAlign: TextAlign.center,
           ),
-        )));
+        ),
+      ),
+    );
 
     return Container(
       color: MyPuttColors.gray[50],

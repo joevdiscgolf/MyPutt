@@ -68,10 +68,10 @@ class EventDirector extends StatelessWidget {
         const SizedBox(height: 16),
         _percentCompleteIndicator(
           context,
-          totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
+          begin: totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
               totalAttemptsFromStructure(state.event.challengeStructure)
                   .toDouble(),
-          (totalAttemptsFromSubset(state.eventPlayerData.sets,
+          end: (totalAttemptsFromSubset(state.eventPlayerData.sets,
                       state.eventPlayerData.sets.length)
                   .toDouble()) /
               totalAttemptsFromStructure(state.event.challengeStructure)
@@ -81,8 +81,8 @@ class EventDirector extends StatelessWidget {
     );
   }
 
-  Widget _percentCompleteIndicator(
-      BuildContext context, double begin, double end) {
+  Widget _percentCompleteIndicator(BuildContext context,
+      {required double begin, required double end}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TweenAnimationBuilder<double>(

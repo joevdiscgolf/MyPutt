@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/events/event_record/components/event_director.dart';
 import 'package:myputt/screens/events/event_record/components/event_record_title.dart';
+import 'package:myputt/screens/events/event_record/components/event_undo_button.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/set_helpers.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/data/types/sessions/putting_set.dart';
@@ -27,23 +29,13 @@ class EventRecordScreen extends StatefulWidget {
 }
 
 class _EventRecordScreenState extends State<EventRecordScreen> {
-  final UserRepository _userRepository = locator.get<UserRepository>();
-
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
 
   bool sessionInProgress = true;
-  int _setLength = 10;
-  int _focusedIndex = 10;
-  late int _distance;
+  int? _focusedIndex;
 
   @override
   void initState() {
-    _distance = _userRepository
-            .currentUser?.userSettings?.sessionSettings?.preferredDistance ??
-        20;
-    _setLength = _userRepository.currentUser?.userSettings?.sessionSettings
-            ?.preferredPuttsPickerLength ??
-        10;
     super.initState();
   }
 
@@ -55,11 +47,19 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
           return const LoadingScreen();
         } else if (state is! ActiveEventState) {
           return Center(
-              child: Center(
-                  child: EmptyState(
-                      onRetry: () => BlocProvider.of<EventsCubit>(context)
-                          .openEvent(widget.event))));
+            child: Center(
+              child: EmptyState(
+                onRetry: () => BlocProvider.of<EventsCubit>(context)
+                    .openEvent(widget.event),
+              ),
+            ),
+          );
         }
+        final ChallengeStructureItem currentStructureItem =
+            getCurrentChallengeStructureItem(
+                state.event.challengeStructure, state.eventPlayerData.sets);
+        final int setLength = currentStructureItem.setLength;
+        final int distance = currentStructureItem.distance;
 
         List<Widget> previousSetsChildren = List.from(state.eventPlayerData.sets
             .asMap()
@@ -75,33 +75,50 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                 ))
             .toList()
             .reversed);
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewPadding.bottom > 0 ? 48 : 12,
+        return Scaffold(
+          appBar: AppBar(
+            title: const EventRecordTitle(),
+            backgroundColor: MyPuttColors.white,
+            actions: const [
+              Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: ExitButton(),
+              )
+            ],
           ),
-          child: ListView(
+          body: Column(
             children: [
-              const EventRecordTitle(),
               const EventDirector(),
+              const SizedBox(height: 16),
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 4, top: 8),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Putts made',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6
-                              ?.copyWith(
-                                  color: MyPuttColors.darkGray, fontSize: 20)),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Putts made',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                    color: MyPuttColors.darkGray, fontSize: 20),
+                          ),
+                        ),
+                        EventUndoButton(
+                            onPressed: () =>
+                                BlocProvider.of<EventsCubit>(context)
+                                    .undoSet()),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   PuttsMadePicker(
-                      length: _setLength,
-                      initialIndex: _setLength.toDouble(),
+                      length: setLength,
+                      initialIndex: setLength.toDouble(),
                       challengeMode: false,
                       sslKey: puttsMadePickerKey,
                       onUpdate: (int newIndex) {
@@ -121,16 +138,19 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                   height: 50,
                   iconData: FlutterRemix.add_line,
                   onPressed: () {
-                    BlocProvider.of<EventsCubit>(context).addSet(PuttingSet(
+                    BlocProvider.of<EventsCubit>(context).addSet(
+                      PuttingSet(
                         timeStamp: DateTime.now().millisecondsSinceEpoch,
-                        puttsMade: _focusedIndex,
-                        puttsAttempted: _setLength,
-                        distance: _distance));
+                        puttsMade: _focusedIndex ?? setLength,
+                        puttsAttempted: setLength,
+                        distance: distance,
+                      ),
+                    );
                   },
                 ),
               ),
               const SizedBox(height: 16),
-              ...previousSetsChildren,
+              Expanded(child: ListView(children: previousSetsChildren)),
             ],
           ),
         );

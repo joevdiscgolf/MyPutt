@@ -164,7 +164,15 @@ class _EventsState extends State<EventsScreen>
     } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
       return Container();
     } else if (_events?.isNotEmpty != true || _events == null) {
-      return const EmptyState();
+      return EmptyState(
+        title: 'Uh-oh',
+        subtitle: "We couldn't find any events",
+        onRetry: () {
+          if (_searchBarText != null && _searchBarText!.isNotEmpty) {
+            _searchEvents(_searchBarText!);
+          }
+        },
+      );
     }
     return EventsList(
       events: _events!,
@@ -227,11 +235,14 @@ class _EventsState extends State<EventsScreen>
       },
       child: MyPuttButton(
         onPressed: () {
-          Navigator.of(context).push(
-            AnimatedRoute(
-              const CreateEventScreen(),
-            ),
-          );
+          BlocProvider.of<EventsCubit>(context).createEventPressed();
+          Navigator.of(context)
+              .push(AnimatedRoute(const CreateEventScreen()))
+              .then((_) {
+            if (BlocProvider.of<EventsCubit>(context).newEventWasCreated) {
+              setState(() => _tabController.index = 3);
+            }
+          });
         },
         title: 'New Event',
         iconData: FlutterRemix.add_line,

@@ -35,14 +35,14 @@ class _SelectDivisionsPanelState extends State<SelectDivisionsPanel> {
       const PanelHeader(title: 'Select divisions'),
       const SizedBox(height: 16),
       DivisionRow(
-        division: Division.everyone,
-        selected: _selectedDivisions.contains(Division.everyone),
+        division: Division.mixed,
+        selected: _selectedDivisions.contains(Division.mixed),
         onPressed: () => setState(
           () {
-            if (_selectedDivisions.contains(Division.everyone)) {
-              _selectedDivisions.remove(Division.everyone);
+            if (_selectedDivisions.contains(Division.mixed)) {
+              _selectedDivisions.remove(Division.mixed);
             } else {
-              _selectedDivisions.add(Division.everyone);
+              _selectedDivisions.add(Division.mixed);
             }
             widget.onDivisionSelected(_selectedDivisions);
           },

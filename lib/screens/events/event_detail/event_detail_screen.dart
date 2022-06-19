@@ -322,96 +322,98 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 state.event.challengeStructure.length.toDouble();
 
         return Bounceable(
-            onTap: () {
-              Vibrate.feedback(FeedbackType.light);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
+          onTap: () {
+            Vibrate.feedback(FeedbackType.light);
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 48,
+                  width: MediaQuery.of(context).size.width / 2,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      color: MyPuttColors.gray[100]!),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Transform.translate(
+                  offset: Offset(
+                      MediaQuery.of(context).size.width /
+                          2 *
+                          -((1 - percentComplete) / 2),
+                      0),
                   child: Container(
                     height: 48,
-                    width: MediaQuery.of(context).size.width / 2,
+                    width: percentComplete == 0
+                        ? 0
+                        : MediaQuery.of(context).size.width /
+                            2 *
+                            percentComplete,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
-                        color: MyPuttColors.gray[100]!),
+                        color: MyPuttColors.skyBlue),
                   ),
                 ),
-                Align(
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Transform.translate(
-                    offset: Offset(
-                        MediaQuery.of(context).size.width /
-                            2 *
-                            -((1 - percentComplete) / 2),
-                        0),
-                    child: Container(
-                      height: 48,
-                      width: percentComplete == 0
-                          ? 0
-                          : MediaQuery.of(context).size.width /
-                              2 *
-                              percentComplete,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: MyPuttColors.skyBlue),
-                    ),
+                  child: MyPuttButton(
+                    onPressed: () {
+                      BlocProvider.of<EventsCubit>(context)
+                          .openEvent(widget.event);
+                      displayBottomSheet(
+                        context,
+                        EventRecordScreen(event: widget.event),
+                        dismissibleOnTap: true,
+                        enableDrag: false,
+                        onDismiss: () => _fetchData = _initData(),
+                      );
+                    },
+                    title:
+                        '${((percentComplete) * 100).toStringAsFixed(0)}% complete',
+                    iconData: FlutterRemix.sword_fill,
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: 48,
+                    textColor: MyPuttColors.darkGray,
+                    shadowColor: Colors.transparent,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: MyPuttButton(
-                      onPressed: () {
-                        BlocProvider.of<EventsCubit>(context)
-                            .openEvent(widget.event);
-                        displayBottomSheet(
-                          context,
-                          EventRecordScreen(event: widget.event),
-                          dismissibleOnTap: true,
-                          enableDrag: false,
-                          onDismiss: () => _fetchData = _initData(),
-                        );
-                      },
-                      title:
-                          '${((percentComplete) * 100).toStringAsFixed(0)}% complete',
-                      iconData: FlutterRemix.sword_fill,
-                      color: Colors.transparent,
-                      width: MediaQuery.of(context).size.width / 2,
-                      height: 48,
-                      textColor: MyPuttColors.darkGray,
-                      shadowColor: Colors.transparent,
-                    ),
-                  ),
-                ),
-              ],
-            ));
+              ),
+            ],
+          ),
+        );
       },
     );
   }
 
   Widget _joinLeaveButton(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                if (!_inEvent) {
-                  return JoinEventDialog(
-                    event: widget.event,
-                    onEventJoin: () => setState(() => _inEvent = true),
-                  );
-                }
-                return ExitEventDialog(
-                    event: widget.event,
-                    onEventExit: () => setState(() => _inEvent = false));
-              }).then((_) => _fetchData = _initData());
-        },
-        icon: Icon(
-          _inEvent ? FlutterRemix.logout_box_line : FlutterRemix.user_add_line,
-          color: MyPuttColors.white,
-        ));
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              if (!_inEvent) {
+                return JoinEventDialog(
+                  event: widget.event,
+                  onEventJoin: () => setState(() => _inEvent = true),
+                );
+              }
+              return ExitEventDialog(
+                  event: widget.event,
+                  onEventExit: () => setState(() => _inEvent = false));
+            }).then((_) => _fetchData = _initData());
+      },
+      icon: Icon(
+        _inEvent ? FlutterRemix.logout_box_line : FlutterRemix.user_add_line,
+        color: MyPuttColors.white,
+      ),
+    );
   }
 }

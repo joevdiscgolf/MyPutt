@@ -17,8 +17,11 @@ class EventsCubit extends Cubit<EventsState> {
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
+  bool _newEventCreated = false;
 
   EventsCubit() : super(EventsInitial());
+
+  bool get newEventWasCreated => _newEventCreated;
 
   Future<void> openEvent(MyPuttEvent event) async {
     _eventsRepository.initializeEventStream(event.eventId);
@@ -48,6 +51,25 @@ class EventsCubit extends Cubit<EventsState> {
     }
 
     _eventsRepository.currentPlayerData!.sets.add(set);
+    final bool success = await _eventsRepository.resyncSets();
+    if (!success) {
+      emit(EventErrorState());
+      return;
+    }
+    emit(ActiveEventState(
+      event: _eventsRepository.currentEvent!,
+      eventPlayerData: _eventsRepository.currentPlayerData!,
+    ));
+  }
+
+  Future<void> undoSet() async {
+    if (_eventsRepository.currentPlayerData == null ||
+        _eventsRepository.currentEvent == null) {
+      emit(EventErrorState());
+      return;
+    }
+
+    _eventsRepository.currentPlayerData!.sets.removeLast();
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
       emit(EventErrorState());
@@ -106,6 +128,13 @@ class EventsCubit extends Cubit<EventsState> {
         ),
       ),
     );
+    if (response.eventId != null) {
+      _newEventCreated = true;
+    }
     return response.eventId != null;
+  }
+
+  void createEventPressed() {
+    _newEventCreated = false;
   }
 }

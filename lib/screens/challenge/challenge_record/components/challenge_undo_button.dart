@@ -6,8 +6,8 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
-class UndoButton extends StatelessWidget {
-  const UndoButton({Key? key}) : super(key: key);
+class ChallengeUndoButton extends StatelessWidget {
+  const ChallengeUndoButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +25,19 @@ class UndoButton extends StatelessWidget {
           onPressed = () {};
         }
         return Bounceable(
-            onTap: () => onPressed(),
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(48)),
-                child: const Center(
-                  child: Icon(
-                    FlutterRemix.arrow_go_back_line,
-                    color: MyPuttColors.darkGray,
-                  ),
-                )));
+          onTap: () => onPressed(),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(48)),
+            child: const Center(
+              child: Icon(
+                FlutterRemix.arrow_go_back_line,
+                color: MyPuttColors.darkGray,
+              ),
+            ),
+          ),
+        );
       },
     );
   }

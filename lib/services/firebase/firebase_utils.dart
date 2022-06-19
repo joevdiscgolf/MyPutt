@@ -19,19 +19,5 @@ Future<void> renameSessionsForUser(String uid) async {
               '$sessionsCollection/$uid/$completedSessionsCollection/${doc.id}')
           .delete();
     }
-
-    // if (doc.id.contains(uid)) {
-    //   print('${doc.id}');
-    //   await firestore
-    //       .doc(
-    //           '$sessionsCollection/$uid/$completedSessionsCollection/${doc.id}')
-    //       .delete();
-    // }
-    // if (data != null && data['id'] != null) {
-    //   firestore
-    //       .doc(
-    //           '$sessionsCollection/$uid/$completedSessionsCollection/${data['id']}')
-    //       .set((data));
-    // }
   });
 }

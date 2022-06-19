@@ -4,8 +4,6 @@ import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/data/types/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
 
-import 'enums.dart';
-
 bool currentUserSetsComplete(PuttingChallenge challenge) {
   return challenge.currentUserSets.length ==
       challenge.challengeStructure.length;
