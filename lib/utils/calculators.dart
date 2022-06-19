@@ -135,10 +135,10 @@ int totalAttemptsFromStructure(List<ChallengeStructureItem> structure) {
 }
 
 int totalAttemptsFromPresetInstructions(
-    List<GeneratedChallengeItem> instructions) {
+    List<GeneratedChallengeInstruction> instructions) {
   int total = 0;
-  for (GeneratedChallengeItem instruction in instructions) {
-    total += instruction.numSets * 10;
+  for (GeneratedChallengeInstruction instruction in instructions) {
+    total += instruction.setCount * instruction.setLength;
   }
   return total;
 }

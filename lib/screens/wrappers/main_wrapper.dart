@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -13,6 +12,7 @@ import 'package:myputt/screens/sessions/sessions_screen.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/utils/admin_helpers.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -36,6 +36,7 @@ class _MainWrapperState extends State<MainWrapper> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAdmin = isAdminAccount();
     return Scaffold(
       body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -52,7 +53,7 @@ class _MainWrapperState extends State<MainWrapper> {
             BlocProvider.of<ChallengesCubit>(context).reload();
           } else if (index == 1) {
             BlocProvider.of<SessionsCubit>(context).reload();
-          } else if (index == (kDebugMode ? 4 : 3)) {
+          } else if (index == (isAdmin ? 4 : 3)) {
             BlocProvider.of<MyProfileCubit>(context).reload();
           }
           setState(() => _currentIndex = index);
@@ -86,7 +87,7 @@ class _MainWrapperState extends State<MainWrapper> {
             ),
             label: 'Challenge',
           ),
-          if (kDebugMode)
+          if (isAdmin)
             const BottomNavigationBarItem(
               icon: Icon(FlutterRemix.medal_2_fill),
               label: 'Events',

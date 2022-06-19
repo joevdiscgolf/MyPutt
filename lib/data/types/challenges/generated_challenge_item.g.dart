@@ -6,15 +6,18 @@ part of 'generated_challenge_item.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GeneratedChallengeItem _$GeneratedChallengeItemFromJson(Map json) =>
-    GeneratedChallengeItem(
+GeneratedChallengeInstruction _$GeneratedChallengeInstructionFromJson(
+        Map json) =>
+    GeneratedChallengeInstruction(
       distance: json['distance'] as int,
-      numSets: json['numSets'] as int,
+      setCount: json['setCount'] as int,
+      setLength: json['setLength'] as int,
     );
 
-Map<String, dynamic> _$GeneratedChallengeItemToJson(
-        GeneratedChallengeItem instance) =>
+Map<String, dynamic> _$GeneratedChallengeInstructionToJson(
+        GeneratedChallengeInstruction instance) =>
     <String, dynamic>{
       'distance': instance.distance,
-      'numSets': instance.numSets,
+      'setCount': instance.setCount,
+      'setLength': instance.setLength,
     };

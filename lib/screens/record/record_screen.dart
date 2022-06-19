@@ -55,6 +55,7 @@ class _RecordScreenState extends State<RecordScreen> {
           iconTheme: const IconThemeData(
             color: MyPuttColors.darkGray,
           ),
+          centerTitle: true,
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
           actions: [
