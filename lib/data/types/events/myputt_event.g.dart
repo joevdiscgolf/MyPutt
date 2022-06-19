@@ -25,6 +25,7 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
       verificationRequired: json['verificationRequired'] as bool,
       bannerImgUrl: json['bannerImgUrl'] as String? ??
           'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
+      participantCount: json['participantCount'] as int,
     );
 
 Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
@@ -42,6 +43,7 @@ Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
       'completionTimestamp': instance.completionTimestamp,
       'verificationRequired': instance.verificationRequired,
       'bannerImgUrl': instance.bannerImgUrl,
+      'participantCount': instance.participantCount,
     };
 
 K _$enumDecode<K, V>(
