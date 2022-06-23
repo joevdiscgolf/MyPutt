@@ -55,6 +55,9 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
             ),
           );
         }
+        final bool setsFilled =
+            state.event.eventCustomizationData.challengeStructure.length ==
+                state.eventPlayerData.sets.length;
         final ChallengeStructureItem currentStructureItem =
             getCurrentChallengeStructureItem(
                 state.event.eventCustomizationData.challengeStructure,
@@ -110,9 +113,9 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                           ),
                         ),
                         EventUndoButton(
-                            onPressed: () =>
-                                BlocProvider.of<EventsCubit>(context)
-                                    .undoSet()),
+                          onPressed: () =>
+                              BlocProvider.of<EventsCubit>(context).undoSet(),
+                        ),
                       ],
                     ),
                   ),
@@ -131,13 +134,12 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
               ),
               const SizedBox(height: 16),
               Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width / 4),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
                 child: MyPuttButton(
-                  title: 'Add set',
-                  width: MediaQuery.of(context).size.width / 2,
+                  title: setsFilled ? 'Finish event' : 'Add set',
+                  width: double.infinity,
                   height: 50,
-                  iconData: FlutterRemix.add_line,
+                  iconData: setsFilled ? null : FlutterRemix.add_line,
                   onPressed: () {
                     BlocProvider.of<EventsCubit>(context).addSet(
                       PuttingSet(
@@ -148,6 +150,8 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                       ),
                     );
                   },
+                  color:
+                      setsFilled ? MyPuttColors.lightGreen : MyPuttColors.blue,
                 ),
               ),
               const SizedBox(height: 16),

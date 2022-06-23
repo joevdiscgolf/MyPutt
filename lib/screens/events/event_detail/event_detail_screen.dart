@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
-import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
@@ -17,11 +16,11 @@ import 'package:myputt/data/types/events/event_player_data.dart';
 import 'package:myputt/data/types/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/events_repository.dart';
+import 'package:myputt/screens/events/event_detail/components/compete_button.dart';
 import 'package:myputt/screens/events/event_detail/components/dialogs/exit_event_dialog.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/player_list.dart';
-import 'package:myputt/screens/events/event_record/event_record_screen.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -81,45 +80,77 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        floatingActionButton: _inEvent ? _competeButton(context) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: MyPuttColors.white,
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, _) => [
-            _sliverAppBar(context),
+        body: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                _sliverAppBar(context),
+                CupertinoSliverRefreshControl(
+                  onRefresh: () => _fetchData = _initData(),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return FutureBuilder<void>(
+                        future: _fetchData,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<void> snapshot) {
+                          // return const EventDetailLoadingScreen();
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.done:
+                              if (_eventStandings == null) {
+                                return EmptyState(
+                                  onRetry: () => _fetchData = _initData(),
+                                );
+                              }
+                              if (_eventStandings!.isEmpty) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    EmptyState(
+                                      title: 'Nothing here yet',
+                                      subtitle: 'Please try again',
+                                      icon: const Icon(
+                                        FlutterRemix.stack_line,
+                                        size: 40,
+                                      ),
+                                      onRetry: () => _fetchData = _initData(),
+                                    )
+                                  ],
+                                );
+                              }
+                              return PlayerList(
+                                  eventStandings: _eventStandings!,
+                                  challengeStructure: widget
+                                      .event
+                                      .eventCustomizationData
+                                      .challengeStructure);
+                            case ConnectionState.none:
+                            case ConnectionState.waiting:
+                            case ConnectionState.active:
+                            default:
+                              return const EventDetailLoadingScreen();
+                          }
+                        },
+                      );
+                    },
+                    childCount: 1,
+                  ),
+                )
+              ],
+            ),
+            if (_inEvent)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: CompeteButton(
+                  event: widget.event,
+                  refreshData: () => _fetchData = _initData(),
+                ),
+              ),
           ],
-          body: FutureBuilder<void>(
-            future: _fetchData,
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              // return const EventDetailLoadingScreen();
-              switch (snapshot.connectionState) {
-                case ConnectionState.done:
-                  if (_eventStandings == null) {
-                    return EmptyState(onRetry: () => _fetchData = _initData());
-                  }
-                  if (_eventStandings!.isEmpty) {
-                    return EmptyState(
-                      title: 'Nothing here yet',
-                      subtitle: 'Please try again later',
-                      icon: Icon(
-                        FlutterRemix.stack_line,
-                        color: MyPuttColors.gray[400]!,
-                        size: 40,
-                      ),
-                    );
-                  }
-                  return PlayerList(
-                      eventStandings: _eventStandings!,
-                      challengeStructure: widget
-                          .event.eventCustomizationData.challengeStructure);
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                case ConnectionState.active:
-                default:
-                  return const EventDetailLoadingScreen();
-              }
-            },
-          ),
         ),
       ),
     );
@@ -310,91 +341,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ],
           ),
         ));
-  }
-
-  Widget _competeButton(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
-      builder: (context, state) {
-        if (state is! ActiveEventState) {
-          return Container();
-        }
-        final double percentComplete =
-            state.event.eventCustomizationData.challengeStructure.isEmpty
-                ? 0
-                : state.eventPlayerData.sets.length.toDouble() /
-                    state.event.eventCustomizationData.challengeStructure.length
-                        .toDouble();
-
-        return Bounceable(
-          onTap: () {
-            Vibrate.feedback(FeedbackType.light);
-          },
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 48,
-                  width: MediaQuery.of(context).size.width / 2,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      color: MyPuttColors.gray[100]!),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Transform.translate(
-                  offset: Offset(
-                      MediaQuery.of(context).size.width /
-                          2 *
-                          -((1 - percentComplete) / 2),
-                      0),
-                  child: Container(
-                    height: 48,
-                    width: percentComplete == 0
-                        ? 0
-                        : MediaQuery.of(context).size.width /
-                            2 *
-                            percentComplete,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: MyPuttColors.skyBlue),
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: MyPuttButton(
-                    onPressed: () {
-                      BlocProvider.of<EventsCubit>(context)
-                          .openEvent(widget.event);
-                      displayBottomSheet(
-                        context,
-                        EventRecordScreen(event: widget.event),
-                        dismissibleOnTap: true,
-                        enableDrag: false,
-                        onDismiss: () => _fetchData = _initData(),
-                      );
-                    },
-                    title:
-                        '${((percentComplete) * 100).toStringAsFixed(0)}% complete',
-                    iconData: FlutterRemix.sword_fill,
-                    color: Colors.transparent,
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: 48,
-                    textColor: MyPuttColors.darkGray,
-                    shadowColor: Colors.transparent,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Widget _joinLeaveButton(BuildContext context) {
