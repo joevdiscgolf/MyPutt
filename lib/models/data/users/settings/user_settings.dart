@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/users/settings/session_settings.dart';
+import 'package:myputt/models/data/users/settings/session_settings.dart';
 
 part 'user_settings.g.dart';
 

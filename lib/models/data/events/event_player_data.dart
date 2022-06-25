@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'event_enums.dart';
 
 part 'event_player_data.g.dart';

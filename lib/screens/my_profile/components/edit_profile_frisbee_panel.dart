@@ -5,7 +5,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
-import 'package:myputt/data/types/users/frisbee_avatar.dart';
+import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/screens/my_profile/components/color_marker.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';

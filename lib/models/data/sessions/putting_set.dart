@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/conditions/conditions.dart';
+import 'package:myputt/models/data/conditions/conditions.dart';
 
 part 'putting_set.g.dart';
 

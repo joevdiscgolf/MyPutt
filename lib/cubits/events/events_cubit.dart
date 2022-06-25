@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:myputt/data/endpoints/events/event_endpoints.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/endpoints/events/event_endpoints.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';

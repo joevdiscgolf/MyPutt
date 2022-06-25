@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';

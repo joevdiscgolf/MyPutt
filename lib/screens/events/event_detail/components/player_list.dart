@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/data/types/events/ordered_standing.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/ordered_standing.dart';
 import 'package:myputt/screens/events/event_detail/components/player_data_row.dart';
 import 'package:myputt/utils/event_helpers.dart';
 

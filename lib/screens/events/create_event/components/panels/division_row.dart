@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/utils/colors.dart';
 
 class DivisionRow extends StatelessWidget {

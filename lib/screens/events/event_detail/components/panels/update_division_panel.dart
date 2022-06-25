@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/components/panels/panel_header.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/screens/events/event_detail/components/panels/event_division_row.dart';
 
 class UpdateDivisionPanel extends StatelessWidget {

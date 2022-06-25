@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:myputt/data/types/chart/chart_point.dart';
-import 'package:myputt/data/types/stats/stats.dart';
-import 'package:myputt/data/types/stats/general_stats.dart';
-import 'package:myputt/data/types/sessions/putting_session.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/data/chart/chart_point.dart';
+import 'package:myputt/models/data/stats/stats.dart';
+import 'package:myputt/models/data/stats/general_stats.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/calendar_view/utils.dart';
 import 'package:myputt/utils/calculators.dart';

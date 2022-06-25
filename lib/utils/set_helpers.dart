@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 
 ChallengeStructureItem getCurrentChallengeStructureItem(
     List<ChallengeStructureItem> challengeStructure,

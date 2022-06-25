@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 
 class EventCreateParams {
   EventCreateParams({

@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 
 part 'event_endpoints.g.dart';
 

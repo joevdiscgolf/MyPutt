@@ -4,7 +4,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
-import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
+import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/screens/challenge/components/dialogs/components/structure_description_row.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';

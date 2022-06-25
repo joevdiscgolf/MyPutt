@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/types/challenges/putting_challenge.dart';
+import '../../../models/data/challenges/putting_challenge.dart';
 
 class ChallengeCategoryTab extends StatelessWidget {
   const ChallengeCategoryTab(

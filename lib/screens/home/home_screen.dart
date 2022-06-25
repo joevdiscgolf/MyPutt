@@ -62,13 +62,14 @@ class HomeScreenState extends State<HomeScreen>
           children: [
             _calendarChartTabBar(context),
             Expanded(
-                child: TabBarView(
-              controller: _calendarChartTabController,
-              children: const [
-                StatsView(),
-                CalendarView(),
-              ],
-            ))
+              child: TabBarView(
+                controller: _calendarChartTabController,
+                children: const [
+                  StatsView(),
+                  CalendarView(),
+                ],
+              ),
+            )
           ],
         ));
   }

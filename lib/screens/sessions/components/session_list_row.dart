@@ -5,21 +5,21 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
-import 'package:myputt/data/types/sessions/putting_session.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 class SessionListRow extends StatelessWidget {
-  const SessionListRow(
-      {Key? key,
-      required this.session,
-      this.index,
-      required this.delete,
-      required this.isCurrentSession,
-      required this.onTap})
-      : super(key: key);
+  const SessionListRow({
+    Key? key,
+    required this.session,
+    this.index,
+    required this.delete,
+    required this.isCurrentSession,
+    required this.onTap,
+  }) : super(key: key);
   final Function delete;
   final PuttingSession session;
   final int? index;
@@ -34,14 +34,15 @@ class SessionListRow extends StatelessWidget {
     return Bounceable(
       onTap: () => onTap(),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-                offset: const Offset(0, 3),
-                color: MyPuttColors.gray[300]!,
-                blurRadius: 2)
+              offset: const Offset(0, 2),
+              color: MyPuttColors.gray[300]!,
+              blurRadius: 1,
+            )
           ],
           borderRadius: BorderRadius.circular(16),
           color: MyPuttColors.gray[50],
@@ -97,7 +98,7 @@ class SessionListRow extends StatelessWidget {
               child: const Icon(
                 FlutterRemix.sword_fill,
                 color: MyPuttColors.blue,
-                size: 32,
+                size: 24,
               ),
             ),
           const SizedBox(
@@ -107,25 +108,27 @@ class SessionListRow extends StatelessWidget {
             onTap: () {
               Vibrate.feedback(FeedbackType.light);
               showDialog(
-                  context: context,
-                  builder: (BuildContext context) => ConfirmDialog(
-                      actionPressed: delete,
-                      title: 'Delete session',
-                      message: 'Are you sure you want to delete this session?',
-                      buttonlabel: 'Delete',
-                      buttonColor: MyPuttColors.red,
-                      icon: const ShadowIcon(
-                        icon: Icon(
-                          FlutterRemix.alert_line,
-                          color: MyPuttColors.red,
-                          size: 60,
-                        ),
-                      )));
+                context: context,
+                builder: (BuildContext context) => ConfirmDialog(
+                  actionPressed: delete,
+                  title: 'Delete session',
+                  message: 'Are you sure you want to delete this session?',
+                  buttonlabel: 'Delete',
+                  buttonColor: MyPuttColors.red,
+                  icon: const ShadowIcon(
+                    icon: Icon(
+                      FlutterRemix.alert_line,
+                      color: MyPuttColors.red,
+                      size: 60,
+                    ),
+                  ),
+                ),
+              );
             },
             child: const Icon(
-              FlutterRemix.delete_bin_line,
+              FlutterRemix.delete_bin_7_line,
               color: MyPuttColors.red,
-              size: 24,
+              size: 20,
             ),
           ),
           const SizedBox(

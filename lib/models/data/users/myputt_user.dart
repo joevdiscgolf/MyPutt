@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/users/frisbee_avatar.dart';
-import 'package:myputt/data/types/users/settings/user_settings.dart';
+import 'package:myputt/models/data/users/frisbee_avatar.dart';
+import 'package:myputt/models/data/users/settings/user_settings.dart';
 
 part 'myputt_user.g.dart';
 
