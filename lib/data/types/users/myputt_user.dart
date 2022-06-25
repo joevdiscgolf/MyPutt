@@ -6,16 +6,19 @@ part 'myputt_user.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class MyPuttUser {
-  MyPuttUser(
-      {required this.username,
-      required this.keywords,
-      required this.displayName,
-      required this.uid,
-      this.pdgaNum,
-      this.pdgaRating,
-      this.frisbeeAvatar,
-      this.userSettings,
-      this.eventIds});
+  MyPuttUser({
+    required this.username,
+    required this.keywords,
+    required this.displayName,
+    required this.uid,
+    this.pdgaNum,
+    this.pdgaRating,
+    this.frisbeeAvatar,
+    this.userSettings,
+    this.eventIds,
+    this.isAdmin,
+    this.trebuchets,
+  });
   final String username;
   final List<String> keywords;
   final String displayName;
@@ -25,6 +28,8 @@ class MyPuttUser {
   FrisbeeAvatar? frisbeeAvatar;
   UserSettings? userSettings;
   final List<String>? eventIds;
+  final bool? isAdmin;
+  final List<String>? trebuchets;
 
   factory MyPuttUser.fromJson(Map<String, dynamic> json) =>
       _$MyPuttUserFromJson(json);

@@ -5,6 +5,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
@@ -12,7 +13,7 @@ import 'package:myputt/screens/sessions/sessions_screen.dart';
 import 'package:myputt/data/types/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
-import 'package:myputt/utils/admin_helpers.dart';
+import 'package:myputt/services/beta_access_service.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -26,19 +27,28 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   int _currentIndex = 0;
 
-  final List<Widget> screens = <Widget>[
-    const HomeScreen(),
-    const SessionsScreen(),
-    const ChallengesScreen(),
-    const EventsScreen(),
-    const MyProfileScreen(),
-  ];
+  late final List<Widget> _screens;
+  late bool _showEventsTab;
+
+  @override
+  void initState() {
+    _showEventsTab = locator
+        .get<BetaAccessService>()
+        .hasFeatureAccess(featureName: 'events');
+    _screens = <Widget>[
+      const HomeScreen(),
+      const SessionsScreen(),
+      const ChallengesScreen(),
+      if (_showEventsTab) const EventsScreen(),
+      const MyProfileScreen(),
+    ];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bool isAdmin = isAdminAccount();
     return Scaffold(
-      body: screens[_currentIndex],
+      body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey[100]!,
         elevation: 0,
@@ -49,11 +59,11 @@ class _MainWrapperState extends State<MainWrapper> {
           Vibrate.feedback(FeedbackType.light);
           if (index == 0) {
             BlocProvider.of<HomeScreenCubit>(context).reload();
-          } else if (index == 2) {
-            BlocProvider.of<ChallengesCubit>(context).reload();
           } else if (index == 1) {
             BlocProvider.of<SessionsCubit>(context).reload();
-          } else if (index == (isAdmin ? 4 : 3)) {
+          } else if (index == 2) {
+            BlocProvider.of<ChallengesCubit>(context).reload();
+          } else if (index == (_showEventsTab ? 4 : 3)) {
             BlocProvider.of<MyProfileCubit>(context).reload();
           }
           setState(() => _currentIndex = index);
@@ -87,7 +97,7 @@ class _MainWrapperState extends State<MainWrapper> {
             ),
             label: 'Challenge',
           ),
-          if (isAdmin)
+          if (_showEventsTab)
             const BottomNavigationBarItem(
               icon: Icon(FlutterRemix.medal_2_fill),
               label: 'Events',
@@ -103,22 +113,28 @@ class _MainWrapperState extends State<MainWrapper> {
 
   Widget _challengesIcon(
       BuildContext context, List<PuttingChallenge> pendingChallenges) {
-    return Stack(children: [
-      const Center(child: Icon(FlutterRemix.sword_fill)),
-      Visibility(
-        visible: pendingChallenges.isNotEmpty,
-        child: Positioned(
+    return Stack(
+      children: [
+        const Center(child: Icon(FlutterRemix.sword_fill)),
+        Visibility(
+          visible: pendingChallenges.isNotEmpty,
+          child: Positioned(
             top: 0,
             right: 0,
             child: Container(
-                padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-                decoration: const BoxDecoration(
-                    color: Colors.red, shape: BoxShape.circle),
-                child: Center(
-                    child: Text(pendingChallenges.length.toString(),
-                        style: const TextStyle(
-                            fontSize: 15, color: Colors.white))))),
-      )
-    ]);
+              padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+              decoration: const BoxDecoration(
+                  color: Colors.red, shape: BoxShape.circle),
+              child: Center(
+                child: Text(
+                  pendingChallenges.length.toString(),
+                  style: const TextStyle(fontSize: 15, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

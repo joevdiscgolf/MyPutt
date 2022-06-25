@@ -18,6 +18,7 @@ import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
+import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/init_service.dart';
 import 'package:myputt/theme/theme_data.dart';
@@ -36,6 +37,7 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<InitService>().init();
+  await locator.get<BetaAccessService>().loadFeatureAccess();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
