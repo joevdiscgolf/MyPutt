@@ -7,7 +7,7 @@ import 'package:myputt/cubits/events/events_cubit.dart';
 import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
 import 'package:myputt/data/types/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/forms/date_layout_form.dart';
-import 'package:myputt/screens/events/create_event/forms/event_basic_info_form.dart';
+import 'package:myputt/screens/events/create_event/forms/name_description_form.dart';
 import 'package:myputt/screens/events/create_event/forms/event_details_form.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
@@ -112,7 +112,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   Widget _carouselBody(BuildContext context) {
     final bool addBottomPadding = MediaQuery.of(context).viewPadding.bottom > 0;
     List<Widget> carouselChildren = [
-      EventBasicInfoForm(
+      NameDescriptionForm(
         eventNameController: _eventNameController,
         eventDescriptionController: _descriptionController,
       ),

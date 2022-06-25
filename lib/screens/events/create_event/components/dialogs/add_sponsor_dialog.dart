@@ -146,7 +146,6 @@ class _AddSponsorDialogState extends State<AddSponsorDialog> {
     if (_imageFile == null) {
       return;
     }
-    print('not null');
     setState(() => _imageFile = img);
   }
 }

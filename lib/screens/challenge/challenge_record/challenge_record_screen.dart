@@ -7,12 +7,14 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
+import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
 import 'package:myputt/data/types/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/screens/challenge/challenge_record/components/undo_button.dart';
+import 'package:myputt/screens/challenge/challenge_record/components/challenge_undo_button.dart';
 import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/utils/set_helpers.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
@@ -207,31 +209,32 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
           if ((state is ChallengeInProgress || state is OpponentUserComplete) &&
               state.currentChallenge != null) {
             return MyPuttButton(
-                title: 'Add Set',
-                color: Colors.blue,
-                iconData: FlutterRemix.add_line,
-                iconColor: MyPuttColors.white,
-                width: 50,
-                shadowColor: MyPuttColors.gray[400],
-                onPressed: () {
-                  Vibrate.feedback(FeedbackType.light);
-                  if (state.currentChallenge!.currentUserSets.length <
-                      state.currentChallenge!.challengeStructure.length) {
-                    BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
-                        timeStamp: DateTime.now().millisecondsSinceEpoch,
-                        distance: state
-                            .currentChallenge!
-                            .challengeStructure[
-                                state.currentChallenge!.currentUserSets.length]
-                            .distance,
-                        puttsAttempted: state
-                            .currentChallenge!
-                            .challengeStructure[
-                                state.currentChallenge!.currentUserSets.length]
-                            .setLength,
-                        puttsMade: puttsPickerFocusedIndex));
-                  }
-                });
+              title: 'Add Set',
+              color: Colors.blue,
+              iconData: FlutterRemix.add_line,
+              iconColor: MyPuttColors.white,
+              width: 50,
+              shadowColor: MyPuttColors.gray[400],
+              onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
+                if (state.currentChallenge!.currentUserSets.length <
+                    state.currentChallenge!.challengeStructure.length) {
+                  BlocProvider.of<ChallengesCubit>(context).addSet(PuttingSet(
+                      timeStamp: DateTime.now().millisecondsSinceEpoch,
+                      distance: state
+                          .currentChallenge!
+                          .challengeStructure[
+                              state.currentChallenge!.currentUserSets.length]
+                          .distance,
+                      puttsAttempted: state
+                          .currentChallenge!
+                          .challengeStructure[
+                              state.currentChallenge!.currentUserSets.length]
+                          .setLength,
+                      puttsMade: puttsPickerFocusedIndex));
+                }
+              },
+            );
           } else {
             return MyPuttButton(
               title: 'Add Set',
@@ -251,24 +254,14 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   Widget _puttsMadeContainer(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
-        int length = 0;
         if (state is ChallengesErrorState) {
           return Container();
-        } else if ((state is CurrentUserComplete ||
-                state is BothUsersComplete) &&
-            state.currentChallenge != null) {
-          length = state
-              .currentChallenge!
-              .challengeStructure[
-                  state.currentChallenge!.currentUserSets.length - 1]
-              .setLength;
-        } else {
-          length = state
-              .currentChallenge!
-              .challengeStructure[
-                  state.currentChallenge!.currentUserSets.length]
-              .setLength;
         }
+        final ChallengeStructureItem currentStructureItem =
+            getCurrentChallengeStructureItem(
+                state.currentChallenge!.challengeStructure,
+                state.currentChallenge!.currentUserSets);
+        final int setLength = currentStructureItem.setLength;
         return Container(
           padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
           decoration: const BoxDecoration(
@@ -292,15 +285,15 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
                     ),
                     const Align(
                       alignment: Alignment.centerRight,
-                      child: UndoButton(),
+                      child: ChallengeUndoButton(),
                     )
                   ],
                 ),
               ),
               const SizedBox(height: 16),
               PuttsMadePicker(
-                initialIndex: length.toDouble(),
-                length: length,
+                initialIndex: setLength.toDouble(),
+                length: setLength,
                 challengeMode: true,
                 sslKey: puttsMadePickerKey,
                 onUpdate: (int newIndex) {

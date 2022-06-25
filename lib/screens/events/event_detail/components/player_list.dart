@@ -20,19 +20,21 @@ class PlayerList extends StatelessWidget {
     List<OrderedStanding> orderedStandings =
         getOrderedStandings(eventStandings);
 
-    return ListView(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      children: orderedStandings
-          .asMap()
-          .entries
-          .map((entry) => PlayerDataRow(
-                isFirst: entry.key == 0,
-                isLast: entry.key == eventStandings.length - 1,
-                position: entry.value.position,
-                eventPlayerData: entry.value.eventPlayerData,
-                challengeStructure: challengeStructure,
-              ))
-          .toList(),
+      child: Column(
+        children: orderedStandings
+            .asMap()
+            .entries
+            .map((entry) => PlayerDataRow(
+                  isFirst: entry.key == 0,
+                  isLast: entry.key == eventStandings.length - 1,
+                  position: entry.value.position,
+                  eventPlayerData: entry.value.eventPlayerData,
+                  challengeStructure: challengeStructure,
+                ))
+            .toList(),
+      ),
     );
   }
 }

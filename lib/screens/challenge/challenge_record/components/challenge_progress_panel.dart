@@ -49,7 +49,7 @@ class ChallengeProgressPanel extends StatelessWidget {
               ? challenge.currentUserSets.last.puttsMade.toInt()
               : 0;
           final int? opponentPuttsMade = challenge.opponentSets.isNotEmpty &&
-                  challenge.opponentSets.length >
+                  challenge.opponentSets.length >=
                       challenge.currentUserSets.length
               ? challenge
                   .opponentSets[challenge.currentUserSets.length -
@@ -65,7 +65,14 @@ class ChallengeProgressPanel extends StatelessWidget {
               Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                color: MyPuttColors.white,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                      MyPuttColors.blue.withOpacity(0.2),
+                      MyPuttColors.red.withOpacity(0.2)
+                    ])),
                 child: Column(
                   children: [
                     _versusRow(

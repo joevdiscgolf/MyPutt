@@ -27,8 +27,8 @@ enum Division {
   fa3,
   @JsonValue('junior')
   junior,
-  @JsonValue('everyone')
-  everyone,
+  @JsonValue('mixed')
+  mixed,
 }
 
 enum EventType {

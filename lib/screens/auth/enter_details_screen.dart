@@ -329,20 +329,24 @@ class _UsernameFieldState extends State<UsernameField> {
 }
 
 class DetailsTextField extends StatelessWidget {
-  const DetailsTextField(
-      {Key? key,
-      required this.iconData,
-      required this.textEditingController,
-      required this.hint,
-      required this.enabled,
-      this.onInput,
-      this.numberInput = false})
-      : super(key: key);
+  const DetailsTextField({
+    Key? key,
+    required this.iconData,
+    required this.textEditingController,
+    required this.hint,
+    required this.enabled,
+    this.maxLines = 1,
+    this.maxLength,
+    this.onInput,
+    this.numberInput = false,
+  }) : super(key: key);
 
   final IconData iconData;
   final String hint;
   final TextEditingController textEditingController;
   final bool enabled;
+  final int maxLines;
+  final int? maxLength;
   final Function? onInput;
   final bool numberInput;
 
@@ -359,13 +363,13 @@ class DetailsTextField extends StatelessWidget {
           controller: textEditingController,
           enabled: enabled,
           autocorrect: false,
-          maxLines: 1,
-          maxLength: 24,
+          maxLines: maxLines,
+          maxLength: maxLength,
           style: Theme.of(context)
               .textTheme
               .subtitle1!
               .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-          keyboardType: numberInput ? TextInputType.number : TextInputType.text,
+          keyboardType: numberInput ? TextInputType.number : null,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.only(top: 12, bottom: 12),
             border: InputBorder.none,

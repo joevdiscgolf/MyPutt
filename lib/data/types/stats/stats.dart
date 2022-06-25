@@ -24,3 +24,21 @@ class Stats {
 
   Map<String, dynamic> toJson() => _$StatsToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class EventStats {
+  EventStats({
+    this.c1Percentage,
+    this.c2Percentage,
+    this.overallPercentage,
+  });
+
+  final double? c1Percentage;
+  final double? c2Percentage;
+  final double? overallPercentage;
+
+  factory EventStats.fromJson(Map<String, dynamic> json) =>
+      _$EventStatsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventStatsToJson(this);
+}

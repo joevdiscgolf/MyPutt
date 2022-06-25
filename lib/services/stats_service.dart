@@ -215,14 +215,15 @@ class StatsService {
     }
 
     return Stats(
-        circleOnePercentages: circleOneFocusFractions,
-        circleTwoPercentages: circleTwoFocusFractions,
-        circleOneOverall: circleOneOverallFractions,
-        circleTwoOverall: circleTwoOverallFractions,
-        generalStats: GeneralStats(
-          totalAttempts: totalAttempts,
-          totalMade: totalMade,
-        ));
+      circleOnePercentages: circleOneFocusFractions,
+      circleTwoPercentages: circleTwoFocusFractions,
+      circleOneOverall: circleOneOverallFractions,
+      circleTwoOverall: circleTwoOverallFractions,
+      generalStats: GeneralStats(
+        totalAttempts: totalAttempts,
+        totalMade: totalMade,
+      ),
+    );
   }
 
   Stats statsFromSets(List<PuttingSet> sets) {
@@ -276,6 +277,35 @@ class StatsService {
           totalAttempts: totalAttempts,
           totalMade: totalMade,
         ));
+  }
+
+  EventStats getEventStats(List<PuttingSet> sets) {
+    int c1Attempts = 0;
+    int c1Makes = 0;
+    int c2Attempts = 0;
+    int c2Makes = 0;
+
+    for (PuttingSet set in sets) {
+      if (set.distance <= 30) {
+        c1Attempts += set.puttsAttempted;
+        c1Makes += set.puttsMade;
+      } else {
+        c2Attempts += set.puttsAttempted;
+        c2Makes += set.puttsMade;
+      }
+    }
+
+    final double? c1Percentage = c1Attempts > 0 ? c1Makes / c1Attempts : null;
+    final double? c2Percentage = c2Attempts > 0 ? c2Makes / c2Attempts : null;
+    final double? overallPercentage = (c1Attempts + c2Attempts) > 0
+        ? (c1Makes + c2Makes) / (c1Attempts + c2Attempts)
+        : null;
+
+    return EventStats(
+      c1Percentage: c1Percentage,
+      c2Percentage: c2Percentage,
+      overallPercentage: overallPercentage,
+    );
   }
 
   Map<String, Stats> generateSessionsStatsMap(

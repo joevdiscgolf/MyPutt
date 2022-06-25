@@ -11,7 +11,7 @@ class EventSearchLoadingScreen extends StatelessWidget {
       for (int i = 0; i < 3; i++) ...[
         if (i != 0) const SizedBox(height: 8),
         FadeShimmer(
-          height: 100,
+          height: 180,
           width: double.infinity,
           radius: 8,
           millisecondsDelay: 300,

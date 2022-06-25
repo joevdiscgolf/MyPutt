@@ -28,7 +28,7 @@ class EventRecordTitle extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      '${state.eventPlayerData.sets.length == state.event.challengeStructure.length ? state.eventPlayerData.sets.length : state.eventPlayerData.sets.length + 1}',
+                      '${state.eventPlayerData.sets.length == state.event.eventCustomizationData.challengeStructure.length ? state.eventPlayerData.sets.length : state.eventPlayerData.sets.length + 1}',
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontWeight: FontWeight.w500,
@@ -36,7 +36,8 @@ class EventRecordTitle extends StatelessWidget {
                       ),
                 ),
                 TextSpan(
-                  text: '/${state.event.challengeStructure.length}',
+                  text:
+                      '/${state.event.eventCustomizationData.challengeStructure.length}',
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w500,

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 
-class EventBasicInfoForm extends StatelessWidget {
-  const EventBasicInfoForm({
+class NameDescriptionForm extends StatelessWidget {
+  const NameDescriptionForm({
     Key? key,
     required this.eventNameController,
     required this.eventDescriptionController,
@@ -34,6 +34,8 @@ class EventBasicInfoForm extends StatelessWidget {
           hint: 'Event name (required)',
           enabled: true,
           textEditingController: eventNameController,
+          maxLines: 1,
+          maxLength: 32,
         ),
         const SizedBox(height: 48),
         DetailsTextField(
@@ -41,6 +43,7 @@ class EventBasicInfoForm extends StatelessWidget {
           hint: 'Description (optional)',
           enabled: true,
           textEditingController: eventDescriptionController,
+          maxLength: 120,
         ),
       ],
     );

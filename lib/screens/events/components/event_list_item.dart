@@ -23,80 +23,104 @@ class EventListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Bounceable(
-        onTap: () async {
-          onPressed(event);
-        },
-        child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: MyPuttColors.gray[50],
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                    offset: const Offset(0, 2),
-                    color: MyPuttColors.gray[400]!,
-                    blurRadius: 2)
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AutoSizeText(
-                          event.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6
-                              ?.copyWith(
-                                  fontSize: 20, color: MyPuttColors.blue),
-                          maxLines: 1,
-                        ),
-                      ),
-                      Text(
-                        eventTypeToName[event.eventType]!,
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            fontSize: 16, color: MyPuttColors.darkGray),
-                      ),
-                    ],
+      onTap: () async {
+        onPressed(event);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: MyPuttColors.gray[50],
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+                offset: const Offset(0, 2),
+                color: MyPuttColors.gray[400]!,
+                blurRadius: 2)
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AutoSizeText(
+                      event.name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    _dateLabel(context),
+                  Text(
+                    eventTypeToName[event.eventType]!,
                     style: Theme.of(context)
                         .textTheme
                         .headline6
                         ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _image(context),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Row(
-                    children: [
-                      Expanded(child: _participantCountIndicator(context, 50)),
-                      Wrap(
-                        alignment: WrapAlignment.start,
-                        children: event.divisions
-                            .map((division) => DivisionIndicator(
-                                  divisionName: division.name.toUpperCase(),
-                                ))
-                            .toList(),
-                      ),
-                    ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                _dateLabel(context),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _image(context),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _participantCountIndicator(
+                        context, event.participantCount),
                   ),
-                )
-              ],
-            )));
+                  Wrap(
+                    alignment: WrapAlignment.start,
+                    children: event.eventCustomizationData.divisions
+                        .map((division) => DivisionIndicator(
+                            divisionName: division.name.toUpperCase()))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+              child: Row(
+                children: [
+                  const Icon(FlutterRemix.clipboard_line,
+                      color: MyPuttColors.darkGray, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${event.creator.displayName}${event.admins.length > 1 ? '+ ${event.admins.length - 1} more' : ''}',
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                          color: MyPuttColors.darkGray,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _image(BuildContext context) {
@@ -141,16 +165,19 @@ class EventListItem extends StatelessWidget {
     return Row(
       children: [
         const Icon(
-          FlutterRemix.user_fill,
+          FlutterRemix.user_line,
           color: MyPuttColors.darkGray,
-          size: 12,
+          size: 16,
         ),
-        const SizedBox(width: 4),
-        Text('$numParticipants',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 12, color: MyPuttColors.darkGray)),
+        const SizedBox(width: 8),
+        Text(
+          '$numParticipants  players',
+          style: Theme.of(context).textTheme.headline6?.copyWith(
+                color: MyPuttColors.darkGray,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
       ],
     );
   }
