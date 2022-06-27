@@ -16,13 +16,14 @@ class HomeScreenTab extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(4),
         child: Tab(
-            icon: icon,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(label),
-              ],
-            )),
+          icon: icon,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(label),
+            ],
+          ),
+        ),
       ),
     );
   }

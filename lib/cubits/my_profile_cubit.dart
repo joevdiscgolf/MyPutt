@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:myputt/data/types/users/frisbee_avatar.dart';
-import 'package:myputt/data/types/users/pdga_player_info.dart';
+import 'package:myputt/models/data/users/frisbee_avatar.dart';
+import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 
 part 'my_profile_state.dart';

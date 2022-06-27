@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/date_helpers.dart';
 

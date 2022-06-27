@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/conditions/condition_enums.dart';
+import 'package:myputt/models/data/conditions/condition_enums.dart';
 
 part 'conditions.g.dart';
 

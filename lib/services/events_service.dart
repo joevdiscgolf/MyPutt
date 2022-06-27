@@ -1,7 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:myputt/data/endpoints/events/event_endpoints.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/endpoints/events/event_endpoints.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 
 class EventsService {
   Future<GetEventResponse> getEvent(String eventId, {Division? division}) {

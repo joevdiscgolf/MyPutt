@@ -1,5 +1,5 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
+import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';

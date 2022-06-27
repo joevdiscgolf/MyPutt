@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 

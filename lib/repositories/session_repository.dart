@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/sessions/putting_session.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';

@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/data/types/events/ordered_standing.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/ordered_standing.dart';
 import 'package:myputt/utils/calculators.dart';
 
 List<OrderedStanding> getOrderedStandings(List<EventPlayerData> standings) {

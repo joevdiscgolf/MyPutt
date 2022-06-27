@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 
 import 'event_list_item.dart';
 

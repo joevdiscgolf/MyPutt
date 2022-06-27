@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/events/event_player_data.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
 
 part 'ordered_standing.g.dart';
 

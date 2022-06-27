@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/misc/sized_vertical_divider.dart';
-import 'package:myputt/data/types/stats/stats.dart';
+import 'package:myputt/models/data/stats/stats.dart';
 import 'package:myputt/screens/sessions/components/percentage_column.dart';
 import 'colors.dart';
 

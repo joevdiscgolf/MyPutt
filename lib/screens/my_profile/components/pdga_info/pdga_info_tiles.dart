@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
-import 'package:myputt/data/types/users/pdga_player_info.dart';
+import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/pdga_info/pdga_number_dialog.dart';
 import 'package:myputt/screens/my_profile/components/pdga_info/pdga_stat_tile.dart';
 import 'package:myputt/utils/colors.dart';

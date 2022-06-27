@@ -9,7 +9,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';

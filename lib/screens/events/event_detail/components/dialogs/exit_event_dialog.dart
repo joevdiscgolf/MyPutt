@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';

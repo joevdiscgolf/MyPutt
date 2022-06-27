@@ -1,11 +1,11 @@
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';

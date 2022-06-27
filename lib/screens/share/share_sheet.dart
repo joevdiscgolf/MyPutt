@@ -6,7 +6,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
-import 'package:myputt/data/types/sessions/putting_session.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:tailwind_colors/tailwind_colors.dart';

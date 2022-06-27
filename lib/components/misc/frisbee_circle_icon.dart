@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/users/frisbee_avatar.dart';
+import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 

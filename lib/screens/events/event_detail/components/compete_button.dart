@@ -4,7 +4,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/event_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/panel_helpers.dart';
@@ -102,7 +102,6 @@ class CompeteButton extends StatelessWidget {
               ),
               Bounceable(
                 onTap: () {
-                  print('tapped');
                   Vibrate.feedback(FeedbackType.light);
                   BlocProvider.of<EventsCubit>(context).openEvent(event);
                   displayBottomSheet(

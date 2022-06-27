@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/data/endpoints/events/event_endpoints.dart';
-import 'package:myputt/data/types/events/event_enums.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/endpoints/events/event_endpoints.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/event_detail/components/dialogs/division_chip.dart';
 import 'package:myputt/services/events_service.dart';
@@ -34,16 +34,17 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding:
-              const EdgeInsets.only(top: 24, bottom: 16, left: 24, right: 24),
-          width: double.infinity,
-          child: _mainBody(context),
-        ));
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Container(
+        padding:
+            const EdgeInsets.only(top: 24, bottom: 16, left: 24, right: 24),
+        width: double.infinity,
+        child: _mainBody(context),
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {

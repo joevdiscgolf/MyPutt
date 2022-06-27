@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/data/types/chart/chart_point.dart';
+import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PerformanceChart extends StatelessWidget {
@@ -43,17 +43,19 @@ class PerformanceChart extends StatelessWidget {
       ),
       clipData: FlClipData(bottom: true, left: true, top: true, right: true),
       axisTitleData: FlAxisTitleData(
-          leftTitle: AxisTitle(
-        margin: 0,
-        textAlign: TextAlign.center,
-        showTitle: false,
-        titleText: '%',
-      )),
+        leftTitle: AxisTitle(
+          margin: 0,
+          textAlign: TextAlign.center,
+          showTitle: false,
+          titleText: '%',
+        ),
+      ),
       gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          horizontalInterval: 20,
-          drawVerticalLine: false),
+        show: true,
+        drawHorizontalLine: true,
+        horizontalInterval: 20,
+        drawVerticalLine: false,
+      ),
       titlesData: LineTitles.getTitleData(),
       borderData: FlBorderData(show: false),
       minX: 0,
@@ -69,6 +71,7 @@ class PerformanceChart extends StatelessWidget {
                   double.parse((entry.value.decimal * 100).toStringAsFixed(4))))
               .toList(),
           isCurved: true,
+          curveSmoothness: 0.1,
           colors: [MyPuttColors.darkBlue],
           barWidth: 3,
           isStrokeCapRound: true,

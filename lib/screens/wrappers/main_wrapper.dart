@@ -10,7 +10,7 @@ import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/services/beta_access_service.dart';

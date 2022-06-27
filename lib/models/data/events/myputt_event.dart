@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'event_enums.dart';
 
 part 'myputt_event.g.dart';

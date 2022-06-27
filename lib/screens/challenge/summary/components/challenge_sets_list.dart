@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/components/challenge_set_row.dart';
 
 class ChallengeSetsList extends StatelessWidget {

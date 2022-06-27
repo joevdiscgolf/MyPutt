@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/components/division_indicator.dart';
 
 import 'package:myputt/utils/colors.dart';

@@ -1,4 +1,4 @@
-import 'package:myputt/data/types/users/pdga_player_info.dart';
+import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:web_scraper/web_scraper.dart';
 
 class WebScraperService {

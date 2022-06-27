@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/sessions/putting_session.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -51,6 +51,7 @@ class PercentagesCard extends StatelessWidget {
         .toList();
 
     return ListView(
+      physics: const ClampingScrollPhysics(),
       children: children,
     );
   }

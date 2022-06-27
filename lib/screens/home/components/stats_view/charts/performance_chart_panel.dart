@@ -2,9 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:myputt/components/charts/empty_state_chart/empty_state_chart.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
-import 'package:myputt/data/types/chart/chart_point.dart';
+import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -70,21 +71,25 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   Widget build(BuildContext context) {
     int? limit =
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
+    final List<ChartPoint> _points =
+        _statsService.getPointsWithDistanceAndLimit(
+            _sessionRepository.allSessions,
+            _challengesRepository.completedChallenges,
+            _selectedDistance,
+            limit);
     PerformanceChartData smoothData = smoothChart(
-        PerformanceChartData(
-            points: _statsService.getPointsWithDistanceAndLimit(
-                _sessionRepository.allSessions,
-                _challengesRepository.completedChallenges,
-                _selectedDistance,
-                limit)),
-        _smoothRange);
+      PerformanceChartData(points: _points),
+      _smoothRange,
+    );
     return Column(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sessionRangeTabBar(context),
-            PerformanceChart(data: smoothData),
+            _points.isEmpty
+                ? const EmptyStateChart()
+                : PerformanceChart(data: smoothData),
             Row(
               children: distancesRow
                   .map((distance) =>

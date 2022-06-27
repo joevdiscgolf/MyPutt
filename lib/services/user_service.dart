@@ -1,4 +1,4 @@
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/firebase/user_data_writer.dart';
 
 class UserService {

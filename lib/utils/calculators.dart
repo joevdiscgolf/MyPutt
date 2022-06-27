@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:myputt/data/types/challenges/challenge_structure_item.dart';
-import 'package:myputt/data/types/challenges/generated_challenge_item.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
-import 'package:myputt/data/types/chart/chart_point.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
+import 'package:myputt/models/data/chart/chart_point.dart';
 
 PerformanceChartData smoothChart(
     PerformanceChartData data, int comparisonRange) {

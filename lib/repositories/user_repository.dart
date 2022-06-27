@@ -1,5 +1,5 @@
-import 'package:myputt/data/types/users/frisbee_avatar.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
+import 'package:myputt/models/data/users/frisbee_avatar.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/database_service.dart';

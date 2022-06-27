@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/screens/my_profile/components/color_marker.dart';

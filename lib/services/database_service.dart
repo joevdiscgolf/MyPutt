@@ -1,8 +1,8 @@
-import 'package:myputt/data/types/events/event_player_data.dart';
-import 'package:myputt/data/types/sessions/putting_set.dart';
-import 'package:myputt/data/types/users/myputt_user.dart';
-import 'package:myputt/data/types/challenges/putting_challenge.dart';
-import 'package:myputt/data/types/sessions/putting_session.dart';
+import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/sessions/putting_set.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';
@@ -12,7 +12,7 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
-import 'package:myputt/data/types/challenges/storage_putting_challenge.dart';
+import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {

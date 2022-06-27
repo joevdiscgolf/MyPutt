@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
-import 'package:myputt/data/types/events/myputt_event.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/screens/events/components/events_list.dart';
