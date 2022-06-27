@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 
@@ -27,7 +29,7 @@ class SigninService {
     try {
       signUpSuccess = await _authService
           .signUpWithEmail(email, password)
-          .timeout(const Duration(seconds: 4));
+          .timeout(shortTimeout);
     } on TimeoutException catch (_) {
       errorMessage = 'Failed to connect';
       return false;
@@ -40,11 +42,10 @@ class SigninService {
 
     bool fetchUserSuccess;
     try {
-      fetchUserSuccess = await _userRepository
-          .fetchCurrentUser()
-          .timeout(const Duration(seconds: 3));
+      fetchUserSuccess =
+          await _userRepository.fetchCurrentUser().timeout(shortTimeout);
     } catch (e) {
-      print(e);
+      log(e.toString());
       errorMessage = 'Failed to connect';
       fetchUserSuccess = false;
     }
@@ -53,9 +54,9 @@ class SigninService {
     }
 
     try {
-      await fetchRepositoryData().timeout(const Duration(seconds: 3));
+      await fetchRepositoryData().timeout(shortTimeout);
     } catch (e) {
-      print(e);
+      log(e.toString());
     }
     controller.add(AppScreenState.setup);
     currentAppScreenState = AppScreenState.setup;
@@ -67,8 +68,9 @@ class SigninService {
     try {
       signInSuccess = await _authService
           .signInWithEmail(email, password)
-          .timeout(const Duration(seconds: 3));
-    } on Exception catch (_) {
+          .timeout(shortTimeout);
+    } on Exception catch (e) {
+      log(e.toString());
       errorMessage = 'Failed to connect';
       return false;
     }
@@ -79,27 +81,33 @@ class SigninService {
     }
 
     try {
-      await fetchRepositoryData().timeout(const Duration(seconds: 3));
+      await fetchRepositoryData().timeout(shortTimeout);
     } catch (e) {
-      print('failed to fetch repository data: $e');
+      log('failed to fetch repository data: $e');
     }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;
     return true;
   }
 
-  Future<bool> setupNewUser(String username, String displayName,
-      {int? pdgaNumber}) async {
+  Future<bool> setupNewUser(
+    String username,
+    String displayName, {
+    int? pdgaNumber,
+  }) async {
     final MyPuttUser? newUser = await _authService
         .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
-    if (await _authService.userIsSetup() && newUser != null) {
-      _userRepository.currentUser = newUser;
-      controller.add(AppScreenState.loggedIn);
-      currentAppScreenState = AppScreenState.loggedIn;
-      return true;
-    } else {
+    final bool? isSetUp = await _authService.userIsSetup();
+    if (isSetUp == null || !isSetUp) {
       return false;
     }
+    if (newUser == null) {
+      return false;
+    }
+    _userRepository.currentUser = newUser;
+    controller.add(AppScreenState.loggedIn);
+    currentAppScreenState = AppScreenState.loggedIn;
+    return true;
   }
 
   void signOut() {

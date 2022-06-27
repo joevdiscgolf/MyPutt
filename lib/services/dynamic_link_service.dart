@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
@@ -30,7 +32,7 @@ class DynamicLinkService {
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
       _handleDeepLink(dynamicLinkData);
     }).onError((error) {
-      print('onLink error: ${error.message}');
+      log('onLink error: ${error.message}');
     });
   }
 

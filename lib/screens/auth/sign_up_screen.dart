@@ -99,17 +99,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomField(
-            keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
-            hint: 'Email',
-            iconData: FlutterRemix.mail_line,
-            onInput: (String text) => setState(() => _email = text)),
+          keyboardType: TextInputType.emailAddress,
+          controller: _emailController,
+          hint: 'Email',
+          iconData: FlutterRemix.mail_line,
+          onInput: (String text) => setState(() => _email = text),
+          innerPadding:
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
+        ),
         CustomField(
           controller: _passwordController,
           hint: 'Password',
           iconData: FlutterRemix.lock_line,
           onInput: (String text) => setState(() => _password = text),
           obscureText: true,
+          innerPadding:
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
         ),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -155,23 +160,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
             setState(() {
               _errorText = 'Missing username or password';
             });
+            return;
+          }
+          setState(() => _loading = true);
+          final signUpSuccess =
+              await _signinService.attemptSignUpWithEmail(email, email);
+          setState(() => _loading = false);
+          if (!signUpSuccess) {
+            setState(() => _errorText = _signinService.errorMessage);
           } else {
-            setState(() {
-              _loading = true;
+            int count = 0;
+            Navigator.popUntil(context, (route) {
+              return count++ == 2;
             });
-            final signUpSuccess =
-                await _signinService.attemptSignUpWithEmail(email, email);
-            if (!signUpSuccess) {
-              setState(() {
-                _loading = false;
-                _errorText = _signinService.errorMessage;
-              });
-            } else {
-              int count = 0;
-              Navigator.popUntil(context, (route) {
-                return count++ == 2;
-              });
-            }
           }
         });
   }

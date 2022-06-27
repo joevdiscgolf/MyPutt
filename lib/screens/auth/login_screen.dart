@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
       iconSize: 20,
       height: 48,
       width: 260,
-      onPressed: _onLogin,
+      onPressed: _loginPressed,
     );
   }
 
@@ -252,38 +252,37 @@ class _LoginScreenState extends State<LoginScreen> {
         _email!.isEmpty;
   }
 
-  void _onLogin() async {
+  void _loginPressed() async {
     if (_email == null || _password == null) {
       setState(() {
         _error = true;
         _errorText = 'Missing username or password';
       });
-    } else {
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+
+    bool signinSuccess;
+    try {
+      signinSuccess =
+          await _signinService.attemptSignInWithEmail(_email!, _password!);
+    } catch (e) {
+      signinSuccess = false;
       setState(() {
-        _loading = true;
+        _errorText = 'Something went wrong, please try again.';
       });
+    }
 
-      bool signinSuccess;
-      try {
-        signinSuccess = await _signinService
-            .attemptSignInWithEmail(_email!, _password!)
-            .timeout(const Duration(seconds: 3));
-      } catch (e) {
-        signinSuccess = false;
-        setState(() {
-          _errorText = 'Something went wrong, please try again.';
-        });
-      }
-
-      if (!signinSuccess) {
-        setState(() {
-          _loading = false;
-          _error = true;
-          _errorText = _signinService.errorMessage;
-        });
-      } else {
-        Navigator.pop(context);
-      }
+    if (!signinSuccess) {
+      setState(() {
+        _loading = false;
+        _error = true;
+        _errorText = _signinService.errorMessage;
+      });
+    } else {
+      Navigator.pop(context);
     }
   }
 }

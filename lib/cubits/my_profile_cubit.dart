@@ -7,6 +7,7 @@ import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/constants.dart';
 
 part 'my_profile_state.dart';
 
@@ -33,7 +34,7 @@ class MyProfileCubit extends Cubit<MyProfileState> {
 
     final PDGAPlayerInfo? playerInfo = await _webScraperService
         .getPDGAData(_userRepository.currentUser?.pdgaNum)
-        .timeout(const Duration(seconds: 3));
+        .timeout(shortTimeout);
     if (playerInfo?.rating != null) {
       updateUserPDGARating(playerInfo!.rating!);
     }

@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/models/data/users/username_doc.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 class AuthService {
@@ -13,7 +16,7 @@ class AuthService {
     try {
       return _auth.currentUser;
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       return null;
     }
   }
@@ -30,7 +33,7 @@ class AuthService {
     try {
       return _auth.currentUser?.getIdToken();
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       return null;
     }
   }
@@ -75,32 +78,10 @@ class AuthService {
       } else if (e.code == 'wrong-password') {
         exception = 'Wrong password provided for that user.';
       }
-      print(e);
+      log(e.toString());
       return false;
     }
   }
-
-  // Future<bool> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //
-  //     // Obtain the auth details from the request
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await googleUser?.authentication;
-  //
-  //     // Create a new credential
-  //     final oauthCredential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth?.accessToken,
-  //       idToken: googleAuth?.idToken,
-  //     );
-  //
-  //     return FirebaseAuth.instance
-  //         .signInWithCredential(oauthCredential)
-  //         .then((credential) => credential.user != null);
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
 
   Future<bool> usernameIsAvailable(String username) async {
     try {
@@ -111,7 +92,7 @@ class AuthService {
           .get();
       return !usernameDoc.exists;
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       return false;
     }
   }
@@ -144,7 +125,7 @@ class AuthService {
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
     await batch.commit().catchError((e) {
-      print(e);
+      log(e);
       return null;
     });
     return newUser;
@@ -168,32 +149,40 @@ class AuthService {
         .doc(user.uid)
         .update(userData)
         .catchError((e) {
-      print(e.toString());
+      log(e);
     });
   }
 
-  Future<bool> userIsSetup() async {
+  Future<bool?> userIsSetup() async {
     if (_auth.currentUser?.uid == null) {
       return false;
     }
-    final DocumentSnapshot<dynamic> userDoc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .timeout(const Duration(seconds: 3));
-    if (userDoc.data() == null ||
-        !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
-      return false;
-    } else {
-      return true;
+    try {
+      final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .doc(_auth.currentUser!.uid)
+          .get()
+          .catchError((e) {
+        log(e);
+      }).timeout(timeoutDuration);
+      if (userDoc?.data() == null ||
+          !userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
+        return null;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      log(e.toString());
+      return null;
     }
   }
 
   Future<void> logOut() async {
     try {
       return await _auth.signOut();
-    } catch (error) {
-      print(error.toString());
+    } catch (e) {
+      log(e.toString());
     }
   }
 

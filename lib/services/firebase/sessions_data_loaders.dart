@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
@@ -24,7 +26,9 @@ class FBSessionsDataLoader {
     QuerySnapshot querySnapshot = await completedSessionsReference
         .orderBy('timeStamp')
         .get()
-        .catchError((error) => print(error));
+        .catchError((e) {
+      log(e);
+    });
 
     return querySnapshot.docs
         .map((doc) =>

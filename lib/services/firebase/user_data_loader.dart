@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
@@ -29,8 +31,8 @@ class FBUserDataLoader {
         .collection(usersCollection)
         .where('keywords', arrayContains: username)
         .get()
-        .catchError((error) {
-      print(error);
+        .catchError((e) {
+      log(e);
     });
 
     final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
