@@ -30,9 +30,10 @@ class SigninService {
       signUpSuccess = await _authService
           .signUpWithEmail(email, password)
           .timeout(shortTimeout);
-    } on TimeoutException catch (_) {
+    } catch (e) {
+      log(e.toString());
       errorMessage = 'Failed to connect';
-      return false;
+      signUpSuccess = false;
     }
 
     if (!signUpSuccess || _authService.getCurrentUserId() == null) {
@@ -49,7 +50,8 @@ class SigninService {
       errorMessage = 'Failed to connect';
       fetchUserSuccess = false;
     }
-    if (fetchUserSuccess) {
+    if (!fetchUserSuccess) {
+      errorMessage = 'Failed to load user';
       return false;
     }
 

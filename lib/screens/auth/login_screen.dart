@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/spinner_button.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/auth/components/reset_password_dialog.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
+import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -18,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final SigninService _signinService = locator.get<SigninService>();
+  final AuthService _authService = locator.get<AuthService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -103,7 +108,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   color: Colors.transparent,
                   textColor: MyPuttColors.blue,
-                )
+                  underline: true,
+                ),
+                const SizedBox(height: 16),
+                MyPuttButton(
+                  title: 'Reset password',
+                  onPressed: () {
+                    if (_email == null || _email!.isEmpty) {
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) =>
+                          ResetPasswordDialog(email: _email!),
+                    );
+                  },
+                  color: Colors.transparent,
+                  textColor: MyPuttColors.blue,
+                  underline: true,
+                ),
               ],
             ),
           ],

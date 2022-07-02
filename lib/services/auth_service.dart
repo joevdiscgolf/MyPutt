@@ -7,8 +7,10 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = auth;
 
   String exception = '';
 
@@ -40,9 +42,8 @@ class AuthService {
 
   Future<bool> signUpWithEmail(String inputEmail, String inputPassword) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: inputEmail, password: inputPassword);
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: inputEmail, password: inputPassword);
       if (userCredential.user == null) {
         return false;
       }
@@ -65,9 +66,8 @@ class AuthService {
 
   Future<bool> signInWithEmail(String inputEmail, String inputPassword) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: inputEmail, password: inputPassword);
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+          email: inputEmail, password: inputPassword);
       if (userCredential.user == null) {
         return false;
       }
@@ -176,6 +176,16 @@ class AuthService {
       log(e.toString());
       return null;
     }
+  }
+
+  Future<bool> sendPasswordReset(String email) {
+    return auth
+        .sendPasswordResetEmail(email: email)
+        .then((_) => true)
+        .catchError((e) {
+      log(e);
+      return false;
+    });
   }
 
   Future<void> logOut() async {

@@ -28,6 +28,7 @@ class MyPuttButton extends StatelessWidget {
     this.borderColor,
     this.borderRadius = 24,
     this.buttonState = ButtonState.normal,
+    this.underline = false,
   }) : super(key: key);
 
   final String title;
@@ -44,6 +45,7 @@ class MyPuttButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
   final ButtonState buttonState;
+  final bool underline;
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +59,18 @@ class MyPuttButton extends StatelessWidget {
         width: width,
         padding: padding,
         decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                offset: const Offset(0, 2),
-                color: shadowColor ?? Colors.transparent,
-                blurRadius: 4,
-              )
-            ],
-            borderRadius: BorderRadius.circular(borderRadius),
-            border:
-                Border.all(color: borderColor ?? Colors.transparent, width: 1),
-            color: color),
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(0, 2),
+              color: shadowColor ?? Colors.transparent,
+              blurRadius: 4,
+            )
+          ],
+          borderRadius: BorderRadius.circular(borderRadius),
+          border:
+              Border.all(color: borderColor ?? Colors.transparent, width: 1),
+          color: color,
+        ),
         child: _buildChild(context),
       ),
     );
@@ -91,10 +94,11 @@ class MyPuttButton extends StatelessWidget {
             ],
             AutoSizeText(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(color: textColor, fontSize: textSize),
+              style: Theme.of(context).textTheme.headline6?.copyWith(
+                    color: textColor,
+                    fontSize: textSize,
+                    decoration: underline ? TextDecoration.underline : null,
+                  ),
               maxLines: 1,
             ),
           ],

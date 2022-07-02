@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -46,9 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             FlutterRemix.arrow_left_s_line,
             color: Colors.black,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: MyPuttColors.white,
         shadowColor: Colors.transparent,
@@ -103,7 +102,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           controller: _emailController,
           hint: 'Email',
           iconData: FlutterRemix.mail_line,
-          onInput: (String text) => setState(() => _email = text),
+          onInput: (String text) => setState(() {
+            _email = text;
+            _errorText = null;
+          }),
           innerPadding:
               const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
         ),
@@ -111,7 +113,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           controller: _passwordController,
           hint: 'Password',
           iconData: FlutterRemix.lock_line,
-          onInput: (String text) => setState(() => _password = text),
+          onInput: (String text) => setState(() {
+            _password = text;
+            _errorText = null;
+          }),
           obscureText: true,
           innerPadding:
               const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
@@ -128,14 +133,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(
               height: 16,
             ),
-            // _signInWithGoogleButton(context),
             if (_errorText != null)
-              Text(
+              AutoSizeText(
                 _errorText!,
                 style: Theme.of(context)
                     .textTheme
                     .headline6
                     ?.copyWith(color: Colors.red),
+                maxLines: 1,
               ),
           ],
         )
@@ -145,36 +150,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _signUpButton(BuildContext context) {
     return PrimaryButton(
-        loading: _loading,
-        disabled: _checkDisabled(),
-        label: 'Sign up',
-        fontSize: 20,
-        backgroundColor: Colors.blue,
-        height: 48,
-        width: MediaQuery.of(context).size.width,
-        onPressed: () async {
-          Vibrate.feedback(FeedbackType.light);
-          final String email = _emailController.text;
-          final String password = _passwordController.text;
-          if (email.isEmpty || password.isEmpty) {
-            setState(() {
-              _errorText = 'Missing username or password';
-            });
-            return;
-          }
-          setState(() => _loading = true);
-          final signUpSuccess =
-              await _signinService.attemptSignUpWithEmail(email, email);
-          setState(() => _loading = false);
-          if (!signUpSuccess) {
-            setState(() => _errorText = _signinService.errorMessage);
-          } else {
-            int count = 0;
-            Navigator.popUntil(context, (route) {
-              return count++ == 2;
-            });
-          }
-        });
+      loading: _loading,
+      disabled: _checkDisabled(),
+      label: 'Sign up',
+      fontSize: 20,
+      backgroundColor: Colors.blue,
+      height: 48,
+      width: MediaQuery.of(context).size.width,
+      onPressed: _signupPressed,
+    );
+  }
+
+  Future<void> _signupPressed() async {
+    setState(() => _errorText = null);
+    Vibrate.feedback(FeedbackType.light);
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorText = 'Missing username or password';
+      });
+      return;
+    }
+    setState(() => _loading = true);
+    final signUpSuccess =
+        await _signinService.attemptSignUpWithEmail(email, password);
+    setState(() => _loading = false);
+    if (!signUpSuccess) {
+      setState(
+        () => _errorText = _signinService.errorMessage.isNotEmpty
+            ? _signinService.errorMessage
+            : 'Something went wrong. Please try again',
+      );
+    } else {
+      int count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
+    }
   }
 
   bool _checkDisabled() {
