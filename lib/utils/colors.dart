@@ -77,12 +77,14 @@ abstract class MyPuttColors {
   });
   static const int _grayPrimaryValue = (0xff535353);
 
-  static const Color white = Color(0xFFFFFFFF);
+  static const Color white = Color(0xffffffff);
+  static const Color offWhite = Color(0xFFE8E8E8);
   static const Color black = Color(0xff000000);
   static const Color darkGray = Color(0xff111111);
   static const Color green = Color(0xff31b00b);
   static const Color lightGreen = Color(0xff00de64);
   static const Color blue = Color(0xFF2196F3);
+  static const Color paleBlue = Color(0xFF3FABEF);
   static const Color lightBlue = Color(0xff00bbff);
   static const Color skyBlue = Color(0xff8DCDFF);
   static const Color faintBlue = Color(0xff97dfff);

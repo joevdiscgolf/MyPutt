@@ -1022,13 +1022,6 @@ packages:
       relative: true
     source: path
     version: "3.0.5"
-  tailwind_colors:
-    dependency: "direct main"
-    description:
-      name: tailwind_colors
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0-nullsafety.1"
   term_glyph:
     dependency: transitive
     description:

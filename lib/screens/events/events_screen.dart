@@ -17,7 +17,6 @@ import 'package:myputt/screens/events/tabs/my_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:tailwind_colors/tailwind_colors.dart';
 
 import 'components/event_category_tab.dart';
 import 'components/events_list.dart';
@@ -205,7 +204,7 @@ class _EventsState extends State<EventsScreen>
           hintStyle: Theme.of(context)
               .textTheme
               .subtitle1!
-              .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+              .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
           enabledBorder: Theme.of(context)
               .inputDecorationTheme
               .border

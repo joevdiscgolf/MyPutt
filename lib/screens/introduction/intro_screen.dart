@@ -25,7 +25,7 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_currentPage < 4) {
         _currentPage++;
       } else {
@@ -35,7 +35,7 @@ class _IntroScreenState extends State<IntroScreen> {
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 350),
-        curve: Curves.easeIn,
+        curve: Curves.easeInOut,
       );
     });
   }
@@ -44,6 +44,7 @@ class _IntroScreenState extends State<IntroScreen> {
   void dispose() {
     super.dispose();
     _timer?.cancel();
+    _pageController.dispose();
   }
 
   @override
@@ -85,12 +86,12 @@ class _IntroScreenState extends State<IntroScreen> {
         Expanded(
           child: PageView(
             controller: _pageController,
-            onPageChanged: (int page) {
-              if (page != _currentPage) {
-                _currentPage = page;
-                _timer?.cancel();
-              }
-            },
+            // onPageChanged: (int page) {
+            //   if (page != _currentPage) {
+            //     _currentPage = page;
+            //     _timer?.cancel();
+            //   }
+            // },
             physics: const ClampingScrollPhysics(),
             children: carouselChildren,
           ),

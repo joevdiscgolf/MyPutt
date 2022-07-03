@@ -4,9 +4,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/screens/auth/components/custom_field.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -23,7 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool _loading = false;
+  ButtonState _buttonState = ButtonState.normal;
   Timer? checkUsernameOnStoppedTyping;
   String? displayName;
   String? _email;
@@ -149,12 +149,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _signUpButton(BuildContext context) {
-    return PrimaryButton(
-      loading: _loading,
+    return MyPuttButton(
+      buttonState: _buttonState,
       disabled: _checkDisabled(),
-      label: 'Sign up',
-      fontSize: 20,
-      backgroundColor: Colors.blue,
+      title: 'Sign up',
+      textSize: 20,
+      color: MyPuttColors.blue,
       height: 48,
       width: MediaQuery.of(context).size.width,
       onPressed: _signupPressed,
@@ -172,17 +172,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       return;
     }
-    setState(() => _loading = true);
+    setState(() => _buttonState = ButtonState.loading);
     final signUpSuccess =
         await _signinService.attemptSignUpWithEmail(email, password);
-    setState(() => _loading = false);
     if (!signUpSuccess) {
-      setState(
-        () => _errorText = _signinService.errorMessage.isNotEmpty
+      setState(() {
+        _buttonState = ButtonState.retry;
+        _errorText = _signinService.errorMessage.isNotEmpty
             ? _signinService.errorMessage
-            : 'Something went wrong. Please try again',
-      );
+            : 'Something went wrong. Please try again';
+      });
     } else {
+      setState(() => _buttonState = ButtonState.success);
       int count = 0;
       Navigator.popUntil(context, (route) {
         return count++ == 2;

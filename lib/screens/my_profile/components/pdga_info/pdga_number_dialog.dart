@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:tailwind_colors/tailwind_colors.dart';
 
 class PdgaNumberDialog extends StatefulWidget {
   const PdgaNumberDialog({Key? key, required this.onSubmit}) : super(key: key);
@@ -56,11 +55,12 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
           ),
           const SizedBox(height: 16),
           const ShadowIcon(
-              icon: Icon(
-            FlutterRemix.user_3_fill,
-            size: 80,
-            color: MyPuttColors.blue,
-          )),
+            icon: Icon(
+              FlutterRemix.user_3_fill,
+              size: 80,
+              color: MyPuttColors.blue,
+            ),
+          ),
           const SizedBox(height: 16),
           _pdgaNumField(context),
           const SizedBox(height: 16),
@@ -120,7 +120,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
         hintStyle: Theme.of(context)
             .textTheme
             .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+            .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,
         counter: const Offstage(),

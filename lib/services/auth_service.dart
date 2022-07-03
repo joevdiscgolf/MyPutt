@@ -120,7 +120,7 @@ class AuthService {
             username: username,
             displayName: displayName,
             uid: user.uid,
-            pdgaNum: pdgaNumber);
+          );
     batch.set(userDoc, newUser.toJson());
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
@@ -181,9 +181,9 @@ class AuthService {
   Future<bool> sendPasswordReset(String email) {
     return auth
         .sendPasswordResetEmail(email: email)
-        .then((_) => true)
+        .then((response) => true)
         .catchError((e) {
-      log(e);
+      log(e.toString());
       return false;
     });
   }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/screens/auth/components/custom_field.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AddSponsorDialog extends StatefulWidget {

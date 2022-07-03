@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/utils/colors.dart';
 
 enum ButtonState {
   normal,
@@ -28,6 +29,7 @@ class MyPuttButton extends StatelessWidget {
     this.borderColor,
     this.borderRadius = 24,
     this.buttonState = ButtonState.normal,
+    this.disabled = false,
     this.underline = false,
   }) : super(key: key);
 
@@ -45,6 +47,7 @@ class MyPuttButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
   final ButtonState buttonState;
+  final bool disabled;
   final bool underline;
 
   @override
@@ -69,7 +72,7 @@ class MyPuttButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           border:
               Border.all(color: borderColor ?? Colors.transparent, width: 1),
-          color: color,
+          color: disabled ? MyPuttColors.gray[100] : color,
         ),
         child: _buildChild(context),
       ),
@@ -95,7 +98,7 @@ class MyPuttButton extends StatelessWidget {
             AutoSizeText(
               title,
               style: Theme.of(context).textTheme.headline6?.copyWith(
-                    color: textColor,
+                    color: disabled ? MyPuttColors.white : textColor,
                     fontSize: textSize,
                     decoration: underline ? TextDecoration.underline : null,
                   ),
