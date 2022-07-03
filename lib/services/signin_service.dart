@@ -30,8 +30,9 @@ class SigninService {
       signUpSuccess = await _authService
           .signUpWithEmail(email, password)
           .timeout(shortTimeout);
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       errorMessage = 'Failed to connect';
       signUpSuccess = false;
     }
@@ -45,8 +46,9 @@ class SigninService {
     try {
       fetchUserSuccess =
           await _userRepository.fetchCurrentUser().timeout(shortTimeout);
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       errorMessage = 'Failed to connect';
       fetchUserSuccess = false;
     }
@@ -57,8 +59,9 @@ class SigninService {
 
     try {
       await fetchRepositoryData().timeout(shortTimeout);
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
     }
     controller.add(AppScreenState.setup);
     currentAppScreenState = AppScreenState.setup;
@@ -71,8 +74,9 @@ class SigninService {
       signInSuccess = await _authService
           .signInWithEmail(email, password)
           .timeout(shortTimeout);
-    } on Exception catch (e) {
+    } on Exception catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       errorMessage = 'Failed to connect';
       return false;
     }
@@ -84,8 +88,9 @@ class SigninService {
 
     try {
       await fetchRepositoryData().timeout(shortTimeout);
-    } catch (e) {
+    } catch (e, trace) {
       log('failed to fetch repository data: $e');
+      log(trace.toString());
     }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;

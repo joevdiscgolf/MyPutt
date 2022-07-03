@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -35,9 +37,7 @@ class FBChallengesDataLoader {
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
         .get()
         .catchError((error) {
-      if (kDebugMode) {
-        print('[getPuttingChallenges] $error');
-      }
+      log('[getPuttingChallenges] $error');
     });
 
     return querySnapshot.docs.map((doc) {

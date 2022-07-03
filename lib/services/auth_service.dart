@@ -17,8 +17,9 @@ class AuthService {
   Future<User?> getUser() async {
     try {
       return _auth.currentUser;
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       return null;
     }
   }
@@ -34,8 +35,9 @@ class AuthService {
   Future<String?> getAuthToken() async {
     try {
       return _auth.currentUser?.getIdToken();
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       return null;
     }
   }
@@ -91,8 +93,9 @@ class AuthService {
           .doc(username)
           .get();
       return !usernameDoc.exists;
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       return false;
     }
   }
@@ -155,7 +158,7 @@ class AuthService {
 
   Future<bool?> userIsSetup() async {
     if (_auth.currentUser?.uid == null) {
-      return false;
+      return null;
     }
     try {
       final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
@@ -164,16 +167,17 @@ class AuthService {
           .doc(_auth.currentUser!.uid)
           .get()
           .catchError((e) {
-        log(e);
-      }).timeout(timeoutDuration);
+        log(e.toString());
+      }).timeout(shortTimeout);
       if (userDoc?.data() == null ||
           !userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
         return null;
       } else {
         return true;
       }
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
       return null;
     }
   }
@@ -191,8 +195,9 @@ class AuthService {
   Future<void> logOut() async {
     try {
       return await _auth.signOut();
-    } catch (e) {
+    } catch (e, trace) {
       log(e.toString());
+      log(trace.toString());
     }
   }
 

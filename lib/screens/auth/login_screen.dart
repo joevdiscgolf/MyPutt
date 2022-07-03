@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
@@ -288,7 +290,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       signinSuccess =
           await _signinService.attemptSignInWithEmail(_email!, _password!);
-    } catch (e) {
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
       signinSuccess = false;
       setState(() => _errorText = 'Something went wrong, please try again.');
     }

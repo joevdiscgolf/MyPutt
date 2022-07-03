@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
@@ -15,6 +17,8 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return GetEventResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      log(e.toString());
+      log(trace.toString());
       return GetEventResponse(inEvent: false);
     });
   }

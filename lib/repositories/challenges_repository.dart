@@ -23,8 +23,13 @@ class ChallengesRepository {
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   Future<void> fetchAllChallenges() async {
-    final List<PuttingChallenge> allChallenges =
+    final List<PuttingChallenge>? allChallenges =
         await _databaseService.getAllChallenges();
+
+    if (allChallenges == null) {
+      return;
+    }
+
     final MyPuttUser? currentUser = _userRepository.currentUser;
     pendingChallenges = allChallenges
         .where((challenge) =>
