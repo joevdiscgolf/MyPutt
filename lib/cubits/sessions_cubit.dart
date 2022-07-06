@@ -21,19 +21,26 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   void reload() {
     if (_sessionRepository.currentSession != null) {
-      emit(SessionInProgressState(
+      emit(
+        SessionInProgressState(
           sessions: _sessionRepository.allSessions,
           currentSession: _sessionRepository.currentSession!,
           individualStats: _statsService
               .generateSessionsStatsMap(_sessionRepository.allSessions),
           currentSessionStats: _statsService.getStatsForSession(
-              _sessionRepository.allSessions,
-              _sessionRepository.currentSession!)));
+            _sessionRepository.allSessions,
+            _sessionRepository.currentSession!,
+          ),
+        ),
+      );
     } else {
-      emit(NoActiveSessionState(
+      emit(
+        NoActiveSessionState(
           sessions: _sessionRepository.allSessions,
           individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.allSessions)));
+              .generateSessionsStatsMap(_sessionRepository.allSessions),
+        ),
+      );
     }
   }
 
