@@ -19,7 +19,7 @@ class SessionsCubit extends Cubit<SessionsState> {
     reload();
   }
 
-  reload() {
+  void reload() {
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
           sessions: _sessionRepository.allSessions,
