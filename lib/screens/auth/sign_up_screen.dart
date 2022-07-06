@@ -154,7 +154,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       disabled: _checkDisabled(),
       title: 'Sign up',
       textSize: 20,
-      color: MyPuttColors.blue,
+      backgroundColor: MyPuttColors.blue,
       height: 48,
       width: MediaQuery.of(context).size.width,
       onPressed: _signupPressed,

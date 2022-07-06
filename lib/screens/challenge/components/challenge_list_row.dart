@@ -57,7 +57,7 @@ class ChallengeListRow extends StatelessWidget {
           Navigator.of(context)
               .push(MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      ChallengeRecordScreen(challengeId: challenge.id)))
+                      ChallengeRecordScreen(challenge: challenge)))
               .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
         } else if (challenge.status == ChallengeStatus.complete) {
           Navigator.of(context).push(
@@ -179,7 +179,7 @@ class ChallengeListRow extends StatelessWidget {
                 }
               },
               title: 'Accept',
-              color: MyPuttColors.blue,
+              backgroundColor: MyPuttColors.blue,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               shadowColor: MyPuttColors.gray[400],
@@ -192,7 +192,7 @@ class ChallengeListRow extends StatelessWidget {
                 }
               },
               title: 'Decline',
-              color: MyPuttColors.red,
+              backgroundColor: MyPuttColors.red,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               shadowColor: MyPuttColors.gray[400],

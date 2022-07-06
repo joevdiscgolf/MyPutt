@@ -86,12 +86,6 @@ class _IntroScreenState extends State<IntroScreen> {
         Expanded(
           child: PageView(
             controller: _pageController,
-            // onPageChanged: (int page) {
-            //   if (page != _currentPage) {
-            //     _currentPage = page;
-            //     _timer?.cancel();
-            //   }
-            // },
             physics: const ClampingScrollPhysics(),
             children: carouselChildren,
           ),
@@ -113,7 +107,7 @@ class _IntroScreenState extends State<IntroScreen> {
           title: 'Continue to app',
           textColor: MyPuttColors.white,
           iconColor: MyPuttColors.white,
-          color: MyPuttColors.darkGray,
+          backgroundColor: MyPuttColors.darkGray,
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => const LoginScreen()));

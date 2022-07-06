@@ -84,7 +84,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
             textSize: 18,
             height: 40,
             borderColor: MyPuttColors.blue,
-            color: MyPuttColors.white,
+            backgroundColor: MyPuttColors.white,
             textColor: MyPuttColors.blue,
             shadowColor: MyPuttColors.gray[300]!,
             onPressed: _exitPressed,
@@ -95,7 +95,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
               title: 'Cancel',
               textSize: 12,
               textColor: Colors.grey[600]!,
-              color: Colors.transparent,
+              backgroundColor: Colors.transparent,
               onPressed: () {
                 Navigator.pop(context);
               }),

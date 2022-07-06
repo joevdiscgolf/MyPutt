@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -25,6 +26,7 @@ void clearRepositoryData() {
 }
 
 void reloadCubits(BuildContext context) {
+  BlocProvider.of<HomeScreenCubit>(context).reload();
   BlocProvider.of<SessionsCubit>(context).reload();
   BlocProvider.of<ChallengesCubit>(context).reload();
   BlocProvider.of<MyProfileCubit>(context).reload();

@@ -133,8 +133,11 @@ class ChallengesRepository {
       pendingChallenges.remove(challenge);
       activeChallenges.add(currentChallenge!);
       _databaseService.setStorageChallenge(
-          StoragePuttingChallenge.fromPuttingChallenge(
-              currentChallenge!, currentUser));
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUser,
+        ),
+      );
     }
   }
 

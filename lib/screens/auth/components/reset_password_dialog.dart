@@ -77,7 +77,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
             textSize: 18,
             height: 40,
             borderColor: MyPuttColors.blue,
-            color: MyPuttColors.white,
+            backgroundColor: MyPuttColors.white,
             textColor: MyPuttColors.blue,
             shadowColor: MyPuttColors.gray[300]!,
             onPressed: _onSend,
@@ -89,7 +89,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
             title: 'Cancel',
             textSize: 12,
             textColor: Colors.grey[600]!,
-            color: Colors.transparent,
+            backgroundColor: Colors.transparent,
             onPressed: () {
               Navigator.pop(context);
             },
