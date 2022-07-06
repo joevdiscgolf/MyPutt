@@ -9,6 +9,7 @@ import 'package:myputt/screens/auth/components/reset_password_dialog.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.isFirstRun = false}) : super(key: key);
@@ -99,10 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: 'Sign up',
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const SignUpScreen()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const SignUpScreen(),
+                      ),
+                    );
                   },
                   color: Colors.transparent,
                   textColor: MyPuttColors.blue,
@@ -302,8 +304,9 @@ class _LoginScreenState extends State<LoginScreen> {
         _loading = false;
         _errorText = _signinService.errorMessage;
       });
-    } else {
-      Navigator.pop(context);
+      return;
     }
+    reloadCubits(context);
+    Navigator.of(context).pop();
   }
 }

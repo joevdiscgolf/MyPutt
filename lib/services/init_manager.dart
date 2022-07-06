@@ -30,7 +30,6 @@ class InitManager {
     final String? minimumVersion = await getMinimumAppVersion();
 
     if (minimumVersion == null) {
-      print('no minimum version');
       controller.add(AppScreenState.connectionError);
       return;
     }
@@ -47,17 +46,18 @@ class InitManager {
       controller.add(AppScreenState.connectionError);
       return;
     }
-    print(isSetup);
+
     if (!isSetup) {
       controller.add(AppScreenState.setup);
       return;
     }
 
     try {
-      await fetchRepositoryData().timeout(shortTimeout);
+      await fetchRepositoryData().timeout(timeoutDuration);
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      controller.add(AppScreenState.connectionError);
       return;
     }
     controller.add(AppScreenState.loggedIn);
