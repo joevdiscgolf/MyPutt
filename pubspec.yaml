@@ -49,7 +49,6 @@ dependencies:
   json_annotation: ^4.1.0
   build_runner: ^2.1.7
   equatable: ^2.0.3
-  tailwind_colors: ^0.3.0-nullsafety.1
   google_fonts: ^2.3.1
   web_scraper: ^0.1.4
   firebase_dynamic_links: ^4.0.6

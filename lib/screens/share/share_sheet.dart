@@ -9,7 +9,6 @@ import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
-import 'package:tailwind_colors/tailwind_colors.dart';
 import 'package:share/share.dart';
 
 import 'components/user_list_view.dart';
@@ -95,21 +94,21 @@ class _ShareSheetState extends State<ShareSheet> {
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        hintText: 'Enter username',
+        hintText: 'Search by username',
         contentPadding:
             const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
         isDense: true,
         hintStyle: Theme.of(context)
             .textTheme
             .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+            .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,
-        prefixIcon: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 18.0),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18.0),
           child: Icon(
             FlutterRemix.user_line,
-            color: TWUIColors.gray,
+            color: MyPuttColors.gray[400]!,
             size: 22,
           ),
         ),

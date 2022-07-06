@@ -5,7 +5,7 @@ import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
-import 'package:myputt/screens/auth/components/custom_field.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/screens/challenge/components/dialogs/components/structure_description_row.dart';
 import 'package:myputt/utils/colors.dart';
 

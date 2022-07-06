@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
@@ -17,9 +19,8 @@ class EventDataWriter {
     return challengeRef
         .set({'sets': jsonSets}, SetOptions(merge: true))
         .then((value) => true)
-        .catchError((error) {
-          print('got here');
-          print(error);
+        .catchError((e) {
+          log(e);
           return false;
         });
   }

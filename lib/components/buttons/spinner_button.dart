@@ -91,8 +91,10 @@ class _SpinnerButtonState extends State<SpinnerButton>
         width: widget.width,
         padding: widget.padding,
         decoration: BoxDecoration(
-            color: widget.backgroundColor,
-            borderRadius: BorderRadius.circular(24)),
+          color:
+              widget.disabled ? MyPuttColors.gray[100] : widget.backgroundColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -102,17 +104,21 @@ class _SpinnerButtonState extends State<SpinnerButton>
               builder: (BuildContext context, Widget? child) =>
                   Transform.rotate(
                 angle: _rotation.value,
-                child: Icon(FlutterRemix.refresh_line,
-                    size: widget.iconSize, color: widget.iconColor),
+                child: Icon(
+                  FlutterRemix.refresh_line,
+                  size: widget.iconSize,
+                  color: widget.iconColor,
+                ),
               ),
             ),
             const SizedBox(
-              width: 4,
+              width: 8,
             ),
             AutoSizeText(
               widget.title,
               style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                  color: widget.textColor,
+                  color:
+                      widget.disabled ? MyPuttColors.white : widget.textColor,
                   fontSize: widget.textSize,
                   fontWeight: FontWeight.w500),
             )

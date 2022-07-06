@@ -1,19 +1,25 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myputt/models/data/users/username_doc.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = auth;
 
   String exception = '';
 
   Future<User?> getUser() async {
     try {
       return _auth.currentUser;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
       return null;
     }
   }
@@ -29,17 +35,17 @@ class AuthService {
   Future<String?> getAuthToken() async {
     try {
       return _auth.currentUser?.getIdToken();
-    } catch (e) {
-      print(e.toString());
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
       return null;
     }
   }
 
   Future<bool> signUpWithEmail(String inputEmail, String inputPassword) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: inputEmail, password: inputPassword);
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: inputEmail, password: inputPassword);
       if (userCredential.user == null) {
         return false;
       }
@@ -62,9 +68,8 @@ class AuthService {
 
   Future<bool> signInWithEmail(String inputEmail, String inputPassword) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: inputEmail, password: inputPassword);
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+          email: inputEmail, password: inputPassword);
       if (userCredential.user == null) {
         return false;
       }
@@ -75,32 +80,10 @@ class AuthService {
       } else if (e.code == 'wrong-password') {
         exception = 'Wrong password provided for that user.';
       }
-      print(e);
+      log(e.toString());
       return false;
     }
   }
-
-  // Future<bool> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //
-  //     // Obtain the auth details from the request
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await googleUser?.authentication;
-  //
-  //     // Create a new credential
-  //     final oauthCredential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth?.accessToken,
-  //       idToken: googleAuth?.idToken,
-  //     );
-  //
-  //     return FirebaseAuth.instance
-  //         .signInWithCredential(oauthCredential)
-  //         .then((credential) => credential.user != null);
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
 
   Future<bool> usernameIsAvailable(String username) async {
     try {
@@ -110,8 +93,9 @@ class AuthService {
           .doc(username)
           .get();
       return !usernameDoc.exists;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
       return false;
     }
   }
@@ -139,12 +123,12 @@ class AuthService {
             username: username,
             displayName: displayName,
             uid: user.uid,
-            pdgaNum: pdgaNumber);
+          );
     batch.set(userDoc, newUser.toJson());
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
     await batch.commit().catchError((e) {
-      print(e);
+      log(e);
       return null;
     });
     return newUser;
@@ -168,32 +152,52 @@ class AuthService {
         .doc(user.uid)
         .update(userData)
         .catchError((e) {
-      print(e.toString());
+      log(e);
     });
   }
 
-  Future<bool> userIsSetup() async {
+  Future<bool?> userIsSetup() async {
     if (_auth.currentUser?.uid == null) {
-      return false;
+      return null;
     }
-    final DocumentSnapshot<dynamic> userDoc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
-        .get()
-        .timeout(const Duration(seconds: 3));
-    if (userDoc.data() == null ||
-        !userDocIsValid(userDoc.data() as Map<String, dynamic>)) {
-      return false;
-    } else {
-      return true;
+    try {
+      final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .doc(_auth.currentUser!.uid)
+          .get()
+          .catchError((e) {
+        log(e.toString());
+      }).timeout(shortTimeout);
+      if (userDoc?.data() == null ||
+          !userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
+        return null;
+      } else {
+        return true;
+      }
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
+      return null;
     }
+  }
+
+  Future<bool> sendPasswordReset(String email) {
+    return auth
+        .sendPasswordResetEmail(email: email)
+        .then((response) => true)
+        .catchError((e) {
+      log(e.toString());
+      return false;
+    });
   }
 
   Future<void> logOut() async {
     try {
       return await _auth.signOut();
-    } catch (error) {
-      print(error.toString());
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
     }
   }
 

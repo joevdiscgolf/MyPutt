@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/components/buttons/primary_button.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/screens/auth/components/custom_field.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -22,7 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool _loading = false;
+  ButtonState _buttonState = ButtonState.normal;
   Timer? checkUsernameOnStoppedTyping;
   String? displayName;
   String? _email;
@@ -46,9 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             FlutterRemix.arrow_left_s_line,
             color: Colors.black,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: MyPuttColors.white,
         shadowColor: Colors.transparent,
@@ -99,17 +98,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomField(
-            keyboardType: TextInputType.emailAddress,
-            controller: _emailController,
-            hint: 'Email',
-            iconData: FlutterRemix.mail_line,
-            onInput: (String text) => setState(() => _email = text)),
+          keyboardType: TextInputType.emailAddress,
+          controller: _emailController,
+          hint: 'Email',
+          iconData: FlutterRemix.mail_line,
+          onInput: (String text) => setState(() {
+            _email = text;
+            _errorText = null;
+          }),
+          innerPadding:
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
+        ),
         CustomField(
           controller: _passwordController,
           hint: 'Password',
           iconData: FlutterRemix.lock_line,
-          onInput: (String text) => setState(() => _password = text),
+          onInput: (String text) => setState(() {
+            _password = text;
+            _errorText = null;
+          }),
           obscureText: true,
+          innerPadding:
+              const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 8),
         ),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -123,14 +133,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(
               height: 16,
             ),
-            // _signInWithGoogleButton(context),
             if (_errorText != null)
-              Text(
+              AutoSizeText(
                 _errorText!,
                 style: Theme.of(context)
                     .textTheme
                     .headline6
                     ?.copyWith(color: Colors.red),
+                maxLines: 1,
               ),
           ],
         )
@@ -139,41 +149,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _signUpButton(BuildContext context) {
-    return PrimaryButton(
-        loading: _loading,
-        disabled: _checkDisabled(),
-        label: 'Sign up',
-        fontSize: 20,
-        backgroundColor: Colors.blue,
-        height: 48,
-        width: MediaQuery.of(context).size.width,
-        onPressed: () async {
-          Vibrate.feedback(FeedbackType.light);
-          final String email = _emailController.text;
-          final String password = _passwordController.text;
-          if (email.isEmpty || password.isEmpty) {
-            setState(() {
-              _errorText = 'Missing username or password';
-            });
-          } else {
-            setState(() {
-              _loading = true;
-            });
-            final signUpSuccess =
-                await _signinService.attemptSignUpWithEmail(email, email);
-            if (!signUpSuccess) {
-              setState(() {
-                _loading = false;
-                _errorText = _signinService.errorMessage;
-              });
-            } else {
-              int count = 0;
-              Navigator.popUntil(context, (route) {
-                return count++ == 2;
-              });
-            }
-          }
-        });
+    return MyPuttButton(
+      buttonState: _buttonState,
+      disabled: _checkDisabled(),
+      title: 'Sign up',
+      textSize: 20,
+      color: MyPuttColors.blue,
+      height: 48,
+      width: MediaQuery.of(context).size.width,
+      onPressed: _signupPressed,
+    );
+  }
+
+  Future<void> _signupPressed() async {
+    setState(() => _errorText = null);
+    Vibrate.feedback(FeedbackType.light);
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorText = 'Missing username or password';
+      });
+      return;
+    }
+    setState(() => _buttonState = ButtonState.loading);
+    final signUpSuccess =
+        await _signinService.attemptSignUpWithEmail(email, password);
+    if (!signUpSuccess) {
+      setState(() {
+        _buttonState = ButtonState.retry;
+        _errorText = _signinService.errorMessage.isNotEmpty
+            ? _signinService.errorMessage
+            : 'Something went wrong. Please try again';
+      });
+    } else {
+      setState(() => _buttonState = ButtonState.success);
+      int count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
+    }
   }
 
   bool _checkDisabled() {

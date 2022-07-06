@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
@@ -7,6 +9,7 @@ import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/utils/constants.dart';
 
 part 'my_profile_state.dart';
 
@@ -31,15 +34,24 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       }
     }
 
-    final PDGAPlayerInfo? playerInfo = await _webScraperService
-        .getPDGAData(_userRepository.currentUser?.pdgaNum)
-        .timeout(const Duration(seconds: 3));
-    if (playerInfo?.rating != null) {
+    PDGAPlayerInfo? playerInfo;
+    try {
+      playerInfo = await _webScraperService
+          .getPDGAData(_userRepository.currentUser?.pdgaNum)
+          .timeout(shortTimeout);
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
+    }
+    if (playerInfo?.rating != null &&
+        playerInfo?.rating != _userRepository.currentUser!.pdgaRating) {
       updateUserPDGARating(playerInfo!.rating!);
     }
     emit(
       MyProfileLoaded(
-          myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo),
+        myUser: _userRepository.currentUser!,
+        pdgaPlayerInfo: playerInfo,
+      ),
     );
   }
 
@@ -47,8 +59,12 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     _userRepository.updateUserAvatar(frisbeeAvatar);
     final PDGAPlayerInfo? playerInfo = await _webScraperService
         .getPDGAData(_userRepository.currentUser?.pdgaNum);
-    emit(MyProfileLoaded(
-        myUser: _userRepository.currentUser!, pdgaPlayerInfo: playerInfo));
+    emit(
+      MyProfileLoaded(
+        myUser: _userRepository.currentUser!,
+        pdgaPlayerInfo: playerInfo,
+      ),
+    );
   }
 
   Future<bool> submitPDGANumber(String pdgaNum) async {
@@ -59,10 +75,13 @@ class MyProfileCubit extends Cubit<MyProfileState> {
         final bool setUserSuccess =
             await _userService.setUserWithPayload(currentUser);
         if (setUserSuccess) {
-          emit(MyProfileLoaded(
+          emit(
+            MyProfileLoaded(
               myUser: _userRepository.currentUser!,
               pdgaPlayerInfo: await _webScraperService
-                  .getPDGAData(_userRepository.currentUser?.pdgaNum)));
+                  .getPDGAData(_userRepository.currentUser?.pdgaNum),
+            ),
+          );
         }
         return setUserSuccess;
       }

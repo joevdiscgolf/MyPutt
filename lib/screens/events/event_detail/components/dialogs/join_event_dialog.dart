@@ -8,7 +8,6 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/event_detail/components/dialogs/division_chip.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:tailwind_colors/tailwind_colors.dart';
 
 class JoinEventDialog extends StatefulWidget {
   const JoinEventDialog(
@@ -131,7 +130,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
         hintStyle: Theme.of(context)
             .textTheme
             .subtitle1!
-            .copyWith(color: TWUIColors.gray[400], fontSize: 18),
+            .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,
         counter: const Offstage(),

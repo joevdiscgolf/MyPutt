@@ -9,7 +9,7 @@ import 'package:myputt/services/auth_service.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
-import 'package:myputt/services/init_service.dart';
+import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/services/stats_service.dart';
@@ -32,7 +32,7 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<EventsRepository>(EventsRepository());
   locator.registerLazySingleton(() => StatsService());
   locator.registerLazySingleton(() => SigninService());
-  locator.registerLazySingleton(() => InitService());
+  locator.registerLazySingleton(() => InitManager());
   locator.registerLazySingleton(() => WebScraperService());
   locator.registerLazySingleton(() => DynamicLinkService());
   locator.registerLazySingleton(() => EventsService());

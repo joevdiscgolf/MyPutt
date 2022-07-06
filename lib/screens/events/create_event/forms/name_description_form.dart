@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/screens/auth/enter_details_screen.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 
 class NameDescriptionForm extends StatelessWidget {
   const NameDescriptionForm({

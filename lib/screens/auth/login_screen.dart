@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/spinner_button.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/auth/components/reset_password_dialog.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
 import 'package:myputt/services/signin_service.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, this.isFirstRun = false}) : super(key: key);
@@ -23,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _email;
   String? _password;
-  bool _error = false;
   String _errorText = '';
   bool _loading = false;
 
@@ -44,24 +47,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(
-                FlutterRemix.arrow_left_s_line,
-                color: MyPuttColors.darkGray,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              FlutterRemix.arrow_left_s_line,
+              color: MyPuttColors.darkGray,
             ),
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.white,
-          body: _connectedBody(context)),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        ),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        body: _mainBody(context),
+      ),
     );
   }
 
-  Widget _connectedBody(BuildContext context) {
+  Widget _mainBody(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       child: SizedBox(
@@ -77,13 +81,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 _signInButton(context, true),
                 const SizedBox(height: 36),
-                _error
-                    ? SizedBox(
-                        height: 50,
-                        child: Text(_errorText,
-                            style: const TextStyle(color: Colors.red)),
-                      )
-                    : Container(height: 50),
+                SizedBox(
+                  height: 50,
+                  child: Text(
+                    _errorText,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
                 Text("Don't have an account?",
                     style: Theme.of(context)
                         .textTheme
@@ -96,14 +100,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   title: 'Sign up',
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const SignUpScreen()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const SignUpScreen(),
+                      ),
+                    );
                   },
                   color: Colors.transparent,
                   textColor: MyPuttColors.blue,
-                )
+                  underline: true,
+                ),
+                const SizedBox(height: 16),
+                MyPuttButton(
+                  title: 'Reset password',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) => const ResetPasswordDialog(),
+                    );
+                  },
+                  color: Colors.transparent,
+                  textColor: MyPuttColors.blue,
+                  underline: true,
+                ),
               ],
             ),
           ],
@@ -184,7 +203,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           counter: const Offstage(),
         ),
-        onChanged: (String? value) => setState(() => _email = value),
+        onChanged: (String? value) => setState(() {
+          _errorText = '';
+          _email = value;
+        }),
       ),
     );
   }
@@ -224,7 +246,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           counter: const Offstage(),
         ),
-        onChanged: (String? value) => setState(() => _password = value),
+        onChanged: (String? value) => setState(() {
+          _errorText = '';
+          _password = value;
+        }),
       ),
     );
   }
@@ -241,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
       iconSize: 20,
       height: 48,
       width: 260,
-      onPressed: _onLogin,
+      onPressed: _loginPressed,
     );
   }
 
@@ -252,38 +277,36 @@ class _LoginScreenState extends State<LoginScreen> {
         _email!.isEmpty;
   }
 
-  void _onLogin() async {
+  void _loginPressed() async {
     if (_email == null || _password == null) {
       setState(() {
-        _error = true;
         _errorText = 'Missing username or password';
       });
-    } else {
-      setState(() {
-        _loading = true;
-      });
-
-      bool signinSuccess;
-      try {
-        signinSuccess = await _signinService
-            .attemptSignInWithEmail(_email!, _password!)
-            .timeout(const Duration(seconds: 3));
-      } catch (e) {
-        signinSuccess = false;
-        setState(() {
-          _errorText = 'Something went wrong, please try again.';
-        });
-      }
-
-      if (!signinSuccess) {
-        setState(() {
-          _loading = false;
-          _error = true;
-          _errorText = _signinService.errorMessage;
-        });
-      } else {
-        Navigator.pop(context);
-      }
+      return;
     }
+    setState(() {
+      _loading = true;
+    });
+
+    bool signinSuccess;
+    try {
+      signinSuccess =
+          await _signinService.attemptSignInWithEmail(_email!, _password!);
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
+      signinSuccess = false;
+      setState(() => _errorText = 'Something went wrong, please try again.');
+    }
+
+    if (!signinSuccess) {
+      setState(() {
+        _loading = false;
+        _errorText = _signinService.errorMessage;
+      });
+      return;
+    }
+    reloadCubits(context);
+    Navigator.of(context).pop();
   }
 }

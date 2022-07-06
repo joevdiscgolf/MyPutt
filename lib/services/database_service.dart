@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -13,6 +15,7 @@ import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
+import 'package:myputt/utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -87,14 +90,22 @@ class DatabaseService {
         currentUser, status);
   }
 
-  Future<List<PuttingChallenge>> getAllChallenges() async {
+  Future<List<PuttingChallenge>?> getAllChallenges() async {
     final UserRepository _userRepository = locator.get<UserRepository>();
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       return [];
     }
 
-    return _challengesDataLoader.getAllChallenges(currentUser);
+    try {
+      return _challengesDataLoader
+          .getAllChallenges(currentUser)
+          .timeout(shortTimeout);
+    } catch (e, trace) {
+      log(e.toString());
+      log(trace.toString());
+      return null;
+    }
   }
 
   Future<PuttingChallenge?> getPuttingChallengeById(String challengeId) async {
