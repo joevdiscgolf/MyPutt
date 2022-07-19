@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
@@ -14,107 +13,100 @@ import 'package:myputt/utils/colors.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class ChallengeProgressPanel extends StatelessWidget {
-  ChallengeProgressPanel({Key? key}) : super(key: key);
+  ChallengeProgressPanel({Key? key, required this.state}) : super(key: key);
 
+  final ChallengesState state;
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChallengesCubit, ChallengesState>(
-      builder: (context, state) {
-        if (state is! ChallengesErrorState && state.currentChallenge != null) {
-          final PuttingChallenge challenge = state.currentChallenge!;
-          final bool challengeComplete = challenge.currentUserSets.length ==
-              challenge.challengeStructure.length;
+    if (state is! ChallengesErrorState && state.currentChallenge != null) {
+      final PuttingChallenge challenge = state.currentChallenge!;
+      final bool challengeComplete = challenge.currentUserSets.length ==
+          challenge.challengeStructure.length;
 
-          final int distance = challengeComplete
-              ? challenge
-                  .challengeStructure[challenge.currentUserSets.length - 1]
-                  .distance
-              : challenge.challengeStructure[challenge.currentUserSets.length]
-                  .distance;
-          final int setLength = challengeComplete
-              ? challenge
-                  .challengeStructure[challenge.currentUserSets.length - 1]
-                  .setLength
-              : challenge.challengeStructure[challenge.currentUserSets.length]
-                  .setLength;
-          final int setNumber =
-              (state is CurrentUserComplete || state is BothUsersComplete)
-                  ? challenge.currentUserSets.length
-                  : challenge.currentUserSets.length + 1;
-          final int difference = getDifferenceFromChallenge(challenge);
+      final int distance = challengeComplete
+          ? challenge
+              .challengeStructure[challenge.currentUserSets.length - 1].distance
+          : challenge
+              .challengeStructure[challenge.currentUserSets.length].distance;
+      final int setLength = challengeComplete
+          ? challenge.challengeStructure[challenge.currentUserSets.length - 1]
+              .setLength
+          : challenge
+              .challengeStructure[challenge.currentUserSets.length].setLength;
+      final int setNumber =
+          (state is CurrentUserComplete || state is BothUsersComplete)
+              ? challenge.currentUserSets.length
+              : challenge.currentUserSets.length + 1;
+      final int difference = getDifferenceFromChallenge(challenge);
 
-          final int currentUserPuttsMade = challenge.currentUserSets.isNotEmpty
-              ? challenge.currentUserSets.last.puttsMade.toInt()
-              : 0;
-          final int? opponentPuttsMade = challenge.opponentSets.isNotEmpty &&
-                  challenge.opponentSets.length >=
-                      challenge.currentUserSets.length
-              ? challenge
-                  .opponentSets[challenge.currentUserSets.length -
-                      (challengeComplete ? 1 : 0)]
-                  .puttsMade
-                  .toInt()
-              : null;
+      final int currentUserPuttsMade = challenge.currentUserSets.isNotEmpty
+          ? challenge.currentUserSets.last.puttsMade.toInt()
+          : 0;
+      final int? opponentPuttsMade = challenge.opponentSets.isNotEmpty &&
+              challenge.opponentSets.length >= challenge.currentUserSets.length
+          ? challenge
+              .opponentSets[challenge.currentUserSets.length -
+                  (challengeComplete ? 1 : 0)]
+              .puttsMade
+              .toInt()
+          : null;
 
-          return Column(
-            children: [
-              _setNumberContainer(
-                  context, setNumber, challenge.challengeStructure.length),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                      MyPuttColors.blue.withOpacity(0.2),
-                      MyPuttColors.red.withOpacity(0.2)
-                    ])),
-                child: Column(
-                  children: [
-                    _versusRow(
-                        context, challenge.currentUser, challenge.opponentUser),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    ChallengeSetRow(
-                      currentUserMade: currentUserPuttsMade,
-                      opponentMade: opponentPuttsMade,
-                      setLength: setLength,
-                      distance: distance,
-                    ),
-                  ],
+      return Column(
+        children: [
+          _setNumberContainer(
+              context, setNumber, challenge.challengeStructure.length),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                  MyPuttColors.blue.withOpacity(0.2),
+                  MyPuttColors.red.withOpacity(0.2)
+                ])),
+            child: Column(
+              children: [
+                _versusRow(
+                    context, challenge.currentUser, challenge.opponentUser),
+                const SizedBox(
+                  height: 12,
                 ),
-              ),
-              _instructionsPanel(context, distance, setLength),
-              const SizedBox(
-                height: 8,
-              ),
-              _percentCompleteIndicator(
-                context,
-                totalAttemptsFromSets(challenge.currentUserSets).toDouble() /
-                    totalAttemptsFromStructure(challenge.challengeStructure)
-                        .toDouble(),
-                (totalAttemptsFromSubset(challenge.currentUserSets,
-                            challenge.currentUserSets.length)
-                        .toDouble()) /
-                    totalAttemptsFromStructure(challenge.challengeStructure)
-                        .toDouble(),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              _puttsDifferenceText(context, difference),
-            ],
-          );
-        } else {
-          return Container();
-        }
-      },
-    );
+                ChallengeSetRow(
+                  currentUserMade: currentUserPuttsMade,
+                  opponentMade: opponentPuttsMade,
+                  setLength: setLength,
+                  distance: distance,
+                ),
+              ],
+            ),
+          ),
+          _instructionsPanel(context, distance, setLength),
+          const SizedBox(
+            height: 8,
+          ),
+          _percentCompleteIndicator(
+            context,
+            totalAttemptsFromSets(challenge.currentUserSets).toDouble() /
+                totalAttemptsFromStructure(challenge.challengeStructure)
+                    .toDouble(),
+            (totalAttemptsFromSubset(challenge.currentUserSets,
+                        challenge.currentUserSets.length)
+                    .toDouble()) /
+                totalAttemptsFromStructure(challenge.challengeStructure)
+                    .toDouble(),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          _puttsDifferenceText(context, difference),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _setNumberContainer(BuildContext context, int setNumber, int maxSets) {

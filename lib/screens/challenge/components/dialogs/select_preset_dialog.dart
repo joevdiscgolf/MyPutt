@@ -81,7 +81,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             textSize: 18,
             textColor: MyPuttColors.blue,
             height: 48,
-            color: MyPuttColors.white,
+            backgroundColor: MyPuttColors.white,
             borderColor: MyPuttColors.blue,
             onPressed: () {
               Vibrate.feedback(FeedbackType.light);
@@ -111,7 +111,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
               title: 'Cancel',
               textSize: 18,
               textColor: Colors.grey[400]!,
-              color: Colors.transparent,
+              backgroundColor: Colors.transparent,
               onPressed: () {
                 Navigator.pop(context);
               }),

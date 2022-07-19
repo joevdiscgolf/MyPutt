@@ -3,13 +3,13 @@ import 'package:myputt/utils/colors.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/components/shadow_circular_indicator.dart';
 
 class ChallengeRecordSetRow extends StatelessWidget {
-  const ChallengeRecordSetRow(
-      {Key? key,
-      required this.setNumber,
-      required this.currentUserPuttsMade,
-      required this.setLength,
-      this.opponentPuttsMade})
-      : super(key: key);
+  const ChallengeRecordSetRow({
+    Key? key,
+    required this.setNumber,
+    required this.currentUserPuttsMade,
+    required this.setLength,
+    this.opponentPuttsMade,
+  }) : super(key: key);
 
   final int setNumber;
   final int setLength;

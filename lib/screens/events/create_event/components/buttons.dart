@@ -40,7 +40,7 @@ class PreviousPageButton extends StatelessWidget {
     return MyPuttButton(
       title: 'Back',
       textColor: MyPuttColors.gray[400]!,
-      color: Colors.transparent,
+      backgroundColor: Colors.transparent,
       width: double.infinity,
       onPressed: onTap,
     );

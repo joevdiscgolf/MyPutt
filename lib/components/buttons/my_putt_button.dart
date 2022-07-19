@@ -20,7 +20,7 @@ class MyPuttButton extends StatelessWidget {
     this.iconData,
     this.height = 50,
     this.width,
-    this.color = Colors.blue,
+    this.backgroundColor = Colors.blue,
     this.iconColor = Colors.white,
     this.textColor = Colors.white,
     this.textSize = 16,
@@ -38,7 +38,7 @@ class MyPuttButton extends StatelessWidget {
   final IconData? iconData;
   final double height;
   final double? width;
-  final Color color;
+  final Color backgroundColor;
   final Color iconColor;
   final Color textColor;
   final Color? shadowColor;
@@ -72,7 +72,7 @@ class MyPuttButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           border:
               Border.all(color: borderColor ?? Colors.transparent, width: 1),
-          color: disabled ? MyPuttColors.gray[100] : color,
+          color: disabled ? MyPuttColors.gray[100] : backgroundColor,
         ),
         child: _buildChild(context),
       ),

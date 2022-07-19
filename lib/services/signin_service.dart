@@ -87,10 +87,12 @@ class SigninService {
     }
 
     try {
-      await fetchRepositoryData().timeout(shortTimeout);
+      await fetchRepositoryData().timeout(standardTimeout);
     } catch (e, trace) {
+      errorMessage = 'Failed to load your history';
       log('failed to fetch repository data: $e');
       log(trace.toString());
+      return false;
     }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;

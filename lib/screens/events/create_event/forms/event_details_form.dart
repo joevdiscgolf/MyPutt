@@ -121,7 +121,7 @@ class EventDetailsForm extends StatelessWidget {
             title: 'No',
             onPressed: () => updateSignatureVerification(false),
             borderRadius: 4,
-            color:
+            backgroundColor:
                 signatureVerification ? Colors.transparent : MyPuttColors.blue,
             textColor: signatureVerification ? Colors.blue : Colors.white,
             borderColor:
@@ -134,7 +134,7 @@ class EventDetailsForm extends StatelessWidget {
             title: 'Yes',
             onPressed: () => updateSignatureVerification(true),
             borderRadius: 4,
-            color:
+            backgroundColor:
                 signatureVerification ? MyPuttColors.blue : Colors.transparent,
             textColor:
                 signatureVerification ? MyPuttColors.white : MyPuttColors.blue,

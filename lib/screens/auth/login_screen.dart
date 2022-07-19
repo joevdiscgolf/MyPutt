@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  color: Colors.transparent,
+                  backgroundColor: Colors.transparent,
                   textColor: MyPuttColors.blue,
                   underline: true,
                 ),
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       builder: (dialogContext) => const ResetPasswordDialog(),
                     );
                   },
-                  color: Colors.transparent,
+                  backgroundColor: Colors.transparent,
                   textColor: MyPuttColors.blue,
                   underline: true,
                 ),
@@ -296,7 +296,11 @@ class _LoginScreenState extends State<LoginScreen> {
       log(e.toString());
       log(trace.toString());
       signinSuccess = false;
-      setState(() => _errorText = 'Something went wrong, please try again.');
+      setState(
+        () => _errorText = _signinService.errorMessage.isNotEmpty
+            ? _signinService.errorMessage
+            : 'Something went wrong. Please try again',
+      );
     }
 
     if (!signinSuccess) {

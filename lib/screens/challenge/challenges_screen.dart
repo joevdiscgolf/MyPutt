@@ -148,7 +148,7 @@ class _ChallengesState extends State<ChallengesScreen>
           },
           title: 'New challenge',
           iconData: FlutterRemix.add_line,
-          color: MyPuttColors.blue,
+          backgroundColor: MyPuttColors.blue,
           textSize: 16,
           width: MediaQuery.of(context).size.width / 2,
           shadowColor: MyPuttColors.gray[400],

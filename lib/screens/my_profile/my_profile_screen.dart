@@ -103,7 +103,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         height: 50,
         title: 'Log out',
         iconColor: MyPuttColors.darkGray,
-        color: Colors.transparent,
+        backgroundColor: Colors.transparent,
         textColor: MyPuttColors.darkBlue.withOpacity(0.8),
       ),
     );

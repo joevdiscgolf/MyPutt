@@ -150,7 +150,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                       ),
                     );
                   },
-                  color:
+                  backgroundColor:
                       setsFilled ? MyPuttColors.lightGreen : MyPuttColors.blue,
                 ),
               ),

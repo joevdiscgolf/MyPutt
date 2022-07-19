@@ -83,7 +83,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
             textSize: 18,
             height: 40,
             borderColor: widget.buttonColor,
-            color: MyPuttColors.white,
+            backgroundColor: MyPuttColors.white,
             textColor: widget.buttonColor,
             shadowColor: MyPuttColors.gray[300]!,
             onPressed: () {
@@ -97,7 +97,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
               title: 'Cancel',
               textSize: 12,
               textColor: Colors.grey[600]!,
-              color: Colors.transparent,
+              backgroundColor: Colors.transparent,
               onPressed: () {
                 Navigator.pop(context);
               }),

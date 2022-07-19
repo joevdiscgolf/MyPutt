@@ -5,14 +5,14 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:flutter/services.dart';
 
 class PuttsMadePicker extends StatefulWidget {
-  const PuttsMadePicker(
-      {Key? key,
-      this.initialIndex = 0,
-      this.length = 10,
-      required this.sslKey,
-      required this.onUpdate,
-      required this.challengeMode})
-      : super(key: key);
+  const PuttsMadePicker({
+    Key? key,
+    this.initialIndex = 0,
+    this.length = 10,
+    required this.sslKey,
+    required this.onUpdate,
+    required this.challengeMode,
+  }) : super(key: key);
 
   final double initialIndex;
   final int length;

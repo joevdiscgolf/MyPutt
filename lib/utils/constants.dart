@@ -8,7 +8,7 @@ import 'package:myputt/utils/colors.dart';
 import 'enums.dart';
 
 const Duration shortTimeout = Duration(seconds: 3);
-const Duration timeoutDuration = Duration(seconds: 5);
+const Duration standardTimeout = Duration(seconds: 5);
 
 class TimeRange {
   static const lastFive = 5;

@@ -70,7 +70,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
             textSize: 18,
             height: 40,
             borderColor: MyPuttColors.blue,
-            color: MyPuttColors.white,
+            backgroundColor: MyPuttColors.white,
             textColor: MyPuttColors.blue,
             shadowColor: MyPuttColors.gray[300]!,
             onPressed: () async {
@@ -92,7 +92,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
               title: 'Cancel',
               textSize: 12,
               textColor: Colors.grey[600]!,
-              color: Colors.transparent,
+              backgroundColor: Colors.transparent,
               onPressed: () {
                 Navigator.pop(context);
               }),

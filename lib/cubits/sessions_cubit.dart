@@ -53,14 +53,18 @@ class SessionsCubit extends Cubit<SessionsState> {
         id: '$currentUid~$now',
       );
       _sessionRepository.currentSession = newSession;
-      emit(SessionInProgressState(
+      emit(
+        SessionInProgressState(
           sessions: _sessionRepository.allSessions,
           currentSession: _sessionRepository.currentSession!,
           individualStats: _statsService
               .generateSessionsStatsMap(_sessionRepository.allSessions),
           currentSessionStats: _statsService.getStatsForSession(
-              _sessionRepository.allSessions,
-              _sessionRepository.currentSession!)));
+            _sessionRepository.allSessions,
+            _sessionRepository.currentSession!,
+          ),
+        ),
+      );
       final bool success = await _sessionRepository.startNewSession(newSession);
       if (success) {
         emit(SessionInProgressState(

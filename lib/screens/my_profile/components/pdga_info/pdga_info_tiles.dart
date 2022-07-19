@@ -81,7 +81,7 @@ class PDGAInfoTiles extends StatelessWidget {
                                   },
                                 ));
                       },
-                      color: Colors.transparent,
+                      backgroundColor: Colors.transparent,
                       iconData: FlutterRemix.pencil_line,
                       iconColor: MyPuttColors.blue,
                       title: '',

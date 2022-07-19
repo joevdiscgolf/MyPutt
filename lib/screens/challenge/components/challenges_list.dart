@@ -54,15 +54,18 @@ class ChallengesList extends StatelessWidget {
                             accept: () {
                               BlocProvider.of<ChallengesCubit>(context)
                                   .openChallenge(challenge);
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       BlocProvider.value(
-                                          value:
-                                              BlocProvider.of<ChallengesCubit>(
-                                                  context),
-                                          child: ChallengeRecordScreen(
-                                            challengeId: challenge.id,
-                                          ))));
+                                    value: BlocProvider.of<ChallengesCubit>(
+                                        context),
+                                    child: ChallengeRecordScreen(
+                                      challenge: challenge,
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
                             decline: () {
                               BlocProvider.of<ChallengesCubit>(context)

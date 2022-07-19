@@ -52,7 +52,7 @@ class _ShareSheetState extends State<ShareSheet> {
               ),
               MyPuttButton(
                 onPressed: () => _shareWithLink(),
-                color: MyPuttColors.white,
+                backgroundColor: MyPuttColors.white,
                 textColor: MyPuttColors.blue,
                 textSize: 20,
                 iconData: FlutterRemix.link,

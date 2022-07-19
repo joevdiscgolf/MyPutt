@@ -53,7 +53,7 @@ class InitManager {
     }
 
     try {
-      await fetchRepositoryData().timeout(timeoutDuration);
+      await fetchRepositoryData().timeout(standardTimeout);
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());

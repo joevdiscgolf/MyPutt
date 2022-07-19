@@ -245,7 +245,7 @@ class _EventsState extends State<EventsScreen>
         },
         title: 'New Event',
         iconData: FlutterRemix.add_line,
-        color: MyPuttColors.blue,
+        backgroundColor: MyPuttColors.blue,
         textSize: 16,
         width: MediaQuery.of(context).size.width / 2,
         shadowColor: MyPuttColors.gray[400],

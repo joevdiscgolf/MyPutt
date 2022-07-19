@@ -27,11 +27,14 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
 
   ChallengesCubit()
-      : super(ChallengesInitial(
+      : super(
+          ChallengesInitial(
             completedChallenges: [],
             activeChallenges: [],
             currentChallenge: null,
-            pendingChallenges: []));
+            pendingChallenges: [],
+          ),
+        );
 
   CurrentUserComplete _currentUserComplete() {
     return CurrentUserComplete(
@@ -71,19 +74,21 @@ class ChallengesCubit extends Cubit<ChallengesState> {
 
   NoCurrentChallenge _noCurrentChallenge() {
     return NoCurrentChallenge(
-        activeChallenges: _challengesRepository.activeChallenges,
-        pendingChallenges: _challengesRepository.pendingChallenges,
-        completedChallenges: _challengesRepository.completedChallenges,
-        currentChallenge: null);
+      activeChallenges: _challengesRepository.activeChallenges,
+      pendingChallenges: _challengesRepository.pendingChallenges,
+      completedChallenges: _challengesRepository.completedChallenges,
+      currentChallenge: null,
+    );
   }
 
   ChallengeFinished _challengeFinished() {
     return ChallengeFinished(
-        activeChallenges: _challengesRepository.activeChallenges,
-        pendingChallenges: _challengesRepository.pendingChallenges,
-        completedChallenges: _challengesRepository.completedChallenges,
-        finishedChallenge: _challengesRepository.finishedChallenge!,
-        currentChallenge: null);
+      activeChallenges: _challengesRepository.activeChallenges,
+      pendingChallenges: _challengesRepository.pendingChallenges,
+      completedChallenges: _challengesRepository.completedChallenges,
+      finishedChallenge: _challengesRepository.finishedChallenge!,
+      currentChallenge: null,
+    );
   }
 
   ChallengesState getStateFromChallenge(PuttingChallenge challenge) {

@@ -63,7 +63,7 @@ class _RecordScreenState extends State<RecordScreen> {
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: MyPuttButton(
-                color: Colors.transparent,
+                backgroundColor: Colors.transparent,
                 textColor: MyPuttColors.darkGray,
                 onPressed: () {
                   showDialog(
