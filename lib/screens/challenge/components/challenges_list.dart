@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/screens/challenge/components/challenge_list_row.dart';
@@ -22,94 +24,117 @@ class ChallengesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: RefreshIndicator(
-        onRefresh: () => BlocProvider.of<ChallengesCubit>(context).reload(),
-        child: challenges.isEmpty
-            ? LayoutBuilder(
-                builder: (BuildContext context, constraints) => ListView(
-                  children: [
-                    Container(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: const Center(
-                        child: Text('No challenges'),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            : ListView(
-                children: challenges
-                    .map(
-                      (challenge) => Builder(builder: (context) {
-                        if (category == ChallengeCategory.pending) {
-                          return ChallengeListRow(
-                            difference: 0,
-                            currentUserPuttsMade: 0,
-                            currentUserPuttsAttempted: 0,
-                            opponentPuttsMade: 0,
-                            opponentPuttsAttempted: 0,
-                            activeChallenge: false,
-                            minLength: 0,
-                            accept: () {
-                              BlocProvider.of<ChallengesCubit>(context)
-                                  .openChallenge(challenge);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      BlocProvider.value(
-                                    value: BlocProvider.of<ChallengesCubit>(
-                                        context),
-                                    child: ChallengeRecordScreen(
-                                      challenge: challenge,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            decline: () {
-                              BlocProvider.of<ChallengesCubit>(context)
-                                  .declineChallenge(challenge);
-                            },
-                            challenge: challenge,
-                          );
-                        } else {
-                          final int minLength = min(
-                            challenge.currentUserSets.length,
-                            challenge.opponentSets.length,
-                          );
-                          final bool activeChallenge =
-                              challenge.status == ChallengeStatus.active;
-                          int currentUserPuttsMade = totalMadeFromSubset(
-                              challenge.currentUserSets, minLength);
-                          final int currentUserPuttsAttempted =
-                              totalAttemptsFromSubset(
-                                  challenge.currentUserSets, minLength);
-                          final int opponentPuttsMade = totalMadeFromSubset(
-                              challenge.opponentSets, minLength);
-                          final int opponentPuttsAttempted =
-                              totalAttemptsFromSubset(
-                                  challenge.opponentSets, minLength);
-
-                          final int difference =
-                              currentUserPuttsMade - opponentPuttsMade;
-                          return ChallengeListRow(
-                            minLength: minLength,
-                            activeChallenge: activeChallenge,
-                            currentUserPuttsAttempted:
-                                currentUserPuttsAttempted,
-                            currentUserPuttsMade: currentUserPuttsMade,
-                            opponentPuttsAttempted: opponentPuttsAttempted,
-                            opponentPuttsMade: opponentPuttsMade,
-                            difference: difference,
-                            challenge: challenge,
-                          );
-                        }
-                      }),
-                    )
-                    .toList(),
+      child: challenges.isEmpty
+          ? LayoutBuilder(
+              builder: (BuildContext context, constraints) => ListView(
+                children: [
+                  Container(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: const Center(
+                      child: Text('No challenges'),
+                    ),
+                  )
+                ],
               ),
-      ),
+            )
+          : CustomScrollView(
+              slivers: [
+                CupertinoSliverRefreshControl(
+                  onRefresh: () async {
+                    Vibrate.feedback(FeedbackType.light);
+                    await BlocProvider.of<ChallengesCubit>(context).reload();
+                  },
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return Column(
+                          children: challenges
+                              .map(
+                                (challenge) => Builder(builder: (context) {
+                                  if (category == ChallengeCategory.pending) {
+                                    return ChallengeListRow(
+                                      difference: 0,
+                                      currentUserPuttsMade: 0,
+                                      currentUserPuttsAttempted: 0,
+                                      opponentPuttsMade: 0,
+                                      opponentPuttsAttempted: 0,
+                                      activeChallenge: false,
+                                      minLength: 0,
+                                      accept: () {
+                                        BlocProvider.of<ChallengesCubit>(
+                                                context)
+                                            .openChallenge(challenge);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                BlocProvider.value(
+                                              value: BlocProvider.of<
+                                                  ChallengesCubit>(context),
+                                              child: ChallengeRecordScreen(
+                                                challenge: challenge,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      decline: () {
+                                        BlocProvider.of<ChallengesCubit>(
+                                                context)
+                                            .declineChallenge(challenge);
+                                      },
+                                      challenge: challenge,
+                                    );
+                                  } else {
+                                    final int minLength = min(
+                                      challenge.currentUserSets.length,
+                                      challenge.opponentSets.length,
+                                    );
+                                    final bool activeChallenge =
+                                        challenge.status ==
+                                            ChallengeStatus.active;
+                                    int currentUserPuttsMade =
+                                        totalMadeFromSubset(
+                                            challenge.currentUserSets,
+                                            minLength);
+                                    final int currentUserPuttsAttempted =
+                                        totalAttemptsFromSubset(
+                                            challenge.currentUserSets,
+                                            minLength);
+                                    final int opponentPuttsMade =
+                                        totalMadeFromSubset(
+                                            challenge.opponentSets, minLength);
+                                    final int opponentPuttsAttempted =
+                                        totalAttemptsFromSubset(
+                                            challenge.opponentSets, minLength);
+
+                                    final int difference =
+                                        currentUserPuttsMade -
+                                            opponentPuttsMade;
+                                    return ChallengeListRow(
+                                      minLength: minLength,
+                                      activeChallenge: activeChallenge,
+                                      currentUserPuttsAttempted:
+                                          currentUserPuttsAttempted,
+                                      currentUserPuttsMade:
+                                          currentUserPuttsMade,
+                                      opponentPuttsAttempted:
+                                          opponentPuttsAttempted,
+                                      opponentPuttsMade: opponentPuttsMade,
+                                      difference: difference,
+                                      challenge: challenge,
+                                    );
+                                  }
+                                }),
+                              )
+                              .toList());
+                    },
+                    childCount: 1,
+                  ),
+                )
+              ],
+            ),
     );
   }
 }

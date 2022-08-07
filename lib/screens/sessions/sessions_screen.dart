@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,68 +28,64 @@ class _SessionsState extends State<SessionsScreen> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<SessionsCubit>(context).reload();
+  }
+
+  @override
   Widget build(BuildContext context) {
     BlocProvider.of<SessionsCubit>(context).reload();
     return Navigator(
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-            settings: settings,
-            builder: (BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(
-                    'Sessions',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
-                  ),
-                  centerTitle: true,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
+          settings: settings,
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Column(
+                  children: [
+                    Text(
+                      'Sessions',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _sessionRepository.allSessions.isEmpty
+                          ? 'No sessions yet'
+                          : '${_sessionRepository.allSessions.length} total',
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                          fontSize: 16, color: MyPuttColors.gray[400]),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-                backgroundColor: MyPuttColors.white,
-                floatingActionButton: _addButton(context),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
-                body: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Text(
-                            _sessionRepository.allSessions.isEmpty
-                                ? 'No sessions yet'
-                                : '${_sessionRepository.allSessions.length} total',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(
-                                    fontSize: 16,
-                                    color: MyPuttColors.gray[400]),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        _sessionsListView(context),
-                      ],
-                    )),
-              );
-            });
+                centerTitle: true,
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              backgroundColor: MyPuttColors.white,
+              floatingActionButton: _addButton(context),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              body: _mainBody(context),
+            );
+          },
+        );
       },
     );
   }
 
-  Widget _sessionsListView(BuildContext context) {
+  Widget _mainBody(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is SessionInProgressState || state is NoActiveSessionState) {
-          List<Widget> listViewChildren = [];
+          List<Widget> children = [];
           if (state is SessionInProgressState) {
-            listViewChildren.add(
+            children.add(
               SessionListRow(
                 session: state.currentSession,
                 delete: () {
@@ -97,46 +94,71 @@ class _SessionsState extends State<SessionsScreen> {
                 },
                 onTap: () {
                   Vibrate.feedback(FeedbackType.light);
-                  Navigator.of(context).push(MaterialPageRoute(
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
                       builder: (BuildContext context) => BlocProvider.value(
-                          value: BlocProvider.of<SessionsCubit>(context),
-                          child: const RecordScreen())));
+                        value: BlocProvider.of<SessionsCubit>(context),
+                        child: const RecordScreen(),
+                      ),
+                    ),
+                  );
                 },
                 isCurrentSession: true,
               ),
             );
           }
-          listViewChildren.addAll(List.from(state.sessions
-              .asMap()
-              .entries
-              .map((entry) => SessionListRow(
-                    session: entry.value,
-                    index: entry.key + 1,
-                    delete: () {
-                      BlocProvider.of<SessionsCubit>(context)
-                          .deleteSession(entry.value);
-                      BlocProvider.of<HomeScreenCubit>(context).reload();
+          children.addAll(
+            List.from(
+              state.sessions
+                  .asMap()
+                  .entries
+                  .map(
+                    (entry) => SessionListRow(
+                      session: entry.value,
+                      index: entry.key + 1,
+                      delete: () {
+                        BlocProvider.of<SessionsCubit>(context)
+                            .deleteSession(entry.value);
+                        BlocProvider.of<HomeScreenCubit>(context).reload();
+                      },
+                      isCurrentSession: false,
+                      onTap: () {
+                        Vibrate.feedback(FeedbackType.light);
+                        BlocProvider.of<SessionSummaryCubit>(context)
+                            .openSessionSummary(entry.value);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                SessionSummaryScreen(session: entry.value),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                  .toList()
+                  .reversed,
+            ),
+          );
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: CustomScrollView(
+              slivers: [
+                CupertinoSliverRefreshControl(
+                  onRefresh: () async {
+                    Vibrate.feedback(FeedbackType.light);
+                    await BlocProvider.of<SessionsCubit>(context)
+                        .reloadSessions();
+                  },
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return Column(children: children);
                     },
-                    isCurrentSession: false,
-                    onTap: () {
-                      Vibrate.feedback(FeedbackType.light);
-                      BlocProvider.of<SessionSummaryCubit>(context)
-                          .openSessionSummary(entry.value);
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              SessionSummaryScreen(session: entry.value)));
-                    },
-                  ))
-              .toList()
-              .reversed));
-          return Flexible(
-            fit: FlexFit.loose,
-            child: ListView.builder(
-              itemCount: listViewChildren.length,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) =>
-                  listViewChildren[index],
-              padding: const EdgeInsets.only(top: 0),
+                    childCount: 1,
+                  ),
+                )
+              ],
             ),
           );
         } else {
