@@ -24,6 +24,7 @@ class SessionsCubit extends Cubit<SessionsState> {
       _sessionRepository.fetchCompletedSessions(),
       _sessionRepository.fetchCurrentSession()
     ]);
+    reload();
   }
 
   void reload() {
