@@ -19,7 +19,7 @@ import 'package:myputt/screens/home/components/stats_view/rows/components/shadow
 import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
 import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
-import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
@@ -97,7 +97,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       child: MyPuttButton(
         onPressed: () {
           BlocProvider.of<MyProfileCubit>(context).signOut();
-          locator.get<SigninService>().signOut();
+          locator.get<MyPuttAuthService>().signOut();
         },
         padding: const EdgeInsets.all(8),
         height: 50,

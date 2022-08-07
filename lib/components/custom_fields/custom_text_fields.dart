@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/validators.dart';
 
@@ -95,7 +95,7 @@ class UsernameField extends StatefulWidget {
 }
 
 class _UsernameFieldState extends State<UsernameField> {
-  final AuthService authService = locator.get<AuthService>();
+  final FirebaseAuthService authService = locator.get<FirebaseAuthService>();
   UsernameStatus _usernameStatus = UsernameStatus.none;
   Timer? checkUsernameOnStoppedTyping;
 

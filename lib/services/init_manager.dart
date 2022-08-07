@@ -9,11 +9,11 @@ import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'auth_service.dart';
+import 'firebase_auth_service.dart';
 import 'firebase/app_info_data_loader.dart';
 
 class InitManager {
-  final AuthService _authService = locator.get<AuthService>();
+  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
 
   final ScreenController _screenController = locator.get<ScreenController>();
   late StreamController<AppScreenState> controller;
@@ -45,9 +45,7 @@ class InitManager {
     if (isSetup == null) {
       controller.add(AppScreenState.connectionError);
       return;
-    }
-
-    if (!isSetup) {
+    } else if (!isSetup) {
       controller.add(AppScreenState.setup);
       return;
     }

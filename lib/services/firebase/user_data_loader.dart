@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -14,15 +14,15 @@ class FBUserDataLoader {
     final snapshot = await currentSessionReference.get();
     if (snapshot.exists &&
         isValidUser(snapshot.data() as Map<String, dynamic>)) {
-      final Map<String, dynamic>? data = snapshot.data();
-      return MyPuttUser.fromJson(data!);
+      final Map<String, dynamic> data = snapshot.data()!;
+      return MyPuttUser.fromJson(data);
     } else {
       return null;
     }
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
-    final AuthService authService = locator.get<AuthService>();
+    final FirebaseAuthService authService = locator.get<FirebaseAuthService>();
     final String? currentUid = authService.getCurrentUserId();
     if (currentUid == null) {
       return [];
@@ -54,9 +54,9 @@ class FBUserDataLoader {
     return existingUsers;
   }
 
-  bool isValidUser(Map<String, dynamic> data) {
-    return data['username'] != null &&
-        data['displayName'] != null &&
-        data['uid'] != null;
+  bool isValidUser(Map<String, dynamic>? data) {
+    return data?['username'] != null &&
+        data?['displayName'] != null &&
+        data?['uid'] != null;
   }
 }

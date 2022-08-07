@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/locator.dart';
 
@@ -23,7 +23,7 @@ class EnterDetailsScreen extends StatefulWidget {
 }
 
 class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
-  final SigninService _signinService = locator.get<SigninService>();
+  final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
 
   String? _errorText;
   bool _usernameValid = false;
@@ -171,19 +171,9 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   }
 
   Future<void> _onSubmit() async {
-    if (_username.isEmpty) {
-      setState(() => _errorText = 'Enter a username');
+    if (!_validateFields()) {
       return;
     }
-    if (_displayName.isEmpty) {
-      setState(() => _errorText = 'Enter a display name');
-      return;
-    }
-    if (_pdgaNumber.isNotEmpty && int.tryParse(_pdgaNumber) == null) {
-      setState(() => _errorText = 'Enter a valid PDGA number');
-      return;
-    }
-
     final int? pdgaNumber = _pdgaNumber.isEmpty ? null : int.parse(_pdgaNumber);
 
     setState(() => _buttonState = ButtonState.loading);
@@ -192,12 +182,25 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
       _displayName,
       pdgaNumber: pdgaNumber,
     );
-
-    if (!success) {
+    if (success) {
+      setState(() => _buttonState = ButtonState.success);
+    } else {
       setState(() => _buttonState = ButtonState.retry);
-      return;
     }
-    setState(() => _buttonState = ButtonState.success);
+  }
+
+  bool _validateFields() {
+    if (_username.isEmpty) {
+      setState(() => _errorText = 'Enter a username');
+      return false;
+    } else if (_displayName.isEmpty) {
+      setState(() => _errorText = 'Enter a display name');
+      return false;
+    } else if (_pdgaNumber.isNotEmpty && int.tryParse(_pdgaNumber) == null) {
+      setState(() => _errorText = 'Enter a valid PDGA number');
+      return false;
+    }
+    return true;
   }
 
   bool _checkDisabled() {
