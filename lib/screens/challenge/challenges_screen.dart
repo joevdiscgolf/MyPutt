@@ -28,34 +28,40 @@ class _ChallengesState extends State<ChallengesScreen>
   bool get wantKeepAlive => true;
 
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ChallengesCubit>(context).reload();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-            backgroundColor: MyPuttColors.white,
-            appBar: AppBar(
-              title: Text(
-                'Challenges',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-            ),
-            floatingActionButton: _newChallengeButton(context),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            body: NestedScrollView(
-              body: _mainBody(context),
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return [SliverToBoxAdapter(child: _tabBar(context))];
-              },
-            )));
+      length: 3,
+      child: Scaffold(
+        backgroundColor: MyPuttColors.white,
+        appBar: AppBar(
+          title: Text(
+            'Challenges',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        ),
+        floatingActionButton: _newChallengeButton(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: NestedScrollView(
+          body: _mainBody(context),
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [SliverToBoxAdapter(child: _tabBar(context))];
+          },
+        ),
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {

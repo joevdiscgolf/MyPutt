@@ -53,8 +53,12 @@ class _CalendarViewState extends State<CalendarView>
       builder: (context, state) {
         if (state is HomeScreenLoaded) {
           final List<PuttingSession> sessions = state.allSessions
-              .where((session) => isSameDay(_currentSelectedDate,
-                  DateTime.fromMillisecondsSinceEpoch(session.timeStamp)))
+              .where(
+                (session) => isSameDay(
+                  _currentSelectedDate,
+                  DateTime.fromMillisecondsSinceEpoch(session.timeStamp),
+                ),
+              )
               .toList();
           final List<PuttingChallenge> challenges = state.allChallenges
               .where(
@@ -146,7 +150,8 @@ class _CalendarViewState extends State<CalendarView>
                     },
                   ),
                 )
-                .toList());
+                .toList(),
+          );
   }
 
   Widget _sessionsAndChallengesTabBar(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/screens/home/components/home_app_bar.dart';
 import 'package:myputt/screens/home/components/stats_view/stats_view.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
@@ -39,25 +40,7 @@ class HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          shadowColor: Colors.transparent,
-          title: Center(
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: Theme.of(context).textTheme.headline4,
-                children: [
-                  const TextSpan(
-                      text: 'My', style: TextStyle(color: Colors.blue)),
-                  TextSpan(
-                      text: 'Putt',
-                      style: TextStyle(color: MyPuttColors.gray[400])),
-                ],
-              ),
-            ),
-          ),
-        ),
+        appBar: const HomeAppBar(),
         body: Column(
           children: [
             _calendarChartTabBar(context),

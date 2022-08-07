@@ -19,6 +19,14 @@ class SessionsCubit extends Cubit<SessionsState> {
     reload();
   }
 
+  Future<void> reloadSessions() async {
+    await Future.wait([
+      _sessionRepository.fetchCompletedSessions(),
+      _sessionRepository.fetchCurrentSession()
+    ]);
+    reload();
+  }
+
   void reload() {
     if (_sessionRepository.currentSession != null) {
       emit(

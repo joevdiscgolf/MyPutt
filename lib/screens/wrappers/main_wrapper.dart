@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/cubits/home_screen_cubit.dart';
-import 'package:myputt/cubits/my_profile_cubit.dart';
-import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
@@ -57,15 +54,6 @@ class _MainWrapperState extends State<MainWrapper> {
         enableFeedback: true,
         onTap: (int index) {
           Vibrate.feedback(FeedbackType.light);
-          if (index == 0) {
-            BlocProvider.of<HomeScreenCubit>(context).reload();
-          } else if (index == 1) {
-            BlocProvider.of<SessionsCubit>(context).reload();
-          } else if (index == 2) {
-            BlocProvider.of<ChallengesCubit>(context).reload();
-          } else if (index == (_showEventsTab ? 4 : 3)) {
-            BlocProvider.of<MyProfileCubit>(context).reload();
-          }
           setState(() => _currentIndex = index);
         },
         items: [
