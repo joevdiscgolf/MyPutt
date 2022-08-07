@@ -9,7 +9,7 @@ import 'package:myputt/utils/string_helpers.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
-class AuthService {
+class FirebaseAuthService {
   final FirebaseAuth _auth = auth;
 
   String exception = '';
@@ -168,10 +168,11 @@ class AuthService {
           .get()
           .catchError((e) {
         log(e.toString());
-      }).timeout(shortTimeout);
-      if (userDoc?.data() == null ||
-          !userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
+      }).timeout(standardTimeout);
+      if (userDoc?.data() == null) {
         return null;
+      } else if (!userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
+        return false;
       } else {
         return true;
       }

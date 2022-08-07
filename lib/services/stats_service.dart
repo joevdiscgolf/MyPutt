@@ -12,7 +12,7 @@ import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 
-import 'auth_service.dart';
+import 'firebase_auth_service.dart';
 
 class StatsService {
   // limit is an num and it's the number of sessions to look back for stats.
@@ -390,7 +390,7 @@ class StatsService {
 
   List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
       List<PuttingChallenge> challenges, int distance, int? limit) {
-    final AuthService _authService = locator.get<AuthService>();
+    final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
     final String? currentUid = _authService.getCurrentUserId();
 
     if (currentUid == null) {

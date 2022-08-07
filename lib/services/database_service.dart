@@ -6,7 +6,7 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase/event_data_loader.dart';
 import 'package:myputt/services/firebase/event_data_writer.dart';
@@ -27,7 +27,7 @@ class DatabaseService {
   final EventDataWriter _eventDataWriter = EventDataWriter();
   final EventDataLoader _eventDataLoader = EventDataLoader();
 
-  final AuthService _authService = locator.get<AuthService>();
+  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
 
   Future<bool> startCurrentSession(PuttingSession currentSession) async {
     final uid = _authService.getCurrentUserId();

@@ -3,24 +3,24 @@ import 'dart:developer';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 
-class SigninService {
+class MyPuttAuthService {
   final ScreenController _screenController = locator.get<ScreenController>();
   late StreamController<AppScreenState> controller;
   late Stream<AppScreenState> siginStream;
-  final AuthService _authService = locator.get<AuthService>();
+  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   String errorMessage = '';
 
   AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
 
-  SigninService() {
+  MyPuttAuthService() {
     controller = _screenController.controller;
   }
 
@@ -40,32 +40,11 @@ class SigninService {
     if (!signUpSuccess || _authService.getCurrentUserId() == null) {
       errorMessage = _authService.exception;
       return false;
+    } else {
+      controller.add(AppScreenState.setup);
+      currentAppScreenState = AppScreenState.setup;
+      return true;
     }
-
-    bool fetchUserSuccess;
-    try {
-      fetchUserSuccess =
-          await _userRepository.fetchCurrentUser().timeout(shortTimeout);
-    } catch (e, trace) {
-      log(e.toString());
-      log(trace.toString());
-      errorMessage = 'Failed to connect';
-      fetchUserSuccess = false;
-    }
-    if (!fetchUserSuccess) {
-      errorMessage = 'Failed to load user';
-      return false;
-    }
-
-    try {
-      await fetchRepositoryData().timeout(shortTimeout);
-    } catch (e, trace) {
-      log(e.toString());
-      log(trace.toString());
-    }
-    controller.add(AppScreenState.setup);
-    currentAppScreenState = AppScreenState.setup;
-    return true;
   }
 
   Future<bool> attemptSignInWithEmail(String email, String password) async {
@@ -86,13 +65,22 @@ class SigninService {
       return false;
     }
 
+    final bool? isSetup = await _authService.userIsSetup();
+
+    if (isSetup == null) {
+      errorMessage = 'Something went wrong, please try again.';
+      return false;
+    } else if (!isSetup) {
+      controller.add(AppScreenState.setup);
+      currentAppScreenState = AppScreenState.setup;
+      return true;
+    }
+
     try {
       await fetchRepositoryData().timeout(standardTimeout);
     } catch (e, trace) {
-      errorMessage = 'Failed to load your history';
-      log('failed to fetch repository data: $e');
+      log('[myputt_auth_service][attemptSigninWithEmail] Failed to fetch repository data. Error: $e');
       log(trace.toString());
-      return false;
     }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;
@@ -106,13 +94,14 @@ class SigninService {
   }) async {
     final MyPuttUser? newUser = await _authService
         .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
+    if (newUser == null) {
+      return false;
+    }
     final bool? isSetUp = await _authService.userIsSetup();
     if (isSetUp == null || !isSetUp) {
       return false;
     }
-    if (newUser == null) {
-      return false;
-    }
+
     _userRepository.currentUser = newUser;
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;

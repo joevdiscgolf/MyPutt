@@ -4,7 +4,7 @@ import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
@@ -37,7 +37,8 @@ class PuttingChallenge {
 
   factory PuttingChallenge.fromStorageChallenge(
       StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
-    final String? currentUid = locator.get<AuthService>().getCurrentUserId();
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
     MyPuttUser recipientUser;
 
     // recipient user is only the current user if it's null and the current user is not the challenger.

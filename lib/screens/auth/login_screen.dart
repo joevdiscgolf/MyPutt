@@ -7,7 +7,7 @@ import 'package:myputt/components/buttons/spinner_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/components/reset_password_dialog.dart';
 import 'package:myputt/screens/auth/sign_up_screen.dart';
-import 'package:myputt/services/signin_service.dart';
+import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/utils.dart';
 
@@ -21,7 +21,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final SigninService _signinService = locator.get<SigninService>();
+  final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 

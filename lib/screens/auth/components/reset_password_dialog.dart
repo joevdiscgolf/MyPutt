@@ -4,7 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/services/auth_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ResetPasswordDialog extends StatefulWidget {
@@ -15,7 +15,7 @@ class ResetPasswordDialog extends StatefulWidget {
 }
 
 class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
-  final AuthService _authService = locator.get<AuthService>();
+  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
 
   String _email = '';
   String? _dialogErrorText;

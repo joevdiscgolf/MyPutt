@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:myputt/utils/colors.dart';
 
 ThemeData lightTheme(BuildContext context) {
-  final textTheme = Theme.of(context).textTheme;
-
   return ThemeData(
     scaffoldBackgroundColor: MyPuttColors.white,
     canvasColor: MyPuttColors.white,

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/locator.dart';
 
-import 'auth_service.dart';
+import 'firebase_auth_service.dart';
 import 'firebase/utils/fb_constants.dart';
 
-final AuthService _authService = locator.get<AuthService>();
+final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
 
 class BetaAccessService {
   bool _isAdmin = false;
