@@ -12,6 +12,7 @@ import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/screens/sessions/components/sessions_screen_app_bar.dart';
 import 'package:myputt/utils/colors.dart';
 import 'session_summary_screen.dart';
 
@@ -42,30 +43,8 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: AppBar(
-                title: Column(
-                  children: [
-                    Text(
-                      'Sessions',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _sessionRepository.allSessions.isEmpty
-                          ? 'No sessions yet'
-                          : '${_sessionRepository.allSessions.length} total',
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontSize: 16, color: MyPuttColors.gray[400]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
+              appBar: SessionsScreenAppBar(
+                allSessions: _sessionRepository.allSessions,
               ),
               backgroundColor: MyPuttColors.white,
               floatingActionButton: _addButton(context),
