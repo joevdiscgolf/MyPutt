@@ -7,6 +7,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
+import 'package:myputt/screens/challenge/components/challenges_screen_app_bar.dart';
 import 'package:myputt/screens/challenge/components/dialogs/select_preset_dialog.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/utils/colors.dart';
@@ -40,18 +41,7 @@ class _ChallengesState extends State<ChallengesScreen>
       length: 3,
       child: Scaffold(
         backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          title: Text(
-            'Challenges',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-        ),
+        appBar: const ChallengesScreenAppBar(),
         floatingActionButton: _newChallengeButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: NestedScrollView(
