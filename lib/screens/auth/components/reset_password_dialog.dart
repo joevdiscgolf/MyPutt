@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/locator.dart';
@@ -139,6 +140,10 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
   }
 
   Future<void> _onSend() async {
+    locator.get<Mixpanel>().track(
+      'Reset Password Dialog Send Button Pressed',
+      properties: {'Email': _email},
+    );
     setState(() => _buttonState = ButtonState.loading);
     final bool success = await _authService.sendPasswordReset(_email);
     if (!success) {

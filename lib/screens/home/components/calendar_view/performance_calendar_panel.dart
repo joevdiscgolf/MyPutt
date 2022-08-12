@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'utils.dart';
 
@@ -19,6 +21,7 @@ class PerformanceCalendarPanel extends StatefulWidget {
 }
 
 class _PerformanceCalendarPanelState extends State<PerformanceCalendarPanel> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
       .toggledOff; // Can be toggled on/off by longpressing a date
@@ -33,12 +36,11 @@ class _PerformanceCalendarPanelState extends State<PerformanceCalendarPanel> {
     _selectedDay = _focusedDay;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    _mixpanel.track(
+      'Home Screen Performance Calendar Day Selected',
+      properties: {'Date': selectedDay.toIso8601String()},
+    );
     if (!isSameDay(_selectedDay, selectedDay)) {
       Vibrate.feedback(FeedbackType.light);
       widget.onDateChanged(selectedDay);

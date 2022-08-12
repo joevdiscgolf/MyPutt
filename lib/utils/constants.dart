@@ -7,6 +7,9 @@ import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
 
+const kMixpanelProductionToken = 'ab0d6ddcbf4e268b5344eac8568449ec';
+const kMixpanelDevelopmentToken = '2b158a436ff4f818d5da5c4dc846696a';
+
 const Duration shortTimeout = Duration(seconds: 6);
 const Duration standardTimeout = Duration(seconds: 10);
 

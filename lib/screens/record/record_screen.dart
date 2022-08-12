@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
@@ -27,6 +28,7 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
@@ -80,6 +82,9 @@ class _RecordScreenState extends State<RecordScreen> {
                             buttonlabel: 'Finish',
                             buttonColor: MyPuttColors.blue,
                             actionPressed: () {
+                              _mixpanel.track(
+                                'Record Screen Finish Session Confirmed',
+                              );
                               BlocProvider.of<SessionsCubit>(context)
                                   .completeSession();
                               setState(() {
@@ -110,15 +115,18 @@ class _RecordScreenState extends State<RecordScreen> {
               List.from(state.currentSession.sets
                   .asMap()
                   .entries
-                  .map((entry) => PuttingSetRow(
-                        deletable: true,
-                        set: entry.value,
-                        index: entry.key,
-                        delete: () {
-                          BlocProvider.of<SessionsCubit>(context)
-                              .deleteSet(entry.value);
-                        },
-                      ))
+                  .map(
+                    (entry) => PuttingSetRow(
+                      deletable: true,
+                      set: entry.value,
+                      index: entry.key,
+                      delete: () {
+                        _mixpanel.track('Record Screen Set Deleted');
+                        BlocProvider.of<SessionsCubit>(context)
+                            .deleteSet(entry.value);
+                      },
+                    ),
+                  )
                   .toList()
                   .reversed);
           return ListView(
@@ -168,11 +176,21 @@ class _RecordScreenState extends State<RecordScreen> {
                     height: 50,
                     iconData: FlutterRemix.add_line,
                     onPressed: () {
-                      BlocProvider.of<SessionsCubit>(context).addSet(PuttingSet(
+                      _mixpanel.track(
+                        'Record Screen Add Set Button Pressed',
+                        properties: {
+                          'Putts Attempted': _setLength,
+                          'Putts Made': _focusedIndex
+                        },
+                      );
+                      BlocProvider.of<SessionsCubit>(context).addSet(
+                        PuttingSet(
                           timeStamp: DateTime.now().millisecondsSinceEpoch,
                           puttsMade: _focusedIndex,
                           puttsAttempted: _setLength,
-                          distance: _distance));
+                          distance: _distance,
+                        ),
+                      );
                     }),
               ),
               const SizedBox(height: 10),
@@ -181,10 +199,13 @@ class _RecordScreenState extends State<RecordScreen> {
           );
         } else {
           return Center(
-              child: Center(
-                  child: EmptyState(
-                      onRetry: () => BlocProvider.of<SessionsCubit>(context)
-                          .continueSession())));
+            child: Center(
+              child: EmptyState(
+                onRetry: () =>
+                    BlocProvider.of<SessionsCubit>(context).continueSession(),
+              ),
+            ),
+          );
         }
       },
     );
@@ -226,7 +247,13 @@ class _RecordScreenState extends State<RecordScreen> {
         // ),
         ConditionsRow(
           initialIndex: distanceToIndex[_distance]!,
-          onPressed: (int dist) => setState(() => _distance = dist),
+          onPressed: (int dist) {
+            _mixpanel.track(
+              'Record Screen Change Distance Button Pressed',
+              properties: {'Distance': dist},
+            );
+            setState(() => _distance = dist);
+          },
           iconData: FlutterRemix.map_pin_2_line,
           label: 'Distance',
           type: ConditionsType.distance,
@@ -256,6 +283,10 @@ class _RecordScreenState extends State<RecordScreen> {
                     _focusedIndex = _setLength;
                   });
                 }
+                _mixpanel.track(
+                  'Record Screen Putter Count Changed',
+                  properties: {'Set Length': _setLength},
+                );
               },
               style: ElevatedButton.styleFrom(
                   primary: Colors.transparent, shadowColor: Colors.transparent),
@@ -284,6 +315,10 @@ class _RecordScreenState extends State<RecordScreen> {
                 setState(() {
                   _focusedIndex = _setLength + 1;
                 });
+                _mixpanel.track(
+                  'Record Screen Putter Count Changed',
+                  properties: {'Set Length': _setLength},
+                );
                 Future.delayed(const Duration(milliseconds: 25), () {
                   puttsMadePickerKey.currentState?.focusToItem(_setLength + 1);
                 });

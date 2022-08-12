@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
@@ -23,6 +24,7 @@ class ChallengePerformancePanel extends StatefulWidget {
 }
 
 class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
 
@@ -165,47 +167,37 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         ),
         Row(
           children: [
-            const ColorMarker(
-              color: MyPuttColors.red,
-              size: 16,
-            ),
-            const SizedBox(
-              width: 4,
-            ),
+            const ColorMarker(color: MyPuttColors.red, size: 16),
+            const SizedBox(width: 4),
             SizedBox(
-                width: 40,
-                child: AutoSizeText(
-                  'Losses',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
-                  maxLines: 1,
-                )),
+              width: 40,
+              child: AutoSizeText(
+                'Losses',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                maxLines: 1,
+              ),
+            ),
           ],
         ),
-        const SizedBox(
-          height: 8,
-        ),
+        const SizedBox(height: 8),
         Row(
           children: [
-            const ColorMarker(
-              color: MyPuttColors.gray,
-              size: 16,
-            ),
-            const SizedBox(
-              width: 4,
-            ),
+            const ColorMarker(color: MyPuttColors.gray, size: 16),
+            const SizedBox(width: 4),
             SizedBox(
-                width: 40,
-                child: AutoSizeText(
-                  'Draws',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
-                  maxLines: 1,
-                )),
+              width: 40,
+              child: AutoSizeText(
+                'Draws',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
+                maxLines: 1,
+              ),
+            ),
           ],
         ),
       ],
@@ -356,6 +348,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
 
   void _onSelection(SelectionArgs args) {
     final int index = args.pointIndex;
+    _mixpanel.track('My Profile Screen Challenge Result Chart Pressed');
     if (_spacerChartData[index].challengeResult != ChallengeResult.none) {
       Vibrate.feedback(FeedbackType.light);
       setState(() {

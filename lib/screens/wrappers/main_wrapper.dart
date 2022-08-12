@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
@@ -22,6 +23,7 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   int _currentIndex = 0;
 
   late final List<Widget> _screens;
@@ -54,6 +56,10 @@ class _MainWrapperState extends State<MainWrapper> {
         enableFeedback: true,
         onTap: (int index) {
           Vibrate.feedback(FeedbackType.light);
+          _mixpanel.track(
+            'Bottom Navigation Bar Item Pressed',
+            properties: {'Screen': _screens[index].toString()},
+          );
           setState(() => _currentIndex = index);
         },
         items: [
@@ -62,9 +68,7 @@ class _MainWrapperState extends State<MainWrapper> {
             label: 'Home',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(
-              FlutterRemix.record_circle_fill,
-            ),
+            icon: Icon(FlutterRemix.record_circle_fill),
             label: 'Record',
           ),
           BottomNavigationBarItem(

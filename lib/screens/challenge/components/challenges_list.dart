@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/screens/challenge/components/challenge_list_row.dart';
@@ -43,6 +45,9 @@ class ChallengesList extends StatelessWidget {
                 CupertinoSliverRefreshControl(
                   onRefresh: () async {
                     Vibrate.feedback(FeedbackType.light);
+                    locator
+                        .get<Mixpanel>()
+                        .track('Challenges Screen Pull To Refresh');
                     await BlocProvider.of<ChallengesCubit>(context).reload();
                   },
                 ),
@@ -63,9 +68,12 @@ class ChallengesList extends StatelessWidget {
                                       activeChallenge: false,
                                       minLength: 0,
                                       accept: () {
+                                        locator.get<Mixpanel>().track(
+                                              'Challenges Screen Pending Challenge Accepted',
+                                            );
                                         BlocProvider.of<ChallengesCubit>(
-                                                context)
-                                            .openChallenge(challenge);
+                                          context,
+                                        ).openChallenge(challenge);
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (BuildContext context) =>
@@ -80,6 +88,9 @@ class ChallengesList extends StatelessWidget {
                                         );
                                       },
                                       decline: () {
+                                        locator.get<Mixpanel>().track(
+                                              'Challenges Screen Pending Challenge Declined',
+                                            );
                                         BlocProvider.of<ChallengesCubit>(
                                                 context)
                                             .declineChallenge(challenge);

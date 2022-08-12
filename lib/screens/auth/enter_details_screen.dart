@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
@@ -23,6 +24,7 @@ class EnterDetailsScreen extends StatefulWidget {
 }
 
 class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
 
   String? _errorText;
@@ -33,6 +35,12 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   String _username = '';
   String _displayName = '';
   String _pdgaNumber = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _mixpanel.track('Enter Details Screen Impression');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,11 +179,15 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   }
 
   Future<void> _onSubmit() async {
+    _mixpanel.track('Enter Details Screen Submit Button Pressed', properties: {
+      'Username': _username,
+      'Display Name': _displayName,
+      'PDGA Number': _pdgaNumber
+    });
     if (!_validateFields()) {
       return;
     }
     final int? pdgaNumber = _pdgaNumber.isEmpty ? null : int.parse(_pdgaNumber);
-
     setState(() => _buttonState = ButtonState.loading);
     final bool success = await _signinService.setupNewUser(
       _username,

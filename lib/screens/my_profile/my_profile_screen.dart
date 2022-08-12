@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
@@ -24,6 +24,7 @@ import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/panel_helpers.dart';
 import 'components/pdga_info/pdga_info_tiles.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -34,10 +35,17 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
   final StatsService _statsService = locator.get<StatsService>();
+
+  @override
+  void initState() {
+    super.initState();
+    _mixpanel.track('My Profile Screen Impression');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,23 +59,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 _percentagesPanel(context),
                 const SizedBox(height: 8),
                 _lifetimeStats(context),
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
                 const SizedBox(height: 20),
                 ChallengePerformancePanel(
                   chartSize: MediaQuery.of(context).size.width / 1.8,
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 const PDGAInfoTiles(),
-                const SizedBox(
-                  height: 16,
-                )
+                const SizedBox(height: 16)
               ];
               return RefreshIndicator(
                 onRefresh: () async {
+                  _mixpanel.track('My Profile Screen Pull To Refresh');
                   await BlocProvider.of<MyProfileCubit>(context).reload();
                 },
                 child: CustomScrollView(
@@ -96,6 +99,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       padding: const EdgeInsets.all(16),
       child: MyPuttButton(
         onPressed: () {
+          _mixpanel.track('My Profile Screen Logout Button Pressed');
           BlocProvider.of<MyProfileCubit>(context).signOut();
           locator.get<MyPuttAuthService>().signOut();
         },
@@ -136,20 +140,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         Bounceable(
                           onTap: () {
                             Vibrate.feedback(FeedbackType.light);
-                            showBarModalBottomSheet(
-                              context: context,
-                              duration: const Duration(milliseconds: 200),
-                              enableDrag: true,
-                              isDismissible: true,
-                              topControl: Container(),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(36),
-                                  topRight: Radius.circular(36),
-                                ),
-                              ),
-                              builder: (BuildContext context) =>
-                                  EditProfileFrisbeePanel(
+                            _mixpanel.track(
+                              'My Profile Screen Edit Icon Button Pressed',
+                            );
+                            displayBottomSheet(
+                              context,
+                              EditProfileFrisbeePanel(
                                 initialBackgroundColorHex: state.myUser
                                         .frisbeeAvatar?.backgroundColorHex ??
                                     '2196F3',

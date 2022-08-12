@@ -2,8 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/screens/my_profile/components/pdga_info/pdga_number_dialog.dart';
 import 'package:myputt/screens/my_profile/components/pdga_info/pdga_stat_tile.dart';
@@ -71,15 +73,22 @@ class PDGAInfoTiles extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: MyPuttButton(
                       onPressed: () {
+                        locator.get<Mixpanel>().track(
+                              'My Profile Screen Edit PDGA Number Button Pressed',
+                            );
                         showDialog(
-                            context: context,
-                            builder: (context) => PdgaNumberDialog(
-                                  onSubmit: (String pdgaNumber) {
-                                    return BlocProvider.of<MyProfileCubit>(
-                                            context)
-                                        .submitPDGANumber(pdgaNumber);
-                                  },
-                                ));
+                          context: context,
+                          builder: (context) => PdgaNumberDialog(
+                            onSubmit: (String pdgaNumber) {
+                              locator.get<Mixpanel>().track(
+                                'My Profile Screen New PDGA Number Submitted',
+                                properties: {'PDGA Number': pdgaNumber},
+                              );
+                              return BlocProvider.of<MyProfileCubit>(context)
+                                  .submitPDGANumber(pdgaNumber);
+                            },
+                          ),
+                        );
                       },
                       backgroundColor: Colors.transparent,
                       iconData: FlutterRemix.pencil_line,

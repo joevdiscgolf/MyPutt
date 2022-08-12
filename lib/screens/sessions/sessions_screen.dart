@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
@@ -26,11 +27,13 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsState extends State<SessionsScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
   @override
   void initState() {
     super.initState();
+    _mixpanel.track('Sessions Screen Impression');
     BlocProvider.of<SessionsCubit>(context).reload();
   }
 
@@ -68,11 +71,16 @@ class _SessionsState extends State<SessionsScreen> {
               SessionListRow(
                 session: state.currentSession,
                 delete: () {
+                  _mixpanel.track('Sessions Screen Delete Session Confirmed');
                   BlocProvider.of<SessionsCubit>(context)
                       .deleteCurrentSession();
                 },
                 onTap: () {
                   Vibrate.feedback(FeedbackType.light);
+                  _mixpanel.track('Sessions Screen Current Session Row Pressed',
+                      properties: {
+                        'Set Count': state.currentSession.sets.length,
+                      });
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => BlocProvider.value(
@@ -103,6 +111,10 @@ class _SessionsState extends State<SessionsScreen> {
                       isCurrentSession: false,
                       onTap: () {
                         Vibrate.feedback(FeedbackType.light);
+                        _mixpanel.track('Sessions Screen Session Row Pressed',
+                            properties: {
+                              'Set Count': entry.value.sets.length,
+                            });
                         BlocProvider.of<SessionSummaryCubit>(context)
                             .openSessionSummary(entry.value);
                         Navigator.of(context).push(
@@ -124,6 +136,7 @@ class _SessionsState extends State<SessionsScreen> {
               slivers: [
                 CupertinoSliverRefreshControl(
                   onRefresh: () async {
+                    _mixpanel.track('Sessions Screen Pull To Refresh');
                     Vibrate.feedback(FeedbackType.light);
                     await BlocProvider.of<SessionsCubit>(context)
                         .reloadSessions();
@@ -160,6 +173,11 @@ class _SessionsState extends State<SessionsScreen> {
           width: MediaQuery.of(context).size.width / 2,
           shadowColor: MyPuttColors.gray[400],
           onPressed: () {
+            Vibrate.feedback(FeedbackType.light);
+            _mixpanel.track(
+              'Sessions Screen New Session Button Pressed',
+              properties: {'Session Count': state.sessions.length},
+            );
             if (state is! SessionInProgressState) {
               BlocProvider.of<SessionsCubit>(context).startNewSession();
               Navigator.of(context).push(

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
@@ -59,9 +61,7 @@ class SessionListRow extends StatelessWidget {
                       .headline6
                       ?.copyWith(color: MyPuttColors.red, fontSize: 12),
                 ),
-                const SizedBox(
-                  height: 8,
-                )
+                const SizedBox(height: 8)
               ],
               Text(
                 timestampToDate(session.timeStamp),
@@ -70,9 +70,7 @@ class SessionListRow extends StatelessWidget {
                     .headline6
                     ?.copyWith(color: MyPuttColors.gray[600], fontSize: 12),
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               Text(
                 '$setCount sets, $puttsAttempted putts',
                 style: Theme.of(context)
@@ -86,14 +84,18 @@ class SessionListRow extends StatelessWidget {
           if (!isCurrentSession)
             Bounceable(
               onTap: () {
+                locator
+                    .get<Mixpanel>()
+                    .track('Session Row Challenge Button Pressed');
                 Vibrate.feedback(FeedbackType.light);
                 showBarModalBottomSheet(
-                    topControl: Container(),
-                    context: context,
-                    builder: (BuildContext context) => ShareSheet(
-                          session: session,
-                          onComplete: () => Navigator.pop(context),
-                        ));
+                  topControl: Container(),
+                  context: context,
+                  builder: (BuildContext context) => ShareSheet(
+                    session: session,
+                    onComplete: () => Navigator.pop(context),
+                  ),
+                );
               },
               child: const Icon(
                 FlutterRemix.sword_fill,
@@ -107,6 +109,9 @@ class SessionListRow extends StatelessWidget {
           Bounceable(
             onTap: () {
               Vibrate.feedback(FeedbackType.light);
+              locator
+                  .get<Mixpanel>()
+                  .track('Session List Row Delete Button Pressed');
               showDialog(
                 context: context,
                 builder: (BuildContext context) => ConfirmDialog(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -10,6 +11,7 @@ import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 
 class MyPuttAuthService {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ScreenController _screenController = locator.get<ScreenController>();
   late StreamController<AppScreenState> controller;
   late Stream<AppScreenState> siginStream;
@@ -76,6 +78,11 @@ class MyPuttAuthService {
       return true;
     }
 
+    _mixpanel.track(
+      'Sign in',
+      properties: {'Uid': _authService.getCurrentUserId()},
+    );
+
     try {
       await fetchRepositoryData().timeout(standardTimeout);
     } catch (e, trace) {
@@ -102,6 +109,11 @@ class MyPuttAuthService {
       return false;
     }
 
+    _mixpanel.track(
+      'New User Set Up',
+      properties: {'Uid': newUser.uid, 'Username': username},
+    );
+
     _userRepository.currentUser = newUser;
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;
@@ -109,6 +121,10 @@ class MyPuttAuthService {
   }
 
   void signOut() {
+    _mixpanel.track(
+      'Log out',
+      properties: {'Uid': _authService.getCurrentUserId()},
+    );
     clearRepositoryData();
     _authService.logOut();
     controller.add(AppScreenState.notLoggedIn);
