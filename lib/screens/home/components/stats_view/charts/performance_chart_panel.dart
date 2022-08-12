@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/charts/empty_state_chart/empty_state_chart.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
@@ -26,6 +27,7 @@ class PerformanceChartPanel extends StatefulWidget {
 
 class _PerformanceChartPanelState extends State<PerformanceChartPanel>
     with TickerProviderStateMixin {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
@@ -96,9 +98,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
                       Expanded(child: _chooseDistanceButton(context, distance)))
                   .toList(),
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -108,6 +108,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
                     thumbColor: MyPuttColors.darkBlue,
                     label: _numSets.toString(),
                     onChanged: (double newValue) {
+                      _mixpanel.track(
+                        'Home Screen Performance Chart Slider Dragged',
+                        properties: {'Value': newValue},
+                      );
                       setState(() {
                         _smoothRange = (newValue * 8).toInt();
                         _smoothnessSliderValue = newValue;
@@ -138,18 +142,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         labelColor: MyPuttColors.darkBlue,
         unselectedLabelColor: Colors.black,
         tabs: const [
-          Tab(
-            child: Text('Last 5'),
-          ),
-          Tab(
-            child: Text('Last 20'),
-          ),
-          Tab(
-            child: Text('Last 50'),
-          ),
-          Tab(
-            child: Text('All time'),
-          ),
+          Tab(child: Text('Last 5')),
+          Tab(child: Text('Last 20')),
+          Tab(child: Text('Last 50')),
+          Tab(child: Text('All time')),
         ],
       ),
     );
@@ -158,6 +154,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   Widget _chooseDistanceButton(BuildContext context, int distance) {
     return Bounceable(
       onTap: () {
+        _mixpanel.track(
+          'Home Screen Performance Chart Distance Button Pressed',
+          properties: {'Distance': distance},
+        );
         setState(() {
           _selectedDistance = distance;
           _totalSets = _statsService.getTotalPuttingSets(

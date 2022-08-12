@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
@@ -17,8 +19,15 @@ import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 
+import 'utils/constants.dart';
+
 final locator = GetIt.instance;
 Future<void> setUpLocator() async {
+  final Mixpanel mixpanel = await Mixpanel.init(
+    kDebugMode ? kMixpanelDevelopmentToken : kMixpanelProductionToken,
+    optOutTrackingDefault: false,
+  );
+  locator.registerSingleton<Mixpanel>(mixpanel);
   locator
       .registerSingleton<SharedPreferencesService>(SharedPreferencesService());
   locator.registerSingleton<ScreenController>(ScreenController());

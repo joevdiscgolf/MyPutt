@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/components/custom_fields/custom_text_fields.dart';
@@ -18,6 +19,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
+
   final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
   final formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
@@ -29,6 +32,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String? _email;
   String? _password;
   String? _errorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _mixpanel.track('Sign Up Screen Impression');
+  }
 
   @override
   void dispose() {
@@ -58,9 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _header(context),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             Center(child: _mainBody(context)),
           ],
         ),
@@ -79,9 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               .headline6
               ?.copyWith(color: MyPuttColors.blue, fontSize: 32),
         ),
-        const SizedBox(
-          height: 4,
-        ),
+        const SizedBox(height: 4),
         Text(
           'Please enter your email and password',
           style: Theme.of(context)
@@ -130,9 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: 16,
             ),
             _signUpButton(context),
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
             if (_errorText != null)
               AutoSizeText(
                 _errorText!,
@@ -162,6 +165,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _signupPressed() async {
+    _mixpanel.track(
+      'Sign Up Screen Sign Up Button Pressed',
+      properties: {'Email': _email},
+    );
     setState(() => _errorText = null);
     Vibrate.feedback(FeedbackType.light);
     final String email = _emailController.text;

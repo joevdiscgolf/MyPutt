@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
@@ -29,6 +31,7 @@ class ShareSheet extends StatefulWidget {
 }
 
 class _ShareSheetState extends State<ShareSheet> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final TextEditingController _searchTextController = TextEditingController();
 
   int lastUpdated = 0;
@@ -61,11 +64,12 @@ class _ShareSheetState extends State<ShareSheet> {
               ),
               const SizedBox(height: 8),
               const ShadowIcon(
-                  icon: Icon(
-                FlutterRemix.sword_fill,
-                color: MyPuttColors.black,
-                size: 80,
-              )),
+                icon: Icon(
+                  FlutterRemix.sword_fill,
+                  color: MyPuttColors.black,
+                  size: 80,
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: _usernameField(context),
@@ -74,10 +78,12 @@ class _ShareSheetState extends State<ShareSheet> {
           ),
         ),
         Expanded(
-            child: UserListView(
-                preset: widget.preset,
-                onComplete: widget.onComplete,
-                session: widget.session)),
+          child: UserListView(
+            preset: widget.preset,
+            onComplete: widget.onComplete,
+            session: widget.session,
+          ),
+        ),
       ],
     );
   }
@@ -127,6 +133,7 @@ class _ShareSheetState extends State<ShareSheet> {
 
   Future<void> _shareWithLink() async {
     Vibrate.feedback(FeedbackType.light);
+    _mixpanel.track('Share Challenge Screen Send Link Button Pressed');
     String? shareMessage;
     if (widget.preset != null) {
       shareMessage = await BlocProvider.of<ChallengesCubit>(context)

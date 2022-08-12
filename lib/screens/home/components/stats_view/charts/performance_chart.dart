@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -20,6 +22,11 @@ class PerformanceChart extends StatelessWidget {
   LineChartData mainData(BuildContext context, PerformanceChartData chartData) {
     return LineChartData(
       lineTouchData: LineTouchData(
+        touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
+          locator
+              .get<Mixpanel>()
+              .track('Home Screen Performance Chart Dragged');
+        },
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
           tooltipRoundedRadius: 16,

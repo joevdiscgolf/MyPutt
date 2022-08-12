@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/dialogs/finish_challenge_dialog.dart';
 import 'package:myputt/utils/colors.dart';
@@ -39,6 +41,9 @@ class AddSetButton extends StatelessWidget {
     if (state is BothUsersComplete) {
       return () {
         Vibrate.feedback(FeedbackType.light);
+        locator.get<Mixpanel>().track(
+              'Challenge Record Screen Finish Challenge Button Pressed',
+            );
         showDialog(
           context: context,
           builder: (dialogContext) => BlocProvider.value(
@@ -52,6 +57,9 @@ class AddSetButton extends StatelessWidget {
     } else {
       return () {
         Vibrate.feedback(FeedbackType.light);
+        locator.get<Mixpanel>().track(
+              'Challenge Record Screen Add Set Button Pressed',
+            );
         if (state.currentChallenge!.currentUserSets.length <
             state.currentChallenge!.challengeStructure.length) {
           BlocProvider.of<ChallengesCubit>(context).addSet(

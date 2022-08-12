@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/screens/auth/login_screen.dart';
 import 'package:myputt/screens/introduction/constants.dart';
 import 'package:myputt/utils/colors.dart';
@@ -18,6 +20,7 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _timer;
@@ -25,6 +28,7 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   void initState() {
     super.initState();
+    _mixpanel.track('Intro Screen Impression');
     _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_currentPage < 4) {
         _currentPage++;
@@ -109,8 +113,12 @@ class _IntroScreenState extends State<IntroScreen> {
           iconColor: MyPuttColors.white,
           backgroundColor: MyPuttColors.darkGray,
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => const LoginScreen()));
+            _mixpanel.track('Intro Screen Continue To App Button Pressed');
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const LoginScreen(),
+              ),
+            );
           },
         ),
         SizedBox(height: addBottomPadding ? 64 : 24),

@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/repositories/presets_repository.dart';
@@ -7,6 +9,7 @@ import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/enums.dart';
+import 'package:myputt/utils/panel_helpers.dart';
 
 import 'components/preset_list_item.dart';
 
@@ -20,20 +23,24 @@ class SelectPresetDialog extends StatefulWidget {
 }
 
 class _SelectPresetDialogState extends State<SelectPresetDialog> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
+
   final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
   ChallengePreset _selectedPreset = ChallengePreset.none;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            width: double.infinity,
-            child: _mainBody(context)));
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        width: double.infinity,
+        child: _mainBody(context),
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {
@@ -60,17 +67,23 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             fit: FlexFit.loose,
             child: ListView(
               children: _presetsRepository.presetStructures.entries
-                  .map((entry) => PresetListItem(
-                        onTap: (ChallengePreset preset) {
-                          setState(() {
-                            _selectedPreset = preset;
-                          });
-                        },
-                        presetType: entry.key,
-                        presetInstructions:
-                            _presetsRepository.presetInstructions[entry.key]!,
-                        selected: _selectedPreset == entry.key,
-                      ))
+                  .map(
+                    (entry) => PresetListItem(
+                      onTap: (ChallengePreset preset) {
+                        _mixpanel.track('Select Preset Dialog Preset Pressed',
+                            properties: {
+                              'Preset Name': describeEnum(preset),
+                            });
+                        setState(() {
+                          _selectedPreset = preset;
+                        });
+                      },
+                      presetType: entry.key,
+                      presetInstructions:
+                          _presetsRepository.presetInstructions[entry.key]!,
+                      selected: _selectedPreset == entry.key,
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -85,22 +98,17 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             borderColor: MyPuttColors.blue,
             onPressed: () {
               Vibrate.feedback(FeedbackType.light);
+              _mixpanel.track('Select Preset Dialog Share Button Pressed');
               if (_selectedPreset != ChallengePreset.none) {
-                showBarModalBottomSheet(
-                    topControl: Container(),
-                    bounce: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0)),
+                displayBottomSheet(
+                    context,
+                    ShareSheet(
+                      preset: _selectedPreset,
+                      onComplete: () {
+                        Navigator.pop(context);
+                      },
                     ),
-                    context: context,
-                    builder: (context) => ShareSheet(
-                          preset: _selectedPreset,
-                          onComplete: () {
-                            Navigator.pop(context);
-                          },
-                        )).then((_) => Navigator.pop(context));
+                    onDismiss: () => Navigator.pop(context));
               }
             },
           ),

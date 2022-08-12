@@ -3,7 +3,7 @@ part of 'sessions_cubit.dart';
 @immutable
 abstract class SessionsState {
   const SessionsState({required this.sessions});
-  final List sessions;
+  final List<PuttingSession> sessions;
 
   void addSession(session) {
     sessions.add(session);

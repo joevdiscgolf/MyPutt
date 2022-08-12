@@ -125,9 +125,7 @@ class _CalendarViewState extends State<CalendarView>
 
   Widget _sessionsLists(BuildContext context, List<PuttingSession> sessions) {
     return sessions.isEmpty
-        ? const Center(
-            child: Text('No sessions'),
-          )
+        ? const Center(child: Text('No sessions'))
         : ListView(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             children: sessions

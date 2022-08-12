@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.dart';
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
@@ -24,6 +26,14 @@ class SessionSummaryScreen extends StatefulWidget {
 }
 
 class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
+
+  @override
+  void initState() {
+    super.initState();
+    _mixpanel.track('Session Summary Screen Impression');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
@@ -53,6 +54,9 @@ class ChallengeListRow extends StatelessWidget {
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
         if (challenge.status == ChallengeStatus.active) {
+          locator
+              .get<Mixpanel>()
+              .track('Challenges Screen Active Challenge Pressed');
           BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context)
               .push(MaterialPageRoute(
@@ -60,6 +64,9 @@ class ChallengeListRow extends StatelessWidget {
                       ChallengeRecordScreen(challenge: challenge)))
               .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
         } else if (challenge.status == ChallengeStatus.complete) {
+          locator
+              .get<Mixpanel>()
+              .track('Challenges Screen Completed Challenge Pressed');
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -174,6 +181,7 @@ class ChallengeListRow extends StatelessWidget {
             const SizedBox(height: 12),
             MyPuttButton(
               onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
                 if (accept != null) {
                   accept!();
                 }
@@ -187,6 +195,7 @@ class ChallengeListRow extends StatelessWidget {
             const SizedBox(height: 12),
             MyPuttButton(
               onPressed: () {
+                Vibrate.feedback(FeedbackType.light);
                 if (decline != null) {
                   decline!();
                 }

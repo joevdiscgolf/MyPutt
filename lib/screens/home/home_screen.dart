@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/home_app_bar.dart';
 import 'package:myputt/screens/home/components/stats_view/stats_view.dart';
 import 'package:myputt/utils/colors.dart';
@@ -18,17 +20,29 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   PerformanceViewMode _performanceViewMode = PerformanceViewMode.chart;
   late final TabController _calendarChartTabController;
 
   @override
   void initState() {
-    _calendarChartTabController = TabController(length: 2, vsync: this);
-    _calendarChartTabController.addListener(() => setState(() =>
-        _performanceViewMode = _calendarChartTabController.index == 0
-            ? PerformanceViewMode.chart
-            : PerformanceViewMode.calendar));
     super.initState();
+    _mixpanel.track('Home Screen Impression');
+    _calendarChartTabController = TabController(length: 2, vsync: this);
+    _calendarChartTabController.addListener(
+      () {
+        if (_calendarChartTabController.index == 0) {
+          _mixpanel.track('Home Screen Performance Chart Tab Pressed');
+        } else {
+          _mixpanel.track('Home Screen Performance Calendar Tab Pressed');
+        }
+        setState(
+          () => _performanceViewMode = _calendarChartTabController.index == 0
+              ? PerformanceViewMode.chart
+              : PerformanceViewMode.calendar,
+        );
+      },
+    );
   }
 
   @override
@@ -40,21 +54,22 @@ class HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const HomeAppBar(),
-        body: Column(
-          children: [
-            _calendarChartTabBar(context),
-            Expanded(
-              child: TabBarView(
-                controller: _calendarChartTabController,
-                children: const [
-                  StatsView(),
-                  CalendarView(),
-                ],
-              ),
-            )
-          ],
-        ));
+      appBar: const HomeAppBar(),
+      body: Column(
+        children: [
+          _calendarChartTabBar(context),
+          Expanded(
+            child: TabBarView(
+              controller: _calendarChartTabController,
+              children: const [
+                StatsView(),
+                CalendarView(),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget _calendarChartTabBar(BuildContext context) {

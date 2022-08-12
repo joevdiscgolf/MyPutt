@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/spinner_button.dart';
 import 'package:myputt/locator.dart';
@@ -21,6 +22,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
+
   final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -33,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    _mixpanel.track('Login Screen Impression');
   }
 
   @override
@@ -99,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 MyPuttButton(
                   title: 'Sign up',
                   onPressed: () {
+                    _mixpanel.track('Login Screen Sign Up Button Pressed');
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -114,6 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 MyPuttButton(
                   title: 'Reset password',
                   onPressed: () {
+                    _mixpanel
+                        .track('Login Screen Reset Password Button Pressed');
                     showDialog(
                       context: context,
                       builder: (dialogContext) => const ResetPasswordDialog(),
@@ -266,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
       iconSize: 20,
       height: 48,
       width: 260,
-      onPressed: _loginPressed,
+      onPressed: _signInPressed,
     );
   }
 
@@ -277,7 +284,8 @@ class _LoginScreenState extends State<LoginScreen> {
         _email!.isEmpty;
   }
 
-  void _loginPressed() async {
+  void _signInPressed() async {
+    _mixpanel.track('Login Screen Sign In Button Pressed');
     if (_email == null || _password == null) {
       setState(() {
         _errorText = 'Missing username or password';

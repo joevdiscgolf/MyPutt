@@ -15,7 +15,8 @@ class SessionsCubit extends Cubit<SessionsState> {
   final UserRepository _userRepository = locator.get<UserRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
-  SessionsCubit() : super(const SessionLoadingState(sessions: [])) {
+  SessionsCubit()
+      : super(const SessionLoadingState(sessions: <PuttingSession>[])) {
     reload();
   }
 

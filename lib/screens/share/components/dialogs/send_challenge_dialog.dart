@@ -2,9 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/utils/colors.dart';
@@ -30,20 +32,24 @@ class SendChallengeDialog extends StatefulWidget {
 }
 
 class _SendChallengeDialogState extends State<SendChallengeDialog> {
+  final Mixpanel _mixpanel = locator.get<Mixpanel>();
+
   String? _dialogErrorText;
   LoadingState _loadingState = LoadingState.static;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-            padding: const EdgeInsets.all(24),
-            width: double.infinity,
-            child: _mainBody(context)));
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        width: double.infinity,
+        child: _mainBody(context),
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {
@@ -121,6 +127,13 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
   }
 
   void _sharePressed() async {
+    _mixpanel.track(
+      'Send Challenge Dialog Send Button Pressed',
+      properties: {
+        'Recipient Uid': widget.recipientUser.uid,
+        'Recipient Username': widget.recipientUser.username,
+      },
+    );
     setState(() {
       _loadingState = LoadingState.loading;
     });

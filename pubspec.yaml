@@ -72,6 +72,7 @@ dependencies:
   rename: ^2.0.1
   cloud_functions: ^3.2.13
   image_picker: ^0.8.5+3
+  mixpanel_flutter: ^1.6.0
 
 dev_dependencies:
   flutter_test:
