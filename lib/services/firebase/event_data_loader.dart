@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 
@@ -13,6 +14,16 @@ class EventDataLoader {
         return null;
       }
       return EventPlayerData.fromJson(snapshot.data()!);
-    }).catchError((error) => null);
+    }).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[EventDataLoader][loadEventPlayerData] firestore read exception',
+        );
+        return null;
+      },
+    );
   }
 }

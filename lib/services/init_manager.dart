@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/constants.dart';
@@ -56,6 +57,11 @@ class InitManager {
       log(e.toString());
       log(trace.toString());
       controller.add(AppScreenState.connectionError);
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[InitManager][init] fetchRepositoryData timeout',
+      );
       return;
     }
     controller.add(AppScreenState.loggedIn);

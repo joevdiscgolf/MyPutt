@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/username_doc.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/utils/constants.dart';
@@ -20,6 +21,11 @@ class FirebaseAuthService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FirebaseAuthService][getUser] exception',
+      );
       return null;
     }
   }
@@ -38,6 +44,11 @@ class FirebaseAuthService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FirebaseAuthService][getAuthToken] exception',
+      );
       return null;
     }
   }
@@ -96,6 +107,11 @@ class FirebaseAuthService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FirebaseAuthSErvice][usernameIsAvailable] exception',
+      );
       return false;
     }
   }
@@ -127,8 +143,14 @@ class FirebaseAuthService {
     batch.set(userDoc, newUser.toJson());
     batch.set(
         usernameDoc, UsernameDoc(username: username, uid: user.uid).toJson());
-    await batch.commit().catchError((e) {
+    await batch.commit().catchError((e, trace) {
       log(e);
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FirebaseAuthService][setUpNewUser] firestore batch commit exception',
+      );
       return null;
     });
     return newUser;
@@ -151,8 +173,13 @@ class FirebaseAuthService {
         .collection('Users')
         .doc(user.uid)
         .update(userData)
-        .catchError((e) {
+        .catchError((e, trace) {
       log(e);
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FirebaseAuthService][saveUserInfo] firestore exception',
+      );
     });
   }
 
@@ -166,8 +193,13 @@ class FirebaseAuthService {
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .get()
-          .catchError((e) {
+          .catchError((e, trace) {
         log(e.toString());
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason: '[FirebaseAuthService][userIsSetUp] firestore read exception',
+        );
       }).timeout(standardTimeout);
       if (userDoc?.data() == null) {
         return null;
@@ -179,6 +211,11 @@ class FirebaseAuthService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[AuthService][userIsSetup] get User timeout',
+      );
       return null;
     }
   }
@@ -187,8 +224,14 @@ class FirebaseAuthService {
     return auth
         .sendPasswordResetEmail(email: email)
         .then((response) => true)
-        .catchError((e) {
+        .catchError((e, trace) {
       log(e.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FirebaseAuthService][sendPasswordReset] sendPasswordResetEmail() exception',
+      );
       return false;
     });
   }
@@ -199,6 +242,11 @@ class FirebaseAuthService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FirebaseAuthSErvice][logOut] exception',
+      );
     }
   }
 

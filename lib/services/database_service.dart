@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -104,6 +105,11 @@ class DatabaseService {
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[DatabaseService][getAllChallenges] timeout',
+      );
       return null;
     }
   }

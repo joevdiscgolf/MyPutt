@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -37,6 +38,12 @@ class MyPuttAuthService {
       log(trace.toString());
       errorMessage = 'Failed to connect';
       signUpSuccess = false;
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[MyPuttAuthService][attemptSignUpWithEmail] authService.signUpWithEmail timeout',
+      );
     }
 
     if (!signUpSuccess || _authService.getCurrentUserId() == null) {
@@ -59,6 +66,12 @@ class MyPuttAuthService {
       log(e.toString());
       log(trace.toString());
       errorMessage = 'Failed to connect';
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[MyPuttAuthService][attemptSignInWithEmail] authService.signInWithEmail timeout',
+      );
       return false;
     }
 
@@ -88,6 +101,12 @@ class MyPuttAuthService {
     } catch (e, trace) {
       log('[myputt_auth_service][attemptSigninWithEmail] Failed to fetch repository data. Error: $e');
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[MyPuttAuthService][attemptSignInWithEmail] fetchRepositoryData timeout',
+      );
     }
     controller.add(AppScreenState.loggedIn);
     currentAppScreenState = AppScreenState.loggedIn;

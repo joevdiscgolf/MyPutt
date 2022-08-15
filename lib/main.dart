@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/controllers/screen_controller.dart';
@@ -30,14 +31,19 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   if (kDebugMode) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-    // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  } else {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   }
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<InitManager>().init();
   await locator.get<BetaAccessService>().loadFeatureAccess();
+  FirebaseCrashlytics.instance.crash();
+  // throw Exception();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());

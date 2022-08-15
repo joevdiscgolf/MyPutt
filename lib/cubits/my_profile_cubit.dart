@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:meta/meta.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
@@ -38,10 +39,16 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     try {
       playerInfo = await _webScraperService
           .getPDGAData(_userRepository.currentUser?.pdgaNum)
-          .timeout(shortTimeout);
+          .timeout(standardTimeout);
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[MyProfileCubit][reload] webScraperService.getPDGAData() timeout',
+      );
     }
     if (playerInfo?.rating != null &&
         playerInfo?.rating != _userRepository.currentUser!.pdgaRating) {

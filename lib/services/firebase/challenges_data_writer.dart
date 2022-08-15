@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
@@ -19,7 +20,15 @@ class FBChallengesDataWriter {
     batch.set(
         challengerRef, storageChallenge.toJson(), SetOptions(merge: true));
 
-    return batch.commit().then((value) => true).catchError((e) => false);
+    return batch.commit().then((value) => true).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FBChallengesDataWriter][setPuttingChallenge] firestore write exception',
+      );
+      return false;
+    });
   }
 
   Future<bool> sendChallengeToUser(String recipientUid, MyPuttUser currentUser,
@@ -29,7 +38,15 @@ class FBChallengesDataWriter {
     return challengeRef
         .set(storageChallenge.toJson())
         .then((value) => true)
-        .catchError((error) => false);
+        .catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FBChallengesDataWriter][sendChallengeToUser] firestore write exception',
+      );
+      return false;
+    });
   }
 
   Future<bool> uploadUnclaimedChallenge(
@@ -39,7 +56,15 @@ class FBChallengesDataWriter {
         .doc(storageChallenge.id)
         .set(storageChallenge.toJson())
         .then((value) => true)
-        .catchError((e) => false);
+        .catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FBChallengesDataWriter][uploadUnclaimedChallenge] firestore write exception',
+      );
+      return false;
+    });
   }
 
   Future<bool> deleteUnclaimedChallenge(String challengeId) async {
@@ -47,7 +72,17 @@ class FBChallengesDataWriter {
         .doc('$unclaimedChallengesCollection/$challengeId')
         .delete()
         .then((value) => true)
-        .catchError((error) => false);
+        .catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataWriter][deleteUnclaimedChallenge] firestore delete exception',
+        );
+        return false;
+      },
+    );
   }
 
   Future<bool> deleteChallenge(
@@ -57,6 +92,16 @@ class FBChallengesDataWriter {
             '$challengesCollection/$currentUid/$challengesCollection/${challengeToDelete.id}')
         .delete()
         .then((value) => true)
-        .catchError((error) => false);
+        .catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataWriter][deleteChallenge] firestore delete exception',
+        );
+        return false;
+      },
+    );
   }
 }

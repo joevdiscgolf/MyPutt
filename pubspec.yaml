@@ -73,6 +73,7 @@ dependencies:
   cloud_functions: ^3.2.13
   image_picker: ^0.8.5+3
   mixpanel_flutter: ^1.6.0
+  firebase_crashlytics: ^2.8.7
 
 dev_dependencies:
   flutter_test:

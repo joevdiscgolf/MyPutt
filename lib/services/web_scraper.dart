@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:web_scraper/web_scraper.dart';
 
@@ -5,9 +6,16 @@ class WebScraperService {
   Future<PDGAPlayerInfo?> getPDGAData(int? pdgaNumber) async {
     if (pdgaNumber != null) {
       final webScraper = WebScraper('https://www.pdga.com/');
-      if (await webScraper
-          .loadWebPage('player/$pdgaNumber')
-          .catchError((e) {})) {
+      if (await webScraper.loadWebPage('player/$pdgaNumber').catchError(
+        (e, trace) {
+          FirebaseCrashlytics.instance.recordError(
+            e,
+            trace,
+            reason:
+                '[WebScraperService][getPDGAData] webScraper.loadWebPage() exception',
+          );
+        },
+      )) {
         List<Map<String, dynamic>> nameHTML = webScraper
             .getElement('div.inside > div.panel-pane > div.pane-content', []);
         List<Map<String, dynamic>> locationHTML =
