@@ -34,16 +34,13 @@ void main() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   if (kDebugMode) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  } else {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   }
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<InitManager>().init();
   await locator.get<BetaAccessService>().loadFeatureAccess();
-  FirebaseCrashlytics.instance.crash();
-  // throw Exception();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
@@ -63,7 +60,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
         BlocProvider(create: (_) => SearchUserCubit()),
-        BlocProvider(create: (_) => EventsCubit())
+        BlocProvider(create: (_) => EventsCubit()),
       ],
       child: MaterialApp(
         builder: (context, child) {
