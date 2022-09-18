@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -308,6 +309,12 @@ class _LoginScreenState extends State<LoginScreen> {
         () => _errorText = _signinService.errorMessage.isNotEmpty
             ? _signinService.errorMessage
             : 'Something went wrong. Please try again',
+      );
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[LoginScreen][_signinPressed] signinService.attemptSignInWithEmail() exception',
       );
     }
 

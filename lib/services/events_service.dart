@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
@@ -19,6 +20,11 @@ class EventsService {
     }).catchError((e, trace) async {
       log(e.toString());
       log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][getEvent] exception',
+      );
       return GetEventResponse(inEvent: false);
     });
   }
@@ -34,6 +40,11 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return JoinEventResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][joinEventWithCode] exception',
+      );
       return JoinEventResponse(success: false);
     });
   }
@@ -48,6 +59,11 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return ExitEventResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][exitEvent] exception',
+      );
       return ExitEventResponse(success: false);
     });
   }
@@ -62,6 +78,11 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return GetEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][searchEvents] exception',
+      );
       return GetEventsResponse(events: []);
     });
   }
@@ -73,6 +94,11 @@ class EventsService {
     return callable().then((HttpsCallableResult<dynamic> response) {
       return GetEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][getMyEvents] exception',
+      );
       return GetEventsResponse(events: []);
     });
   }
@@ -90,6 +116,11 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return UpdatePlayerSetsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][updatePlayerSets] exception',
+      );
       return UpdatePlayerSetsResponse(success: false);
     });
   }
@@ -102,6 +133,11 @@ class EventsService {
         .then((HttpsCallableResult<dynamic> response) {
       return CreateEventResponse.fromJson(response.data);
     }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][createEvent] exception',
+      );
       return CreateEventResponse();
     });
   }

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
@@ -31,8 +32,14 @@ class FBUserDataLoader {
         .collection(usersCollection)
         .where('keywords', arrayContains: username)
         .get()
-        .catchError((e) {
+        .catchError((e, trace) {
       log(e);
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FBUserDataLoader][getUsersByUsername] firestore read exception',
+      );
     });
 
     final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {

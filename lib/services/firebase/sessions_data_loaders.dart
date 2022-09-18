@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/models/data/sessions/sessions_document.dart';
@@ -23,12 +24,18 @@ class FBSessionsDataLoader {
     final completedSessionsReference = firestore
         .collection('$sessionsCollection/$uid/$completedSessionsCollection');
 
-    QuerySnapshot querySnapshot = await completedSessionsReference
-        .orderBy('timeStamp')
-        .get()
-        .catchError((e) {
-      log(e);
-    });
+    QuerySnapshot querySnapshot =
+        await completedSessionsReference.orderBy('timeStamp').get().catchError(
+      (e, trace) {
+        log(e);
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBSessionsDataLoader][getCompletedSEssions] firestore read exception',
+        );
+      },
+    );
 
     return querySnapshot.docs
         .map((doc) =>

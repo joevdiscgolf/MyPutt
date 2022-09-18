@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 
@@ -19,8 +20,14 @@ class EventDataWriter {
     return challengeRef
         .set({'sets': jsonSets}, SetOptions(merge: true))
         .then((value) => true)
-        .catchError((e) {
+        .catchError((e, trace) {
           log(e);
+          FirebaseCrashlytics.instance.recordError(
+            e,
+            trace,
+            reason:
+                '[EventDataWriter][updatePlayerSets] firestore write exception',
+          );
           return false;
         });
   }

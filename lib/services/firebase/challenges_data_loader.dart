@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
@@ -17,10 +17,14 @@ class FBChallengesDataLoader {
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
         .where('status', isEqualTo: status)
         .get()
-        .catchError((error) {
-      if (kDebugMode) {
-        print('[getPuttingChallenges] $error, status: $status');
-      }
+        .catchError((e, trace) {
+      log('[getPuttingChallenges] $e, status: $status');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[FBChallengesDataLoader][getPuttingChallengesByStatus] firestore read exception',
+      );
     });
 
     return querySnapshot.docs.map((doc) {
@@ -36,9 +40,17 @@ class FBChallengesDataLoader {
         .collection(
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
         .get()
-        .catchError((error) {
-      log('[getPuttingChallenges] $error');
-    });
+        .catchError(
+      (e, trace) {
+        log('[FBChallengesDataLoader][getAllChallenges] $e');
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataLoader][getAllChallenges] firestore read exception',
+        );
+      },
+    );
 
     return querySnapshot.docs.map((doc) {
       return PuttingChallenge.fromStorageChallenge(
