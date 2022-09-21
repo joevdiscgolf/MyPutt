@@ -114,6 +114,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
 
   Widget _basicInfoPanel(BuildContext context) {
+    final double frisbeeAvatarSize = MediaQuery.of(context).size.width / 4;
     return BlocBuilder<MyProfileCubit, MyProfileState>(
         builder: (context, state) {
       if (state is MyProfileLoaded) {
@@ -154,47 +155,43 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               ),
                             );
                           },
-                          child: Builder(builder: (context) {
-                            final double size =
-                                MediaQuery.of(context).size.width / 4;
-                            return SizedBox(
-                              height: size + 20,
-                              width: size + 20,
-                              child: Center(
-                                child: FrisbeeCircleIcon(
-                                  frisbeeAvatar: state.myUser.frisbeeAvatar,
-                                  size: size,
-                                  iconSize: size * 0.8,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: frisbeeAvatarSize + 20,
+                                width: frisbeeAvatarSize + 20,
+                                child: Center(
+                                  child: FrisbeeCircleIcon(
+                                    frisbeeAvatar: state.myUser.frisbeeAvatar,
+                                    size: frisbeeAvatarSize,
+                                    iconSize: frisbeeAvatarSize * 0.8,
+                                  ),
                                 ),
                               ),
-                            );
-                          }),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FlutterRemix.pencil_fill,
+                                    color: MyPuttColors.gray[400],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Edit',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        ?.copyWith(
+                                            color: MyPuttColors.darkGray,
+                                            fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FlutterRemix.pencil_fill,
-                              color: MyPuttColors.gray[400],
-                              size: 20,
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              'Edit',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline6
-                                  ?.copyWith(
-                                      color: MyPuttColors.darkGray,
-                                      fontSize: 16),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 12),
                         AutoSizeText(
                           state.myUser.displayName,
                           style: Theme.of(context)
