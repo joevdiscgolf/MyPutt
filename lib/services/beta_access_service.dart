@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 
 import 'firebase_auth_service.dart';
 import 'firebase/utils/fb_constants.dart';
@@ -32,15 +33,22 @@ class BetaAccessService {
       needsReload = true;
       return;
     }
-    needsReload = false;
-    _isAdmin = userDoc['isAdmin'] ?? false;
-    _trebuchets = userDoc['trebuchets'] ?? [];
+    try {
+      final MyPuttUser user = MyPuttUser.fromJson(userDoc);
+      needsReload = false;
+      _isAdmin = user.isAdmin ?? false;
+      _trebuchets = user.trebuchets ?? [];
+    } catch (e) {
+      needsReload = true;
+      return;
+    }
   }
 
   bool hasFeatureAccess({String? featureName}) {
     if (_isAdmin == true) {
       return true;
-    } else if (featureName != null) {
+    }
+    if (featureName != null) {
       return _trebuchets.contains(featureName);
     }
     return false;
