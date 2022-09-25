@@ -92,8 +92,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
               DetailsTextField(
                 iconData: FlutterRemix.user_line,
                 hint: 'Display name',
-                enabled: true,
-                // _buttonState != ButtonState.loading,
+                enabled: _buttonState != ButtonState.loading,
                 onChanged: (String displayName) =>
                     setState(() => _displayName = displayName),
               ),
