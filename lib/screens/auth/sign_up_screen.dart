@@ -123,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         CustomField(
           controller: _passwordController,
-          hint: 'Password (>= 8 characters)',
+          hint: 'Password',
           iconData: FlutterRemix.lock_line,
           onInput: (String text) => setState(() {
             _password = text;
