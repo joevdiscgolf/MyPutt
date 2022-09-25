@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
@@ -52,59 +53,59 @@ class _RecordScreenState extends State<RecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(
-            color: MyPuttColors.darkGray,
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          shadowColor: Colors.transparent,
-          actions: [
-            Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: MyPuttButton(
-                backgroundColor: Colors.transparent,
-                textColor: MyPuttColors.darkGray,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (dialogContext) => ConfirmDialog(
-                            title: 'Finish session',
-                            icon: const ShadowIcon(
-                              icon: Icon(
-                                FlutterRemix.medal_2_fill,
-                                size: 80,
-                                color: MyPuttColors.black,
-                              ),
+      backgroundColor: MyPuttColors.white,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: MyPuttColors.darkGray),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: const AppBarBackButton(),
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: MyPuttButton(
+              backgroundColor: Colors.transparent,
+              textColor: MyPuttColors.darkGray,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (dialogContext) => ConfirmDialog(
+                          title: 'Finish session',
+                          icon: const ShadowIcon(
+                            icon: Icon(
+                              FlutterRemix.medal_2_fill,
+                              size: 80,
+                              color: MyPuttColors.black,
                             ),
-                            buttonlabel: 'Finish',
-                            buttonColor: MyPuttColors.blue,
-                            actionPressed: () {
-                              _mixpanel.track(
-                                'Record Screen Finish Session Confirmed',
-                              );
-                              BlocProvider.of<SessionsCubit>(context)
-                                  .completeSession();
-                              setState(() {
-                                sessionInProgress = false;
-                              });
-                            },
-                          )).then((value) => dialogCallBack());
-                },
-                title: 'Finish',
-                iconColor: MyPuttColors.darkGray,
-              ),
+                          ),
+                          buttonlabel: 'Finish',
+                          buttonColor: MyPuttColors.blue,
+                          actionPressed: () {
+                            _mixpanel.track(
+                              'Record Screen Finish Session Confirmed',
+                            );
+                            BlocProvider.of<SessionsCubit>(context)
+                                .completeSession();
+                            setState(() {
+                              sessionInProgress = false;
+                            });
+                          },
+                        )).then((value) => dialogCallBack());
+              },
+              title: 'Finish',
+              iconColor: MyPuttColors.darkGray,
             ),
-          ],
-          title: Text('Record',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
-        ),
-        body: _mainBody(context));
+          ),
+        ],
+        title: Text('Record',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
+      ),
+      body: _mainBody(context),
+    );
   }
 
   Widget _mainBody(BuildContext context) {

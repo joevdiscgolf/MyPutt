@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/charts/empty_state_chart/empty_chart_points.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EmptyStateChart extends StatelessWidget {
-  const EmptyStateChart({Key? key}) : super(key: key);
+  const EmptyStateChart({Key? key, required this.hasSessions})
+      : super(key: key);
+
+  final bool hasSessions;
 
   @override
   Widget build(BuildContext context) {
@@ -14,25 +20,51 @@ class EmptyStateChart extends StatelessWidget {
       height: 250,
       child: Stack(
         alignment: Alignment.center,
-        children: [
-          LineChart(mainData(context)),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(FlutterRemix.ghost_line, size: 40),
-              Text(
-                'No data',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
-                      color: MyPuttColors.darkGray,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
-          ),
-        ],
+        children: [LineChart(mainData(context)), _getCenter(context)],
       ),
     );
+  }
+
+  Widget _getCenter(BuildContext context) {
+    if (hasSessions) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(FlutterRemix.ghost_line, size: 40),
+          const SizedBox(height: 8),
+          Text(
+            'No data',
+            style: Theme.of(context).textTheme.headline6?.copyWith(
+                  color: MyPuttColors.darkGray,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Let's get you started!",
+            style: Theme.of(context).textTheme.headline6?.copyWith(
+                  color: MyPuttColors.darkGray,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 16),
+          MyPuttButton(
+            title: 'Start putting',
+            onPressed: () {
+              locator.get<NavigationService>().setMainWrapperTab(1);
+            },
+            backgroundColor: MyPuttColors.gray[800]!,
+          ),
+        ],
+      );
+    }
   }
 
   LineChartData mainData(BuildContext context) {

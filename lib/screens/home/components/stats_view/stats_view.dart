@@ -93,20 +93,21 @@ class _StatsViewState extends State<StatsView> with TickerProviderStateMixin {
             child: Column(
               children: [
                 Container(
-                    padding: const EdgeInsets.only(top: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        end: const Alignment(0.9, 0),
-                        transform: const GradientRotation(3 * math.pi / 2),
-                        colors: [
-                          MyPuttColors.blue.withOpacity(0.8),
-                          MyPuttColors.white,
-                        ],
-                      ),
+                  padding: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      end: const Alignment(0.9, 0),
+                      transform: const GradientRotation(3 * math.pi / 2),
+                      colors: [
+                        MyPuttColors.blue.withOpacity(0.8),
+                        MyPuttColors.white,
+                      ],
                     ),
-                    child: PerformanceChartPanel(
-                      rangeTabController: _rangeTabController,
-                    )),
+                  ),
+                  child: PerformanceChartPanel(
+                    rangeTabController: _rangeTabController,
+                  ),
+                ),
                 _circlesTabBar(context)
               ],
             ),
