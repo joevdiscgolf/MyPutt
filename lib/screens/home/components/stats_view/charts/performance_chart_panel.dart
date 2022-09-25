@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:myputt/components/charts/empty_state_chart/empty_state_chart.dart';
+import 'package:myputt/components/empty_state/empty_state_chart/empty_state_chart.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
@@ -51,9 +51,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       BlocProvider.of<HomeScreenCubit>(context).reload();
     });
     _totalSets = _statsService.getTotalPuttingSets(
-        _sessionRepository.allSessions,
-        _challengesRepository.completedChallenges,
-        _selectedDistance);
+      _sessionRepository.allSessions,
+      _challengesRepository.completedChallenges,
+      _selectedDistance,
+    );
     _numSets = _totalSets;
     for (var distance = 10; distance <= 30; distance += 5) {
       distancesRow.add(distance);
@@ -90,7 +91,9 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
           children: [
             _sessionRangeTabBar(context),
             _points.isEmpty
-                ? const EmptyStateChart()
+                ? EmptyStateChart(
+                    hasSessions: _sessionRepository.allSessions.isNotEmpty,
+                  )
                 : PerformanceChart(data: smoothData),
             Row(
               children: distancesRow
@@ -161,9 +164,10 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         setState(() {
           _selectedDistance = distance;
           _totalSets = _statsService.getTotalPuttingSets(
-              _sessionRepository.allSessions,
-              _challengesRepository.completedChallenges,
-              distance);
+            _sessionRepository.allSessions,
+            _challengesRepository.completedChallenges,
+            distance,
+          );
           _numSets = ((1 - _sliderValue) * _totalSets).toInt();
         });
       },

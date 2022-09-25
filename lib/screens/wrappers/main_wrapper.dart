@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -12,6 +14,7 @@ import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/services/beta_access_service.dart';
+import 'package:myputt/services/navigation_service.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -23,14 +26,29 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
+  final NavigationService _navigationService = locator.get<NavigationService>();
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
   int _currentIndex = 0;
 
   late final List<Widget> _screens;
   late bool _showEventsTab;
 
+  late final StreamSubscription<int> _tabStreamSubscription;
+
+  @override
+  void dispose() {
+    _tabStreamSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
+    _tabStreamSubscription =
+        _navigationService.mainWrapperTabStream.listen((int newIndex) {
+      setState(() {
+        _currentIndex = newIndex;
+      });
+    });
     _showEventsTab = locator
         .get<BetaAccessService>()
         .hasFeatureAccess(featureName: 'events');

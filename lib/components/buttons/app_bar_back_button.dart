@@ -13,7 +13,6 @@ class AppBarBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
       child: Container(
-        margin: const EdgeInsets.only(left: 16),
         height: 32,
         width: 32,
         alignment: Alignment.center,

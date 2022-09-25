@@ -24,7 +24,7 @@ class MyPuttButton extends StatelessWidget {
     this.iconColor = Colors.white,
     this.textColor = Colors.white,
     this.textSize = 16,
-    this.padding = const EdgeInsets.all(8),
+    this.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     this.shadowColor,
     this.borderColor,
     this.borderRadius = 24,
