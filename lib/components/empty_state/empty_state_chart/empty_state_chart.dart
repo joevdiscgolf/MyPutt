@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/charts/empty_state_chart/empty_chart_points.dart';
+import 'package:myputt/components/empty_state/empty_state_chart/empty_chart_points.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
