@@ -200,3 +200,10 @@ const List<Division> amateurDivisions = [
   Division.fa3,
   Division.junior,
 ];
+
+const Map<ChallengeCategory, String> challengeCategoryToName =
+    <ChallengeCategory, String>{
+  ChallengeCategory.complete: 'completed',
+  ChallengeCategory.pending: 'pending',
+  ChallengeCategory.active: 'active',
+};

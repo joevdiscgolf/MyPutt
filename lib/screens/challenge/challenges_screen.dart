@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -75,7 +76,14 @@ class _ChallengesState extends State<ChallengesScreen>
       body: NestedScrollView(
         body: _mainBody(context),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [SliverToBoxAdapter(child: _tabBar(context))];
+          return [
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: SliverAppBarDelegate(
+                _tabBar(context),
+              ),
+            )
+          ];
         },
       ),
     );
@@ -118,36 +126,39 @@ class _ChallengesState extends State<ChallengesScreen>
     });
   }
 
-  Widget _tabBar(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(color: MyPuttColors.white, boxShadow: []),
-      child: TabBar(
-        controller: _tabController,
-        indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(color: MyPuttColors.blue),
+  PreferredSizeWidget _tabBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(80),
+      child: Container(
+        decoration: const BoxDecoration(color: MyPuttColors.white),
+        child: TabBar(
+          controller: _tabController,
+          indicator: const UnderlineTabIndicator(
+            borderSide: BorderSide(color: MyPuttColors.blue),
+          ),
+          labelColor: MyPuttColors.blue,
+          unselectedLabelColor: Colors.black,
+          tabs: const [
+            ChallengeCategoryTab(
+              showCounter: true,
+              challenges: [],
+              label: 'Active',
+              icon: Icon(FlutterRemix.play_mini_line, size: 15),
+            ),
+            ChallengeCategoryTab(
+              showCounter: true,
+              challenges: [],
+              label: 'Pending',
+              icon: Icon(FlutterRemix.repeat_line, size: 15),
+            ),
+            ChallengeCategoryTab(
+              showCounter: true,
+              challenges: [],
+              label: 'Completed',
+              icon: Icon(FlutterRemix.check_line, size: 15),
+            ),
+          ],
         ),
-        labelColor: MyPuttColors.blue,
-        unselectedLabelColor: Colors.black,
-        tabs: const [
-          ChallengeCategoryTab(
-            showCounter: true,
-            challenges: [],
-            label: 'Active',
-            icon: Icon(FlutterRemix.play_mini_line, size: 15),
-          ),
-          ChallengeCategoryTab(
-            showCounter: true,
-            challenges: [],
-            label: 'Pending',
-            icon: Icon(FlutterRemix.repeat_line, size: 15),
-          ),
-          ChallengeCategoryTab(
-            showCounter: true,
-            challenges: [],
-            label: 'Completed',
-            icon: Icon(FlutterRemix.check_line, size: 15),
-          ),
-        ],
       ),
     );
   }
