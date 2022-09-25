@@ -88,7 +88,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Please enter your email and password',
+          'Please enter your email and password.',
+          style: Theme.of(context)
+              .textTheme
+              .headline6
+              ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
+        ),
+        Text(
+          '\nYour password should be a least 8 characters.',
           style: Theme.of(context)
               .textTheme
               .headline6
@@ -116,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         CustomField(
           controller: _passwordController,
-          hint: 'Password',
+          hint: 'Password (>= 8 characters)',
           iconData: FlutterRemix.lock_line,
           onInput: (String text) => setState(() {
             _password = text;
