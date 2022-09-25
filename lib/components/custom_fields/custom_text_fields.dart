@@ -220,7 +220,7 @@ class DetailsTextField extends StatelessWidget {
     this.maxLines = 1,
     this.maxLength,
     this.onChanged,
-    this.textInputType = TextInputType.none,
+    this.textInputType,
   }) : super(key: key);
 
   final IconData iconData;
@@ -230,7 +230,7 @@ class DetailsTextField extends StatelessWidget {
   final int maxLines;
   final int? maxLength;
   final Function? onChanged;
-  final TextInputType textInputType;
+  final TextInputType? textInputType;
 
   @override
   Widget build(BuildContext context) {

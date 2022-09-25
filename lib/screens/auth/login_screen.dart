@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/spinner_button.dart';
 import 'package:myputt/locator.dart';
@@ -53,13 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(
-              FlutterRemix.arrow_left_s_line,
-              color: MyPuttColors.darkGray,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          leading: const AppBarBackButton(),
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),
