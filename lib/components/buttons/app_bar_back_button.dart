@@ -5,18 +5,18 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AppBarBackButton extends StatelessWidget {
-  const AppBarBackButton({Key? key}) : super(key: key);
+  const AppBarBackButton({Key? key, this.onPressed}) : super(key: key);
+
+  final Function? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Bounceable(
       child: Container(
+        margin: const EdgeInsets.only(left: 16),
         height: 32,
         width: 32,
-        padding: const EdgeInsets.only(right: 2),
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-            color: MyPuttColors.gray[50]!, shape: BoxShape.circle),
         child: const Center(
           child: Icon(
             FlutterRemix.arrow_left_s_line,
@@ -27,7 +27,11 @@ class AppBarBackButton extends StatelessWidget {
       ),
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
-        Navigator.of(context).pop();
+        if (onPressed != null) {
+          onPressed!();
+        } else {
+          Navigator.of(context).pop();
+        }
       },
     );
   }

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/locator.dart';
-
-import '../../components/custom_fields/custom_text_fields.dart';
 
 enum UsernameStatus { none, available, unavailable, checking }
 
@@ -53,16 +53,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
-          leading: IconButton(
-            color: Colors.transparent,
-            icon: const Icon(
-              FlutterRemix.arrow_left_s_line,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              _signinService.signOut();
-            },
-          ),
+          leading: AppBarBackButton(onPressed: () => _signinService.signOut()),
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 32, right: 32, bottom: 16),
