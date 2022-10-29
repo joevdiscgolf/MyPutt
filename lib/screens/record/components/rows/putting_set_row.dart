@@ -99,7 +99,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                     color: Colors.red,
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent,
+                    backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                   ),
                   onPressed: () {

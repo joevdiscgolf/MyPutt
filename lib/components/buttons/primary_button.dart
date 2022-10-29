@@ -37,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-      primary: gradientBackground?.isNotEmpty == true
+      backgroundColor: gradientBackground?.isNotEmpty == true
           ? Colors.transparent
           : backgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -45,7 +45,7 @@ class PrimaryButton extends StatelessWidget {
       enableFeedback: true,
       shadowColor: Colors.transparent,
       elevation: 0,
-      onPrimary: Colors.grey[100],
+      foregroundColor: Colors.grey[100],
     );
     final Widget text = Text(
       label,

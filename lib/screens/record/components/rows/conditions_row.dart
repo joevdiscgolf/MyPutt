@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
 import 'package:myputt/utils/colors.dart';
@@ -40,57 +38,51 @@ class _ConditionsRowState extends State<ConditionsRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Bounceable(
-      onTap: () {
-        Vibrate.feedback(FeedbackType.light);
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
-          BoxShadow(
-              offset: const Offset(0, 2),
-              blurRadius: 2,
-              color: MyPuttColors.gray[400]!)
-        ]),
-        child: Row(
-          children: [
-            CircularIconContainer(
-              icon: Icon(
-                widget.iconData,
-                color: MyPuttColors.blue,
-                size: 32,
-              ),
-              size: 60,
-              padding: 12,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
+        BoxShadow(
+            offset: const Offset(0, 2),
+            blurRadius: 2,
+            color: MyPuttColors.gray[400]!)
+      ]),
+      child: Row(
+        children: [
+          CircularIconContainer(
+            icon: Icon(
+              widget.iconData,
+              color: MyPuttColors.blue,
+              size: 32,
             ),
-            const SizedBox(
-              width: 16,
-            ),
-            Text(
-              widget.label,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
-            ),
-            const Spacer(),
-            MyPuttButton(
-              width: MediaQuery.of(context).size.width / 4,
-              height: 32,
-              title: getTitle(),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              onPressed: () {
-                if (_index < _conditionOptions.length - 1) {
-                  setState(() => _index++);
-                } else {
-                  setState(() => _index = 0);
-                }
-                widget.onPressed(_conditionOptions[_index]);
-              },
-            )
-          ],
-        ),
+            size: 60,
+            padding: 12,
+          ),
+          const SizedBox(width: 16),
+          Text(
+            widget.label,
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
+          ),
+          const Spacer(),
+          MyPuttButton(
+            width: MediaQuery.of(context).size.width / 4,
+            height: 40,
+            title: getTitle(),
+            textSize: 16,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            onPressed: () {
+              if (_index < _conditionOptions.length - 1) {
+                setState(() => _index++);
+              } else {
+                setState(() => _index = 0);
+              }
+              widget.onPressed(_conditionOptions[_index]);
+            },
+          )
+        ],
       ),
     );
   }
@@ -102,7 +94,7 @@ class _ConditionsRowState extends State<ConditionsRow> {
       case ConditionsType.weather:
         return weatherConditions;
       default:
-        return distanceOptions;
+        return kDistanceOptions;
     }
   }
 
@@ -113,7 +105,7 @@ class _ConditionsRowState extends State<ConditionsRow> {
       case ConditionsType.weather:
         return weatherConditionsEnumMap[_conditionOptions[_index]]!;
       default:
-        return '${distanceOptions[_index].toString()} ft';
+        return '${kDistanceOptions[_index].toString()} ft';
     }
   }
 }

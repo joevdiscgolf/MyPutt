@@ -26,7 +26,7 @@ class ChallengeStatus {
   static String complete = 'complete';
 }
 
-class Cutoffs {
+abstract class CircleCutoffs {
   static const int c1x = 11;
   static const int c2 = 33;
   static const int none = 0;
@@ -58,7 +58,7 @@ const Map<WeatherCondition, String> weatherConditionsEnumMap = {
   WeatherCondition.snowy: 'Snowy',
 };
 
-const List<int> distanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
+const List<int> kDistanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
 
 const Map<int, int> distanceToIndex = {
   10: 0,

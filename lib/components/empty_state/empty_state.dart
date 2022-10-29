@@ -66,8 +66,9 @@ class EmptyState extends StatelessWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(60)),
-                      primary: MyPuttColors.gray[100],
+                        borderRadius: BorderRadius.circular(60),
+                      ),
+                      backgroundColor: MyPuttColors.gray[100],
                       shadowColor: Colors.transparent),
                   onPressed: () => onRetry != null ? onRetry!() : {},
                   child: Container(
