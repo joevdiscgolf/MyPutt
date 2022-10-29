@@ -259,7 +259,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               _statsService.getPercentageWithCutoff(
                                   _sessionRepository.allSessions,
                                   _challengesRepository.completedChallenges,
-                                  Cutoffs.c1x);
+                                  CircleCutoffs.c1x);
                           return ShadowCircularIndicator(
                               decimal: c1XPercentage, size: 80);
                         }),
@@ -278,7 +278,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
-                                    Cutoffs.c2);
+                                    CircleCutoffs.c2);
                             return ShadowCircularIndicator(
                                 decimal: c2Percentage, size: 80);
                           }),
@@ -298,7 +298,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 _statsService.getPercentageWithCutoff(
                                     _sessionRepository.allSessions,
                                     _challengesRepository.completedChallenges,
-                                    Cutoffs.none);
+                                    CircleCutoffs.none);
                             return ShadowCircularIndicator(
                                 decimal: c2Percentage, size: 80);
                           }),

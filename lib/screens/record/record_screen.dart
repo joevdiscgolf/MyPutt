@@ -10,14 +10,12 @@ import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/screens/record/components/rows/distance_selection_row.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/enums.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
-import 'components/rows/conditions_row.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({Key? key}) : super(key: key);
@@ -133,21 +131,22 @@ class _RecordScreenState extends State<RecordScreen> {
           return ListView(
             children: [
               _detailsPanel(context),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 4),
+                    padding: const EdgeInsets.only(left: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Putts made',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6
-                                ?.copyWith(
+                        Text(
+                          'Putts made',
+                          style:
+                              Theme.of(context).textTheme.headline6?.copyWith(
                                     color: MyPuttColors.darkGray,
-                                    fontSize: 20)),
+                                    fontSize: 24,
+                                  ),
+                        ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: _putterCountPicker(context),
@@ -155,7 +154,7 @@ class _RecordScreenState extends State<RecordScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 8),
                   PuttsMadePicker(
                       length: _setLength,
                       initialIndex: _setLength.toDouble(),
@@ -226,12 +225,10 @@ class _RecordScreenState extends State<RecordScreen> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
+                ?.copyWith(fontSize: 24, color: MyPuttColors.darkGray),
           ),
         ),
-        const SizedBox(
-          height: 12,
-        ),
+        const SizedBox(height: 8),
         // ConditionsRow(
         //   onPressed: (WindCondition wind) =>
         //       setState(() => _windCondition = wind),
@@ -246,25 +243,42 @@ class _RecordScreenState extends State<RecordScreen> {
         //   label: 'Weather',
         //   type: ConditionsType.weather,
         // ),
-        ConditionsRow(
-          initialIndex: distanceToIndex[_distance]!,
-          onPressed: (int dist) {
+        // ConditionsRow(
+        //   initialIndex: distanceToIndex[_distance]!,
+        //   onPressed: (int dist) {
+        //     _mixpanel.track(
+        //       'Record Screen Change Distance Button Pressed',
+        //       properties: {'Distance': dist},
+        //     );
+        //     setState(() => _distance = dist);
+        //   },
+        //   iconData: FlutterRemix.map_pin_2_line,
+        //   label: 'Distance',
+        //   type: ConditionsType.distance,
+        // ),
+        DistanceSelectionRow(
+          onIncreasePressed: (int dist) {
             _mixpanel.track(
-              'Record Screen Change Distance Button Pressed',
+              'Record Screen Decrease Distance Button Pressed',
               properties: {'Distance': dist},
             );
             setState(() => _distance = dist);
           },
-          iconData: FlutterRemix.map_pin_2_line,
-          label: 'Distance',
-          type: ConditionsType.distance,
-        ),
+          onDecreasePressed: (int dist) {
+            _mixpanel.track(
+              'Record Screen Increase Distance Button Pressed',
+              properties: {'Distance': dist},
+            );
+            setState(() => _distance = dist);
+          },
+        )
       ],
     );
   }
 
   Widget _putterCountPicker(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
           children: [
@@ -290,17 +304,33 @@ class _RecordScreenState extends State<RecordScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                  primary: Colors.transparent, shadowColor: Colors.transparent),
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent),
             ),
-            const SizedBox(width: 5),
-            Text(
-              _setLength.toString(),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: 56,
+              child: Column(
+                children: [
+                  const SizedBox(height: 0),
+                  Text(
+                    _setLength.toString(),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        fontSize: 20,
+                        color: MyPuttColors.darkGray,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    'putters',
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                          fontSize: 16,
+                          color: MyPuttColors.darkGray,
+                        ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4),
             ElevatedButton(
               child: Text(
                 '+',
@@ -325,7 +355,8 @@ class _RecordScreenState extends State<RecordScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                  primary: Colors.transparent, shadowColor: Colors.transparent),
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent),
             ),
           ],
         ),
