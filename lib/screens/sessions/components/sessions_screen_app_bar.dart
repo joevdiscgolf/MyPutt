@@ -11,7 +11,7 @@ class SessionsScreenAppBar extends StatelessWidget
   final List<PuttingSession> allSessions;
 
   @override
-  Size get preferredSize => const Size.fromHeight(64);
+  Size get preferredSize => const Size.fromHeight(100);
 
   @override
   Widget build(BuildContext context) {
