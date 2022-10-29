@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -68,6 +69,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
                   ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             ),
             onPressed: () {
+              Vibrate.feedback(FeedbackType.medium);
               setState(() {
                 if (_index == 0) {
                   _index = kDistanceOptions.length - 1;
@@ -121,6 +123,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
                   ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             ),
             onPressed: () {
+              Vibrate.feedback(FeedbackType.medium);
               setState(() {
                 if (_index == kDistanceOptions.length - 1) {
                   _index = 0;
