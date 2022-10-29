@@ -95,7 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
         ),
         Text(
-          '\nYour password should be a least 8 characters.',
+          '\nYour password must be a least 8 characters.',
           style: Theme.of(context)
               .textTheme
               .headline6
