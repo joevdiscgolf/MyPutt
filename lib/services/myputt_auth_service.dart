@@ -16,7 +16,8 @@ class MyPuttAuthService {
   final ScreenController _screenController = locator.get<ScreenController>();
   late StreamController<AppScreenState> controller;
   late Stream<AppScreenState> siginStream;
-  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
+  final FirebaseAuthService _firebaseAuthService =
+      locator.get<FirebaseAuthService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   String errorMessage = '';
@@ -27,10 +28,19 @@ class MyPuttAuthService {
     controller = _screenController.controller;
   }
 
+  Future<bool> deleteCurrentUser() {
+    return _firebaseAuthService.deleteCurrentUser().then((success) {
+      if (success) {
+        _screenController.controller.add(AppScreenState.notLoggedIn);
+      }
+      return success;
+    });
+  }
+
   Future<bool> attemptSignUpWithEmail(String email, String password) async {
     bool signUpSuccess = false;
     try {
-      signUpSuccess = await _authService
+      signUpSuccess = await _firebaseAuthService
           .signUpWithEmail(email, password)
           .timeout(shortTimeout);
     } catch (e, trace) {
@@ -46,8 +56,8 @@ class MyPuttAuthService {
       );
     }
 
-    if (!signUpSuccess || _authService.getCurrentUserId() == null) {
-      errorMessage = _authService.exception;
+    if (!signUpSuccess || _firebaseAuthService.getCurrentUserId() == null) {
+      errorMessage = _firebaseAuthService.exception;
       return false;
     } else {
       controller.add(AppScreenState.setup);
@@ -59,7 +69,7 @@ class MyPuttAuthService {
   Future<bool> attemptSignInWithEmail(String email, String password) async {
     bool signInSuccess = false;
     try {
-      signInSuccess = await _authService
+      signInSuccess = await _firebaseAuthService
           .signInWithEmail(email, password)
           .timeout(shortTimeout);
     } on Exception catch (e, trace) {
@@ -75,12 +85,12 @@ class MyPuttAuthService {
       return false;
     }
 
-    if (!signInSuccess || _authService.getCurrentUserId() == null) {
-      errorMessage = _authService.exception;
+    if (!signInSuccess || _firebaseAuthService.getCurrentUserId() == null) {
+      errorMessage = _firebaseAuthService.exception;
       return false;
     }
 
-    final bool? isSetup = await _authService.userIsSetup();
+    final bool? isSetup = await _firebaseAuthService.userIsSetup();
 
     if (isSetup == null) {
       errorMessage = 'Something went wrong, please try again.';
@@ -93,7 +103,7 @@ class MyPuttAuthService {
 
     _mixpanel.track(
       'Sign in',
-      properties: {'Uid': _authService.getCurrentUserId()},
+      properties: {'Uid': _firebaseAuthService.getCurrentUserId()},
     );
 
     try {
@@ -118,12 +128,12 @@ class MyPuttAuthService {
     String displayName, {
     int? pdgaNumber,
   }) async {
-    final MyPuttUser? newUser = await _authService
+    final MyPuttUser? newUser = await _firebaseAuthService
         .setupNewUser(username, displayName, pdgaNumber: pdgaNumber);
     if (newUser == null) {
       return false;
     }
-    final bool? isSetUp = await _authService.userIsSetup();
+    final bool? isSetUp = await _firebaseAuthService.userIsSetup();
     if (isSetUp == null || !isSetUp) {
       return false;
     }
@@ -142,10 +152,10 @@ class MyPuttAuthService {
   void signOut() {
     _mixpanel.track(
       'Log out',
-      properties: {'Uid': _authService.getCurrentUserId()},
+      properties: {'Uid': _firebaseAuthService.getCurrentUserId()},
     );
     clearRepositoryData();
-    _authService.logOut();
+    _firebaseAuthService.logOut();
     controller.add(AppScreenState.notLoggedIn);
     currentAppScreenState = AppScreenState.notLoggedIn;
   }

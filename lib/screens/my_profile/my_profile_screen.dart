@@ -19,6 +19,7 @@ import 'package:myputt/screens/home/components/stats_view/rows/components/shadow
 import 'package:myputt/screens/my_profile/components/challenge_performance_panel.dart';
 import 'package:myputt/screens/my_profile/components/edit_profile_frisbee_panel.dart';
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
+import 'package:myputt/screens/settings/settings_screen.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
@@ -134,9 +135,35 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     // margin: const EdgeInsets.all(0),
                     child: Column(
                       children: [
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _logoutButton(context),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const SettingsScreen(),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    FlutterRemix.settings_2_line,
+                                    color: MyPuttColors.darkGray,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: _logoutButton(context),
+                            ),
+                          ],
                         ),
                         Bounceable(
                           onTap: () {
