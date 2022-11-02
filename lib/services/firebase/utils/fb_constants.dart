@@ -3,6 +3,7 @@ const sessionsCollection = 'Sessions';
 const challengesCollection = 'Challenges';
 const unclaimedChallengesCollection = 'Unclaimed_Challenges';
 const usersCollection = 'Users';
+const String usernamesCollection = 'Usernames';
 const appInfoCollection = 'App_Info';
 const eventsCollection = 'Events';
 const participantsCollection = 'Participants';

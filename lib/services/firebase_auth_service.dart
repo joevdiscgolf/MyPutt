@@ -38,6 +38,15 @@ class FirebaseAuthService {
     return _auth.currentUser?.uid;
   }
 
+  Future<bool> deleteCurrentUser() async {
+    if (_auth.currentUser == null) {
+      return false;
+    }
+    return _auth.currentUser!.delete().then((_) => true).catchError((e, trace) {
+      return false;
+    });
+  }
+
   Future<String?> getAuthToken() async {
     try {
       return _auth.currentUser?.getIdToken();

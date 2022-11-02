@@ -64,5 +64,7 @@
 	<string>MyPutt would like to access your gallery.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>MyPutt would like to access the microphone.</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 </dict>
 </plist>
