@@ -53,15 +53,6 @@ class _ShareSheetState extends State<ShareSheet> {
                     .headline6!
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 32),
               ),
-              MyPuttButton(
-                onPressed: () => _shareWithLink(),
-                backgroundColor: MyPuttColors.white,
-                textColor: MyPuttColors.blue,
-                textSize: 20,
-                iconData: FlutterRemix.link,
-                iconColor: MyPuttColors.blue,
-                title: 'Send link',
-              ),
               const SizedBox(height: 8),
               const ShadowIcon(
                 icon: Icon(
