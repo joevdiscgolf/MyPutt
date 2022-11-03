@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
-import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
-import 'package:share/share.dart';
 
 import 'components/user_list_view.dart';
 
@@ -31,7 +25,6 @@ class ShareSheet extends StatefulWidget {
 }
 
 class _ShareSheetState extends State<ShareSheet> {
-  final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final TextEditingController _searchTextController = TextEditingController();
 
   int lastUpdated = 0;
@@ -52,15 +45,6 @@ class _ShareSheetState extends State<ShareSheet> {
                     .textTheme
                     .headline6!
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 32),
-              ),
-              MyPuttButton(
-                onPressed: () => _shareWithLink(),
-                backgroundColor: MyPuttColors.white,
-                textColor: MyPuttColors.blue,
-                textSize: 20,
-                iconData: FlutterRemix.link,
-                iconColor: MyPuttColors.blue,
-                title: 'Send link',
               ),
               const SizedBox(height: 8),
               const ShadowIcon(
@@ -131,23 +115,23 @@ class _ShareSheetState extends State<ShareSheet> {
     );
   }
 
-  Future<void> _shareWithLink() async {
-    Vibrate.feedback(FeedbackType.light);
-    _mixpanel.track('Share Challenge Screen Send Link Button Pressed');
-    String? shareMessage;
-    if (widget.preset != null) {
-      shareMessage = await BlocProvider.of<ChallengesCubit>(context)
-          .getShareMessageFromPreset(widget.preset!);
-    }
-    if (widget.session != null) {
-      shareMessage = await BlocProvider.of<ChallengesCubit>(context)
-          .getShareMessageFromSession(widget.session!);
-    }
-    if (shareMessage == null) {
-      return;
-    }
-    await Share.share(
-      shareMessage,
-    );
-  }
+  // Future<void> _shareWithLink() async {
+  //   Vibrate.feedback(FeedbackType.light);
+  //   _mixpanel.track('Share Challenge Screen Send Link Button Pressed');
+  //   String? shareMessage;
+  //   if (widget.preset != null) {
+  //     shareMessage = await BlocProvider.of<ChallengesCubit>(context)
+  //         .getShareMessageFromPreset(widget.preset!);
+  //   }
+  //   if (widget.session != null) {
+  //     shareMessage = await BlocProvider.of<ChallengesCubit>(context)
+  //         .getShareMessageFromSession(widget.session!);
+  //   }
+  //   if (shareMessage == null) {
+  //     return;
+  //   }
+  //   await Share.share(
+  //     shareMessage,
+  //   );
+  // }
 }
