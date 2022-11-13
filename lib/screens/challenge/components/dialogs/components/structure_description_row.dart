@@ -50,14 +50,15 @@ class StructureDescriptionRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-          color: MyPuttColors.gray[50],
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: [
-            BoxShadow(
-                offset: const Offset(0, 1),
-                blurRadius: 1,
-                color: MyPuttColors.gray[400]!)
-          ]),
+        color: MyPuttColors.gray[50],
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 1),
+              blurRadius: 1,
+              color: MyPuttColors.gray[400]!)
+        ],
+      ),
       child: Center(
         child: AutoSizeText(
           text,
@@ -65,6 +66,7 @@ class StructureDescriptionRow extends StatelessWidget {
               .textTheme
               .headline6
               ?.copyWith(fontSize: 14, color: MyPuttColors.darkGray),
+          maxLines: 1,
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PdgaStatTile extends StatelessWidget {
@@ -14,48 +13,45 @@ class PdgaStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Bounceable(
-      onTap: () {},
-      child: Container(
-        margin: const EdgeInsets.all(4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: MyPuttColors.gray[50]!,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                  offset: const Offset(0, 2),
-                  blurRadius: 2,
-                  color: MyPuttColors.gray[400]!)
-            ]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              iconData,
-              color: MyPuttColors.darkGray,
-              size: 20,
-            ),
-            const SizedBox(height: 2),
-            AutoSizeText(
-              value ?? 'N/A',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
-              maxLines: 1,
-            ),
-            const SizedBox(height: 2),
-            AutoSizeText(
-              description,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  ?.copyWith(color: MyPuttColors.gray[400], fontSize: 12),
-              maxLines: 1,
-            ),
-          ],
-        ),
+    return Container(
+      margin: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: MyPuttColors.gray[50]!,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                offset: const Offset(0, 2),
+                blurRadius: 2,
+                color: MyPuttColors.gray[400]!)
+          ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            iconData,
+            color: MyPuttColors.darkGray,
+            size: 20,
+          ),
+          const SizedBox(height: 2),
+          AutoSizeText(
+            value ?? 'N/A',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
+            maxLines: 1,
+          ),
+          const SizedBox(height: 2),
+          AutoSizeText(
+            description,
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: MyPuttColors.gray[400], fontSize: 12),
+            maxLines: 1,
+          ),
+        ],
       ),
     );
   }

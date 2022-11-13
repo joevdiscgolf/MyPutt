@@ -59,9 +59,16 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                 ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(
-            height: 40,
+          const SizedBox(height: 16),
+          Text(
+            'Select one before continuing',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
+            textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 20),
           Flexible(
             fit: FlexFit.loose,
             child: ListView(
@@ -74,7 +81,11 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                               'Preset Name': describeEnum(preset),
                             });
                         setState(() {
-                          _selectedPreset = preset;
+                          if (_selectedPreset == preset) {
+                            _selectedPreset = ChallengePreset.none;
+                          } else {
+                            _selectedPreset = preset;
+                          }
                         });
                       },
                       presetType: entry.key,
@@ -110,6 +121,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                     onDismiss: () => Navigator.pop(context));
               }
             },
+            disabled: _selectedPreset == ChallengePreset.none,
           ),
           const SizedBox(height: 8),
           MyPuttButton(
