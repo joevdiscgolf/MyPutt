@@ -120,16 +120,17 @@ class WebScraperService {
           }
         }
         return PDGAPlayerInfo(
-            pdgaNum: pdgaNum,
-            name: name,
-            careerWins: careerWins,
-            location: location,
-            classification: classification,
-            memberSince: memberSince,
-            rating: rating,
-            careerEarnings: careerEarnings,
-            careerEvents: careerEvents,
-            nextEvent: nextEvent);
+          pdgaNum: pdgaNum,
+          name: name,
+          careerWins: careerWins,
+          location: location,
+          classification: classification,
+          memberSince: memberSince,
+          rating: rating,
+          careerEarnings: careerEarnings,
+          careerEvents: careerEvents,
+          nextEvent: nextEvent,
+        );
       } else {
         return null;
       }

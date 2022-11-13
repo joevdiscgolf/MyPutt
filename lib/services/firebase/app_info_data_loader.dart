@@ -12,7 +12,7 @@ Future<String?> getMinimumAppVersion() async {
     DocumentSnapshot<dynamic> snapshot = await FirebaseFirestore.instance
         .doc('$appInfoCollection/$minimumVersionDoc')
         .get()
-        .timeout(shortTimeout);
+        .timeout(standardTimeout);
     if (snapshot.exists && snapshot.data()['minimumVersion'] != null) {
       return snapshot.data()['minimumVersion'];
     } else {

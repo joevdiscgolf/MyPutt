@@ -82,11 +82,12 @@ class MyProfileCubit extends Cubit<MyProfileState> {
         final bool setUserSuccess =
             await _userService.setUserWithPayload(currentUser);
         if (setUserSuccess) {
+          final PDGAPlayerInfo? playerInfo = await _webScraperService
+              .getPDGAData(_userRepository.currentUser?.pdgaNum);
           emit(
             MyProfileLoaded(
               myUser: _userRepository.currentUser!,
-              pdgaPlayerInfo: await _webScraperService
-                  .getPDGAData(_userRepository.currentUser?.pdgaNum),
+              pdgaPlayerInfo: playerInfo,
             ),
           );
         }

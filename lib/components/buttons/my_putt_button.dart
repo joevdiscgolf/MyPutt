@@ -54,8 +54,10 @@ class MyPuttButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
-        onPressed();
+        if (!disabled) {
+          Vibrate.feedback(FeedbackType.light);
+          onPressed();
+        }
       },
       child: Container(
         height: height,
@@ -70,8 +72,7 @@ class MyPuttButton extends StatelessWidget {
             )
           ],
           borderRadius: BorderRadius.circular(borderRadius),
-          border:
-              Border.all(color: borderColor ?? Colors.transparent, width: 1),
+          border: Border.all(color: _getBorderColor(), width: 1),
           color: disabled ? MyPuttColors.gray[100] : backgroundColor,
         ),
         child: _buildChild(context),
@@ -139,6 +140,16 @@ class MyPuttButton extends StatelessWidget {
             ),
           ),
         );
+    }
+  }
+
+  Color _getBorderColor() {
+    if (disabled) {
+      return MyPuttColors.gray[100]!;
+    } else if (borderColor != null) {
+      return borderColor!;
+    } else {
+      return Colors.transparent;
     }
   }
 }
