@@ -8,9 +8,11 @@ part of 'conditions.dart';
 
 Conditions _$ConditionsFromJson(Map json) => Conditions(
       windConditions:
-          _$enumDecode(_$WindConditionsEnumMap, json['windConditions']),
-      weatherConditions:
-          _$enumDecode(_$WeatherConditionsEnumMap, json['weatherConditions']),
+          _$enumDecodeNullable(_$WindConditionsEnumMap, json['windConditions']),
+      weatherConditions: _$enumDecodeNullable(
+          _$WeatherConditionsEnumMap, json['weatherConditions']),
+      windDirection:
+          _$enumDecodeNullable(_$WindDirectionEnumMap, json['windDirection']),
     );
 
 Map<String, dynamic> _$ConditionsToJson(Conditions instance) =>
@@ -18,6 +20,7 @@ Map<String, dynamic> _$ConditionsToJson(Conditions instance) =>
       'windConditions': _$WindConditionsEnumMap[instance.windConditions],
       'weatherConditions':
           _$WeatherConditionsEnumMap[instance.weatherConditions],
+      'windDirection': _$WindDirectionEnumMap[instance.windDirection],
     };
 
 K _$enumDecode<K, V>(
@@ -46,11 +49,22 @@ K _$enumDecode<K, V>(
   ).key;
 }
 
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
 const _$WindConditionsEnumMap = {
   WindConditions.calm: 'calm',
   WindConditions.breezy: 'breezy',
   WindConditions.strong: 'strong',
-  WindConditions.intense: 'intense',
+  WindConditions.violent: 'violent',
 };
 
 const _$WeatherConditionsEnumMap = {
@@ -58,4 +72,11 @@ const _$WeatherConditionsEnumMap = {
   WeatherConditions.cloudy: 'cloudy',
   WeatherConditions.rainy: 'rainy',
   WeatherConditions.snowy: 'snowy',
+};
+
+const _$WindDirectionEnumMap = {
+  WindDirection.headwind: 'headwind',
+  WindDirection.tailwind: 'tailwind',
+  WindDirection.leftToRight: 'leftToRight',
+  WindDirection.rightToLeft: 'rightToLeft',
 };
