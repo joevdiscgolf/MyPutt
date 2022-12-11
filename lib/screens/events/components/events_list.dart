@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
+import 'package:myputt/utils/colors.dart';
 
 import 'event_list_item.dart';
 
@@ -19,48 +22,51 @@ class EventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
-      child: events.isNotEmpty
-          ? CustomScrollView(
-              slivers: [
-                if (onRefresh != null)
-                  CupertinoSliverRefreshControl(
-                    onRefresh: () async {
-                      Vibrate.feedback(FeedbackType.light);
-                      onRefresh!();
-                    },
-                  ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return Column(
-                        children: events
-                            .map((event) => EventListItem(
-                                  event: event,
-                                  onPressed: (MyPuttEvent event) =>
-                                      onPressed(event),
-                                ))
-                            .toList(),
-                      );
-                    },
-                    childCount: 1,
-                  ),
-                ),
-              ],
-            )
-          : LayoutBuilder(
-              builder: (BuildContext context, constraints) => ListView(
-                children: [
-                  Container(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
-                    child: const Center(
-                      child: Text('No events'),
-                    ),
-                  )
-                ],
+        padding: const EdgeInsets.all(8),
+        child: CustomScrollView(
+          slivers: [
+            if (onRefresh != null)
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  Vibrate.feedback(FeedbackType.light);
+                  onRefresh!();
+                },
+              ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (events.isEmpty) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(FlutterRemix.stack_line, size: 40),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No events yet',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(color: MyPuttColors.darkGray),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    children: events
+                        .map((event) => EventListItem(
+                              event: event,
+                              onPressed: (MyPuttEvent event) =>
+                                  onPressed(event),
+                            ))
+                        .toList(),
+                  );
+                },
+                childCount: 1,
               ),
             ),
-    );
+          ],
+        ));
   }
 }

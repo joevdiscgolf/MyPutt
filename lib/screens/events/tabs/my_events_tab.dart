@@ -23,10 +23,27 @@ class _MyEventsTabState extends State<MyEventsTab>
   late Future<void> _fetchData;
 
   late List<MyPuttEvent> _myEvents;
+  bool _error = false;
+  bool _loading = false;
 
   Future<void> _initData() async {
-    _myEvents =
-        await _eventsService.getMyEvents().then((response) => response.events);
+    setState(() {
+      _loading = true;
+      _error = false;
+    });
+    try {
+      _myEvents = await _eventsService
+          .getMyEvents()
+          .then((response) => response.events);
+      setState(() {
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _error = true;
+      });
+    }
   }
 
   @override
@@ -46,10 +63,13 @@ class _MyEventsTabState extends State<MyEventsTab>
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            if (_myEvents.isEmpty) {
+            if (_loading) {
+              return const EventSearchLoadingScreen();
+            } else if (_error) {
               return EmptyState(
                 icon: const Icon(FlutterRemix.stack_line, size: 32),
-                title: "We couldn't find any events",
+                title: "Network error.",
+                subtitle: "Please check your connection and try again.",
                 onRetry: () => _fetchData = _initData(),
               );
             }

@@ -44,15 +44,28 @@ class _EventsState extends State<EventsScreen>
   bool _showSearchBar = true;
   bool _loading = false;
   List<MyPuttEvent>? _events;
+  bool _searchError = false;
 
   Timer? _searchOnStoppedTyping;
 
   Future<void> _searchEvents(String keyword) async {
-    setState(() => _loading = true);
-    _events = await _eventsService
-        .searchEvents(keyword)
-        .then((response) => response.events);
-    setState(() => _loading = false);
+    setState(() {
+      _searchError = false;
+      _loading = true;
+    });
+    try {
+      await _eventsService.searchEvents(keyword).then((response) => setState(
+            () {
+              _loading = false;
+              _events = response.events;
+            },
+          ));
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _searchError = true;
+      });
+    }
   }
 
   @override
@@ -158,21 +171,43 @@ class _EventsState extends State<EventsScreen>
   }
 
   Widget _searchTab(BuildContext context) {
-    if (_loading) {
-      return const EventSearchLoadingScreen();
-    } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
-      return Container();
-    } else if (_events?.isNotEmpty != true || _events == null) {
+    if (_searchError) {
       return EmptyState(
-        title: 'Uh-oh',
-        subtitle: "We couldn't find any events",
+        title: 'Network error',
+        subtitle: "Please try again.",
         onRetry: () {
           if (_searchBarText != null && _searchBarText!.isNotEmpty) {
             _searchEvents(_searchBarText!);
           }
         },
       );
+    } else if (_loading) {
+      return const EventSearchLoadingScreen();
+    } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
+      return Container();
+    } else if (_events?.isNotEmpty != true || _events == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(FlutterRemix.stack_line, size: 40),
+              const SizedBox(height: 16),
+              Text(
+                "We couldn't find any events matching your search.",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(color: MyPuttColors.darkGray),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+        ),
+      );
     }
+
+    // if loaded
     return EventsList(
       events: _events!,
       onPressed: (MyPuttEvent event) => _openEvent(event),

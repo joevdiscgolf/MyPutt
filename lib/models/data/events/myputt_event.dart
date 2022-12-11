@@ -58,10 +58,12 @@ class EventCustomizationData {
     required this.challengeStructure,
     required this.divisions,
     required this.verificationRequired,
+    this.codeRequired,
   });
   final List<ChallengeStructureItem> challengeStructure;
   final List<Division> divisions;
   final bool verificationRequired;
+  final bool? codeRequired;
 
   factory EventCustomizationData.fromJson(Map<String, dynamic> json) =>
       _$EventCustomizationDataFromJson(json);

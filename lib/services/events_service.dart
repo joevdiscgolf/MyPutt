@@ -49,6 +49,26 @@ class EventsService {
     });
   }
 
+  Future<JoinEventResponse> joinEvent(String eventId, Division division) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('joinEvent');
+
+    final JoinEventRequest request =
+        JoinEventRequest(eventId: eventId, division: division);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return JoinEventResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][joinEvent] exception',
+      );
+      return JoinEventResponse(success: false);
+    });
+  }
+
   Future<ExitEventResponse> exitEvent(String eventId) async {
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('exitEvent');
@@ -83,7 +103,7 @@ class EventsService {
         trace,
         reason: '[EventsService][searchEvents] exception',
       );
-      return GetEventsResponse(events: []);
+      throw e;
     });
   }
 
@@ -99,7 +119,7 @@ class EventsService {
         trace,
         reason: '[EventsService][getMyEvents] exception',
       );
-      return GetEventsResponse(events: []);
+      throw e;
     });
   }
 

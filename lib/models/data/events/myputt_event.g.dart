@@ -101,6 +101,7 @@ EventCustomizationData _$EventCustomizationDataFromJson(Map json) =>
           .map((e) => _$enumDecode(_$DivisionEnumMap, e))
           .toList(),
       verificationRequired: json['verificationRequired'] as bool,
+      codeRequired: json['codeRequired'] as bool?,
     );
 
 Map<String, dynamic> _$EventCustomizationDataToJson(
@@ -110,6 +111,7 @@ Map<String, dynamic> _$EventCustomizationDataToJson(
           instance.challengeStructure.map((e) => e.toJson()).toList(),
       'divisions': instance.divisions.map((e) => _$DivisionEnumMap[e]).toList(),
       'verificationRequired': instance.verificationRequired,
+      'codeRequired': instance.codeRequired,
     };
 
 const _$DivisionEnumMap = {

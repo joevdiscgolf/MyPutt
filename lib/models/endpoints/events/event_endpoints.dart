@@ -38,13 +38,27 @@ class GetEventResponse {
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
+class JoinEventRequest {
+  JoinEventRequest({required this.division, required this.eventId});
+  final Division division;
+  final String eventId;
+
+  factory JoinEventRequest.fromJson(Map<String, dynamic> json) =>
+      _$JoinEventRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$JoinEventRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class JoinEventWithCodeRequest {
   JoinEventWithCodeRequest({
-    required this.code,
     required this.division,
+    this.code,
+    this.codeRequired,
   });
-  final int code;
   final Division division;
+  final int? code;
+  final bool? codeRequired;
 
   factory JoinEventWithCodeRequest.fromJson(Map<String, dynamic> json) =>
       _$JoinEventWithCodeRequestFromJson(json);
@@ -54,8 +68,9 @@ class JoinEventWithCodeRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class JoinEventResponse {
-  JoinEventResponse({required this.success});
+  JoinEventResponse({required this.success, this.error});
   final bool success;
+  final String? error;
 
   factory JoinEventResponse.fromJson(Map<String, dynamic> json) =>
       _$JoinEventResponseFromJson(json);

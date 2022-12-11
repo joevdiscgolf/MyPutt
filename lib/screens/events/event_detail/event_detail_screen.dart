@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
+import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
 import 'package:myputt/cubits/events/events_cubit.dart';
@@ -106,20 +107,24 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 );
                               }
                               if (_eventStandings!.isEmpty) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    EmptyState(
-                                      title: 'Nothing here yet',
-                                      subtitle: 'Please try again',
-                                      icon: const Icon(
+                                return Container(
+                                  padding: const EdgeInsets.only(top: 24),
+                                  child: Column(
+                                    children: [
+                                      const Icon(
                                         FlutterRemix.stack_line,
                                         size: 40,
                                       ),
-                                      onRetry: () => _fetchData = _initData(),
-                                    )
-                                  ],
+                                      const SizedBox(height: 8),
+                                      const Text('No players yet'),
+                                      const SizedBox(height: 16),
+                                      MyPuttButton(
+                                        width: 128,
+                                        title: 'Join',
+                                        onPressed: () => _joinOrLeave(context),
+                                      )
+                                    ],
+                                  ),
                                 );
                               }
                               return PlayerList(
@@ -346,29 +351,32 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   Widget _joinLeaveButton(BuildContext context) {
     return IconButton(
       onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              if (!_inEvent) {
-                return JoinEventDialog(
-                  event: widget.event,
-                  onEventJoin: () {
-                    setState(() => _inEvent = true);
-                    BlocProvider.of<EventsCubit>(context)
-                        .openEvent(widget.event);
-                  },
-                );
-              }
-              return ExitEventDialog(
-                event: widget.event,
-                onEventExit: () => setState(() => _inEvent = false),
-              );
-            }).then((_) => _fetchData = _initData());
+        _joinOrLeave(context);
       },
       icon: Icon(
         _inEvent ? FlutterRemix.logout_box_line : FlutterRemix.user_add_line,
         color: MyPuttColors.white,
       ),
     );
+  }
+
+  void _joinOrLeave(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          if (!_inEvent) {
+            return JoinEventDialog(
+              event: widget.event,
+              onEventJoin: () {
+                setState(() => _inEvent = true);
+                BlocProvider.of<EventsCubit>(context).openEvent(widget.event);
+              },
+            );
+          }
+          return ExitEventDialog(
+            event: widget.event,
+            onEventExit: () => setState(() => _inEvent = false),
+          );
+        }).then((_) => _fetchData = _initData());
   }
 }

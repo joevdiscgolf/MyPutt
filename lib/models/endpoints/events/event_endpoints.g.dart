@@ -86,26 +86,41 @@ Map<String, dynamic> _$GetEventResponseToJson(GetEventResponse instance) =>
           instance.eventStandings?.map((e) => e.toJson()).toList(),
     };
 
+JoinEventRequest _$JoinEventRequestFromJson(Map json) => JoinEventRequest(
+      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$JoinEventRequestToJson(JoinEventRequest instance) =>
+    <String, dynamic>{
+      'division': _$DivisionEnumMap[instance.division],
+      'eventId': instance.eventId,
+    };
+
 JoinEventWithCodeRequest _$JoinEventWithCodeRequestFromJson(Map json) =>
     JoinEventWithCodeRequest(
-      code: json['code'] as int,
       division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      code: json['code'] as int?,
+      codeRequired: json['codeRequired'] as bool?,
     );
 
 Map<String, dynamic> _$JoinEventWithCodeRequestToJson(
         JoinEventWithCodeRequest instance) =>
     <String, dynamic>{
-      'code': instance.code,
       'division': _$DivisionEnumMap[instance.division],
+      'code': instance.code,
+      'codeRequired': instance.codeRequired,
     };
 
 JoinEventResponse _$JoinEventResponseFromJson(Map json) => JoinEventResponse(
       success: json['success'] as bool,
+      error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$JoinEventResponseToJson(JoinEventResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
+      'error': instance.error,
     };
 
 SearchEventsRequest _$SearchEventsRequestFromJson(Map json) =>
