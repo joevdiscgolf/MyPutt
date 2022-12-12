@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_run_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/screens/events/components/events_list.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
+import 'package:myputt/screens/events/run_event/run_event_screen.dart';
 import 'package:myputt/services/events_service.dart';
 
 class MyEventsTab extends StatefulWidget {
@@ -89,9 +89,9 @@ class _MyEventsTabState extends State<MyEventsTab>
   }
 
   void _openEvent(MyPuttEvent event) {
-    BlocProvider.of<EventsCubit>(context).openEvent(event);
+    BlocProvider.of<EventRunCubit>(context).openEvent(event);
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EventDetailScreen(event: event)),
+      MaterialPageRoute(builder: (context) => RunEventScreen(event: event)),
     );
   }
 }

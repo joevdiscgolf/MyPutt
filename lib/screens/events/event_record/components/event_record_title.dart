@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_compete_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EventRecordTitle extends StatelessWidget {
@@ -8,9 +8,9 @@ class EventRecordTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
+    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
       builder: (context, state) {
-        if (state is! ActiveEventState) {
+        if (state is! EventCompeteActive) {
           return Container();
         }
         return Container(

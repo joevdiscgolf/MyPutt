@@ -33,7 +33,8 @@ class EventsRepository {
           continue;
         }
         playerData.add(
-            EventPlayerData.fromJson(snapshot.data()! as Map<String, dynamic>));
+          EventPlayerData.fromJson(snapshot.data()! as Map<String, dynamic>),
+        );
       }
       controller?.add(playerData);
     });

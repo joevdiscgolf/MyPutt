@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_run_cubit.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/screens/events/create_event/forms/date_layout_form.dart';
@@ -98,9 +98,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CreateEventHeader(),
               ),
-              const SizedBox(
-                height: 24,
-              ),
+              const SizedBox(height: 24),
               Expanded(child: _carouselBody(context)),
             ],
           ),
@@ -169,9 +167,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       ),
                 ),
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        const SizedBox(height: 16),
         SmoothPageIndicator(
           controller: _pageController,
           count: 3,
@@ -202,8 +198,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 setState(() => _errorText = null);
                 setState(() => _buttonState = ButtonState.loading);
                 final bool createSuccess =
-                    await BlocProvider.of<EventsCubit>(context)
-                        .createEventRequest(
+                    await BlocProvider.of<EventRunCubit>(context)
+                        .createNewEvent(
                   eventName: _eventName!,
                   eventDescription: _eventDescription,
                   verificationSignature: _signatureVerification,

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_compete_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/event_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
@@ -21,9 +21,9 @@ class CompeteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
+    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
       builder: (context, state) {
-        if (state is! ActiveEventState) {
+        if (state is! EventCompeteActive) {
           return Container();
         }
         final double buttonHeight =
@@ -103,7 +103,7 @@ class CompeteButton extends StatelessWidget {
               Bounceable(
                 onTap: () {
                   Vibrate.feedback(FeedbackType.light);
-                  BlocProvider.of<EventsCubit>(context).openEvent(event);
+                  BlocProvider.of<EventCompeteCubit>(context).openEvent(event);
                   displayBottomSheet(
                     context,
                     EventRecordScreen(event: event),

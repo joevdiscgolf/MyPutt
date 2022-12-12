@@ -8,7 +8,8 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_compete_cubit.dart';
+import 'package:myputt/cubits/events/event_run_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
@@ -269,11 +270,11 @@ class _EventsState extends State<EventsScreen>
       },
       child: MyPuttButton(
         onPressed: () {
-          BlocProvider.of<EventsCubit>(context).createEventPressed();
+          BlocProvider.of<EventRunCubit>(context).createEventPressed();
           Navigator.of(context)
               .push(AnimatedRoute(const CreateEventScreen()))
               .then((_) {
-            if (BlocProvider.of<EventsCubit>(context).newEventWasCreated) {
+            if (BlocProvider.of<EventRunCubit>(context).newEventWasCreated) {
               setState(() => _tabController.index = 3);
             }
           });
@@ -310,7 +311,7 @@ class _EventsState extends State<EventsScreen>
   }
 
   void _openEvent(MyPuttEvent event) {
-    BlocProvider.of<EventsCubit>(context).openEvent(event);
+    BlocProvider.of<EventCompeteCubit>(context).openEvent(event);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EventDetailScreen(event: event),

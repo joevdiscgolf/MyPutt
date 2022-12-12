@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_compete_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/animated_arrows.dart';
@@ -13,8 +13,9 @@ class EventDirector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(builder: (context, state) {
-      if (state is! ActiveEventState) {
+    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
+        builder: (context, state) {
+      if (state is! EventCompeteActive) {
         return const Center(child: Text('Something went wrong'));
       }
       final List<ChallengeStructureItem> challengeStructure =
@@ -32,7 +33,7 @@ class EventDirector extends StatelessWidget {
   }
 
   Widget _mainBody(BuildContext context, int distance, int setLength,
-      ActiveEventState state) {
+      EventCompeteActive state) {
     return Column(
       children: [
         Container(

@@ -5,7 +5,7 @@ import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_compete_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/components/event_director.dart';
@@ -41,15 +41,15 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
+    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
       builder: (context, state) {
-        if (state is EventsLoading) {
+        if (state is EventCompeteLoading) {
           return const LoadingScreen();
-        } else if (state is! ActiveEventState) {
+        } else if (state is! EventCompeteActive) {
           return Center(
             child: Center(
               child: EmptyState(
-                onRetry: () => BlocProvider.of<EventsCubit>(context)
+                onRetry: () => BlocProvider.of<EventCompeteCubit>(context)
                     .openEvent(widget.event),
               ),
             ),
@@ -73,7 +73,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                   set: entry.value,
                   index: entry.key,
                   delete: () {
-                    BlocProvider.of<EventsCubit>(context)
+                    BlocProvider.of<EventCompeteCubit>(context)
                         .deleteSet(entry.value);
                   },
                 ))
@@ -114,7 +114,8 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                         ),
                         EventUndoButton(
                           onPressed: () =>
-                              BlocProvider.of<EventsCubit>(context).undoSet(),
+                              BlocProvider.of<EventCompeteCubit>(context)
+                                  .undoSet(),
                         ),
                       ],
                     ),
@@ -141,7 +142,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                   height: 50,
                   iconData: setsFilled ? null : FlutterRemix.add_line,
                   onPressed: () {
-                    BlocProvider.of<EventsCubit>(context).addSet(
+                    BlocProvider.of<EventCompeteCubit>(context).addSet(
                       PuttingSet(
                         timeStamp: DateTime.now().millisecondsSinceEpoch,
                         puttsMade: _focusedIndex ?? setLength,

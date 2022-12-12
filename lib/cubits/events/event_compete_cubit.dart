@@ -11,15 +11,15 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
 
-part 'events_state.dart';
+part 'event_compete_state.dart';
 
-class EventsCubit extends Cubit<EventsState> {
+class EventCompeteCubit extends Cubit<EventCompeteState> {
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
   bool _newEventCreated = false;
 
-  EventsCubit() : super(EventsInitial());
+  EventCompeteCubit() : super(EventCompeteInitial());
 
   bool get newEventWasCreated => _newEventCreated;
 
@@ -27,22 +27,22 @@ class EventsCubit extends Cubit<EventsState> {
     _eventsRepository.initializeEventStream(event.eventId);
 
     _eventsRepository.currentEvent = event;
-    emit(EventsLoading());
+    emit(EventCompeteLoading());
     final EventPlayerData? playerData =
         await _databaseService.loadEventPlayerData(event.eventId);
     if (playerData == null) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
     _eventsRepository.currentPlayerData = playerData;
-    emit(ActiveEventState(
+    emit(EventCompeteActive(
         event: event, eventPlayerData: _eventsRepository.currentPlayerData!));
   }
 
   Future<void> addSet(PuttingSet set) async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
     if (_eventsRepository.currentPlayerData!.sets.length ==
@@ -54,10 +54,10 @@ class EventsCubit extends Cubit<EventsState> {
     _eventsRepository.currentPlayerData!.sets.add(set);
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
-    emit(ActiveEventState(
+    emit(EventCompeteActive(
       event: _eventsRepository.currentEvent!,
       eventPlayerData: _eventsRepository.currentPlayerData!,
     ));
@@ -66,17 +66,17 @@ class EventsCubit extends Cubit<EventsState> {
   Future<void> undoSet() async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
 
     _eventsRepository.currentPlayerData!.sets.removeLast();
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
-    emit(ActiveEventState(
+    emit(EventCompeteActive(
         event: _eventsRepository.currentEvent!,
         eventPlayerData: _eventsRepository.currentPlayerData!));
   }
@@ -84,17 +84,17 @@ class EventsCubit extends Cubit<EventsState> {
   Future<void> deleteSet(PuttingSet set) async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
 
     _eventsRepository.currentPlayerData!.sets.remove(set);
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventErrorState());
+      emit(EventCompeteError());
       return;
     }
-    emit(ActiveEventState(
+    emit(EventCompeteActive(
         event: _eventsRepository.currentEvent!,
         eventPlayerData: _eventsRepository.currentPlayerData!));
   }
