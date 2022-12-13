@@ -112,6 +112,7 @@ class EventsService {
         FirebaseFunctions.instance.httpsCallable('getMyEvents');
 
     return callable().then((HttpsCallableResult<dynamic> response) {
+      print(response.data);
       return GetEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
       FirebaseCrashlytics.instance.recordError(
@@ -159,6 +160,25 @@ class EventsService {
         reason: '[EventsService][createEvent] exception',
       );
       return CreateEventResponse();
+    });
+  }
+
+  Future<bool> endEvent(String eventId) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('endEvent');
+
+    final EndEventRequest request = EndEventRequest(eventId: eventId);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return EndEventResponse.fromJson(response.data).success;
+    }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][createEvent] exception',
+      );
+      return false;
     });
   }
 }

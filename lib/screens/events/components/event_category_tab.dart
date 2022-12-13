@@ -17,14 +17,16 @@ class EventCategoryTab extends StatelessWidget {
     return Center(
       child: Tab(
         icon: icon,
-        child: AutoSizeText(
-          label,
-          style: Theme.of(context).textTheme.headline6?.copyWith(
-                color: MyPuttColors.darkGray,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-          maxLines: 1,
+        child: FittedBox(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.headline6?.copyWith(
+                  color: MyPuttColors.darkGray,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+            maxLines: 1,
+          ),
         ),
       ),
     );

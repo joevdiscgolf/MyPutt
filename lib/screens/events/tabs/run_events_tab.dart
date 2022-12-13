@@ -10,14 +10,14 @@ import 'package:myputt/screens/events/components/events_list.dart';
 import 'package:myputt/screens/events/run_event/run_event_screen.dart';
 import 'package:myputt/services/events_service.dart';
 
-class MyEventsTab extends StatefulWidget {
-  const MyEventsTab({Key? key}) : super(key: key);
+class RunEventsTab extends StatefulWidget {
+  const RunEventsTab({Key? key}) : super(key: key);
 
   @override
-  State<MyEventsTab> createState() => _MyEventsTabState();
+  State<RunEventsTab> createState() => _RunEventsTabState();
 }
 
-class _MyEventsTabState extends State<MyEventsTab>
+class _RunEventsTabState extends State<RunEventsTab>
     with AutomaticKeepAliveClientMixin {
   final EventsService _eventsService = locator.get<EventsService>();
   late Future<void> _fetchData;

@@ -33,9 +33,43 @@ class EventDataLoader {
     String eventId,
     Division division,
   ) async {
-    final ref = firestore
+    return firestore
         .collection('$eventsCollection/$eventId/$participantsCollection')
-        .where('division', isEqualTo: divisionToNameMap[division]!);
+        .where('division', isEqualTo: divisionToNameMap[division]!)
+        .get()
+        .then(
+      (QuerySnapshot snapshot) {
+        final List<EventPlayerData> playerData = List.from(
+          snapshot.docs.map<EventPlayerData?>(
+            (playerData) {
+              if (playerData.data() == null) {
+                return null;
+              }
+              return EventPlayerData.fromJson(
+                playerData.data()! as Map<String, dynamic>,
+              );
+            },
+          ).whereType<EventPlayerData>(),
+        );
+        return playerData;
+      },
+    ).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[EventDataLoader][getEventStandings] firestore read exception',
+        );
+        throw e;
+      },
+    );
+  }
+
+  Future<List<EventPlayerData>> getEventStandings(String eventId) async {
+    final CollectionReference ref = firestore
+        .collection('$eventsCollection/$eventId/$participantsCollection');
+
     return ref.get().then(
       (QuerySnapshot snapshot) {
         final List<EventPlayerData> playerData = List.from(

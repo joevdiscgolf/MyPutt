@@ -18,7 +18,7 @@ class EventRunCubit extends Cubit<EventRunState> {
   final EventsService _eventsService = locator.get<EventsService>();
   bool _newEventCreated = false;
 
-  EventRunCubit() : super(EventRunInitial());
+  EventRunCubit() : super(EventRunLoading());
 
   bool get newEventWasCreated => _newEventCreated;
 
@@ -75,5 +75,14 @@ class EventRunCubit extends Cubit<EventRunState> {
 
   void createEventPressed() {
     _newEventCreated = false;
+  }
+
+  Future<bool> endEvent(String eventId) async {
+    final bool success = await _eventsService.endEvent(eventId);
+
+    if (success) {
+      emit(EventRunComplete());
+    }
+    return success;
   }
 }

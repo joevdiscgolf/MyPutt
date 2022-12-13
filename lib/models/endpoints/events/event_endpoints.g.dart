@@ -240,3 +240,21 @@ Map<String, dynamic> _$EventCreateParamsToJson(EventCreateParams instance) =>
       'challengeStructure':
           instance.challengeStructure.map((e) => e.toJson()).toList(),
     };
+
+EndEventRequest _$EndEventRequestFromJson(Map json) => EndEventRequest(
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$EndEventRequestToJson(EndEventRequest instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+    };
+
+EndEventResponse _$EndEventResponseFromJson(Map json) => EndEventResponse(
+      success: json['success'] as bool,
+    );
+
+Map<String, dynamic> _$EndEventResponseToJson(EndEventResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+    };

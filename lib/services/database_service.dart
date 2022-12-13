@@ -201,4 +201,7 @@ class DatabaseService {
     Division division,
   ) async =>
       _eventDataLoader.getDivisionStandings(eventId, division);
+
+  Future<List<EventPlayerData>> loadEventStandings(String eventId) async =>
+      _eventDataLoader.getEventStandings(eventId);
 }

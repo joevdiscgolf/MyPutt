@@ -197,3 +197,25 @@ class EventCreateParams {
 
   Map<String, dynamic> toJson() => _$EventCreateParamsToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class EndEventRequest {
+  EndEventRequest({required this.eventId});
+  final String eventId;
+
+  factory EndEventRequest.fromJson(Map<String, dynamic> json) =>
+      _$EndEventRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EndEventRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class EndEventResponse {
+  EndEventResponse({required this.success});
+  final bool success;
+
+  factory EndEventResponse.fromJson(Map<String, dynamic> json) =>
+      _$EndEventResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EndEventResponseToJson(this);
+}

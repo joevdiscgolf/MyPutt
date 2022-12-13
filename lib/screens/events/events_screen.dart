@@ -13,8 +13,10 @@ import 'package:myputt/cubits/events/event_run_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
-import 'package:myputt/screens/events/tabs/my_events_tab.dart';
+import 'package:myputt/screens/events/event_detail/event_compete_screen.dart';
+import 'package:myputt/screens/events/tabs/club_events_tab.dart';
+import 'package:myputt/screens/events/tabs/run_events_tab.dart';
+import 'package:myputt/screens/events/tabs/tournament_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -110,31 +112,26 @@ class _EventsState extends State<EventsScreen>
       controller: _tabController,
       children: [
         _searchTab(context),
-        EventsList(
-          events: kTestEvents,
-          onPressed: (MyPuttEvent event) => _openEvent(event),
-        ),
-        EventsList(
-          events: kTestEvents,
-          onPressed: (MyPuttEvent event) => _openEvent(event),
-        ),
-        const MyEventsTab(),
+        const ClubEventsTab(),
+        const TournamentEventsTab(),
+        const RunEventsTab(),
       ],
     );
   }
 
   PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
-        child: Column(
-          children: [
-            _tabBar(context),
-            if (_showSearchBar) ...[
-              const SizedBox(height: 4),
-              _searchBar(context)
-            ]
-          ],
-        ),
-        preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60));
+      child: Column(
+        children: [
+          _tabBar(context),
+          if (_showSearchBar) ...[
+            const SizedBox(height: 4),
+            _searchBar(context)
+          ]
+        ],
+      ),
+      preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60),
+    );
   }
 
   PreferredSizeWidget _tabBar(BuildContext context) {
@@ -164,7 +161,7 @@ class _EventsState extends State<EventsScreen>
               label: 'Tournaments',
               icon: Icon(FlutterRemix.trophy_fill, size: 16),
             ),
-            EventCategoryTab(label: 'My Events', icon: blueFrisbeeImageIcon),
+            EventCategoryTab(label: 'Run events', icon: blueFrisbeeImageIcon),
           ],
         ),
       ),
@@ -211,7 +208,7 @@ class _EventsState extends State<EventsScreen>
     // if loaded
     return EventsList(
       events: _events!,
-      onPressed: (MyPuttEvent event) => _openEvent(event),
+      onPressed: (MyPuttEvent event) => _openCompetitionEvent(event),
       onRefresh: () {
         if (_searchBarText != null && _searchBarText!.isNotEmpty) {
           _searchEvents(_searchBarText!);
@@ -310,11 +307,11 @@ class _EventsState extends State<EventsScreen>
     );
   }
 
-  void _openEvent(MyPuttEvent event) {
+  void _openCompetitionEvent(MyPuttEvent event) {
     BlocProvider.of<EventCompeteCubit>(context).openEvent(event);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EventDetailScreen(event: event),
+        builder: (context) => EventCompeteScreen(event: event),
       ),
     );
   }

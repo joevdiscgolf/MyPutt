@@ -30,16 +30,16 @@ import 'package:myputt/utils/panel_helpers.dart';
 import 'components/dialogs/join_event_dialog.dart';
 import 'components/panels/update_division_panel.dart';
 
-class EventDetailScreen extends StatefulWidget {
-  const EventDetailScreen({Key? key, required this.event}) : super(key: key);
+class EventCompeteScreen extends StatefulWidget {
+  const EventCompeteScreen({Key? key, required this.event}) : super(key: key);
 
   final MyPuttEvent event;
 
   @override
-  State<EventDetailScreen> createState() => _EventDetailScreenState();
+  State<EventCompeteScreen> createState() => _EventCompeteScreenState();
 }
 
-class _EventDetailScreenState extends State<EventDetailScreen> {
+class _EventCompeteScreenState extends State<EventCompeteScreen> {
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final EventsService _eventsService = locator.get<EventsService>();
   late Division _division;
@@ -128,11 +128,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 );
                               }
                               return PlayerList(
-                                  eventStandings: _eventStandings!,
-                                  challengeStructure: widget
-                                      .event
-                                      .eventCustomizationData
-                                      .challengeStructure);
+                                eventStandings: _eventStandings!,
+                                challengeStructure: widget.event
+                                    .eventCustomizationData.challengeStructure,
+                              );
                             case ConnectionState.none:
                             case ConnectionState.waiting:
                             case ConnectionState.active:

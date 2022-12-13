@@ -11,17 +11,15 @@ import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
+import 'package:myputt/cubits/events/event_run_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
-import 'package:myputt/screens/events/event_detail/components/compete_button.dart';
-import 'package:myputt/screens/events/event_detail/components/dialogs/exit_event_dialog.dart';
-import 'package:myputt/screens/events/event_detail/components/dialogs/join_event_dialog.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/panels/update_division_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/player_list.dart';
+import 'package:myputt/screens/events/run_event/components/end_event_dialog.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/panel_helpers.dart';
@@ -37,7 +35,6 @@ class RunEventScreen extends StatefulWidget {
 
 class _RunEventScreenState extends State<RunEventScreen> {
   late Division _division;
-  bool _inEvent = false;
 
   Future<void> _refreshDivisionStandings() async {
     await BlocProvider.of<EventStandingsCubit>(context).loadDivisionStandings(
@@ -63,13 +60,16 @@ class _RunEventScreenState extends State<RunEventScreen> {
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _endEventButton(),
         backgroundColor: MyPuttColors.white,
         body: Stack(
           children: [
             CustomScrollView(
               slivers: [
                 _sliverAppBar(context),
-                CupertinoSliverRefreshControl(onRefresh: () async {}),
+                CupertinoSliverRefreshControl(onRefresh: () async {
+                  await _refreshDivisionStandings();
+                }),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
@@ -93,19 +93,13 @@ class _RunEventScreenState extends State<RunEventScreen> {
                               return Container(
                                 padding: const EdgeInsets.only(top: 24),
                                 child: Column(
-                                  children: [
-                                    const Icon(
+                                  children: const [
+                                    Icon(
                                       FlutterRemix.stack_line,
                                       size: 40,
                                     ),
-                                    const SizedBox(height: 8),
-                                    const Text('No players yet'),
-                                    const SizedBox(height: 16),
-                                    MyPuttButton(
-                                      width: 128,
-                                      title: 'Join',
-                                      onPressed: () => _joinOrLeave(context),
-                                    )
+                                    SizedBox(height: 8),
+                                    Text('No players yet'),
                                   ],
                                 ),
                               );
@@ -124,14 +118,6 @@ class _RunEventScreenState extends State<RunEventScreen> {
                 )
               ],
             ),
-            if (_inEvent)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: CompeteButton(
-                  event: widget.event,
-                  refreshData: () async => await _refreshDivisionStandings(),
-                ),
-              ),
           ],
         ),
       ),
@@ -140,9 +126,6 @@ class _RunEventScreenState extends State<RunEventScreen> {
 
   SliverAppBar _sliverAppBar(BuildContext context) {
     return SliverAppBar(
-      actions: [
-        _joinLeaveButton(context),
-      ],
       backgroundColor: Colors.white,
       leading: const Padding(
         padding: EdgeInsets.only(left: 16),
@@ -313,36 +296,27 @@ class _RunEventScreenState extends State<RunEventScreen> {
         ));
   }
 
-  Widget _joinLeaveButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        _joinOrLeave(context);
-      },
-      icon: Icon(
-        _inEvent ? FlutterRemix.logout_box_line : FlutterRemix.user_add_line,
-        color: MyPuttColors.white,
-      ),
-    );
-  }
+  Widget _endEventButton() {
+    return BlocBuilder<EventStandingsCubit, EventStandingsState>(
+      builder: (context, state) {
+        EventStandingsLoaded? loadedState;
 
-  void _joinOrLeave(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          if (!_inEvent) {
-            return JoinEventDialog(
-              event: widget.event,
-              onEventJoin: () {
-                setState(() => _inEvent = true);
-                BlocProvider.of<EventCompeteCubit>(context)
-                    .openEvent(widget.event);
-              },
+        if (state is EventStandingsLoaded) {
+          loadedState = state;
+        }
+
+        return MyPuttButton(
+          width: 128,
+          title: 'End event',
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) =>
+                  EndEventDialog(eventId: widget.event.eventId),
             );
-          }
-          return ExitEventDialog(
-            event: widget.event,
-            onEventExit: () => setState(() => _inEvent = false),
-          );
-        }).then((_) => _refreshDivisionStandings());
+          },
+        );
+      },
+    );
   }
 }
