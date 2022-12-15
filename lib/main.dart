@@ -4,8 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/controllers/screen_controller.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
-import 'package:myputt/cubits/events/event_run_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
@@ -62,8 +61,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
         BlocProvider(create: (_) => SearchUserCubit()),
-        BlocProvider(create: (_) => EventCompeteCubit()),
-        BlocProvider(create: (_) => EventRunCubit()),
+        BlocProvider(create: (_) => EventDetailCubit()),
+        BlocProvider(create: (_) => EventDetailCubit()),
         BlocProvider(create: (_) => EventStandingsCubit()),
       ],
       child: MaterialApp(

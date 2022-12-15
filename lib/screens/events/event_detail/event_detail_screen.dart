@@ -8,72 +8,74 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
-import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/misc/collapsing_app_bar_title.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
+import 'package:myputt/cubits/events/event_standings_cubit.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
-import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/screens/events/event_detail/components/compete_button.dart';
 import 'package:myputt/screens/events/event_detail/components/dialogs/exit_event_dialog.dart';
+import 'package:myputt/screens/events/event_detail/components/dialogs/end_event_dialog.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_loading_screen.dart';
 import 'package:myputt/screens/events/event_detail/components/event_detail_panel.dart';
 import 'package:myputt/screens/events/event_detail/components/player_list.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/event_helpers.dart';
 import 'package:myputt/utils/panel_helpers.dart';
 
 import 'components/dialogs/join_event_dialog.dart';
 import 'components/panels/update_division_panel.dart';
 
-class EventCompeteScreen extends StatefulWidget {
-  const EventCompeteScreen({Key? key, required this.event}) : super(key: key);
+class EventDetailScreen extends StatefulWidget {
+  const EventDetailScreen({Key? key, required this.event}) : super(key: key);
 
   final MyPuttEvent event;
 
   @override
-  State<EventCompeteScreen> createState() => _EventCompeteScreenState();
+  State<EventDetailScreen> createState() => _EventDetailScreenState();
 }
 
-class _EventCompeteScreenState extends State<EventCompeteScreen> {
-  final EventsRepository _eventsRepository = locator.get<EventsRepository>();
+class _EventDetailScreenState extends State<EventDetailScreen> {
+  late final EventDetailCubit _eventDetailCubit;
+  late final EventStandingsCubit _eventStandingsCubit;
   final EventsService _eventsService = locator.get<EventsService>();
   late Division _division;
-  List<EventPlayerData>? _eventStandings;
-  late Future<void> _fetchData;
   bool _inEvent = false;
-  late final StreamSubscription? _scoreUpdatesSubscription;
+  late bool _isAdmin;
 
-  @override
-  void initState() {
-    _eventsRepository.initializeEventStream(widget.event.eventId);
-    _division = widget.event.eventCustomizationData.divisions.first;
-    _fetchData = _initData();
-    _scoreUpdatesSubscription = _eventsRepository.playerDataStream
-        ?.listen((List<EventPlayerData> standings) {
-      setState(() => _eventStandings = standings);
-    });
+  Future<void> _loadDivisionStandings() async {
+    await BlocProvider.of<EventStandingsCubit>(context).loadDivisionStandings(
+      widget.event.eventId,
+      _division,
+    );
+  }
 
-    super.initState();
+  Future<void> _loadIsInEvent() async {
+    await _eventsService
+        .isInEvent(widget.event.eventId)
+        .then((bool isInEvent) => setState(() => _inEvent = isInEvent));
   }
 
   @override
   void dispose() {
-    _scoreUpdatesSubscription?.cancel();
+    _eventDetailCubit.exitEventScreen();
+    _eventStandingsCubit.exitEventScreen();
     super.dispose();
   }
 
-  Future<void> _initData() async {
-    await _eventsService
-        .getEvent(widget.event.eventId, division: _division)
-        .then((response) => setState(() {
-              _eventStandings = response.eventStandings;
-              _inEvent = response.inEvent;
-            }));
+  @override
+  void initState() {
+    super.initState();
+    _eventDetailCubit = BlocProvider.of<EventDetailCubit>(context);
+    _eventStandingsCubit = BlocProvider.of<EventStandingsCubit>(context);
+
+    _loadIsInEvent();
+    _isAdmin = isEventAdmin(widget.event);
+    _division = widget.event.eventCustomizationData.divisions.first;
   }
 
   @override
@@ -89,54 +91,46 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
               slivers: [
                 _sliverAppBar(context),
                 CupertinoSliverRefreshControl(
-                  onRefresh: () => _fetchData = _initData(),
+                  onRefresh: () async {
+                    await _loadDivisionStandings();
+                  },
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return FutureBuilder<void>(
-                        future: _fetchData,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<void> snapshot) {
-                          // return const EventDetailLoadingScreen();
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.done:
-                              if (_eventStandings == null) {
-                                return EmptyState(
-                                  onRetry: () => _fetchData = _initData(),
-                                );
-                              }
-                              if (_eventStandings!.isEmpty) {
-                                return Container(
-                                  padding: const EdgeInsets.only(top: 24),
-                                  child: Column(
-                                    children: [
-                                      const Icon(
-                                        FlutterRemix.stack_line,
-                                        size: 40,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text('No players yet'),
-                                      const SizedBox(height: 16),
-                                      MyPuttButton(
-                                        width: 128,
-                                        title: 'Join',
-                                        onPressed: () => _joinOrLeave(context),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }
-                              return PlayerList(
-                                eventStandings: _eventStandings!,
-                                challengeStructure: widget.event
-                                    .eventCustomizationData.challengeStructure,
+                      return BlocBuilder<EventStandingsCubit,
+                          EventStandingsState>(
+                        builder: (context, state) {
+                          if (state is EventStandingsLoading) {
+                            return const EventStandingsLoadingScreen();
+                          } else if (state is EventStandingsError) {
+                            return Container(
+                              padding: const EdgeInsets.only(top: 24),
+                              child: EmptyState(
+                                onRetry: () async =>
+                                    await _loadDivisionStandings(),
+                              ),
+                            );
+                          } else {
+                            final EventStandingsLoaded loadedState =
+                                state as EventStandingsLoaded;
+                            if (loadedState.divisionStandings.isEmpty) {
+                              return Container(
+                                padding: const EdgeInsets.only(top: 24),
+                                child: Column(
+                                  children: const [
+                                    Icon(FlutterRemix.stack_line, size: 40),
+                                    SizedBox(height: 8),
+                                    Text('No players yet'),
+                                  ],
+                                ),
                               );
-                            case ConnectionState.none:
-                            case ConnectionState.waiting:
-                            case ConnectionState.active:
-                            default:
-                              return const EventStandingsLoadingScreen();
+                            }
+                            return PlayerList(
+                              eventStandings: loadedState.divisionStandings,
+                              challengeStructure: widget.event
+                                  .eventCustomizationData.challengeStructure,
+                            );
                           }
                         },
                       );
@@ -149,10 +143,7 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
             if (_inEvent)
               Align(
                 alignment: Alignment.bottomCenter,
-                child: CompeteButton(
-                  event: widget.event,
-                  refreshData: () => _fetchData = _initData(),
-                ),
+                child: CompeteButton(event: widget.event),
               ),
           ],
         ),
@@ -225,7 +216,7 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
 
   Widget _descriptionRow(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
           SizedBox(
@@ -259,19 +250,20 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
           ),
           const Spacer(),
           SizedBox(
-              width: 64,
-              child: FittedBox(
-                child: Text(
-                  'PUTTS MADE',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
-                      color: MyPuttColors.darkGray,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                ),
-              )),
-          const SizedBox(width: 52),
+            width: 64,
+            child: FittedBox(
+              child: Text(
+                'PUTTS MADE',
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                    color: MyPuttColors.darkGray,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+              ),
+            ),
+          ),
+          const SizedBox(width: 44),
         ],
       ),
     );
@@ -281,16 +273,45 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(100),
       child: Container(
-        padding: const EdgeInsets.only(top: 16, bottom: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-            color: MyPuttColors.white,
-            border: Border(bottom: BorderSide(color: MyPuttColors.gray[200]!))),
+          color: MyPuttColors.white,
+          border: Border(
+            bottom: BorderSide(
+              color: MyPuttColors.gray[200]!,
+            ),
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-                padding: const EdgeInsets.only(left: 12, bottom: 12),
-                child: _changeDivisionButton(context)),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _changeDivisionButton(context),
+                  ),
+                  if (_isAdmin) ...[
+                    const Spacer(),
+                    Bounceable(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              EndEventDialog(eventId: widget.event.eventId),
+                        );
+                      },
+                      child: const Icon(
+                        FlutterRemix.pencil_line,
+                        color: MyPuttColors.blue,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
             const SizedBox(height: 8),
             _descriptionRow(context),
           ],
@@ -307,9 +328,9 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
                 currentDivision: _division,
                 availableDivisions:
                     widget.event.eventCustomizationData.divisions,
-                onDivisionUpdate: (Division division) {
+                onDivisionUpdate: (Division division) async {
                   setState(() => _division = division);
-                  _fetchData = _initData();
+                  await _loadDivisionStandings();
                 })),
         child: Container(
           padding: const EdgeInsets.all(8),
@@ -347,22 +368,24 @@ class _EventCompeteScreenState extends State<EventCompeteScreen> {
 
   void _joinOrLeave(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          if (!_inEvent) {
-            return JoinEventDialog(
-              event: widget.event,
-              onEventJoin: () {
-                setState(() => _inEvent = true);
-                BlocProvider.of<EventCompeteCubit>(context)
-                    .openEvent(widget.event);
-              },
-            );
-          }
+      context: context,
+      builder: (BuildContext context) {
+        if (!_inEvent) {
+          return JoinEventDialog(
+            event: widget.event,
+            onEventJoin: () {
+              setState(() => _inEvent = true);
+              BlocProvider.of<EventDetailCubit>(context)
+                  .openEvent(widget.event);
+            },
+          );
+        } else {
           return ExitEventDialog(
             event: widget.event,
             onEventExit: () => setState(() => _inEvent = false),
           );
-        }).then((_) => _fetchData = _initData());
+        }
+      },
+    );
   }
 }

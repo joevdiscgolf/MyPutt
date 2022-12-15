@@ -8,18 +8,18 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
-import 'package:myputt/cubits/events/event_run_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
-import 'package:myputt/screens/events/event_detail/event_compete_screen.dart';
+import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 import 'package:myputt/screens/events/tabs/club_events_tab.dart';
 import 'package:myputt/screens/events/tabs/run_events_tab.dart';
 import 'package:myputt/screens/events/tabs/tournament_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/event_helpers.dart';
 
 import 'components/event_category_tab.dart';
 import 'components/events_list.dart';
@@ -208,7 +208,7 @@ class _EventsState extends State<EventsScreen>
     // if loaded
     return EventsList(
       events: _events!,
-      onPressed: (MyPuttEvent event) => _openCompetitionEvent(event),
+      onPressed: (MyPuttEvent event) => _eventPressed(event),
       onRefresh: () {
         if (_searchBarText != null && _searchBarText!.isNotEmpty) {
           _searchEvents(_searchBarText!);
@@ -267,11 +267,11 @@ class _EventsState extends State<EventsScreen>
       },
       child: MyPuttButton(
         onPressed: () {
-          BlocProvider.of<EventRunCubit>(context).createEventPressed();
+          BlocProvider.of<EventDetailCubit>(context).createEventPressed();
           Navigator.of(context)
               .push(AnimatedRoute(const CreateEventScreen()))
               .then((_) {
-            if (BlocProvider.of<EventRunCubit>(context).newEventWasCreated) {
+            if (BlocProvider.of<EventDetailCubit>(context).newEventWasCreated) {
               setState(() => _tabController.index = 3);
             }
           });
@@ -307,12 +307,10 @@ class _EventsState extends State<EventsScreen>
     );
   }
 
-  void _openCompetitionEvent(MyPuttEvent event) {
-    BlocProvider.of<EventCompeteCubit>(context).openEvent(event);
+  void _eventPressed(MyPuttEvent event) {
+    openEvent(context, event);
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EventCompeteScreen(event: event),
-      ),
+      MaterialPageRoute(builder: (context) => EventDetailScreen(event: event)),
     );
   }
 }

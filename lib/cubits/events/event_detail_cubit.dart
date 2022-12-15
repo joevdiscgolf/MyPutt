@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
@@ -10,39 +13,52 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
+import 'package:myputt/services/firebase/utils/fb_constants.dart';
 
-part 'event_compete_state.dart';
+part 'event_detail_state.dart';
 
-class EventCompeteCubit extends Cubit<EventCompeteState> {
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+class EventDetailCubit extends Cubit<EventDetailState> {
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
   bool _newEventCreated = false;
+  StreamSubscription<DocumentSnapshot<Object?>>? _eventStreamSubscription;
 
-  EventCompeteCubit() : super(EventCompeteInitial());
+  EventDetailCubit() : super(EventDetailInitial());
 
   bool get newEventWasCreated => _newEventCreated;
 
   Future<void> openEvent(MyPuttEvent event) async {
-    _eventsRepository.initializeEventStream(event.eventId);
-
+    _initEventSubscription(event.eventId);
     _eventsRepository.currentEvent = event;
-    emit(EventCompeteLoading());
+    emit(EventDetailLoading());
     final EventPlayerData? playerData =
         await _databaseService.loadEventPlayerData(event.eventId);
     if (playerData == null) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
     _eventsRepository.currentPlayerData = playerData;
-    emit(EventCompeteActive(
-        event: event, eventPlayerData: _eventsRepository.currentPlayerData!));
+    emit(
+      EventDetailLoaded(
+        event: event,
+        currentPlayerData: _eventsRepository.currentPlayerData!,
+      ),
+    );
+  }
+
+  void exitEventScreen() {
+    _eventStreamSubscription?.cancel();
+    _eventStreamSubscription = null;
+    emit(EventDetailInitial());
   }
 
   Future<void> addSet(PuttingSet set) async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
     if (_eventsRepository.currentPlayerData!.sets.length ==
@@ -54,52 +70,55 @@ class EventCompeteCubit extends Cubit<EventCompeteState> {
     _eventsRepository.currentPlayerData!.sets.add(set);
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
-    emit(EventCompeteActive(
+    emit(EventDetailLoaded(
       event: _eventsRepository.currentEvent!,
-      eventPlayerData: _eventsRepository.currentPlayerData!,
+      currentPlayerData: _eventsRepository.currentPlayerData!,
     ));
   }
 
   Future<void> undoSet() async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
 
     _eventsRepository.currentPlayerData!.sets.removeLast();
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
-    emit(EventCompeteActive(
+    emit(EventDetailLoaded(
         event: _eventsRepository.currentEvent!,
-        eventPlayerData: _eventsRepository.currentPlayerData!));
+        currentPlayerData: _eventsRepository.currentPlayerData!));
   }
 
   Future<void> deleteSet(PuttingSet set) async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
 
     _eventsRepository.currentPlayerData!.sets.remove(set);
     final bool success = await _eventsRepository.resyncSets();
     if (!success) {
-      emit(EventCompeteError());
+      emit(EventDetailError());
       return;
     }
-    emit(EventCompeteActive(
+    emit(
+      EventDetailLoaded(
         event: _eventsRepository.currentEvent!,
-        eventPlayerData: _eventsRepository.currentPlayerData!));
+        currentPlayerData: _eventsRepository.currentPlayerData!,
+      ),
+    );
   }
 
-  Future<bool> createEventRequest({
+  Future<bool> createNewEvent({
     required String eventName,
     String? eventDescription,
     required bool verificationSignature,
@@ -137,5 +156,30 @@ class EventCompeteCubit extends Cubit<EventCompeteState> {
 
   void createEventPressed() {
     _newEventCreated = false;
+  }
+
+  void _initEventSubscription(String eventId) {
+    DocumentReference eventRef = firestore.doc('$eventsCollection/$eventId');
+    _eventStreamSubscription =
+        eventRef.snapshots().listen((DocumentSnapshot snapshot) {
+      if (snapshot.data() == null) {
+        return;
+      }
+      try {
+        final MyPuttEvent updatedEvent =
+            MyPuttEvent.fromJson(snapshot.data() as Map<String, dynamic>);
+        if (state is EventDetailLoaded) {
+          final EventDetailLoaded activeState = state as EventDetailLoaded;
+          emit(
+            EventDetailLoaded(
+              event: updatedEvent,
+              currentPlayerData: activeState.currentPlayerData,
+            ),
+          );
+        }
+      } catch (e) {
+        return;
+      }
+    });
   }
 }

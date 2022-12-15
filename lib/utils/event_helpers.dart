@@ -1,5 +1,13 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
+import 'package:myputt/cubits/events/event_standings_cubit.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/models/data/events/ordered_standing.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/utils/calculators.dart';
 
 List<OrderedStanding> getOrderedStandings(List<EventPlayerData> standings) {
@@ -42,4 +50,23 @@ List<OrderedStanding> getOrderedStandings(List<EventPlayerData> standings) {
   }
 
   return finalStandings;
+}
+
+bool isEventAdmin(MyPuttEvent event) {
+  final String? currentUid =
+      locator.get<FirebaseAuthService>().getCurrentUserId();
+  return [event.creatorUid, ...event.adminUids].contains(currentUid);
+}
+
+Division getInitialDivision(List<Division> divisions) {
+  if (divisions.isNotEmpty) {
+    return divisions.first;
+  } else {
+    return Division.mpo;
+  }
+}
+
+void openEvent(BuildContext context, MyPuttEvent event) {
+  BlocProvider.of<EventStandingsCubit>(context).openEvent(event);
+  BlocProvider.of<EventDetailCubit>(context).openEvent(event);
 }

@@ -19,11 +19,13 @@ class EndEventDialog extends StatefulWidget {
 }
 
 class _EndEventDialogState extends State<EndEventDialog> {
+  final EventsService _eventsService = locator.get<EventsService>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
 
   late Future<void> _fetchData;
   List<EventPlayerData>? _allStandings;
   bool _error = false;
+  ButtonState _buttonState = ButtonState.normal;
 
   Future<void> _initData() async {
     try {
@@ -71,7 +73,6 @@ class _EndEventDialogState extends State<EndEventDialog> {
     return FutureBuilder<void>(
       future: _fetchData,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        // return const EventDetailLoadingScreen();
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             if (_error || _allStandings == null) {
@@ -122,7 +123,27 @@ class _EndEventDialogState extends State<EndEventDialog> {
                   backgroundColor: MyPuttColors.white,
                   textColor: MyPuttColors.blue,
                   shadowColor: MyPuttColors.gray[300]!,
-                  onPressed: () {},
+                  onPressed: () async {
+                    setState(() {
+                      _buttonState = ButtonState.loading;
+                    });
+                    final bool success =
+                        await _eventsService.endEvent(widget.eventId);
+                    if (!mounted) {
+                      return;
+                    }
+                    if (success) {
+                      await Future.delayed(const Duration(milliseconds: 300));
+                      if (mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    } else {
+                      setState(() {
+                        _buttonState = ButtonState.retry;
+                      });
+                    }
+                  },
+                  buttonState: _buttonState,
                 ),
                 MyPuttButton(
                     width: 100,

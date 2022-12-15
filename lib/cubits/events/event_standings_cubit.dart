@@ -6,8 +6,10 @@ import 'package:meta/meta.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
+import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/utils/event_helpers.dart';
 
 part 'event_standings_state.dart';
 
@@ -18,14 +20,19 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
 
   final DatabaseService _databaseService = locator.get<DatabaseService>();
 
-  Division? division;
+  Division? _division;
 
   bool _firstDocumentSnapshot = true;
   StreamSubscription<QuerySnapshot<Object?>>? _eventStandingsSubscription;
 
-  Future<void> openEvent(String eventId, Division initialDivision) async {
-    _initStandingsSubscription(eventId);
-    loadDivisionStandings(eventId, initialDivision);
+  Future<void> openEvent(MyPuttEvent event) async {
+    _initStandingsSubscription(event.eventId);
+
+    final Division initialDivision =
+        getInitialDivision(event.eventCustomizationData.divisions);
+
+    _division = initialDivision;
+    loadDivisionStandings(event.eventId, initialDivision);
   }
 
   Future<void> loadDivisionStandings(String eventId, Division division) async {
@@ -40,7 +47,7 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
   }
 
   void selectDivision(String eventId, Division updatedDivision) {
-    division = updatedDivision;
+    _division = updatedDivision;
     emit(EventStandingsLoading());
     loadDivisionStandings(eventId, updatedDivision);
   }
@@ -63,13 +70,13 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
           EventPlayerData.fromJson(snapshot.data()! as Map<String, dynamic>),
         );
         playerData =
-            playerData.where((data) => data.division == division).toList();
+            playerData.where((data) => data.division == _division).toList();
       }
       emit(EventStandingsLoaded(divisionStandings: playerData));
     });
   }
 
-  void cancelStandingsSubscription() {
+  void exitEventScreen() {
     _eventStandingsSubscription?.cancel();
     _eventStandingsSubscription = null;
     _firstDocumentSnapshot = true;

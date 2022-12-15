@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/animated_arrows.dart';
@@ -13,14 +13,14 @@ class EventDirector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
+    return BlocBuilder<EventDetailCubit, EventDetailState>(
         builder: (context, state) {
-      if (state is! EventCompeteActive) {
+      if (state is! EventDetailLoaded) {
         return const Center(child: Text('Something went wrong'));
       }
       final List<ChallengeStructureItem> challengeStructure =
           state.event.eventCustomizationData.challengeStructure;
-      final List<PuttingSet> sets = state.eventPlayerData.sets;
+      final List<PuttingSet> sets = state.currentPlayerData.sets;
 
       final int index = sets.length == challengeStructure.length
           ? sets.length - 1
@@ -33,7 +33,7 @@ class EventDirector extends StatelessWidget {
   }
 
   Widget _mainBody(BuildContext context, int distance, int setLength,
-      EventCompeteActive state) {
+      EventDetailLoaded state) {
     return Column(
       children: [
         Container(
@@ -69,12 +69,13 @@ class EventDirector extends StatelessWidget {
         const SizedBox(height: 16),
         _percentCompleteIndicator(
           context,
-          begin: totalAttemptsFromSets(state.eventPlayerData.sets).toDouble() /
-              totalAttemptsFromStructure(
-                      state.event.eventCustomizationData.challengeStructure)
-                  .toDouble(),
-          end: (totalAttemptsFromSubset(state.eventPlayerData.sets,
-                      state.eventPlayerData.sets.length)
+          begin:
+              totalAttemptsFromSets(state.currentPlayerData.sets).toDouble() /
+                  totalAttemptsFromStructure(
+                          state.event.eventCustomizationData.challengeStructure)
+                      .toDouble(),
+          end: (totalAttemptsFromSubset(state.currentPlayerData.sets,
+                      state.currentPlayerData.sets.length)
                   .toDouble()) /
               totalAttemptsFromStructure(
                       state.event.eventCustomizationData.challengeStructure)

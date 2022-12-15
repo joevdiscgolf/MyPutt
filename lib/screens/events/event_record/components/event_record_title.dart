@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/events/event_compete_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EventRecordTitle extends StatelessWidget {
@@ -8,9 +8,9 @@ class EventRecordTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventCompeteCubit, EventCompeteState>(
+    return BlocBuilder<EventDetailCubit, EventDetailState>(
       builder: (context, state) {
-        if (state is! EventCompeteActive) {
+        if (state is! EventDetailLoaded) {
           return Container();
         }
         return Container(
@@ -28,7 +28,7 @@ class EventRecordTitle extends StatelessWidget {
                 ),
                 TextSpan(
                   text:
-                      '${state.eventPlayerData.sets.length == state.event.eventCustomizationData.challengeStructure.length ? state.eventPlayerData.sets.length : state.eventPlayerData.sets.length + 1}',
+                      '${state.currentPlayerData.sets.length == state.event.eventCustomizationData.challengeStructure.length ? state.currentPlayerData.sets.length : state.currentPlayerData.sets.length + 1}',
                   style: Theme.of(context).textTheme.headline6?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontWeight: FontWeight.w500,

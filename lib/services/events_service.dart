@@ -1,10 +1,17 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
+import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
+
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventsService {
   Future<GetEventResponse> getEvent(String eventId, {Division? division}) {
@@ -112,7 +119,6 @@ class EventsService {
         FirebaseFunctions.instance.httpsCallable('getMyEvents');
 
     return callable().then((HttpsCallableResult<dynamic> response) {
-      print(response.data);
       return GetEventsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
       FirebaseCrashlytics.instance.recordError(
@@ -177,6 +183,32 @@ class EventsService {
         e,
         trace,
         reason: '[EventsService][createEvent] exception',
+      );
+      return false;
+    });
+  }
+
+  Future<bool> isInEvent(String eventId) async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return false;
+    }
+    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
+      if (snapshot.data() == null) {
+        return false;
+      }
+      try {
+        final MyPuttUser user =
+            MyPuttUser.fromJson(snapshot.data() as Map<String, dynamic>);
+        return user.eventIds?.contains(eventId) == true;
+      } catch (e) {
+        return false;
+      }
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][isInEvent] exception',
       );
       return false;
     });
