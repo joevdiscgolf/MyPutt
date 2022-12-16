@@ -101,7 +101,6 @@ class CompeteButton extends StatelessWidget {
               Bounceable(
                 onTap: () {
                   Vibrate.feedback(FeedbackType.light);
-                  BlocProvider.of<EventDetailCubit>(context).openEvent(event);
                   displayBottomSheet(
                     context,
                     EventRecordScreen(event: event),

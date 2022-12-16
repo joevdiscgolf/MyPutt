@@ -12,14 +12,12 @@ import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 import 'package:myputt/screens/events/tabs/club_events_tab.dart';
 import 'package:myputt/screens/events/tabs/run_events_tab.dart';
 import 'package:myputt/screens/events/tabs/tournament_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/event_helpers.dart';
 
 import 'components/event_category_tab.dart';
 import 'components/events_list.dart';
@@ -208,7 +206,6 @@ class _EventsState extends State<EventsScreen>
     // if loaded
     return EventsList(
       events: _events!,
-      onPressed: (MyPuttEvent event) => _eventPressed(event),
       onRefresh: () {
         if (_searchBarText != null && _searchBarText!.isNotEmpty) {
           _searchEvents(_searchBarText!);
@@ -304,13 +301,6 @@ class _EventsState extends State<EventsScreen>
           }
         },
       ),
-    );
-  }
-
-  void _eventPressed(MyPuttEvent event) {
-    openEvent(context, event);
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EventDetailScreen(event: event)),
     );
   }
 }

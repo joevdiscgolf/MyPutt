@@ -24,13 +24,16 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
   bool _newEventCreated = false;
+
   StreamSubscription<DocumentSnapshot<Object?>>? _eventStreamSubscription;
+  bool _firstDocumentEvent = true;
 
   EventDetailCubit() : super(EventDetailInitial());
 
   bool get newEventWasCreated => _newEventCreated;
 
   Future<void> openEvent(MyPuttEvent event) async {
+    _firstDocumentEvent = true;
     _initEventSubscription(event.eventId);
     _eventsRepository.currentEvent = event;
     emit(EventDetailLoading());
@@ -50,6 +53,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   }
 
   void exitEventScreen() {
+    _firstDocumentEvent = false;
     _eventStreamSubscription?.cancel();
     _eventStreamSubscription = null;
     emit(EventDetailInitial());
@@ -162,14 +166,20 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     DocumentReference eventRef = firestore.doc('$eventsCollection/$eventId');
     _eventStreamSubscription =
         eventRef.snapshots().listen((DocumentSnapshot snapshot) {
+      if (_firstDocumentEvent) {
+        _firstDocumentEvent = false;
+        return;
+      }
       if (snapshot.data() == null) {
         return;
       }
       try {
         final MyPuttEvent updatedEvent =
             MyPuttEvent.fromJson(snapshot.data() as Map<String, dynamic>);
+
         if (state is EventDetailLoaded) {
           final EventDetailLoaded activeState = state as EventDetailLoaded;
+          _eventsRepository.currentEvent = updatedEvent;
           emit(
             EventDetailLoaded(
               event: updatedEvent,

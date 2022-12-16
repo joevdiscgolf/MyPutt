@@ -5,9 +5,7 @@ import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/screens/events/components/events_list.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 import 'package:myputt/services/events_service.dart';
-import 'package:myputt/utils/event_helpers.dart';
 
 class RunEventsTab extends StatefulWidget {
   const RunEventsTab({Key? key}) : super(key: key);
@@ -74,7 +72,6 @@ class _RunEventsTabState extends State<RunEventsTab>
             }
             return EventsList(
               events: _myEvents,
-              onPressed: (MyPuttEvent event) => _openEvent(event),
               onRefresh: () => _fetchData = _initData(),
             );
           case ConnectionState.none:
@@ -84,13 +81,6 @@ class _RunEventsTabState extends State<RunEventsTab>
             return const EventSearchLoadingScreen();
         }
       },
-    );
-  }
-
-  void _openEvent(MyPuttEvent event) {
-    openEvent(context, event);
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EventDetailScreen(event: event)),
     );
   }
 }

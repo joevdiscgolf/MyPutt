@@ -11,12 +11,10 @@ class EventsList extends StatelessWidget {
   const EventsList({
     Key? key,
     required this.events,
-    required this.onPressed,
     this.onRefresh,
   }) : super(key: key);
 
   final List<MyPuttEvent> events;
-  final Function(MyPuttEvent) onPressed;
   final Function? onRefresh;
 
   @override
@@ -55,10 +53,7 @@ class EventsList extends StatelessWidget {
 
                 return Column(
                   children: events
-                      .map((event) => EventListItem(
-                            event: event,
-                            onPressed: (MyPuttEvent event) => onPressed(event),
-                          ))
+                      .map((event) => EventListItem(event: event))
                       .toList(),
                 );
               },

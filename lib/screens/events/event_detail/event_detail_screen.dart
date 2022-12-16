@@ -31,9 +31,11 @@ import 'components/dialogs/join_event_dialog.dart';
 import 'components/panels/update_division_panel.dart';
 
 class EventDetailScreen extends StatefulWidget {
-  const EventDetailScreen({Key? key, required this.event}) : super(key: key);
+  const EventDetailScreen({Key? key, required this.event, this.onEventUpdate})
+      : super(key: key);
 
   final MyPuttEvent event;
+  final Function(MyPuttEvent)? onEventUpdate;
 
   @override
   State<EventDetailScreen> createState() => _EventDetailScreenState();
@@ -98,40 +100,61 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return BlocBuilder<EventStandingsCubit,
-                          EventStandingsState>(
-                        builder: (context, state) {
-                          if (state is EventStandingsLoading) {
-                            return const EventStandingsLoadingScreen();
-                          } else if (state is EventStandingsError) {
-                            return Container(
-                              padding: const EdgeInsets.only(top: 24),
-                              child: EmptyState(
-                                onRetry: () async =>
-                                    await _loadDivisionStandings(),
-                              ),
-                            );
-                          } else {
-                            final EventStandingsLoaded loadedState =
-                                state as EventStandingsLoaded;
-                            if (loadedState.divisionStandings.isEmpty) {
-                              return Container(
-                                padding: const EdgeInsets.only(top: 24),
-                                child: Column(
-                                  children: const [
-                                    Icon(FlutterRemix.stack_line, size: 40),
-                                    SizedBox(height: 8),
-                                    Text('No players yet'),
-                                  ],
-                                ),
-                              );
+                      return BlocConsumer<EventDetailCubit, EventDetailState>(
+                        listenWhen: (previous, current) =>
+                            current is EventDetailLoaded,
+                        listener: (context, updatedState) {
+                          if (updatedState is EventDetailLoaded) {
+                            if (widget.onEventUpdate != null) {
+                              widget.onEventUpdate!(updatedState.event);
                             }
-                            return PlayerList(
-                              eventStandings: loadedState.divisionStandings,
-                              challengeStructure: widget.event
-                                  .eventCustomizationData.challengeStructure,
-                            );
                           }
+                        },
+                        builder: (context, detailState) {
+                          return BlocBuilder<EventStandingsCubit,
+                              EventStandingsState>(
+                            builder: (context, standingsState) {
+                              if (standingsState is EventStandingsLoading) {
+                                return const EventStandingsLoadingScreen();
+                              } else if (standingsState
+                                  is EventStandingsError) {
+                                return Container(
+                                  padding: const EdgeInsets.only(top: 24),
+                                  child: EmptyState(
+                                    onRetry: () async =>
+                                        await _loadDivisionStandings(),
+                                  ),
+                                );
+                              } else {
+                                final EventStandingsLoaded loadedState =
+                                    standingsState as EventStandingsLoaded;
+                                if (loadedState.divisionStandings.isEmpty) {
+                                  return Container(
+                                    padding: const EdgeInsets.only(top: 24),
+                                    child: Column(
+                                      children: const [
+                                        Icon(FlutterRemix.stack_line, size: 40),
+                                        SizedBox(height: 8),
+                                        Text('No players yet'),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                final bool isComplete =
+                                    detailState is EventDetailLoaded &&
+                                        detailState.event.status ==
+                                            EventStatus.complete;
+                                return PlayerList(
+                                  eventStandings: loadedState.divisionStandings,
+                                  challengeStructure: widget
+                                      .event
+                                      .eventCustomizationData
+                                      .challengeStructure,
+                                  isComplete: isComplete,
+                                );
+                              }
+                            },
+                          );
                         },
                       );
                     },

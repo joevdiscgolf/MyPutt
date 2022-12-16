@@ -67,21 +67,22 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
         final int setLength = currentStructureItem.setLength;
         final int distance = currentStructureItem.distance;
 
-        List<Widget> previousSetsChildren =
-            List.from(state.currentPlayerData.sets
-                .asMap()
-                .entries
-                .map((entry) => PuttingSetRow(
-                      deletable: true,
-                      set: entry.value,
-                      index: entry.key,
-                      delete: () {
-                        BlocProvider.of<EventDetailCubit>(context)
-                            .deleteSet(entry.value);
-                      },
-                    ))
-                .toList()
-                .reversed);
+        List<Widget> previousSetsChildren = List.from(
+          state.currentPlayerData.sets
+              .asMap()
+              .entries
+              .map((entry) => PuttingSetRow(
+                    deletable: true,
+                    set: entry.value,
+                    index: entry.key,
+                    delete: () {
+                      BlocProvider.of<EventDetailCubit>(context)
+                          .deleteSet(entry.value);
+                    },
+                  ))
+              .toList()
+              .reversed,
+        );
         return Scaffold(
           appBar: AppBar(
             title: const EventRecordTitle(),
