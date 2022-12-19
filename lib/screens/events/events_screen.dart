@@ -268,7 +268,7 @@ class _EventsState extends State<EventsScreen>
           Navigator.of(context)
               .push(AnimatedRoute(const CreateEventScreen()))
               .then((_) {
-            if (BlocProvider.of<EventDetailCubit>(context).newEventWasCreated) {
+            if (BlocProvider.of<EventDetailCubit>(context).newEventCreated) {
               setState(() => _tabController.index = 3);
             }
           });

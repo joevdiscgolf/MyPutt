@@ -9,12 +9,8 @@ part 'event_endpoints.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventRequest {
-  GetEventRequest({
-    required this.eventId,
-    required this.division,
-  });
+  GetEventRequest({required this.eventId});
   final String eventId;
-  final Division? division;
 
   factory GetEventRequest.fromJson(Map<String, dynamic> json) =>
       _$GetEventRequestFromJson(json);
@@ -24,12 +20,9 @@ class GetEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventResponse {
-  GetEventResponse({
-    required this.inEvent,
-    this.eventStandings,
-  });
+  GetEventResponse({this.event, required this.inEvent});
+  final MyPuttEvent? event;
   final bool inEvent;
-  final List<EventPlayerData>? eventStandings;
 
   factory GetEventResponse.fromJson(Map<String, dynamic> json) =>
       _$GetEventResponseFromJson(json);
@@ -101,28 +94,54 @@ class GetEventsResponse {
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class UpdatePlayerSetsRequest {
-  UpdatePlayerSetsRequest(
-      {required this.eventId, required this.sets, this.lockedIn});
+class SavePlayerSetsRequest {
+  SavePlayerSetsRequest({
+    required this.eventId,
+    required this.sets,
+    this.lockedIn,
+  });
   final String eventId;
   final List<PuttingSet> sets;
   final bool? lockedIn;
 
-  factory UpdatePlayerSetsRequest.fromJson(Map<String, dynamic> json) =>
-      _$UpdatePlayerSetsRequestFromJson(json);
+  factory SavePlayerSetsRequest.fromJson(Map<String, dynamic> json) =>
+      _$SavePlayerSetsRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UpdatePlayerSetsRequestToJson(this);
+  Map<String, dynamic> toJson() => _$SavePlayerSetsRequestToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class UpdatePlayerSetsResponse {
-  UpdatePlayerSetsResponse({required this.success});
+class SavePlayerSetsResponse {
+  SavePlayerSetsResponse({required this.success, this.eventStatus});
   final bool success;
+  final EventStatus? eventStatus;
 
-  factory UpdatePlayerSetsResponse.fromJson(Map<String, dynamic> json) =>
-      _$UpdatePlayerSetsResponseFromJson(json);
+  factory SavePlayerSetsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SavePlayerSetsResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UpdatePlayerSetsResponseToJson(this);
+  Map<String, dynamic> toJson() => _$SavePlayerSetsResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class GetEventPlayerDataRequest {
+  GetEventPlayerDataRequest({required this.eventId});
+  final String eventId;
+
+  factory GetEventPlayerDataRequest.fromJson(Map<String, dynamic> json) =>
+      _$GetEventPlayerDataRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetEventPlayerDataRequestToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class GetEventPlayerDataResponse {
+  GetEventPlayerDataResponse({this.eventPlayerData});
+  final EventPlayerData? eventPlayerData;
+
+  factory GetEventPlayerDataResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetEventPlayerDataResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetEventPlayerDataResponseToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)

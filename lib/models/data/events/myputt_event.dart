@@ -37,7 +37,7 @@ class MyPuttEvent {
   final EventType eventType;
   final int startTimestamp;
   final int endTimestamp;
-  final EventStatus status;
+  EventStatus status;
   final int? completionTimestamp;
   final String? bannerImgUrl;
   final int participantCount;

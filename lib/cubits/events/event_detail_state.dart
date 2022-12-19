@@ -13,8 +13,13 @@ class EventDetailError extends EventDetailState {
 }
 
 class EventDetailLoaded extends EventDetailState {
-  EventDetailLoaded({required this.event, required this.currentPlayerData});
+  EventDetailLoaded({
+    required this.event,
+    required this.currentPlayerData,
+    required this.connected,
+  });
 
   final MyPuttEvent event;
   final EventPlayerData currentPlayerData;
+  final bool connected;
 }

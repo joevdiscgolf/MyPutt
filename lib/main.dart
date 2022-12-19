@@ -24,18 +24,20 @@ import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/device_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'cubits/my_profile_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final isPhysicalDevice = await DeviceHelpers.isPhysicalDevice();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  if (kDebugMode) {
-    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-  }
+  // if (kDebugMode && !isPhysicalDevice) {
+  //   FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  // }
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
   await setUpLocator();

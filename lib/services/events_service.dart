@@ -14,12 +14,11 @@ import 'package:myputt/services/firebase_auth_service.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventsService {
-  Future<GetEventResponse> getEvent(String eventId, {Division? division}) {
+  Future<GetEventResponse> getEvent(String eventId) {
     final HttpsCallable callable =
         FirebaseFunctions.instance.httpsCallable('getEvent');
 
-    final GetEventRequest request =
-        GetEventRequest(eventId: eventId, division: division);
+    final GetEventRequest request = GetEventRequest(eventId: eventId);
 
     return callable(request.toJson())
         .then((HttpsCallableResult<dynamic> response) {
@@ -130,25 +129,47 @@ class EventsService {
     });
   }
 
-  Future<UpdatePlayerSetsResponse> updatePlayerSets(
-      String eventId, List<PuttingSet> sets,
-      {bool lockedIn = false}) {
+  Future<SavePlayerSetsResponse> savePlayerSets(
+    String eventId,
+    List<PuttingSet> sets, {
+    bool lockedIn = false,
+  }) {
     final HttpsCallable callable =
-        FirebaseFunctions.instance.httpsCallable('searchEvents');
+        FirebaseFunctions.instance.httpsCallable('savePlayerSets');
 
-    final UpdatePlayerSetsRequest request = UpdatePlayerSetsRequest(
-        eventId: eventId, sets: sets, lockedIn: lockedIn);
+    final SavePlayerSetsRequest request =
+        SavePlayerSetsRequest(eventId: eventId, sets: sets, lockedIn: lockedIn);
 
     return callable(request.toJson())
         .then((HttpsCallableResult<dynamic> response) {
-      return UpdatePlayerSetsResponse.fromJson(response.data);
+      return SavePlayerSetsResponse.fromJson(response.data);
     }).catchError((e, trace) async {
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[EventsService][updatePlayerSets] exception',
+        reason: '[EventsService][savePlayerSets] exception',
       );
-      return UpdatePlayerSetsResponse(success: false);
+      throw e;
+    });
+  }
+
+  Future<GetEventPlayerDataResponse> getEventPlayerData(String eventId) {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getPlayerData');
+
+    final GetEventPlayerDataRequest request =
+        GetEventPlayerDataRequest(eventId: eventId);
+
+    return callable(request.toJson())
+        .then((HttpsCallableResult<dynamic> response) {
+      return GetEventPlayerDataResponse.fromJson(response.data);
+    }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][getEventPlayerData] exception',
+      );
+      throw e;
     });
   }
 

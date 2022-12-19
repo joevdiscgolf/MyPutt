@@ -2,27 +2,39 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:meta/meta.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
+import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/utils/event_helpers.dart';
+import 'package:myputt/utils/utils.dart';
 
 part 'event_standings_state.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventStandingsCubit extends Cubit<EventStandingsState> {
-  EventStandingsCubit() : super(EventStandingsLoading());
+  EventStandingsCubit() : super(EventStandingsLoading()) {
+    Connectivity().checkConnectivity().then(
+        (connectivityResult) => _connected = isConnected(connectivityResult));
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) => _connectivityListener(result));
+  }
 
   final DatabaseService _databaseService = locator.get<DatabaseService>();
 
   Division? _division;
+  bool _connected = true;
 
   bool _firstDocumentSnapshot = true;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   StreamSubscription<QuerySnapshot<Object?>>? _eventStandingsSubscription;
 
   Future<void> openEvent(MyPuttEvent event) async {
@@ -77,8 +89,23 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
   }
 
   void exitEventScreen() {
-    _eventStandingsSubscription?.cancel();
-    _eventStandingsSubscription = null;
     _firstDocumentSnapshot = true;
+    _eventStandingsSubscription?.cancel();
+    _connectivitySubscription?.cancel();
+  }
+
+  // Re-initialize subscription when back online.
+  void _connectivityListener(ConnectivityResult result) {
+    final bool wasConnected = _connected;
+    _connected = isConnected(result);
+
+    if (!wasConnected && _connected) {
+      _eventStandingsSubscription?.cancel();
+      if (locator.get<EventsRepository>().currentEvent != null) {
+        _initStandingsSubscription(
+          locator.get<EventsRepository>().currentEvent!.eventId,
+        );
+      }
+    }
   }
 }

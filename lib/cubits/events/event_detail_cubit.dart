@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
@@ -14,23 +15,66 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/utils/utils.dart';
 
 part 'event_detail_state.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventDetailCubit extends Cubit<EventDetailState> {
+  EventDetailCubit() : super(EventDetailInitial()) {
+    Connectivity().checkConnectivity().then(
+        (connectivityResult) => _connected = isConnected(connectivityResult));
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) => _connectivityListener(result));
+  }
+
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
-  bool _newEventCreated = false;
 
+  bool newEventCreated = false;
+
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   StreamSubscription<DocumentSnapshot<Object?>>? _eventStreamSubscription;
+
   bool _firstDocumentEvent = true;
+  bool _connected = true;
 
-  EventDetailCubit() : super(EventDetailInitial());
+  void createEventPressed() {
+    newEventCreated = false;
+  }
 
-  bool get newEventWasCreated => _newEventCreated;
+  void exitEventScreen() {
+    _firstDocumentEvent = false;
+    _eventStreamSubscription?.cancel();
+    _connectivitySubscription?.cancel();
+    emit(EventDetailInitial());
+  }
+
+  Future<void> reloadEventDetails(String eventId) async {
+    final MyPuttEvent? updatedEvent = await _eventsService
+        .getEvent(eventId)
+        .then((response) => response.event);
+
+    if (updatedEvent == null) {
+      // Failure toast
+      return;
+    }
+
+    if (state is EventDetailLoaded) {
+      final EventDetailLoaded loadedState = state as EventDetailLoaded;
+      emit(
+        EventDetailLoaded(
+          event: updatedEvent,
+          currentPlayerData: loadedState.currentPlayerData,
+          connected: _connected,
+        ),
+      );
+    }
+  }
 
   Future<void> openEvent(MyPuttEvent event) async {
     _firstDocumentEvent = true;
@@ -48,15 +92,9 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       EventDetailLoaded(
         event: event,
         currentPlayerData: _eventsRepository.currentPlayerData!,
+        connected: _connected,
       ),
     );
-  }
-
-  void exitEventScreen() {
-    _firstDocumentEvent = false;
-    _eventStreamSubscription?.cancel();
-    _eventStreamSubscription = null;
-    emit(EventDetailInitial());
   }
 
   Future<void> addSet(PuttingSet set) async {
@@ -64,23 +102,14 @@ class EventDetailCubit extends Cubit<EventDetailState> {
         _eventsRepository.currentEvent == null) {
       emit(EventDetailError());
       return;
-    }
-    if (_eventsRepository.currentPlayerData!.sets.length ==
+    } else if (_eventsRepository.currentPlayerData!.sets.length ==
         _eventsRepository
             .currentEvent!.eventCustomizationData.challengeStructure.length) {
       return;
     }
 
     _eventsRepository.currentPlayerData!.sets.add(set);
-    final bool success = await _eventsRepository.resyncSets();
-    if (!success) {
-      emit(EventDetailError());
-      return;
-    }
-    emit(EventDetailLoaded(
-      event: _eventsRepository.currentEvent!,
-      currentPlayerData: _eventsRepository.currentPlayerData!,
-    ));
+    _saveUpdatedPlayerSets();
   }
 
   Future<void> undoSet() async {
@@ -90,15 +119,10 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       return;
     }
 
-    _eventsRepository.currentPlayerData!.sets.removeLast();
-    final bool success = await _eventsRepository.resyncSets();
-    if (!success) {
-      emit(EventDetailError());
-      return;
+    if (_eventsRepository.currentPlayerData!.sets.isNotEmpty) {
+      _eventsRepository.currentPlayerData!.sets.removeLast();
+      _saveUpdatedPlayerSets();
     }
-    emit(EventDetailLoaded(
-        event: _eventsRepository.currentEvent!,
-        currentPlayerData: _eventsRepository.currentPlayerData!));
   }
 
   Future<void> deleteSet(PuttingSet set) async {
@@ -109,17 +133,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     }
 
     _eventsRepository.currentPlayerData!.sets.remove(set);
-    final bool success = await _eventsRepository.resyncSets();
-    if (!success) {
-      emit(EventDetailError());
-      return;
-    }
-    emit(
-      EventDetailLoaded(
-        event: _eventsRepository.currentEvent!,
-        currentPlayerData: _eventsRepository.currentPlayerData!,
-      ),
-    );
+    _saveUpdatedPlayerSets();
   }
 
   Future<bool> createNewEvent({
@@ -153,13 +167,9 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       ),
     );
     if (response.eventId != null) {
-      _newEventCreated = true;
+      newEventCreated = true;
     }
     return response.eventId != null;
-  }
-
-  void createEventPressed() {
-    _newEventCreated = false;
   }
 
   void _initEventSubscription(String eventId) {
@@ -184,6 +194,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
             EventDetailLoaded(
               event: updatedEvent,
               currentPlayerData: activeState.currentPlayerData,
+              connected: _connected,
             ),
           );
         }
@@ -191,5 +202,82 @@ class EventDetailCubit extends Cubit<EventDetailState> {
         return;
       }
     });
+  }
+
+  void _saveUpdatedPlayerSets() {
+    emit(
+      EventDetailLoaded(
+        event: _eventsRepository.currentEvent!,
+        currentPlayerData: _eventsRepository.currentPlayerData!,
+        connected: _connected,
+      ),
+    );
+    try {
+      _eventsRepository.resyncSets().then((SavePlayerSetsResponse response) {
+        if (response.eventStatus == EventStatus.complete) {
+          emit(EventDetailError());
+          return;
+        }
+      });
+    }
+    // Failed to save player sets
+    catch (e) {
+      return;
+    }
+  }
+
+  Future<void> _connectivityListener(ConnectivityResult result) async {
+    final bool wasConnected = _connected;
+    _connected = isConnected(result);
+
+    // if (state is EventDetailLoaded) {
+    //   emit(EventDetailLoaded(
+    //       event: state.event,
+    //       currentPlayerData: state.currentPlayerData,
+    //       connected: _connected));
+    // }
+
+    // Resync sets when coming back online.
+    if (!wasConnected && _connected) {
+      try {
+        if (_eventsRepository.currentEvent != null &&
+            _eventsRepository.currentPlayerData != null) {
+          final SavePlayerSetsResponse response =
+              await _eventsRepository.resyncSets();
+
+          // If the event is complete, lock them out of saving sets.
+          if (response.eventStatus == EventStatus.complete) {
+            final GetEventPlayerDataResponse response = await _eventsService
+                .getEventPlayerData(_eventsRepository.currentEvent!.eventId);
+
+            // Successfully loaded player data from backend
+            // Emit new state with up-to-date
+            if (response.eventPlayerData != null) {
+              _eventsRepository.currentPlayerData = response.eventPlayerData;
+              if (state is EventDetailLoaded) {
+                _eventsRepository.currentEvent!.status = EventStatus.complete;
+                emit(
+                  EventDetailLoaded(
+                    event: _eventsRepository.currentEvent!,
+                    currentPlayerData: _eventsRepository.currentPlayerData!,
+                    connected: _connected,
+                  ),
+                );
+              }
+            }
+            // Failed to load player data from backend.
+            else {
+              // Trigger error
+            }
+          } else if (!response.success) {
+            //  Failed to sync sets to backend
+          } else {
+            // synced successfully
+          }
+        }
+      } catch (e) {
+        return;
+      }
+    }
   }
 }

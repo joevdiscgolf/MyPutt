@@ -49,6 +49,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   bool _inEvent = false;
   late bool _isAdmin;
 
+  Future<void> _refreshData() async {
+    await Future.wait(
+      [
+        _loadDivisionStandings(),
+        BlocProvider.of<EventDetailCubit>(context)
+            .reloadEventDetails(widget.event.eventId)
+      ],
+    );
+  }
+
   Future<void> _loadDivisionStandings() async {
     await BlocProvider.of<EventStandingsCubit>(context).loadDivisionStandings(
       widget.event.eventId,
@@ -94,7 +104,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 _sliverAppBar(context),
                 CupertinoSliverRefreshControl(
                   onRefresh: () async {
-                    await _loadDivisionStandings();
+                    await _refreshData();
                   },
                 ),
                 SliverList(
@@ -144,6 +154,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                     detailState is EventDetailLoaded &&
                                         detailState.event.status ==
                                             EventStatus.complete;
+
                                 return PlayerList(
                                   eventStandings: loadedState.divisionStandings,
                                   challengeStructure: widget
