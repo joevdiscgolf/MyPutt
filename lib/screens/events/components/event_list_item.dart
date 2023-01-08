@@ -5,26 +5,48 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/components/division_indicator.dart';
+import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
 
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/date_helpers.dart';
+import 'package:myputt/utils/event_helpers.dart';
 
-class EventListItem extends StatelessWidget {
-  const EventListItem({
-    Key? key,
-    required this.event,
-    required this.onPressed,
-  }) : super(key: key);
+class EventListItem extends StatefulWidget {
+  const EventListItem({Key? key, required this.event}) : super(key: key);
 
   final MyPuttEvent event;
-  final Function(MyPuttEvent) onPressed;
+
+  @override
+  State<EventListItem> createState() => _EventListItemState();
+}
+
+class _EventListItemState extends State<EventListItem> {
+  late MyPuttEvent _event;
+
+  @override
+  void initState() {
+    _event = widget.event;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Bounceable(
       onTap: () async {
-        onPressed(event);
+        openEvent(context, _event);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EventDetailScreen(
+              event: _event,
+              onEventUpdate: (MyPuttEvent updatedEvent) {
+                setState(() {
+                  _event = updatedEvent;
+                });
+              },
+            ),
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -48,7 +70,7 @@ class EventListItem extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      event.name,
+                      _event.name,
                       style: Theme.of(context)
                           .textTheme
                           .headline6
@@ -57,7 +79,7 @@ class EventListItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    eventTypeToName[event.eventType]!,
+                    eventTypeToName[_event.eventType]!,
                     style: Theme.of(context)
                         .textTheme
                         .headline6
@@ -86,11 +108,11 @@ class EventListItem extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _participantCountIndicator(
-                        context, event.participantCount),
+                        context, _event.participantCount),
                   ),
                   Wrap(
                     alignment: WrapAlignment.start,
-                    children: event.eventCustomizationData.divisions
+                    children: _event.eventCustomizationData.divisions
                         .map((division) => DivisionIndicator(
                             divisionName: division.name.toUpperCase()))
                         .toList(),
@@ -107,7 +129,7 @@ class EventListItem extends StatelessWidget {
                       color: MyPuttColors.darkGray, size: 16),
                   const SizedBox(width: 8),
                   Text(
-                    '${event.creator.displayName}${event.admins.length > 1 ? '+ ${event.admins.length - 1} more' : ''}',
+                    '${_event.creator.displayName}${_event.admins.length > 1 ? '+ ${_event.admins.length - 1} more' : ''}',
                     style: Theme.of(context).textTheme.headline6?.copyWith(
                           color: MyPuttColors.darkGray,
                           fontSize: 12,
@@ -141,9 +163,9 @@ class EventListItem extends StatelessWidget {
   String _dateLabel(BuildContext context) {
     String dateText;
     final DateTime startDate =
-        DateTime.fromMillisecondsSinceEpoch(event.startTimestamp);
+        DateTime.fromMillisecondsSinceEpoch(_event.startTimestamp);
     final DateTime endDate =
-        DateTime.fromMillisecondsSinceEpoch(event.endTimestamp);
+        DateTime.fromMillisecondsSinceEpoch(_event.endTimestamp);
 
     if (isSameDate(startDate, endDate)) {
       dateText =

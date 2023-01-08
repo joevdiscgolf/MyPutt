@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
@@ -30,4 +31,12 @@ void reloadCubits(BuildContext context) {
   BlocProvider.of<SessionsCubit>(context).reload();
   BlocProvider.of<ChallengesCubit>(context).reload();
   BlocProvider.of<MyProfileCubit>(context).reload();
+}
+
+bool isConnected(ConnectivityResult connectivityResult) {
+  return [
+    ConnectivityResult.wifi,
+    ConnectivityResult.mobile,
+    ConnectivityResult.vpn
+  ].contains(connectivityResult);
 }

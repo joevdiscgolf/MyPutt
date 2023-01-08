@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 
@@ -45,10 +46,12 @@ class BetaAccessService {
   }
 
   bool hasFeatureAccess({String? featureName}) {
-    if (_isAdmin == true) {
+    if (kDebugMode) {
       return true;
     }
-    if (featureName != null) {
+    if (_isAdmin == true) {
+      return true;
+    } else if (featureName != null) {
       return _trebuchets.contains(featureName);
     }
     return false;

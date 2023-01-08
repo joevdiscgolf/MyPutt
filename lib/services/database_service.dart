@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -194,4 +195,13 @@ class DatabaseService {
     }
     return _eventDataLoader.loadEventPlayerData(currentUid, eventId);
   }
+
+  Future<List<EventPlayerData>> loadDivisionStandings(
+    String eventId,
+    Division division,
+  ) async =>
+      _eventDataLoader.getDivisionStandings(eventId, division);
+
+  Future<List<EventPlayerData>> loadEventStandings(String eventId) async =>
+      _eventDataLoader.getEventStandings(eventId);
 }

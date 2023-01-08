@@ -4,7 +4,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/controllers/screen_controller.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
+import 'package:myputt/cubits/events/event_standings_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -23,16 +24,18 @@ import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/theme/theme_data.dart';
+import 'package:myputt/utils/device_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'cubits/my_profile_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final isPhysicalDevice = await DeviceHelpers.isPhysicalDevice();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  if (kDebugMode) {
+  if (kDebugMode && !isPhysicalDevice) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -60,7 +63,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ChallengesCubit()),
         BlocProvider(create: (_) => MyProfileCubit()),
         BlocProvider(create: (_) => SearchUserCubit()),
-        BlocProvider(create: (_) => EventsCubit()),
+        BlocProvider(create: (_) => EventDetailCubit()),
+        BlocProvider(create: (_) => EventDetailCubit()),
+        BlocProvider(create: (_) => EventStandingsCubit()),
       ],
       child: MaterialApp(
         builder: (context, child) {

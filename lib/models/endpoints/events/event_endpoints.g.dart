@@ -8,13 +8,36 @@ part of 'event_endpoints.dart';
 
 GetEventRequest _$GetEventRequestFromJson(Map json) => GetEventRequest(
       eventId: json['eventId'] as String,
-      division: _$enumDecodeNullable(_$DivisionEnumMap, json['division']),
     );
 
 Map<String, dynamic> _$GetEventRequestToJson(GetEventRequest instance) =>
     <String, dynamic>{
       'eventId': instance.eventId,
+    };
+
+GetEventResponse _$GetEventResponseFromJson(Map json) => GetEventResponse(
+      event: json['event'] == null
+          ? null
+          : MyPuttEvent.fromJson(
+              Map<String, dynamic>.from(json['event'] as Map)),
+      inEvent: json['inEvent'] as bool,
+    );
+
+Map<String, dynamic> _$GetEventResponseToJson(GetEventResponse instance) =>
+    <String, dynamic>{
+      'event': instance.event?.toJson(),
+      'inEvent': instance.inEvent,
+    };
+
+JoinEventRequest _$JoinEventRequestFromJson(Map json) => JoinEventRequest(
+      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$JoinEventRequestToJson(JoinEventRequest instance) =>
+    <String, dynamic>{
       'division': _$DivisionEnumMap[instance.division],
+      'eventId': instance.eventId,
     };
 
 K _$enumDecode<K, V>(
@@ -43,17 +66,6 @@ K _$enumDecode<K, V>(
   ).key;
 }
 
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
-
 const _$DivisionEnumMap = {
   Division.mpo: 'mpo',
   Division.mp40: 'mp40',
@@ -71,41 +83,30 @@ const _$DivisionEnumMap = {
   Division.mixed: 'mixed',
 };
 
-GetEventResponse _$GetEventResponseFromJson(Map json) => GetEventResponse(
-      inEvent: json['inEvent'] as bool,
-      eventStandings: (json['eventStandings'] as List<dynamic>?)
-          ?.map((e) =>
-              EventPlayerData.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-    );
-
-Map<String, dynamic> _$GetEventResponseToJson(GetEventResponse instance) =>
-    <String, dynamic>{
-      'inEvent': instance.inEvent,
-      'eventStandings':
-          instance.eventStandings?.map((e) => e.toJson()).toList(),
-    };
-
 JoinEventWithCodeRequest _$JoinEventWithCodeRequestFromJson(Map json) =>
     JoinEventWithCodeRequest(
-      code: json['code'] as int,
       division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      code: json['code'] as int?,
+      codeRequired: json['codeRequired'] as bool?,
     );
 
 Map<String, dynamic> _$JoinEventWithCodeRequestToJson(
         JoinEventWithCodeRequest instance) =>
     <String, dynamic>{
-      'code': instance.code,
       'division': _$DivisionEnumMap[instance.division],
+      'code': instance.code,
+      'codeRequired': instance.codeRequired,
     };
 
 JoinEventResponse _$JoinEventResponseFromJson(Map json) => JoinEventResponse(
       success: json['success'] as bool,
+      error: json['error'] as String?,
     );
 
 Map<String, dynamic> _$JoinEventResponseToJson(JoinEventResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
+      'error': instance.error,
     };
 
 SearchEventsRequest _$SearchEventsRequestFromJson(Map json) =>
@@ -130,8 +131,8 @@ Map<String, dynamic> _$GetEventsResponseToJson(GetEventsResponse instance) =>
       'events': instance.events.map((e) => e.toJson()).toList(),
     };
 
-UpdatePlayerSetsRequest _$UpdatePlayerSetsRequestFromJson(Map json) =>
-    UpdatePlayerSetsRequest(
+SavePlayerSetsRequest _$SavePlayerSetsRequestFromJson(Map json) =>
+    SavePlayerSetsRequest(
       eventId: json['eventId'] as String,
       sets: (json['sets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -139,23 +140,68 @@ UpdatePlayerSetsRequest _$UpdatePlayerSetsRequestFromJson(Map json) =>
       lockedIn: json['lockedIn'] as bool?,
     );
 
-Map<String, dynamic> _$UpdatePlayerSetsRequestToJson(
-        UpdatePlayerSetsRequest instance) =>
+Map<String, dynamic> _$SavePlayerSetsRequestToJson(
+        SavePlayerSetsRequest instance) =>
     <String, dynamic>{
       'eventId': instance.eventId,
       'sets': instance.sets.map((e) => e.toJson()).toList(),
       'lockedIn': instance.lockedIn,
     };
 
-UpdatePlayerSetsResponse _$UpdatePlayerSetsResponseFromJson(Map json) =>
-    UpdatePlayerSetsResponse(
+SavePlayerSetsResponse _$SavePlayerSetsResponseFromJson(Map json) =>
+    SavePlayerSetsResponse(
       success: json['success'] as bool,
+      eventStatus:
+          _$enumDecodeNullable(_$EventStatusEnumMap, json['eventStatus']),
     );
 
-Map<String, dynamic> _$UpdatePlayerSetsResponseToJson(
-        UpdatePlayerSetsResponse instance) =>
+Map<String, dynamic> _$SavePlayerSetsResponseToJson(
+        SavePlayerSetsResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
+      'eventStatus': _$EventStatusEnumMap[instance.eventStatus],
+    };
+
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$EventStatusEnumMap = {
+  EventStatus.upcoming: 'upcoming',
+  EventStatus.active: 'active',
+  EventStatus.complete: 'complete',
+};
+
+GetEventPlayerDataRequest _$GetEventPlayerDataRequestFromJson(Map json) =>
+    GetEventPlayerDataRequest(
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$GetEventPlayerDataRequestToJson(
+        GetEventPlayerDataRequest instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+    };
+
+GetEventPlayerDataResponse _$GetEventPlayerDataResponseFromJson(Map json) =>
+    GetEventPlayerDataResponse(
+      eventPlayerData: json['eventPlayerData'] == null
+          ? null
+          : EventPlayerData.fromJson(
+              Map<String, dynamic>.from(json['eventPlayerData'] as Map)),
+    );
+
+Map<String, dynamic> _$GetEventPlayerDataResponseToJson(
+        GetEventPlayerDataResponse instance) =>
+    <String, dynamic>{
+      'eventPlayerData': instance.eventPlayerData?.toJson(),
     };
 
 ExitEventRequest _$ExitEventRequestFromJson(Map json) => ExitEventRequest(
@@ -224,4 +270,22 @@ Map<String, dynamic> _$EventCreateParamsToJson(EventCreateParams instance) =>
       'endDate': instance.endDate,
       'challengeStructure':
           instance.challengeStructure.map((e) => e.toJson()).toList(),
+    };
+
+EndEventRequest _$EndEventRequestFromJson(Map json) => EndEventRequest(
+      eventId: json['eventId'] as String,
+    );
+
+Map<String, dynamic> _$EndEventRequestToJson(EndEventRequest instance) =>
+    <String, dynamic>{
+      'eventId': instance.eventId,
+    };
+
+EndEventResponse _$EndEventResponseFromJson(Map json) => EndEventResponse(
+      success: json['success'] as bool,
+    );
+
+Map<String, dynamic> _$EndEventResponseToJson(EndEventResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
     };

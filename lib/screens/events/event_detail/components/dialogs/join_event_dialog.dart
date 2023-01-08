@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
@@ -8,6 +9,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/event_detail/components/dialogs/division_chip.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/validators.dart';
 
 class JoinEventDialog extends StatefulWidget {
   const JoinEventDialog(
@@ -25,10 +27,20 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
   final EventsService _eventsService = locator.get<EventsService>();
 
   final TextEditingController _codeFieldController = TextEditingController();
-  String? code;
+  late final TextInputFormatter _positiveNumberFormatter;
+
   String? _dialogErrorText;
   bool _loading = false;
   Division? _selectedDivision;
+
+  @override
+  void initState() {
+    _positiveNumberFormatter = TextInputFormatter.withFunction(
+      (oldValue, newValue) =>
+          validatePositiveInteger(oldValue.text, newValue.text),
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +86,10 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
                       selected: _selectedDivision == division))
                   .toList()),
           const SizedBox(height: 16),
-          _codeField(context),
-          const SizedBox(height: 8),
+          if (widget.event.eventCustomizationData.codeRequired == true) ...[
+            _codeField(context),
+            const SizedBox(height: 8),
+          ],
           Text(
             _dialogErrorText ?? '',
             style: Theme.of(context)
@@ -113,6 +127,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
 
   Widget _codeField(BuildContext context) {
     return TextFormField(
+      inputFormatters: [_positiveNumberFormatter],
       controller: _codeFieldController,
       autocorrect: false,
       maxLines: 1,
@@ -135,7 +150,6 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
         focusedBorder: Theme.of(context).inputDecorationTheme.border,
         counter: const Offstage(),
       ),
-      onChanged: (String text) => setState(() => code = text),
     );
   }
 
@@ -145,21 +159,34 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
       return;
     }
 
-    final String inputText = _codeFieldController.text;
-    if (int.tryParse(inputText) == null) {
-      setState(() {
-        _dialogErrorText = 'Enter a valid number';
-        _loading = false;
-      });
-      return;
+    late final JoinEventResponse response;
+    if (widget.event.eventCustomizationData.codeRequired == true) {
+      final int? code = int.tryParse(_codeFieldController.text);
+      if (code == null) {
+        setState(() {
+          _dialogErrorText = 'Enter a valid number';
+          _loading = false;
+        });
+      }
+      setState(() => _loading = true);
+      response =
+          await _eventsService.joinEventWithCode(code!, _selectedDivision!);
+    } else {
+      setState(() => _loading = true);
+      response = await _eventsService.joinEvent(
+        widget.event.eventId,
+        _selectedDivision!,
+      );
     }
+    setState(() => _loading = false);
 
-    final int code = int.parse(inputText);
-    setState(() => _loading = true);
-    final JoinEventResponse response =
-        await _eventsService.joinEventWithCode(code, _selectedDivision!);
     if (response.success) {
       widget.onEventJoin();
+    } else {
+      setState(() {
+        _dialogErrorText =
+            response.error ?? 'Failed to join event, please try again.';
+      });
     }
     Navigator.of(context).pop();
     setState(() => _loading = false);

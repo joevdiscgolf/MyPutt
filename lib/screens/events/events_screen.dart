@@ -8,12 +8,13 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
-import 'package:myputt/screens/events/event_detail/event_detail_screen.dart';
-import 'package:myputt/screens/events/tabs/my_events_tab.dart';
+import 'package:myputt/screens/events/tabs/club_events_tab.dart';
+import 'package:myputt/screens/events/tabs/run_events_tab.dart';
+import 'package:myputt/screens/events/tabs/tournament_events_tab.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -44,15 +45,28 @@ class _EventsState extends State<EventsScreen>
   bool _showSearchBar = true;
   bool _loading = false;
   List<MyPuttEvent>? _events;
+  bool _searchError = false;
 
   Timer? _searchOnStoppedTyping;
 
   Future<void> _searchEvents(String keyword) async {
-    setState(() => _loading = true);
-    _events = await _eventsService
-        .searchEvents(keyword)
-        .then((response) => response.events);
-    setState(() => _loading = false);
+    setState(() {
+      _searchError = false;
+      _loading = true;
+    });
+    try {
+      await _eventsService.searchEvents(keyword).then((response) => setState(
+            () {
+              _loading = false;
+              _events = response.events;
+            },
+          ));
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _searchError = true;
+      });
+    }
   }
 
   @override
@@ -96,31 +110,26 @@ class _EventsState extends State<EventsScreen>
       controller: _tabController,
       children: [
         _searchTab(context),
-        EventsList(
-          events: kTestEvents,
-          onPressed: (MyPuttEvent event) => _openEvent(event),
-        ),
-        EventsList(
-          events: kTestEvents,
-          onPressed: (MyPuttEvent event) => _openEvent(event),
-        ),
-        const MyEventsTab(),
+        const ClubEventsTab(),
+        const TournamentEventsTab(),
+        const RunEventsTab(),
       ],
     );
   }
 
   PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
-        child: Column(
-          children: [
-            _tabBar(context),
-            if (_showSearchBar) ...[
-              const SizedBox(height: 4),
-              _searchBar(context)
-            ]
-          ],
-        ),
-        preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60));
+      child: Column(
+        children: [
+          _tabBar(context),
+          if (_showSearchBar) ...[
+            const SizedBox(height: 4),
+            _searchBar(context)
+          ]
+        ],
+      ),
+      preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60),
+    );
   }
 
   PreferredSizeWidget _tabBar(BuildContext context) {
@@ -150,7 +159,7 @@ class _EventsState extends State<EventsScreen>
               label: 'Tournaments',
               icon: Icon(FlutterRemix.trophy_fill, size: 16),
             ),
-            EventCategoryTab(label: 'My Events', icon: blueFrisbeeImageIcon),
+            EventCategoryTab(label: 'Run events', icon: blueFrisbeeImageIcon),
           ],
         ),
       ),
@@ -158,24 +167,45 @@ class _EventsState extends State<EventsScreen>
   }
 
   Widget _searchTab(BuildContext context) {
-    if (_loading) {
-      return const EventSearchLoadingScreen();
-    } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
-      return Container();
-    } else if (_events?.isNotEmpty != true || _events == null) {
+    if (_searchError) {
       return EmptyState(
-        title: 'Uh-oh',
-        subtitle: "We couldn't find any events",
+        title: 'Network error',
+        subtitle: "Please try again.",
         onRetry: () {
           if (_searchBarText != null && _searchBarText!.isNotEmpty) {
             _searchEvents(_searchBarText!);
           }
         },
       );
+    } else if (_loading) {
+      return const EventSearchLoadingScreen();
+    } else if (_searchBarText == null || _searchBarText?.isEmpty == true) {
+      return Container();
+    } else if (_events?.isNotEmpty != true || _events == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(FlutterRemix.stack_line, size: 40),
+              const SizedBox(height: 16),
+              Text(
+                "We couldn't find any events matching your search.",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(color: MyPuttColors.darkGray),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+        ),
+      );
     }
+
+    // if loaded
     return EventsList(
       events: _events!,
-      onPressed: (MyPuttEvent event) => _openEvent(event),
       onRefresh: () {
         if (_searchBarText != null && _searchBarText!.isNotEmpty) {
           _searchEvents(_searchBarText!);
@@ -234,11 +264,11 @@ class _EventsState extends State<EventsScreen>
       },
       child: MyPuttButton(
         onPressed: () {
-          BlocProvider.of<EventsCubit>(context).createEventPressed();
+          BlocProvider.of<EventDetailCubit>(context).createEventPressed();
           Navigator.of(context)
               .push(AnimatedRoute(const CreateEventScreen()))
               .then((_) {
-            if (BlocProvider.of<EventsCubit>(context).newEventWasCreated) {
+            if (BlocProvider.of<EventDetailCubit>(context).newEventCreated) {
               setState(() => _tabController.index = 3);
             }
           });
@@ -270,15 +300,6 @@ class _EventsState extends State<EventsScreen>
             _searchEvents(value);
           }
         },
-      ),
-    );
-  }
-
-  void _openEvent(MyPuttEvent event) {
-    BlocProvider.of<EventsCubit>(context).openEvent(event);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EventDetailScreen(event: event),
       ),
     );
   }

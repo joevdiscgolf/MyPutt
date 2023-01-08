@@ -207,3 +207,20 @@ const Map<ChallengeCategory, String> challengeCategoryToName =
   ChallengeCategory.pending: 'pending',
   ChallengeCategory.active: 'active',
 };
+
+const Map<Division, String> divisionToNameMap = {
+  Division.mpo: 'mpo',
+  Division.mp40: 'mp40',
+  Division.mp50: 'mp50',
+  Division.ma1: 'ma1',
+  Division.ma2: 'ma2',
+  Division.ma3: 'ma3',
+  Division.ma4: 'ma4',
+  Division.ma5: 'ma5',
+  Division.fpo: 'fpo',
+  Division.fa1: 'fa1',
+  Division.fa2: 'fa2',
+  Division.fa3: 'fa3',
+  Division.junior: 'junior',
+  Division.mixed: 'mixed',
+};

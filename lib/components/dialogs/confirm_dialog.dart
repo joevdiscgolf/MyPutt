@@ -33,15 +33,17 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-            padding:
-                const EdgeInsets.only(top: 24, bottom: 16, left: 24, right: 24),
-            width: double.infinity,
-            child: _mainBody(context)));
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Container(
+        padding:
+            const EdgeInsets.only(top: 24, bottom: 16, left: 24, right: 24),
+        width: double.infinity,
+        child: _mainBody(context),
+      ),
+    );
   }
 
   Widget _mainBody(BuildContext context) {

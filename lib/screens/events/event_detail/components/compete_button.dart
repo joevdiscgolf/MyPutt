@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/event_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
@@ -13,17 +13,15 @@ class CompeteButton extends StatelessWidget {
   const CompeteButton({
     Key? key,
     required this.event,
-    required this.refreshData,
   }) : super(key: key);
 
   final MyPuttEvent event;
-  final Function refreshData;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
+    return BlocBuilder<EventDetailCubit, EventDetailState>(
       builder: (context, state) {
-        if (state is! ActiveEventState) {
+        if (state is! EventDetailLoaded) {
           return Container();
         }
         final double buttonHeight =
@@ -33,7 +31,7 @@ class CompeteButton extends StatelessWidget {
         final double percentComplete =
             state.event.eventCustomizationData.challengeStructure.isEmpty
                 ? 0
-                : state.eventPlayerData.sets.length.toDouble() /
+                : state.currentPlayerData.sets.length.toDouble() /
                     state.event.eventCustomizationData.challengeStructure.length
                         .toDouble();
         final double screenWidth = MediaQuery.of(context).size.width;
@@ -103,13 +101,11 @@ class CompeteButton extends StatelessWidget {
               Bounceable(
                 onTap: () {
                   Vibrate.feedback(FeedbackType.light);
-                  BlocProvider.of<EventsCubit>(context).openEvent(event);
                   displayBottomSheet(
                     context,
                     EventRecordScreen(event: event),
                     dismissibleOnTap: true,
                     enableDrag: false,
-                    onDismiss: refreshData,
                   );
                 },
                 child: Align(

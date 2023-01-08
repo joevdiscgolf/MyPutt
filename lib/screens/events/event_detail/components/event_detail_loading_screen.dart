@@ -2,8 +2,8 @@ import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/utils/colors.dart';
 
-class EventDetailLoadingScreen extends StatelessWidget {
-  const EventDetailLoadingScreen({Key? key}) : super(key: key);
+class EventStandingsLoadingScreen extends StatelessWidget {
+  const EventStandingsLoadingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

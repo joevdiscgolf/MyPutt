@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/screens/loading_screen.dart';
-import 'package:myputt/cubits/events/events_cubit.dart';
+import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/components/event_director.dart';
 import 'package:myputt/screens/events/event_record/components/event_record_title.dart';
@@ -41,15 +43,15 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventsCubit, EventsState>(
+    return BlocBuilder<EventDetailCubit, EventDetailState>(
       builder: (context, state) {
-        if (state is EventsLoading) {
+        if (state is EventDetailLoading) {
           return const LoadingScreen();
-        } else if (state is! ActiveEventState) {
+        } else if (state is! EventDetailLoaded) {
           return Center(
             child: Center(
               child: EmptyState(
-                onRetry: () => BlocProvider.of<EventsCubit>(context)
+                onRetry: () => BlocProvider.of<EventDetailCubit>(context)
                     .openEvent(widget.event),
               ),
             ),
@@ -57,37 +59,36 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
         }
         final bool setsFilled =
             state.event.eventCustomizationData.challengeStructure.length ==
-                state.eventPlayerData.sets.length;
+                state.currentPlayerData.sets.length;
         final ChallengeStructureItem currentStructureItem =
             getCurrentChallengeStructureItem(
                 state.event.eventCustomizationData.challengeStructure,
-                state.eventPlayerData.sets);
+                state.currentPlayerData.sets);
         final int setLength = currentStructureItem.setLength;
         final int distance = currentStructureItem.distance;
 
-        List<Widget> previousSetsChildren = List.from(state.eventPlayerData.sets
-            .asMap()
-            .entries
-            .map((entry) => PuttingSetRow(
-                  deletable: true,
-                  set: entry.value,
-                  index: entry.key,
-                  delete: () {
-                    BlocProvider.of<EventsCubit>(context)
-                        .deleteSet(entry.value);
-                  },
-                ))
-            .toList()
-            .reversed);
+        List<Widget> previousSetsChildren = List.from(
+          state.currentPlayerData.sets
+              .asMap()
+              .entries
+              .map((entry) => PuttingSetRow(
+                    deletable: true,
+                    set: entry.value,
+                    index: entry.key,
+                    delete: () {
+                      BlocProvider.of<EventDetailCubit>(context)
+                          .deleteSet(entry.value);
+                    },
+                  ))
+              .toList()
+              .reversed,
+        );
         return Scaffold(
           appBar: AppBar(
             title: const EventRecordTitle(),
             backgroundColor: MyPuttColors.white,
             actions: const [
-              Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: ExitButton(),
-              )
+              Padding(padding: EdgeInsets.only(right: 16), child: ExitButton())
             ],
           ),
           body: Column(
@@ -113,8 +114,10 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                           ),
                         ),
                         EventUndoButton(
-                          onPressed: () =>
-                              BlocProvider.of<EventsCubit>(context).undoSet(),
+                          onPressed: () {
+                            BlocProvider.of<EventDetailCubit>(context)
+                                .undoSet();
+                          },
                         ),
                       ],
                     ),
@@ -136,12 +139,17 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 child: MyPuttButton(
-                  title: setsFilled ? 'Finish event' : 'Add set',
+                  disabled: setsFilled,
+                  title: 'Add set',
                   width: double.infinity,
                   height: 50,
                   iconData: setsFilled ? null : FlutterRemix.add_line,
                   onPressed: () {
-                    BlocProvider.of<EventsCubit>(context).addSet(
+                    if (state.event.status == EventStatus.complete) {
+                      Vibrate.feedback(FeedbackType.warning);
+                      return;
+                    }
+                    BlocProvider.of<EventDetailCubit>(context).addSet(
                       PuttingSet(
                         timeStamp: DateTime.now().millisecondsSinceEpoch,
                         puttsMade: _focusedIndex ?? setLength,
@@ -150,8 +158,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                       ),
                     );
                   },
-                  backgroundColor:
-                      setsFilled ? MyPuttColors.lightGreen : MyPuttColors.blue,
+                  backgroundColor: MyPuttColors.blue,
                 ),
               ),
               const SizedBox(height: 16),
