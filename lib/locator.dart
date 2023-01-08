@@ -16,6 +16,7 @@ import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/services/stats_service.dart';
+import 'package:myputt/services/toast_service.dart';
 import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
@@ -48,4 +49,5 @@ Future<void> setUpLocator() async {
   locator.registerLazySingleton(() => EventsService());
   locator.registerSingleton<BetaAccessService>(BetaAccessService());
   locator.registerLazySingleton(() => NavigationService());
+  locator.registerLazySingleton(() => ToastService());
 }

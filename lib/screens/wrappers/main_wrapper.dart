@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -10,11 +11,12 @@ import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
-import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/screens/wrappers/components/challenges_icon.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/navigation_service.dart';
+import 'package:myputt/services/toast_service.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({Key? key}) : super(key: key);
@@ -27,17 +29,29 @@ class MainWrapper extends StatefulWidget {
 
 class _MainWrapperState extends State<MainWrapper> {
   final NavigationService _navigationService = locator.get<NavigationService>();
+  final ToastService _toastService = locator.get<ToastService>();
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
   int _currentIndex = 0;
 
+  late final StreamSubscription<int> _tabStreamSubscription;
+  late final StreamSubscription<ToastData> _toastDataSubscription;
+
   late final List<Widget> _screens;
   late bool _showEventsTab;
+  GlobalKey? _toastKey;
 
-  late final StreamSubscription<int> _tabStreamSubscription;
+  void _dismissToast() {
+    try {
+      (_toastKey?.currentWidget as Flushbar?)?.dismiss();
+    } catch (_) {
+      return;
+    }
+  }
 
   @override
   void dispose() {
     _tabStreamSubscription.cancel();
+    _toastDataSubscription.cancel();
     super.dispose();
   }
 
@@ -49,6 +63,14 @@ class _MainWrapperState extends State<MainWrapper> {
         _currentIndex = newIndex;
       });
     });
+
+    _toastDataSubscription =
+        _toastService.toastDataStream.listen((ToastData toastData) {
+      _handleToastData(toastData);
+    });
+
+    _toastService.triggerToast('this is a test message');
+
     _showEventsTab = locator
         .get<BetaAccessService>()
         .hasFeatureAccess(featureName: 'events');
@@ -93,13 +115,17 @@ class _MainWrapperState extends State<MainWrapper> {
             icon: BlocBuilder<ChallengesCubit, ChallengesState>(
               builder: (context, state) {
                 if (state is ChallengeInProgress) {
-                  return _challengesIcon(context, state.pendingChallenges);
-                }
-                if (state is CurrentUserComplete) {
-                  return _challengesIcon(context, state.pendingChallenges);
-                }
-                if (state is NoCurrentChallenge) {
-                  return _challengesIcon(context, state.pendingChallenges);
+                  return ChallengesIcon(
+                    numPendingChallenges: state.pendingChallenges.length,
+                  );
+                } else if (state is CurrentUserComplete) {
+                  return ChallengesIcon(
+                    numPendingChallenges: state.pendingChallenges.length,
+                  );
+                } else if (state is NoCurrentChallenge) {
+                  return ChallengesIcon(
+                    numPendingChallenges: state.pendingChallenges.length,
+                  );
                 } else {
                   return const Icon(FlutterRemix.sword_fill);
                 }
@@ -121,30 +147,18 @@ class _MainWrapperState extends State<MainWrapper> {
     );
   }
 
-  Widget _challengesIcon(
-      BuildContext context, List<PuttingChallenge> pendingChallenges) {
-    return Stack(
-      children: [
-        const Center(child: Icon(FlutterRemix.sword_fill)),
-        Visibility(
-          visible: pendingChallenges.isNotEmpty,
-          child: Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-              decoration: const BoxDecoration(
-                  color: Colors.red, shape: BoxShape.circle),
-              child: Center(
-                child: Text(
-                  pendingChallenges.length.toString(),
-                  style: const TextStyle(fontSize: 15, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
+  void _handleToastData(ToastData toastData) {
+    _dismissToast();
+    setState(() {
+      _toastKey = GlobalKey();
+    });
+
+    final Flushbar toast = _toastService.getGenericToast(
+      context,
+      toastData,
+      onTap: _dismissToast,
     );
+
+    toast.show(context);
   }
 }

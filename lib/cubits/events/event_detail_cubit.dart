@@ -15,6 +15,7 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/services/toast_service.dart';
 import 'package:myputt/utils/utils.dart';
 
 part 'event_detail_state.dart';
@@ -34,6 +35,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final EventsService _eventsService = locator.get<EventsService>();
+  final ToastService _toastService = locator.get<ToastService>();
 
   bool newEventCreated = false;
 
@@ -100,7 +102,8 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   Future<void> addSet(PuttingSet set) async {
     if (_eventsRepository.currentPlayerData == null ||
         _eventsRepository.currentEvent == null) {
-      emit(EventDetailError());
+      // Show toast
+      _toastService.triggerToast('Something went wrong');
       return;
     } else if (_eventsRepository.currentPlayerData!.sets.length ==
         _eventsRepository
@@ -108,8 +111,12 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       return;
     }
 
+    final EventPlayerData previousPlayerData =
+        _eventsRepository.currentPlayerData!;
+
     _eventsRepository.currentPlayerData!.sets.add(set);
-    _saveUpdatedPlayerSets();
+
+    _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
   }
 
   Future<void> undoSet() async {
@@ -120,8 +127,10 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     }
 
     if (_eventsRepository.currentPlayerData!.sets.isNotEmpty) {
+      final EventPlayerData previousPlayerData =
+          _eventsRepository.currentPlayerData!;
       _eventsRepository.currentPlayerData!.sets.removeLast();
-      _saveUpdatedPlayerSets();
+      _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
     }
   }
 
@@ -132,8 +141,10 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       return;
     }
 
+    final EventPlayerData previousPlayerData =
+        _eventsRepository.currentPlayerData!;
     _eventsRepository.currentPlayerData!.sets.remove(set);
-    _saveUpdatedPlayerSets();
+    _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
   }
 
   Future<bool> createNewEvent({
@@ -204,7 +215,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     });
   }
 
-  void _saveUpdatedPlayerSets() {
+  void _saveUpdatedPlayerData({required EventPlayerData previousPlayerData}) {
     emit(
       EventDetailLoaded(
         event: _eventsRepository.currentEvent!,
@@ -215,13 +226,17 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     try {
       _eventsRepository.resyncSets().then((SavePlayerSetsResponse response) {
         if (response.eventStatus == EventStatus.complete) {
-          emit(EventDetailError());
-          return;
+          // Revert changes
+          emit(
+            EventDetailLoaded(
+              event: _eventsRepository.currentEvent!,
+              currentPlayerData: previousPlayerData,
+              connected: _connected,
+            ),
+          );
         }
       });
-    }
-    // Failed to save player sets
-    catch (e) {
+    } catch (e) {
       return;
     }
   }
