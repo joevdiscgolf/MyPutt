@@ -35,9 +35,9 @@ void main() async {
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // if (kDebugMode && !isPhysicalDevice) {
-  //   FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-  // }
+  if (kDebugMode && !isPhysicalDevice) {
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  }
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
   await setUpLocator();
