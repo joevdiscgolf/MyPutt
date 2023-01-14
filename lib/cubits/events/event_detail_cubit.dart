@@ -56,25 +56,50 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     emit(EventDetailInitial());
   }
 
-  Future<void> reloadEventDetails(String eventId) async {
-    final MyPuttEvent? updatedEvent = await _eventsService
-        .getEvent(eventId)
-        .then((response) => response.event);
+  Future<void> reload() async {
+    await Future.wait([
+      reloadEvent(),
+      reloadPlayerData(),
+    ]);
+  }
+
+  Future<MyPuttEvent?> reloadEvent() async {
+    final MyPuttEvent? updatedEvent =
+        await _eventsRepository.reloadCurrentEvent();
 
     if (updatedEvent == null) {
       // Failure toast
-      return;
+      return null;
     }
 
-    if (state is EventDetailLoaded) {
-      final EventDetailLoaded loadedState = state as EventDetailLoaded;
+    if (_eventsRepository.currentEventPlayerData != null) {
       emit(
         EventDetailLoaded(
           event: updatedEvent,
-          currentPlayerData: loadedState.currentPlayerData,
-          connected: _connected,
+          currentPlayerData: _eventsRepository.currentEventPlayerData!,
         ),
       );
+    }
+    return updatedEvent;
+  }
+
+  Future<bool> reloadPlayerData() async {
+    final EventPlayerData? updatedPlayerData =
+        await _eventsRepository.fetchDBPlayerData();
+
+    if (updatedPlayerData == null) {
+      // show error toast
+      return false;
+    }
+
+    if (_eventsRepository.currentEvent != null) {
+      emit(EventDetailLoaded(
+        event: _eventsRepository.currentEvent!,
+        currentPlayerData: updatedPlayerData,
+      ));
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -89,62 +114,79 @@ class EventDetailCubit extends Cubit<EventDetailState> {
       emit(EventDetailError());
       return;
     }
-    _eventsRepository.currentPlayerData = playerData;
+    _eventsRepository.currentEventPlayerData = playerData;
     emit(
       EventDetailLoaded(
         event: event,
-        currentPlayerData: _eventsRepository.currentPlayerData!,
-        connected: _connected,
+        currentPlayerData: _eventsRepository.currentEventPlayerData!,
       ),
     );
   }
 
   Future<void> addSet(PuttingSet set) async {
-    if (_eventsRepository.currentPlayerData == null ||
+    if (_eventsRepository.currentEventPlayerData == null ||
         _eventsRepository.currentEvent == null) {
       // Show toast
       _toastService.triggerToast('Something went wrong');
       return;
-    } else if (_eventsRepository.currentPlayerData!.sets.length ==
+    } else if (_eventsRepository.currentEventPlayerData!.sets.length ==
         _eventsRepository
             .currentEvent!.eventCustomizationData.challengeStructure.length) {
       return;
     }
 
-    final EventPlayerData previousPlayerData =
-        _eventsRepository.currentPlayerData!;
+    _eventsRepository.currentEventPlayerData!.sets.add(set);
 
-    _eventsRepository.currentPlayerData!.sets.add(set);
+    emit(
+      EventDetailLoaded(
+        event: _eventsRepository.currentEvent!,
+        currentPlayerData: _eventsRepository.currentEventPlayerData!,
+      ),
+    );
 
-    _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
+    _saveUpdatedPlayerData();
   }
 
   Future<void> undoSet() async {
-    if (_eventsRepository.currentPlayerData == null ||
-        _eventsRepository.currentEvent == null) {
-      emit(EventDetailError());
+    if (_eventsRepository.currentEventPlayerData == null ||
+        _eventsRepository.currentEvent == null ||
+        state is EventDetailInitial) {
+      // show error toast
       return;
     }
 
-    if (_eventsRepository.currentPlayerData!.sets.isNotEmpty) {
-      final EventPlayerData previousPlayerData =
-          _eventsRepository.currentPlayerData!;
-      _eventsRepository.currentPlayerData!.sets.removeLast();
-      _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
+    if (_eventsRepository.currentEventPlayerData!.sets.isNotEmpty) {
+      _eventsRepository.currentEventPlayerData!.sets.removeLast();
+
+      emit(
+        EventDetailLoaded(
+          event: _eventsRepository.currentEvent!,
+          currentPlayerData: _eventsRepository.currentEventPlayerData!,
+        ),
+      );
+
+      _saveUpdatedPlayerData();
     }
   }
 
   Future<void> deleteSet(PuttingSet set) async {
-    if (_eventsRepository.currentPlayerData == null ||
-        _eventsRepository.currentEvent == null) {
-      emit(EventDetailError());
+    if (_eventsRepository.currentEventPlayerData == null ||
+        _eventsRepository.currentEvent == null ||
+        state is EventDetailInitial) {
+      // show error toast
       return;
     }
 
-    final EventPlayerData previousPlayerData =
-        _eventsRepository.currentPlayerData!;
-    _eventsRepository.currentPlayerData!.sets.remove(set);
-    _saveUpdatedPlayerData(previousPlayerData: previousPlayerData);
+    _eventsRepository.currentEventPlayerData!.sets.remove(set);
+
+    emit(
+      EventDetailLoaded(
+        event: _eventsRepository.currentEvent!,
+        currentPlayerData: _eventsRepository.currentEventPlayerData!,
+      ),
+    );
+
+    _saveUpdatedPlayerData();
   }
 
   Future<bool> createNewEvent({
@@ -205,7 +247,6 @@ class EventDetailCubit extends Cubit<EventDetailState> {
             EventDetailLoaded(
               event: updatedEvent,
               currentPlayerData: activeState.currentPlayerData,
-              connected: _connected,
             ),
           );
         }
@@ -215,29 +256,22 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     });
   }
 
-  void _saveUpdatedPlayerData({required EventPlayerData previousPlayerData}) {
-    emit(
-      EventDetailLoaded(
-        event: _eventsRepository.currentEvent!,
-        currentPlayerData: _eventsRepository.currentPlayerData!,
-        connected: _connected,
-      ),
-    );
+  Future<bool> _saveUpdatedPlayerData() async {
     try {
-      _eventsRepository.resyncSets().then((SavePlayerSetsResponse response) {
-        if (response.eventStatus == EventStatus.complete) {
-          // Revert changes
-          emit(
-            EventDetailLoaded(
-              event: _eventsRepository.currentEvent!,
-              currentPlayerData: previousPlayerData,
-              connected: _connected,
-            ),
-          );
-        }
-      });
+      return _eventsRepository.saveLocalPlayerSets().then(
+        (SavePlayerSetsResponse response) async {
+          if (response.eventStatus == EventStatus.complete) {
+            // show error toast
+            reloadEvent();
+            return false;
+          } else {
+            return true;
+          }
+        },
+      );
     } catch (e) {
-      return;
+      // ignore network errors
+      return false;
     }
   }
 
@@ -245,54 +279,80 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     final bool wasConnected = _connected;
     _connected = isConnected(result);
 
-    // if (state is EventDetailLoaded) {
-    //   emit(EventDetailLoaded(
-    //       event: state.event,
-    //       currentPlayerData: state.currentPlayerData,
-    //       connected: _connected));
-    // }
-
-    // Resync sets when coming back online.
+    // Connection re-established
     if (!wasConnected && _connected) {
-      try {
-        if (_eventsRepository.currentEvent != null &&
-            _eventsRepository.currentPlayerData != null) {
-          final SavePlayerSetsResponse response =
-              await _eventsRepository.resyncSets();
-
-          // If the event is complete, lock them out of saving sets.
-          if (response.eventStatus == EventStatus.complete) {
-            final GetEventPlayerDataResponse response = await _eventsService
-                .getEventPlayerData(_eventsRepository.currentEvent!.eventId);
-
-            // Successfully loaded player data from backend
-            // Emit new state with up-to-date
-            if (response.eventPlayerData != null) {
-              _eventsRepository.currentPlayerData = response.eventPlayerData;
-              if (state is EventDetailLoaded) {
-                _eventsRepository.currentEvent!.status = EventStatus.complete;
-                emit(
-                  EventDetailLoaded(
-                    event: _eventsRepository.currentEvent!,
-                    currentPlayerData: _eventsRepository.currentPlayerData!,
-                    connected: _connected,
-                  ),
-                );
-              }
-            }
-            // Failed to load player data from backend.
-            else {
-              // Trigger error
-            }
-          } else if (!response.success) {
-            //  Failed to sync sets to backend
-          } else {
-            // synced successfully
-          }
-        }
-      } catch (e) {
+      if (_eventsRepository.currentEvent == null) {
         return;
       }
+
+      final MyPuttEvent? updatedEvent = await reloadEvent();
+
+      if (updatedEvent == null) {
+        // show error toast
+        return;
+      } else if (updatedEvent.status == EventStatus.complete) {
+        // show error toast
+
+        // try to revert sets to database copy
+        try {
+          final EventPlayerData? databasePlayerData =
+              await _eventsRepository.fetchDBPlayerData();
+
+          if (databasePlayerData == null) {
+            return;
+          }
+
+          emit(
+            EventDetailLoaded(
+              event: updatedEvent,
+              currentPlayerData: databasePlayerData,
+            ),
+          );
+        }
+        // catch network error
+        catch (e) {
+          // show error toast
+          return;
+        }
+      } else if (_eventsRepository.currentEventPlayerData != null) {
+        final bool saveSuccess = await _saveUpdatedPlayerData();
+        // fetch continually.
+      }
+
+      // if (_eventsRepository.currentEvent != null &&
+      //     _eventsRepository.currentPlayerData != null) {
+      //   final SavePlayerSetsResponse response =
+      //       await _eventsRepository.saveLocalPlayerSets();
+      //
+      //   // If the event is complete, lock them out of saving sets.
+      //   if (response.eventStatus == EventStatus.complete) {
+      //     final GetEventPlayerDataResponse response = await _eventsService
+      //         .getEventPlayerData(_eventsRepository.currentEvent!.eventId);
+      //
+      //     // Successfully loaded player data from backend
+      //     // Emit new state with up-to-date
+      //     if (response.eventPlayerData != null) {
+      //       _eventsRepository.currentPlayerData = response.eventPlayerData;
+      //       if (state is EventDetailLoaded) {
+      //         _eventsRepository.currentEvent!.status = EventStatus.complete;
+      //         emit(
+      //           EventDetailLoaded(
+      //             event: _eventsRepository.currentEvent!,
+      //             currentPlayerData: _eventsRepository.currentPlayerData!,
+      //           ),
+      //         );
+      //       }
+      //     }
+      //     // Failed to load player data from backend.
+      //     else {
+      //       // Trigger error
+      //     }
+      //   } else if (!response.success) {
+      //     //  Failed to sync sets to backend
+      //   } else {
+      //     // synced successfully
+      //   }
+      // }
     }
   }
 }

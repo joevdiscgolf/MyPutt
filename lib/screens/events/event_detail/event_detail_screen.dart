@@ -53,8 +53,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     await Future.wait(
       [
         _loadDivisionStandings(),
-        BlocProvider.of<EventDetailCubit>(context)
-            .reloadEventDetails(widget.event.eventId)
+        BlocProvider.of<EventDetailCubit>(context).reload(),
       ],
     );
   }
