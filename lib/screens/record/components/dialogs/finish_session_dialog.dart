@@ -84,17 +84,18 @@ class _FinishSessionDialogState extends State<FinishSessionDialog> {
                           );
                         } else {
                           return PrimaryButton(
-                              label: 'Finish',
-                              fontSize: 18,
-                              width: 100,
-                              height: 50,
-                              backgroundColor: MyPuttColors.green,
-                              onPressed: () {
-                                setState(() {
-                                  _dialogErrorText = "No active session";
-                                });
-                                return 'Finish';
+                            label: 'Finish',
+                            fontSize: 18,
+                            width: 100,
+                            height: 50,
+                            backgroundColor: MyPuttColors.green,
+                            onPressed: () {
+                              setState(() {
+                                _dialogErrorText = "No active session";
                               });
+                              return 'Finish';
+                            },
+                          );
                         }
                       },
                     ),

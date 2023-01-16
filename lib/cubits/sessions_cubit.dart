@@ -111,10 +111,13 @@ class SessionsCubit extends Cubit<SessionsState> {
     await _sessionRepository
         .addCompletedSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
-    emit(NoActiveSessionState(
+    emit(
+      NoActiveSessionState(
         sessions: _sessionRepository.allSessions,
         individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.allSessions)));
+            .generateSessionsStatsMap(_sessionRepository.allSessions),
+      ),
+    );
   }
 
   void addSet(PuttingSet set) {

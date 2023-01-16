@@ -44,6 +44,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
 
   bool _firstDocumentEvent = true;
   bool _connected = true;
+  Timer? _reloadEventTimer;
 
   void createEventPressed() {
     newEventCreated = false;
@@ -318,41 +319,8 @@ class EventDetailCubit extends Cubit<EventDetailState> {
         final bool saveSuccess = await _saveUpdatedPlayerData();
         // fetch continually.
       }
-
-      // if (_eventsRepository.currentEvent != null &&
-      //     _eventsRepository.currentPlayerData != null) {
-      //   final SavePlayerSetsResponse response =
-      //       await _eventsRepository.saveLocalPlayerSets();
-      //
-      //   // If the event is complete, lock them out of saving sets.
-      //   if (response.eventStatus == EventStatus.complete) {
-      //     final GetEventPlayerDataResponse response = await _eventsService
-      //         .getEventPlayerData(_eventsRepository.currentEvent!.eventId);
-      //
-      //     // Successfully loaded player data from backend
-      //     // Emit new state with up-to-date
-      //     if (response.eventPlayerData != null) {
-      //       _eventsRepository.currentPlayerData = response.eventPlayerData;
-      //       if (state is EventDetailLoaded) {
-      //         _eventsRepository.currentEvent!.status = EventStatus.complete;
-      //         emit(
-      //           EventDetailLoaded(
-      //             event: _eventsRepository.currentEvent!,
-      //             currentPlayerData: _eventsRepository.currentPlayerData!,
-      //           ),
-      //         );
-      //       }
-      //     }
-      //     // Failed to load player data from backend.
-      //     else {
-      //       // Trigger error
-      //     }
-      //   } else if (!response.success) {
-      //     //  Failed to sync sets to backend
-      //   } else {
-      //     // synced successfully
-      //   }
-      // }
+    } else if (wasConnected && !_connected) {
+      _reloadEventTimer?.cancel();
     }
   }
 }
