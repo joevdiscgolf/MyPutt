@@ -3,12 +3,16 @@ import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/firebase/sessions_data_writers.dart';
+import 'package:myputt/services/hive/hive_service.dart';
+import 'package:myputt/utils/session_helpers.dart';
 
 class SessionRepository {
   PuttingSession? currentSession;
   List<PuttingSession> allSessions = [];
   final DatabaseService _databaseService = DatabaseService();
   final UserRepository _userRepository = locator.get<UserRepository>();
+  bool _allSessionsLoaded = false;
 
   Future<void> addCompletedSession(PuttingSession sessionToAdd) async {
     allSessions.add(sessionToAdd);
@@ -62,13 +66,43 @@ class SessionRepository {
     return true;
   }
 
+  Future<void> saveUnsyncedSessions() async {
+    final List<PuttingSession> unsyncedSessions =
+        SessionHelpers.setSyncedForSessions(
+            allSessions.where((session) => session.isSynced != true).toList());
+  }
+
   Future<bool> fetchCompletedSessions() async {
-    final List<PuttingSession>? newCompletedSessionsList =
+    final List<PuttingSession>? dbCompletedSessions =
         await _databaseService.getCompletedSessions();
-    if (newCompletedSessionsList != null) {
-      allSessions = newCompletedSessionsList;
-    } else {
-      allSessions = [];
+
+    // loaded successfully
+    if (dbCompletedSessions != null) {
+      final List<PuttingSession> unsyncedSessions =
+          allSessions.where((session) => session.isSynced != true).toList();
+
+      final List<String> unsyncedSessionIds =
+          unsyncedSessions.map((session) => session.id).toList();
+
+      final List<PuttingSession> unifiedSessions = unsyncedSessions;
+
+      unifiedSessions.addAll(
+        dbCompletedSessions.where(
+          (dbSession) => !unsyncedSessionIds.contains(dbSession.id),
+        ),
+      );
+
+      allSessions = unifiedSessions;
+      syncLocalDb();
+    } else if (!_allSessionsLoaded) {
+      // fetch from local
+
+      final List<PuttingSession>? localDbSessions =
+          await locator.get<HiveService>().retrieveCompletedSessions();
+
+      if (localDbSessions != null) {
+        allSessions = localDbSessions;
+      }
     }
     return true;
   }
@@ -83,5 +117,9 @@ class SessionRepository {
   void clearData() {
     currentSession = null;
     allSessions = [];
+  }
+
+  Future<void> syncLocalDb() async {
+    await locator.get<HiveService>().storeCompletedSessions(allSessions);
   }
 }

@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
@@ -22,6 +23,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/services/hive/constants.dart';
+import 'package:myputt/services/hive/hive_service.dart';
 import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/device_helpers.dart';
@@ -34,16 +37,18 @@ void main() async {
   final isPhysicalDevice = await DeviceHelpers.isPhysicalDevice();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   if (kDebugMode && !isPhysicalDevice) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
+  await initLocalDatabase();
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
-  await locator.get<InitManager>().init();
   await locator.get<BetaAccessService>().loadFeatureAccess();
+  await locator.get<InitManager>().init();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());

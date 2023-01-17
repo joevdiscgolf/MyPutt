@@ -11,6 +11,7 @@ import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
+import 'package:myputt/services/hive/hive_service.dart';
 import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
@@ -47,5 +48,6 @@ Future<void> setUpLocator() async {
   locator.registerLazySingleton(() => DynamicLinkService());
   locator.registerLazySingleton(() => EventsService());
   locator.registerSingleton<BetaAccessService>(BetaAccessService());
+  locator.registerSingleton<HiveService>(HiveService());
   locator.registerLazySingleton(() => NavigationService());
 }
