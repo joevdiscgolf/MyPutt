@@ -76,9 +76,7 @@ class DatabaseService {
   Future<List<PuttingSession>?> getCompletedSessions() async {
     final uid = _authService.getCurrentUserId();
 
-    final completedSessions =
-        await _sessionsDataLoader.getCompletedSessions(uid!);
-    return completedSessions?.toList();
+    return _sessionsDataLoader.getCompletedSessions(uid!);
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {

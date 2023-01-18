@@ -1,2 +1,2 @@
-const String kHiveSessionsBox = 'Sessions';
+const String kSessionsBoxKey = 'Sessions';
 const String kCompletedSessionsKey = 'CompletedSessions';

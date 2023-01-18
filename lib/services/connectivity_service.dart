@@ -21,6 +21,7 @@ class ConnectivityService {
   late final StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   Future<void> _onConnected() async {
-    await locator.get<SessionRepository>().saveUnsyncedSessions();
+    await locator.get<SessionRepository>().fetchCloudCompletedSessions();
+    await locator.get<SessionRepository>().syncCloudWithLocalSessions();
   }
 }

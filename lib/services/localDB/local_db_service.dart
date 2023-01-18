@@ -1,14 +1,9 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
-import 'package:myputt/services/hive/constants.dart';
+import 'package:myputt/services/localDB/constants.dart';
 
-Future<void> initLocalDatabase() async {
-  await Hive.initFlutter();
-  await Hive.openBox(kHiveSessionsBox);
-}
-
-class HiveService {
-  final _sessionsBox = Hive.box(kHiveSessionsBox);
+class LocalDBService {
+  final _sessionsBox = Hive.box(kSessionsBoxKey);
 
   Future<bool> deleteAllData() async {
     try {
@@ -23,8 +18,10 @@ class HiveService {
   ) async {
     try {
       return _sessionsBox
-          .put(kCompletedSessionsKey,
-              completedSessions.map((session) => session.toJson()).toList())
+          .put(
+            kCompletedSessionsKey,
+            List.from(completedSessions.map((session) => session.toJson())),
+          )
           .then((_) => true);
     } catch (e) {
       return false;

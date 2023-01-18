@@ -21,12 +21,21 @@ class FBSessionsDataLoader {
   }
 
   Future<List<PuttingSession>?> getCompletedSessions(String uid) async {
-    final completedSessionsReference = firestore
-        .collection('$sessionsCollection/$uid/$completedSessionsCollection');
-
-    QuerySnapshot querySnapshot =
-        await completedSessionsReference.orderBy('timeStamp').get().catchError(
-      (e, trace) {
+    return firestore
+        .collection('$sessionsCollection/$uid/$completedSessionsCollection')
+        .orderBy('timeStamp')
+        .get()
+        .then(
+      (QuerySnapshot snapshot) {
+        return List.from(
+          snapshot.docs.map(
+            (doc) =>
+                PuttingSession.fromJson(doc.data() as Map<String, dynamic>),
+          ),
+        ) as List<PuttingSession>;
+      },
+    ).catchError(
+      (e, trace) async {
         log(e);
         FirebaseCrashlytics.instance.recordError(
           e,
@@ -36,10 +45,5 @@ class FBSessionsDataLoader {
         );
       },
     );
-
-    return querySnapshot.docs
-        .map((doc) =>
-            PuttingSession.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
   }
 }
