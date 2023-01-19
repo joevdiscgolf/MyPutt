@@ -20,7 +20,7 @@ class LocalDBService {
       return _sessionsBox
           .put(
             kCompletedSessionsKey,
-            List.from(completedSessions.map((session) => session.toJson())),
+            completedSessions.map((session) => session.toJson()).toList(),
           )
           .then((_) => true);
     } catch (e) {
@@ -28,11 +28,29 @@ class LocalDBService {
     }
   }
 
-  Future<List<PuttingSession>?> retrieveCompletedSessions() async {
-    return _sessionsBox.get(kCompletedSessionsKey).then((result) {
-      print('retrieved completed sessions');
-      print(result);
-      return [];
-    });
+  List<PuttingSession>? retrieveCompletedSessions() {
+    try {
+      final Iterable<dynamic>? results = _sessionsBox
+          .get(kCompletedSessionsKey)
+          ?.map((hashMap) =>
+              PuttingSession.fromJson(Map<String, dynamic>.from(hashMap)));
+
+      if (results == null) {
+        return null;
+      }
+
+      final List<PuttingSession> puttingSessions = [];
+
+      for (var result in results) {
+        if (result is PuttingSession) {
+          puttingSessions.add(result);
+        }
+      }
+
+      return puttingSessions;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 }

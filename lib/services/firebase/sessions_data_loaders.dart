@@ -27,21 +27,21 @@ class FBSessionsDataLoader {
         .get()
         .then(
       (QuerySnapshot snapshot) {
-        return List.from(
-          snapshot.docs.map(
-            (doc) =>
-                PuttingSession.fromJson(doc.data() as Map<String, dynamic>),
-          ),
-        ) as List<PuttingSession>;
+        return snapshot.docs
+            .map(
+              (doc) =>
+                  PuttingSession.fromJson(doc.data() as Map<String, dynamic>),
+            )
+            .toList();
       },
     ).catchError(
       (e, trace) async {
-        log(e);
+        log(e.toString());
         FirebaseCrashlytics.instance.recordError(
           e,
           trace,
           reason:
-              '[FBSessionsDataLoader][getCompletedSEssions] firestore read exception',
+              '[FBSessionsDataLoader][getCompletedSessions] firestore read exception',
         );
       },
     );

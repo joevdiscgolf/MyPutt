@@ -12,7 +12,7 @@ import 'package:myputt/repositories/user_repository.dart';
 
 Future<void> fetchRepositoryData() async {
   await locator.get<UserRepository>().fetchCurrentUser();
-  await locator.get<SessionRepository>().fetchLocalCompletedSessions();
+  locator.get<SessionRepository>().fetchLocalCompletedSessions();
   await Future.wait([
     locator.get<SessionRepository>().fetchCloudCompletedSessions(),
     locator.get<SessionRepository>().fetchCurrentSession(),

@@ -51,7 +51,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       BlocProvider.of<HomeScreenCubit>(context).reload();
     });
     _totalSets = _statsService.getTotalPuttingSets(
-      _sessionRepository.allSessions,
+      _sessionRepository.completedSessions,
       _challengesRepository.completedChallenges,
       _selectedDistance,
     );
@@ -76,7 +76,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
     final List<ChartPoint> _points =
         _statsService.getPointsWithDistanceAndLimit(
-            _sessionRepository.allSessions,
+            _sessionRepository.completedSessions,
             _challengesRepository.completedChallenges,
             _selectedDistance,
             limit);
@@ -92,7 +92,8 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
             _sessionRangeTabBar(context),
             _points.isEmpty
                 ? EmptyStateChart(
-                    hasSessions: _sessionRepository.allSessions.isNotEmpty,
+                    hasSessions:
+                        _sessionRepository.completedSessions.isNotEmpty,
                   )
                 : PerformanceChart(data: smoothData),
             Row(
@@ -164,7 +165,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         setState(() {
           _selectedDistance = distance;
           _totalSets = _statsService.getTotalPuttingSets(
-            _sessionRepository.allSessions,
+            _sessionRepository.completedSessions,
             _challengesRepository.completedChallenges,
             distance,
           );

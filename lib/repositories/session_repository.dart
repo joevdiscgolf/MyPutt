@@ -14,16 +14,25 @@ import 'package:myputt/utils/session_helpers.dart';
 
 class SessionRepository {
   PuttingSession? currentSession;
-  List<PuttingSession> allSessions = [];
+  List<PuttingSession> completedSessions = [];
   final DatabaseService _databaseService = DatabaseService();
 
   Future<void> addCompletedSession(PuttingSession sessionToAdd) async {
-    allSessions.add(sessionToAdd);
-    await _databaseService.addCompletedSession(sessionToAdd);
+    completedSessions.add(sessionToAdd);
+    _updateSessionsInLocalDB();
+
+    await _databaseService
+        .addCompletedSession(sessionToAdd)
+        .then((bool success) {
+      if (success) {
+        _setSessionToSynced(sessionToAdd);
+      }
+    });
   }
 
   void deleteSession(PuttingSession sessionToDelete) {
-    allSessions.remove(sessionToDelete);
+    completedSessions.remove(sessionToDelete);
+    _updateSessionsInLocalDB();
     _databaseService.deleteCompletedSession(sessionToDelete);
   }
 
@@ -59,10 +68,6 @@ class SessionRepository {
     }
   }
 
-  List<PuttingSession> get sessions {
-    return allSessions;
-  }
-
   Future<void> fetchCurrentSession() async {
     try {
       final PuttingSession? newCurrentSession =
@@ -73,18 +78,18 @@ class SessionRepository {
     }
   }
 
-  Future<void> fetchLocalCompletedSessions() async {
+  void fetchLocalCompletedSessions() {
     final List<PuttingSession>? localDbSessions =
-        await locator.get<LocalDBService>().retrieveCompletedSessions();
+        locator.get<LocalDBService>().retrieveCompletedSessions();
 
     if (localDbSessions != null) {
-      allSessions = localDbSessions;
+      completedSessions = localDbSessions;
     }
   }
 
-  Future<void> syncCloudWithLocalSessions() async {
+  Future<void> syncLocalSessionsToCloud() async {
     List<PuttingSession> unsyncedSessions =
-        allSessions.where((session) => session.isSynced != true).toList();
+        completedSessions.where((session) => session.isSynced != true).toList();
     unsyncedSessions = SessionHelpers.setSyncedToTrue(unsyncedSessions);
 
     if (unsyncedSessions.isEmpty) {
@@ -93,14 +98,15 @@ class SessionRepository {
 
     // save unsynced sessions in firestore.
     final bool success =
-        await FBSessionsDataWriter.instance.setSessionsBatch(sessions);
+        await FBSessionsDataWriter.instance.setSessionsBatch(unsyncedSessions);
 
     if (!success) {
       // trigger error toast
       return;
     }
 
-    allSessions = SessionHelpers.mergeSessions(unsyncedSessions, allSessions);
+    completedSessions =
+        SessionHelpers.mergeSessions(unsyncedSessions, completedSessions);
   }
 
   Future<void> fetchCloudCompletedSessions() async {
@@ -114,14 +120,16 @@ class SessionRepository {
     }
 
     if (cloudSessions != null) {
-      final List<PuttingSession> unsyncedSessions =
-          List.from(allSessions.where((session) => session.isSynced != true));
+      cloudSessions = SessionHelpers.setSyncedToTrue(cloudSessions);
+      final List<PuttingSession> unsyncedSessions = completedSessions
+          .where((session) => session.isSynced != true)
+          .toList();
       final List<PuttingSession> combinedSessions =
           SessionHelpers.mergeSessions(unsyncedSessions, cloudSessions);
 
       // store new sessions if necessary.
       final List<PuttingSession> newSessions =
-          SessionHelpers.getNewSessions(allSessions, cloudSessions);
+          SessionHelpers.getNewSessions(completedSessions, cloudSessions);
 
       if (newSessions.isNotEmpty) {
         final bool success = await locator
@@ -132,21 +140,41 @@ class SessionRepository {
         }
       }
 
-      allSessions = combinedSessions;
-      await locator.get<LocalDBService>().storeCompletedSessions(allSessions);
+      completedSessions = combinedSessions;
     }
   }
 
   List<PuttingSession> getSessionsWithRange(int range) {
-    allSessions.sort((s1, s2) => s1.timeStamp.compareTo(s2.timeStamp));
+    completedSessions.sort((s1, s2) => s1.timeStamp.compareTo(s2.timeStamp));
     final List<PuttingSession> selectedSessions =
-        allSessions.take(range).toList();
-    return range == 0 ? allSessions : selectedSessions;
+        completedSessions.take(range).toList();
+    return range == 0 ? completedSessions : selectedSessions;
+  }
+
+  void _updateSessionsInLocalDB() {
+    locator.get<LocalDBService>().storeCompletedSessions(completedSessions);
+  }
+
+  void _setSessionToSynced(PuttingSession session) {
+    int? sessionIndex;
+    for (int i = 0; i < completedSessions.length; i++) {
+      final PuttingSession completedSession = completedSessions[i];
+      if (completedSession.id == session.id) {
+        sessionIndex = i;
+      }
+    }
+    if (sessionIndex != null) {
+      final Map<String, dynamic> sessionJson = session.toJson();
+      sessionJson['isSynced'] = true;
+      final PuttingSession syncedSession = PuttingSession.fromJson(sessionJson);
+      completedSessions[sessionIndex] = syncedSession;
+      _updateSessionsInLocalDB();
+    }
   }
 
   void clearData() {
     currentSession = null;
-    allSessions = [];
+    completedSessions = [];
   }
 }
 
