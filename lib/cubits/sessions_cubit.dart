@@ -155,8 +155,8 @@ class SessionsCubit extends Cubit<SessionsState> {
     }
   }
 
-  void deleteSession(PuttingSession session) {
-    _sessionRepository.deleteSession(session);
+  Future<void> deleteCompletedSession(PuttingSession session) async {
+    await _sessionRepository.deleteCompletedSession(session);
     if (state is SessionInProgressState) {
       if (_sessionRepository.currentSession != null) {
         emit(SessionInProgressState(
@@ -172,10 +172,14 @@ class SessionsCubit extends Cubit<SessionsState> {
       }
     } else {
       if (_sessionRepository.currentSession == null) {
-        emit(NoActiveSessionState(
+        emit(
+          NoActiveSessionState(
             sessions: _sessionRepository.completedSessions,
             individualStats: _statsService.generateSessionsStatsMap(
-                _sessionRepository.completedSessions)));
+              _sessionRepository.completedSessions,
+            ),
+          ),
+        );
       } else {
         emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
       }
@@ -184,9 +188,13 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   void deleteCurrentSession() {
     _sessionRepository.deleteCurrentSession();
-    emit(NoActiveSessionState(
+    emit(
+      NoActiveSessionState(
         sessions: _sessionRepository.completedSessions,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions)));
+        individualStats: _statsService.generateSessionsStatsMap(
+          _sessionRepository.completedSessions,
+        ),
+      ),
+    );
   }
 }

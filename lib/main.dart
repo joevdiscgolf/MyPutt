@@ -21,10 +21,10 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/beta_access_service.dart';
+import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/theme/theme_data.dart';
-import 'package:myputt/utils/device_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/hive_helpers.dart';
 import 'cubits/my_profile_cubit.dart';
@@ -32,7 +32,7 @@ import 'cubits/my_profile_cubit.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final isPhysicalDevice = await DeviceHelpers.isPhysicalDevice();
+  final isPhysicalDevice = await DeviceService.isPhysicalDevice();
   FirebaseFirestore.instance.settings =
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   if (kDebugMode && !isPhysicalDevice) {

@@ -31,36 +31,6 @@ class DatabaseService {
 
   final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
 
-  Future<bool> startCurrentSession(PuttingSession currentSession) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.setCurrentSession(currentSession, uid);
-  }
-
-  Future<bool> updateCurrentSession(PuttingSession currentSession) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.updateCurrentSession(currentSession, uid);
-  }
-
-  Future<bool> deleteCurrentSession() async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.deleteCurrentSession(uid);
-  }
-
-  Future<bool> addCompletedSession(PuttingSession sessionToAdd) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.addCompletedSession(sessionToAdd, uid);
-  }
-
-  Future<bool> deleteCompletedSession(PuttingSession sessionToDelete) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.deleteCompletedSession(sessionToDelete, uid);
-  }
-
   Future<PuttingSession?> getCurrentSession() async {
     final uid = _authService.getCurrentUserId();
 

@@ -134,7 +134,7 @@ class _CalendarViewState extends State<CalendarView>
                     session: session,
                     delete: () {
                       BlocProvider.of<SessionsCubit>(context)
-                          .deleteSession(session);
+                          .deleteCompletedSession(session);
                       BlocProvider.of<HomeScreenCubit>(context).reload();
                     },
                     isCurrentSession: false,

@@ -7,6 +7,7 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/database_service.dart';
@@ -50,4 +51,5 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<BetaAccessService>(BetaAccessService());
   locator.registerSingleton<LocalDBService>(LocalDBService());
   locator.registerLazySingleton(() => NavigationService());
+  locator.registerSingleton<DeviceService>(DeviceService());
 }

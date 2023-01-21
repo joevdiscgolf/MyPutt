@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/localDB/constants.dart';
@@ -49,7 +51,7 @@ class LocalDBService {
 
       return puttingSessions;
     } catch (e) {
-      print(e);
+      log(e.toString());
       return null;
     }
   }

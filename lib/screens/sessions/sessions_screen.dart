@@ -105,7 +105,7 @@ class _SessionsState extends State<SessionsScreen> {
                       index: entry.key + 1,
                       delete: () {
                         BlocProvider.of<SessionsCubit>(context)
-                            .deleteSession(entry.value);
+                            .deleteCompletedSession(entry.value);
                         BlocProvider.of<HomeScreenCubit>(context).reload();
                       },
                       isCurrentSession: false,

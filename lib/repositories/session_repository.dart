@@ -6,6 +6,7 @@ import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
@@ -17,48 +18,63 @@ class SessionRepository {
   List<PuttingSession> completedSessions = [];
   final DatabaseService _databaseService = DatabaseService();
 
-  Future<void> addCompletedSession(PuttingSession sessionToAdd) async {
-    completedSessions.add(sessionToAdd);
-    _updateSessionsInLocalDB();
+  Future<bool> startNewSession(PuttingSession session) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+    final String? deviceId = locator.get<DeviceService>().getDeviceId;
 
-    await _databaseService
+    if (currentUid == null || deviceId == null) {
+      // toast error
+      return false;
+    }
+
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    currentSession = PuttingSession(
+      timeStamp: now,
+      id: '$currentUid~$now',
+    );
+
+    FBSessionsDataWriter.instance.setCurrentSession(session);
+    return true;
+  }
+
+  Future<bool> addCompletedSession(PuttingSession sessionToAdd) async {
+    completedSessions.add(sessionToAdd);
+    final bool localSaveSuccess = await _updateSessionsInLocalDB();
+
+    if (!localSaveSuccess) {
+      return false;
+    }
+
+    FBSessionsDataWriter.instance
         .addCompletedSession(sessionToAdd)
-        .then((bool success) {
+        .then((success) {
+      // set session to synced if the session has been uploaded successfully
       if (success) {
         _setSessionToSynced(sessionToAdd);
       }
     });
+    return true;
   }
 
-  void deleteSession(PuttingSession sessionToDelete) {
-    completedSessions.remove(sessionToDelete);
-    _updateSessionsInLocalDB();
-    _databaseService.deleteCompletedSession(sessionToDelete);
-  }
-
-  Future<bool> startNewSession(PuttingSession session) async {
-    final String? currentUid =
-        locator.get<FirebaseAuthService>().getCurrentUserId();
-    if (currentUid != null) {
-      final int now = DateTime.now().millisecondsSinceEpoch;
-      currentSession = PuttingSession(
-        timeStamp: now,
-        id: '$currentUid~$now',
-      );
-      return _databaseService.startCurrentSession(currentSession!);
+  Future<bool> deleteCompletedSession(PuttingSession sessionToDelete) async {
+    completedSessions = SessionHelpers.removeSession(
+      sessionToDelete.id,
+      completedSessions,
+    );
+    final bool localSaveSuccess = await _updateSessionsInLocalDB();
+    if (!localSaveSuccess) {
+      return false;
     }
-    return false;
-  }
-
-  void deleteCurrentSession() {
-    currentSession = null;
-    _databaseService.deleteCurrentSession();
+    FBSessionsDataWriter.instance.deleteCompletedSession(sessionToDelete.id);
+    return true;
   }
 
   void addSet(PuttingSet set) {
     if (currentSession != null) {
       currentSession!.addSet(set);
-      _databaseService.updateCurrentSession(currentSession!);
+      FBSessionsDataWriter.instance
+          .setCurrentSession(currentSession!, merge: true);
     }
   }
 
@@ -78,6 +94,11 @@ class SessionRepository {
     }
   }
 
+  void deleteCurrentSession() {
+    currentSession = null;
+    FBSessionsDataWriter.instance.deleteCurrentSession();
+  }
+
   void fetchLocalCompletedSessions() {
     final List<PuttingSession>? localDbSessions =
         locator.get<LocalDBService>().retrieveCompletedSessions();
@@ -88,25 +109,30 @@ class SessionRepository {
   }
 
   Future<void> syncLocalSessionsToCloud() async {
-    List<PuttingSession> unsyncedSessions =
+    List<PuttingSession> newlySyncedSessions =
         completedSessions.where((session) => session.isSynced != true).toList();
-    unsyncedSessions = SessionHelpers.setSyncedToTrue(unsyncedSessions);
+    newlySyncedSessions = SessionHelpers.setSyncedToTrue(newlySyncedSessions);
 
-    if (unsyncedSessions.isEmpty) {
+    if (newlySyncedSessions.isEmpty) {
       return;
     }
 
     // save unsynced sessions in firestore.
-    final bool success =
-        await FBSessionsDataWriter.instance.setSessionsBatch(unsyncedSessions);
+    final bool success = await FBSessionsDataWriter.instance
+        .setSessionsBatch(newlySyncedSessions);
 
     if (!success) {
       // trigger error toast
       return;
     }
 
-    completedSessions =
-        SessionHelpers.mergeSessions(unsyncedSessions, completedSessions);
+    completedSessions = SessionHelpers.mergeSyncedSessions(
+      newlySyncedSessions,
+      completedSessions,
+    );
+
+    // store newly-synced sessions
+    await _updateSessionsInLocalDB();
   }
 
   Future<void> fetchCloudCompletedSessions() async {
@@ -121,15 +147,20 @@ class SessionRepository {
 
     if (cloudSessions != null) {
       cloudSessions = SessionHelpers.setSyncedToTrue(cloudSessions);
+
       final List<PuttingSession> unsyncedSessions = completedSessions
           .where((session) => session.isSynced != true)
           .toList();
       final List<PuttingSession> combinedSessions =
-          SessionHelpers.mergeSessions(unsyncedSessions, cloudSessions);
+          SessionHelpers.mergeCloudSessions(unsyncedSessions, cloudSessions);
 
       // store new sessions if necessary.
       final List<PuttingSession> newSessions =
           SessionHelpers.getNewSessions(completedSessions, cloudSessions);
+
+      // delete sessions that failed to delete if necessary.
+      final List<PuttingSession> deletedSessions =
+          SessionHelpers.getDeletedSessions(completedSessions, cloudSessions);
 
       if (newSessions.isNotEmpty) {
         final bool success = await locator
@@ -141,6 +172,11 @@ class SessionRepository {
       }
 
       completedSessions = combinedSessions;
+
+      if (deletedSessions.isNotEmpty) {
+        await FBSessionsDataWriter.instance
+            .deleteSessionsBatch(deletedSessions);
+      }
     }
   }
 
@@ -151,11 +187,13 @@ class SessionRepository {
     return range == 0 ? completedSessions : selectedSessions;
   }
 
-  void _updateSessionsInLocalDB() {
-    locator.get<LocalDBService>().storeCompletedSessions(completedSessions);
+  Future<bool> _updateSessionsInLocalDB() {
+    return locator
+        .get<LocalDBService>()
+        .storeCompletedSessions(completedSessions);
   }
 
-  void _setSessionToSynced(PuttingSession session) {
+  Future<bool> _setSessionToSynced(PuttingSession session) async {
     int? sessionIndex;
     for (int i = 0; i < completedSessions.length; i++) {
       final PuttingSession completedSession = completedSessions[i];
@@ -168,7 +206,9 @@ class SessionRepository {
       sessionJson['isSynced'] = true;
       final PuttingSession syncedSession = PuttingSession.fromJson(sessionJson);
       completedSessions[sessionIndex] = syncedSession;
-      _updateSessionsInLocalDB();
+      return _updateSessionsInLocalDB();
+    } else {
+      return false;
     }
   }
 
@@ -177,14 +217,3 @@ class SessionRepository {
     completedSessions = [];
   }
 }
-
-/*
-if (successfully fetched from server) {
-  merge cloud and local sessions.
-  if (cloud sessions not stored locally) {
-    store cloud sessions locally
-  }
-  set repository sessions to merged sessions.
-
-}
- */

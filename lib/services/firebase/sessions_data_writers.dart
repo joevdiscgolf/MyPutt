@@ -16,12 +16,22 @@ class FBSessionsDataWriter {
 
   FBSessionsDataWriter._internal();
 
-  Future<bool> setCurrentSession(PuttingSession currentSession, uid) async {
+  Future<bool> setCurrentSession(
+    PuttingSession currentSession, {
+    bool merge = false,
+  }) async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    if (uid == null) {
+      return false;
+    }
+
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
     return currentSessionReference
         .set(
           {'currentSession': currentSession.toJson()},
+          SetOptions(merge: merge),
         )
         .then((value) => true)
         .catchError((e, trace) {
@@ -35,29 +45,12 @@ class FBSessionsDataWriter {
         });
   }
 
-  Future<bool> updateCurrentSession(PuttingSession currentSession, uid) async {
-    final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
+  Future<bool> deleteCurrentSession() async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return false;
+    }
 
-    return currentSessionReference
-        .set(
-          {'currentSession': currentSession.toJson()},
-          SetOptions(merge: true),
-        )
-        .then((value) => true)
-        .catchError(
-          (e, trace) {
-            FirebaseCrashlytics.instance.recordError(
-              e,
-              trace,
-              reason:
-                  '[FBSessionsDataWriter][updateCurrentSession] firestore write exception',
-            );
-            return false;
-          },
-        );
-  }
-
-  Future<bool> deleteCurrentSession(uid) async {
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
     return currentSessionReference
@@ -76,7 +69,12 @@ class FBSessionsDataWriter {
         );
   }
 
-  Future<bool> addCompletedSession(PuttingSession completedSession, uid) async {
+  Future<bool> addCompletedSession(PuttingSession completedSession) async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return false;
+    }
+
     final previousSessionReference = firestore.doc(
         '$sessionsCollection/$uid/$completedSessionsCollection/${completedSession.id}');
 
@@ -96,20 +94,51 @@ class FBSessionsDataWriter {
     );
   }
 
-  Future<bool> deleteCompletedSession(
-    PuttingSession currentSession,
-    uid,
-  ) async {
-    final previousSessionReference = firestore.doc(
-        '$sessionsCollection/$uid/$completedSessionsCollection/${currentSession.id}');
+  Future<bool> deleteCompletedSession(String sessionId) async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return false;
+    }
 
-    return previousSessionReference.delete().then((value) => true).catchError(
+    return firestore
+        .doc('$sessionsCollection/$uid/$completedSessionsCollection/$sessionId')
+        .delete()
+        .then((value) => true)
+        .catchError(
       (e, trace) {
         FirebaseCrashlytics.instance.recordError(
           e,
           trace,
           reason:
               '[FBSessionsDataWriter][deleteCompletedSession] firestore delete exception',
+        );
+        return false;
+      },
+    );
+  }
+
+  Future<bool> deleteSessionsBatch(
+    List<PuttingSession> sessionsToDelete,
+  ) async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    if (uid == null) {
+      return false;
+    }
+
+    final WriteBatch batch = firestore.batch();
+
+    for (PuttingSession session in sessionsToDelete) {
+      batch.delete(firestore.doc('$sessionsCollection/$uid/${session.id}'));
+    }
+
+    return batch.commit().then((_) => true).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBSessionsDataWriter][deleteSessionsBatch] firestore delete exception',
         );
         return false;
       },
