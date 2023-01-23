@@ -36,14 +36,8 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 120,
+        height: 124,
         padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(color: MyPuttColors.gray[50]!, boxShadow: [
-          BoxShadow(
-              offset: const Offset(0, 2),
-              color: MyPuttColors.gray[400]!,
-              blurRadius: 2)
-        ]),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,
           key: widget.sslKey,

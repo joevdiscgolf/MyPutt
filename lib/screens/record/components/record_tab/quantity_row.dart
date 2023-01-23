@@ -39,6 +39,14 @@ class QuantitySelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: MyPuttColors.gray[50]!,
         borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: MyPuttColors.black.withOpacity(0.1),
+            offset: const Offset(0, 2),
+            blurRadius: 2,
+            spreadRadius: 0,
+          )
+        ],
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -47,17 +55,20 @@ class QuantitySelector extends StatelessWidget {
             const AdjustQuantityButton(increment: false),
             VerticalDivider(
               width: 1,
-              color: MyPuttColors.gray[200]!,
+              color: MyPuttColors.gray[100]!,
               thickness: 1,
             ),
-            AutoSizeText(
-              '10',
-              style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: MyPuttColors.darkGray,
-                  ),
-              maxLines: 1,
-              textAlign: TextAlign.center,
+            SizedBox(
+              width: 32,
+              child: AutoSizeText(
+                '10',
+                style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: MyPuttColors.darkGray,
+                    ),
+                maxLines: 1,
+                textAlign: TextAlign.center,
+              ),
             ),
             VerticalDivider(
               width: 1,
@@ -83,7 +94,7 @@ class AdjustQuantityButton extends StatefulWidget {
 }
 
 class _AdjustQuantityButtonState extends State<AdjustQuantityButton> {
-  static const double _iconSize = 16;
+  static const double _iconSize = 20;
   static const double _borderRadius = 8;
   bool _isPressed = false;
   @override
@@ -103,6 +114,7 @@ class _AdjustQuantityButtonState extends State<AdjustQuantityButton> {
         });
       },
       child: Container(
+        width: 32,
         decoration: BoxDecoration(
           color: _isPressed ? MyPuttColors.blue : Colors.transparent,
           borderRadius: widget.increment

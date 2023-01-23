@@ -14,7 +14,7 @@ class AdjustDistanceButton extends StatefulWidget {
 }
 
 class _AdjustDistanceButtonState extends State<AdjustDistanceButton> {
-  static const double _iconSize = 16;
+  static const double _iconSize = 20;
   static const double _borderRadius = 8;
   bool _isPressed = false;
 

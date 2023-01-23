@@ -20,7 +20,7 @@ class AppBarBackButton extends StatelessWidget {
           child: Icon(
             FlutterRemix.arrow_left_s_line,
             color: MyPuttColors.black,
-            size: 26,
+            size: 20,
           ),
         ),
       ),

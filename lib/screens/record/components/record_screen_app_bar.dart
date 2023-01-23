@@ -11,7 +11,7 @@ class RecordScreenAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).viewPadding.top,
       ),

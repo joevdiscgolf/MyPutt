@@ -9,7 +9,7 @@ class SelectionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 76,
+      height: 72,
       decoration: BoxDecoration(
         color: MyPuttColors.gray[50],
         borderRadius: BorderRadius.circular(8),
