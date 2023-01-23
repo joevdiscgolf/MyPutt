@@ -5,11 +5,12 @@ part 'putting_set.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSet {
-  PuttingSet(
-      {required this.puttsMade,
-      required this.puttsAttempted,
-      required this.distance,
-      this.timeStamp});
+  PuttingSet({
+    required this.puttsMade,
+    required this.puttsAttempted,
+    required this.distance,
+    this.timeStamp,
+  });
 
   final int? timeStamp;
   final int puttsMade;

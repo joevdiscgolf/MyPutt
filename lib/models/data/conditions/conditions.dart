@@ -5,9 +5,16 @@ part 'conditions.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class Conditions {
-  Conditions({required this.windConditions, required this.weatherConditions});
-  final WindConditions windConditions;
-  final WeatherConditions weatherConditions;
+  Conditions({
+    this.windIntensity,
+    this.weatherConditions,
+    this.windDirection,
+    this.puttingStance,
+  });
+  final WeatherConditions? weatherConditions;
+  final WindIntensity? windIntensity;
+  final WindDirection? windDirection;
+  final PuttingStance? puttingStance;
 
   factory Conditions.fromJson(Map<String, dynamic> json) =>
       _$ConditionsFromJson(json);

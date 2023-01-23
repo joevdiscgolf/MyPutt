@@ -7,24 +7,30 @@ part of 'conditions.dart';
 // **************************************************************************
 
 Conditions _$ConditionsFromJson(Map json) => Conditions(
-      windConditions:
-          $enumDecode(_$WindConditionsEnumMap, json['windConditions']),
-      weatherConditions:
-          $enumDecode(_$WeatherConditionsEnumMap, json['weatherConditions']),
+      windIntensity:
+          $enumDecodeNullable(_$WindIntensityEnumMap, json['windIntensity']),
+      weatherConditions: $enumDecodeNullable(
+          _$WeatherConditionsEnumMap, json['weatherConditions']),
+      windDirection:
+          $enumDecodeNullable(_$WindDirectionEnumMap, json['windDirection']),
+      puttingStance:
+          $enumDecodeNullable(_$PuttingStanceEnumMap, json['puttingStance']),
     );
 
 Map<String, dynamic> _$ConditionsToJson(Conditions instance) =>
     <String, dynamic>{
-      'windConditions': _$WindConditionsEnumMap[instance.windConditions]!,
       'weatherConditions':
-          _$WeatherConditionsEnumMap[instance.weatherConditions]!,
+          _$WeatherConditionsEnumMap[instance.weatherConditions],
+      'windIntensity': _$WindIntensityEnumMap[instance.windIntensity],
+      'windDirection': _$WindDirectionEnumMap[instance.windDirection],
+      'puttingStance': _$PuttingStanceEnumMap[instance.puttingStance],
     };
 
-const _$WindConditionsEnumMap = {
-  WindConditions.calm: 'calm',
-  WindConditions.breezy: 'breezy',
-  WindConditions.strong: 'strong',
-  WindConditions.intense: 'intense',
+const _$WindIntensityEnumMap = {
+  WindIntensity.calm: 'calm',
+  WindIntensity.breezy: 'breezy',
+  WindIntensity.strong: 'strong',
+  WindIntensity.intense: 'intense',
 };
 
 const _$WeatherConditionsEnumMap = {
@@ -32,4 +38,17 @@ const _$WeatherConditionsEnumMap = {
   WeatherConditions.cloudy: 'cloudy',
   WeatherConditions.rainy: 'rainy',
   WeatherConditions.snowy: 'snowy',
+};
+
+const _$WindDirectionEnumMap = {
+  WindDirection.headwind: 'headwind',
+  WindDirection.tailwind: 'tailwind',
+  WindDirection.ltrCross: 'ltr_cross',
+  WindDirection.rtlCross: 'rtl_cross',
+};
+
+const _$PuttingStanceEnumMap = {
+  PuttingStance.staggered: 'staggered',
+  PuttingStance.straddle: 'straddle',
+  PuttingStance.knee: 'knee',
 };
