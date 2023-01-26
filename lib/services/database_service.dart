@@ -13,7 +13,6 @@ import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase/event_data_loader.dart';
 import 'package:myputt/services/firebase/event_data_writer.dart';
 import 'package:myputt/services/firebase/sessions_data_loaders.dart';
-import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
@@ -22,7 +21,6 @@ import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
   final FBSessionsDataLoader _sessionsDataLoader = FBSessionsDataLoader();
-  final FBSessionsDataWriter _sessionsDataWriter = FBSessionsDataWriter();
   final FBChallengesDataWriter _challengesDataWriter = FBChallengesDataWriter();
   final FBChallengesDataLoader _challengesDataLoader = FBChallengesDataLoader();
   final FBUserDataLoader _userDataLoader = FBUserDataLoader();

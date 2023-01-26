@@ -7,14 +7,6 @@ import 'package:myputt/services/localDB/constants.dart';
 class LocalDBService {
   final _sessionsBox = Hive.box(kSessionsBoxKey);
 
-  Future<bool> deleteAllData() async {
-    try {
-      return _sessionsBox.deleteFromDisk().then((_) => true);
-    } catch (e) {
-      return false;
-    }
-  }
-
   Future<bool> storeCompletedSessions(
     List<PuttingSession> completedSessions,
   ) async {
@@ -53,6 +45,41 @@ class LocalDBService {
     } catch (e) {
       log(e.toString());
       return null;
+    }
+  }
+
+  Future<bool> storeCurrentSession(PuttingSession? currentSession) async {
+    try {
+      if (currentSession != null) {
+        return _sessionsBox
+            .put(kCurrentSessionKey, currentSession.toJson())
+            .then((_) => true);
+      } else {
+        return _sessionsBox.delete(kCurrentSessionKey).then((_) => true);
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  PuttingSession? retrieveCurrentSession() {
+    try {
+      final dynamic hashMap = _sessionsBox.get(kCurrentSessionKey);
+      if (hashMap == null) {
+        return null;
+      }
+      return PuttingSession.fromJson(Map<String, dynamic>.from(hashMap));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> deleteAllData() async {
+    try {
+      return _sessionsBox.deleteFromDisk().then((_) => true);
+    } catch (e) {
+      return false;
     }
   }
 }

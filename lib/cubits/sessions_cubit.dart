@@ -24,7 +24,7 @@ class SessionsCubit extends Cubit<SessionsState> {
     await Future.wait(
       [
         _sessionRepository.fetchCloudCompletedSessions(),
-        _sessionRepository.fetchCurrentSession()
+        _sessionRepository.fetchCloudCurrentSession()
       ],
     );
     reload();
@@ -112,7 +112,7 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   Future<void> completeSession() async {
     await _sessionRepository
-        .addCompletedSession(_sessionRepository.currentSession!);
+        .finishCurrentSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
     emit(NoActiveSessionState(
         sessions: _sessionRepository.completedSessions,
@@ -124,13 +124,15 @@ class SessionsCubit extends Cubit<SessionsState> {
     _sessionRepository.addSet(set);
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
-          sessions: _sessionRepository.completedSessions,
-          currentSession: _sessionRepository.currentSession!,
-          individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.completedSessions),
-          currentSessionStats: _statsService.getStatsForSession(
-              _sessionRepository.completedSessions,
-              _sessionRepository.currentSession!)));
+        sessions: _sessionRepository.completedSessions,
+        currentSession: _sessionRepository.currentSession!,
+        individualStats: _statsService
+            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        currentSessionStats: _statsService.getStatsForSession(
+          _sessionRepository.completedSessions,
+          _sessionRepository.currentSession!,
+        ),
+      ));
     } else {
       emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
     }

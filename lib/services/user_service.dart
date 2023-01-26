@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/models/endpoints/users/user_endpoints.dart';
 import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
@@ -11,6 +15,23 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class UserService {
   final FBUserDataWriter _userDataWriter = FBUserDataWriter();
+
+  Future<MyPuttUser?> getUser() {
+    final HttpsCallable callable =
+        FirebaseFunctions.instance.httpsCallable('getEvent');
+    return callable().then((HttpsCallableResult<dynamic> response) {
+      return GetUserResponse.fromJson(response.data).user;
+    }).catchError((e, trace) async {
+      log(e.toString());
+      log(trace.toString());
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[EventsService][getEvent] exception',
+      );
+      throw e;
+    });
+  }
 
   Future<bool> deleteUser(MyPuttUser user) async {
     final MyPuttAuthService _myPuttAuthService =

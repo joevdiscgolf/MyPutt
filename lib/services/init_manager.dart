@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/string_helpers.dart';
@@ -30,11 +31,8 @@ class InitManager {
 
     final String? minimumVersion = await getMinimumAppVersion();
 
-    if (minimumVersion == null) {
-      controller.add(AppScreenState.connectionError);
-      return;
-    }
-    if (versionToNumber(minimumVersion) > versionToNumber(version)) {
+    if (minimumVersion != null &&
+        versionToNumber(minimumVersion) > versionToNumber(version)) {
       controller.add(AppScreenState.forceUpgrade);
       return;
     } else if (_authService.getCurrentUserId() == null) {
@@ -42,27 +40,33 @@ class InitManager {
       return;
     }
 
-    final bool? isSetup = await _authService.userIsSetup();
-    if (isSetup == null) {
+    final bool? userSetUpInCloud = await _authService.userIsSetup();
+    if (userSetUpInCloud == true) {
+      await locator.get<SharedPreferencesService>().markUserIsSetUp(true);
+    }
+    final bool? isSetUp =
+        await locator.get<SharedPreferencesService>().userIsSetUp();
+    print('is set up: $isSetUp');
+    if (isSetUp == null) {
       controller.add(AppScreenState.connectionError);
       return;
-    } else if (!isSetup) {
+    } else if (!isSetUp) {
       controller.add(AppScreenState.setup);
       return;
     }
 
     try {
-      await fetchRepositoryData().timeout(standardTimeout);
+      fetchLocalRepositoryData();
+      fetchRepositoryData().timeout(shortTimeout);
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
-      controller.add(AppScreenState.connectionError);
+      // controller.add(AppScreenState.connectionError);
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
         reason: '[InitManager][init] fetchRepositoryData timeout',
       );
-      return;
     }
     controller.add(AppScreenState.loggedIn);
   }

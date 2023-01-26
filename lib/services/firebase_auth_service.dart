@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/username_doc.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
-import 'package:myputt/utils/constants.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
+import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -125,8 +127,11 @@ class FirebaseAuthService {
     }
   }
 
-  Future<MyPuttUser?> setupNewUser(String username, String displayName,
-      {int? pdgaNumber}) async {
+  Future<MyPuttUser?> setupNewUser(
+    String username,
+    String displayName, {
+    int? pdgaNumber,
+  }) async {
     final User? user = await getUser();
     if (user == null) {
       return null;
@@ -162,6 +167,9 @@ class FirebaseAuthService {
       );
       return null;
     });
+
+    locator.get<SharedPreferencesService>().markUserIsSetUp(true);
+
     return newUser;
   }
 
@@ -197,26 +205,31 @@ class FirebaseAuthService {
       return null;
     }
     try {
-      final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
-          .instance
-          .collection('Users')
-          .doc(_auth.currentUser!.uid)
-          .get()
-          .catchError((e, trace) {
-        log(e.toString());
-        FirebaseCrashlytics.instance.recordError(
-          e,
-          trace,
-          reason: '[FirebaseAuthService][userIsSetUp] firestore read exception',
-        );
-      }).timeout(standardTimeout);
-      if (userDoc?.data() == null) {
-        return null;
-      } else if (!userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
-        return false;
-      } else {
-        return true;
-      }
+      return locator
+          .get<UserService>()
+          .getUser()
+          .then((MyPuttUser? user) => userIsValid(user));
+
+      // final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
+      //     .instance
+      //     .collection('Users')
+      //     .doc(_auth.currentUser!.uid)
+      //     .get()
+      //     .catchError((e, trace) {
+      //   log(e.toString());
+      //   FirebaseCrashlytics.instance.recordError(
+      //     e,
+      //     trace,
+      //     reason: '[FirebaseAuthService][userIsSetUp] firestore read exception',
+      //   );
+      // }).timeout(shortTimeout);
+      // if (userDoc?.data() == null) {
+      //   return null;
+      // } else if (!userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
+      //   return false;
+      // } else {
+      //   return true;
+      // }
     } catch (e, trace) {
       log(e.toString());
       log(trace.toString());
@@ -261,5 +274,9 @@ class FirebaseAuthService {
 
   bool userDocIsValid(Map<String, dynamic> doc) {
     return doc['username'] != null && doc['displayName'] != null;
+  }
+
+  bool userIsValid(MyPuttUser? user) {
+    return user?.username != null && user?.displayName != null;
   }
 }

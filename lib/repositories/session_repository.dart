@@ -29,18 +29,47 @@ class SessionRepository {
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;
-    currentSession = PuttingSession(
-      timeStamp: now,
-      id: '$currentUid~$now',
-    );
+    currentSession = PuttingSession(timeStamp: now, id: '$currentUid~$now');
+
+    final bool localSaveSuccess = await _storeCurrentSessionInLocalDB();
+    if (!localSaveSuccess) {
+      return false;
+    }
 
     FBSessionsDataWriter.instance.setCurrentSession(session);
     return true;
   }
 
-  Future<bool> addCompletedSession(PuttingSession sessionToAdd) async {
+  void addSet(PuttingSet set) {
+    if (currentSession != null) {
+      currentSession!.addSet(set);
+
+      _storeCurrentSessionInLocalDB();
+
+      FBSessionsDataWriter.instance
+          .setCurrentSession(currentSession!, merge: true);
+    }
+  }
+
+  void deleteSet(PuttingSet set) {
+    if (currentSession != null && currentSession?.sets != null) {
+      currentSession?.sets.remove(set);
+
+      _storeCurrentSessionInLocalDB();
+      FBSessionsDataWriter.instance
+          .setCurrentSession(currentSession!, merge: true);
+    }
+  }
+
+  void deleteCurrentSession() {
+    currentSession = null;
+    _storeCurrentSessionInLocalDB();
+    FBSessionsDataWriter.instance.deleteCurrentSession();
+  }
+
+  Future<bool> finishCurrentSession(PuttingSession sessionToAdd) async {
     completedSessions.add(sessionToAdd);
-    final bool localSaveSuccess = await _updateSessionsInLocalDB();
+    final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
 
     if (!localSaveSuccess) {
       return false;
@@ -51,7 +80,7 @@ class SessionRepository {
         .then((success) {
       // set session to synced if the session has been uploaded successfully
       if (success) {
-        _setSessionToSynced(sessionToAdd);
+        _setCompletedSessionToSynced(sessionToAdd);
       }
     });
     return true;
@@ -62,7 +91,7 @@ class SessionRepository {
       sessionToDelete.id,
       completedSessions,
     );
-    final bool localSaveSuccess = await _updateSessionsInLocalDB();
+    final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
     if (!localSaveSuccess) {
       return false;
     }
@@ -70,39 +99,44 @@ class SessionRepository {
     return true;
   }
 
-  void addSet(PuttingSet set) {
-    if (currentSession != null) {
-      currentSession!.addSet(set);
-      FBSessionsDataWriter.instance
-          .setCurrentSession(currentSession!, merge: true);
-    }
+  void fetchLocalCurrentSession() {
+    currentSession = locator.get<LocalDBService>().retrieveCurrentSession();
   }
 
-  void deleteSet(PuttingSet set) {
-    if (currentSession != null && currentSession?.sets != null) {
-      currentSession?.sets.remove(set);
-    }
-  }
-
-  Future<void> fetchCurrentSession() async {
+  Future<void> fetchCloudCurrentSession() async {
     try {
-      final PuttingSession? newCurrentSession =
+      final PuttingSession? cloudCurrentSession =
           await _databaseService.getCurrentSession();
-      currentSession = newCurrentSession;
+
+      if (currentSession != null) {
+        if (currentSession?.deviceId != cloudCurrentSession?.deviceId) {
+          currentSession = cloudCurrentSession;
+        }
+      } else {
+        currentSession = cloudCurrentSession;
+      }
     } catch (e) {
       return;
     }
   }
 
-  void deleteCurrentSession() {
-    currentSession = null;
-    FBSessionsDataWriter.instance.deleteCurrentSession();
+  Future<bool> _storeCurrentSessionInLocalDB() {
+    return locator
+        .get<LocalDBService>()
+        .storeCurrentSession(currentSession)
+        .then((success) {
+      final PuttingSession? currentLocalSession =
+          locator.get<LocalDBService>().retrieveCurrentSession();
+      print('local current session: ${currentLocalSession?.toJson()}');
+      return success;
+    });
   }
 
   void fetchLocalCompletedSessions() {
     final List<PuttingSession>? localDbSessions =
         locator.get<LocalDBService>().retrieveCompletedSessions();
 
+    print('fetched ${localDbSessions?.length} local DB sessions');
     if (localDbSessions != null) {
       completedSessions = localDbSessions;
     }
@@ -132,7 +166,7 @@ class SessionRepository {
     );
 
     // store newly-synced sessions
-    await _updateSessionsInLocalDB();
+    await _storeCompletedSessionsInLocalDB();
   }
 
   Future<void> fetchCloudCompletedSessions() async {
@@ -180,20 +214,23 @@ class SessionRepository {
     }
   }
 
-  List<PuttingSession> getSessionsWithRange(int range) {
-    completedSessions.sort((s1, s2) => s1.timeStamp.compareTo(s2.timeStamp));
-    final List<PuttingSession> selectedSessions =
-        completedSessions.take(range).toList();
-    return range == 0 ? completedSessions : selectedSessions;
-  }
-
-  Future<bool> _updateSessionsInLocalDB() {
+  Future<bool> _storeCompletedSessionsInLocalDB() {
+    final int sessionsLengthBefore =
+        locator.get<LocalDBService>().retrieveCompletedSessions()?.length ?? 0;
     return locator
         .get<LocalDBService>()
-        .storeCompletedSessions(completedSessions);
+        .storeCompletedSessions(completedSessions)
+        .then((success) {
+      final int sessionsLengthAfter =
+          locator.get<LocalDBService>().retrieveCompletedSessions()?.length ??
+              0;
+      print(
+          'sessions before: $sessionsLengthBefore, sessions after: $sessionsLengthAfter');
+      return success;
+    });
   }
 
-  Future<bool> _setSessionToSynced(PuttingSession session) async {
+  Future<bool> _setCompletedSessionToSynced(PuttingSession session) async {
     int? sessionIndex;
     for (int i = 0; i < completedSessions.length; i++) {
       final PuttingSession completedSession = completedSessions[i];
@@ -206,7 +243,7 @@ class SessionRepository {
       sessionJson['isSynced'] = true;
       final PuttingSession syncedSession = PuttingSession.fromJson(sessionJson);
       completedSessions[sessionIndex] = syncedSession;
-      return _updateSessionsInLocalDB();
+      return _storeCompletedSessionsInLocalDB();
     } else {
       return false;
     }

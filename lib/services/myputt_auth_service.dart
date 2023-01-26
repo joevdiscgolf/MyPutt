@@ -7,6 +7,7 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
@@ -31,6 +32,7 @@ class MyPuttAuthService {
   Future<bool> deleteCurrentUser() {
     return _firebaseAuthService.deleteCurrentUser().then((success) {
       if (success) {
+        locator.get<SharedPreferencesService>().markUserIsSetUp(false);
         _screenController.controller.add(AppScreenState.notLoggedIn);
       }
       return success;
@@ -101,13 +103,16 @@ class MyPuttAuthService {
       return true;
     }
 
+    // mark is set up to true
+    locator.get<SharedPreferencesService>().markUserIsSetUp(true);
+
     _mixpanel.track(
       'Sign in',
       properties: {'Uid': _firebaseAuthService.getCurrentUserId()},
     );
 
     try {
-      await fetchRepositoryData().timeout(standardTimeout);
+      await fetchRepositoryData().timeout(shortTimeout);
     } catch (e, trace) {
       log('[myputt_auth_service][attemptSigninWithEmail] Failed to fetch repository data. Error: $e');
       log(trace.toString());
@@ -155,6 +160,7 @@ class MyPuttAuthService {
       properties: {'Uid': _firebaseAuthService.getCurrentUserId()},
     );
     clearRepositoryData();
+    locator.get<SharedPreferencesService>().markUserIsSetUp(true);
     _firebaseAuthService.logOut();
     controller.add(AppScreenState.notLoggedIn);
     currentAppScreenState = AppScreenState.notLoggedIn;

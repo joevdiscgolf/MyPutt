@@ -89,4 +89,14 @@ class SessionHelpers {
             cloudSession.deviceId == deviceId)
         .toList();
   }
+
+  List<PuttingSession> getSessionsWithRange(
+    int range,
+    List<PuttingSession> completedSessions,
+  ) {
+    completedSessions.sort((s1, s2) => s1.timeStamp.compareTo(s2.timeStamp));
+    final List<PuttingSession> selectedSessions =
+        completedSessions.take(range).toList();
+    return range == 0 ? completedSessions : selectedSessions;
+  }
 }
