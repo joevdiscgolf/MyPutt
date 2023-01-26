@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -23,9 +22,9 @@ class RecordScreen extends StatefulWidget {
   _RecordScreenState createState() => _RecordScreenState();
 }
 
-class _RecordScreenState extends State<RecordScreen> {
-  final Mixpanel _mixpanel = locator.get<Mixpanel>();
-  final UserRepository _userRepository = locator.get<UserRepository>();
+class _RecordScreenState extends State<RecordScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
 
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
 
@@ -36,10 +35,19 @@ class _RecordScreenState extends State<RecordScreen> {
 
   @override
   void initState() {
-    _distance = _userRepository
-            .currentUser?.userSettings?.sessionSettings?.preferredDistance ??
+    _tabController = TabController(length: 2, vsync: this);
+    _distance = locator
+            .get<UserRepository>()
+            .currentUser
+            ?.userSettings
+            ?.sessionSettings
+            ?.preferredDistance ??
         20;
-    _setLength = _userRepository.currentUser?.userSettings?.sessionSettings
+    _setLength = locator
+            .get<UserRepository>()
+            .currentUser
+            ?.userSettings
+            ?.sessionSettings
             ?.preferredPuttsPickerLength ??
         10;
     super.initState();
@@ -49,54 +57,56 @@ class _RecordScreenState extends State<RecordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyPuttColors.white,
-      appBar: const RecordScreenAppBar(),
+      appBar: RecordScreenAppBar(tabController: _tabController),
       body: _mainBody(context),
     );
   }
 
   Widget _mainBody(BuildContext context) {
-    return BlocBuilder<SessionsCubit, SessionsState>(
-      builder: (context, state) {
-        if (state is SessionInProgressState) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Column(
-              children: [
-                const SelectionTilesRow(),
-                const SizedBox(height: 40),
-                const QuantityRow(),
-                const SizedBox(height: 4),
-                const SizedBox(height: 8),
-                PuttsMadePicker(
-                  length: _setLength,
-                  initialIndex: _setLength.toDouble(),
-                  challengeMode: false,
-                  sslKey: puttsMadePickerKey,
-                  onUpdate: (int newIndex) {
-                    setState(() {
-                      _focusedIndex = newIndex;
-                    });
-                  },
+    return TabBarView(
+      controller: _tabController,
+      children: [
+        BlocBuilder<SessionsCubit, SessionsState>(
+          builder: (context, state) {
+            if (state is SessionInProgressState) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 12),
+                child: Column(
+                  children: [
+                    const SelectionTilesRow(),
+                    const SizedBox(height: 32),
+                    const QuantityRow(),
+                    const SizedBox(height: 4),
+                    PuttsMadePicker(
+                      length: _setLength,
+                      initialIndex: _setLength.toDouble(),
+                      challengeMode: false,
+                      sslKey: puttsMadePickerKey,
+                      onUpdate: (int newIndex) {
+                        setState(() {
+                          _focusedIndex = newIndex;
+                        });
+                      },
+                    ),
+                    const Expanded(child: StatsSection()),
+                    const AddSetButton(),
+                  ],
                 ),
-                const Expanded(child: StatsSection()),
-                const AddSetButton(),
-                // const SizedBox(height: 12),
-                // const FinishSessionButton(),
-                const SizedBox(height: 24),
-              ],
-            ),
-          );
-        } else {
-          return Center(
-            child: Center(
-              child: EmptyState(
-                onRetry: () =>
-                    BlocProvider.of<SessionsCubit>(context).continueSession(),
-              ),
-            ),
-          );
-        }
-      },
+              );
+            } else {
+              return Center(
+                child: Center(
+                  child: EmptyState(
+                    onRetry: () => BlocProvider.of<SessionsCubit>(context)
+                        .continueSession(),
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+        Container()
+      ],
     );
   }
 }
