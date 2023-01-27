@@ -15,7 +15,7 @@ class EventsRepository {
 
   Future<SavePlayerSetsResponse> resyncSets() async {
     if (currentPlayerData == null || currentEvent == null) {
-      return SavePlayerSetsResponse(success: false);
+      return const SavePlayerSetsResponse(success: false);
     }
     return locator.get<EventsService>().savePlayerSets(
           currentEvent!.eventId,

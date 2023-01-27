@@ -8,7 +8,9 @@ import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
+import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/user_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:myputt/utils/enums.dart';
 
@@ -92,12 +94,24 @@ class MyPuttAuthService {
       return false;
     }
 
-    final bool? isSetup = await _firebaseAuthService.userIsSetup();
+    bool? isSetup;
+
+    await locator.get<UserService>().getUser().then(
+      (MyPuttUser? user) {
+        isSetup = userIsValid(user);
+      },
+    ).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[AuthService][userIsSetup] get User timeout',
+      );
+    });
 
     if (isSetup == null) {
       errorMessage = 'Something went wrong, please try again.';
       return false;
-    } else if (!isSetup) {
+    } else if (isSetup == false) {
       controller.add(AppScreenState.setup);
       currentAppScreenState = AppScreenState.setup;
       return true;
@@ -138,8 +152,21 @@ class MyPuttAuthService {
     if (newUser == null) {
       return false;
     }
-    final bool? isSetUp = await _firebaseAuthService.userIsSetup();
-    if (isSetUp == null || !isSetUp) {
+    bool? isSetUp;
+
+    await locator.get<UserService>().getUser().then(
+      (MyPuttUser? user) {
+        isSetUp = userIsValid(user);
+      },
+    ).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[AuthService][userIsSetup] get User timeout',
+      );
+    });
+
+    if (isSetUp == null || isSetUp == false) {
       return false;
     }
 

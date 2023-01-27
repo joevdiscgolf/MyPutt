@@ -200,48 +200,6 @@ class FirebaseAuthService {
     });
   }
 
-  Future<bool?> userIsSetup() async {
-    if (_auth.currentUser?.uid == null) {
-      return null;
-    }
-    try {
-      return locator
-          .get<UserService>()
-          .getUser()
-          .then((MyPuttUser? user) => userIsValid(user));
-
-      // final DocumentSnapshot<dynamic>? userDoc = await FirebaseFirestore
-      //     .instance
-      //     .collection('Users')
-      //     .doc(_auth.currentUser!.uid)
-      //     .get()
-      //     .catchError((e, trace) {
-      //   log(e.toString());
-      //   FirebaseCrashlytics.instance.recordError(
-      //     e,
-      //     trace,
-      //     reason: '[FirebaseAuthService][userIsSetUp] firestore read exception',
-      //   );
-      // }).timeout(shortTimeout);
-      // if (userDoc?.data() == null) {
-      //   return null;
-      // } else if (!userDocIsValid(userDoc?.data() as Map<String, dynamic>)) {
-      //   return false;
-      // } else {
-      //   return true;
-      // }
-    } catch (e, trace) {
-      log(e.toString());
-      log(trace.toString());
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason: '[AuthService][userIsSetup] get User timeout',
-      );
-      return null;
-    }
-  }
-
   Future<bool> sendPasswordReset(String email) {
     return auth
         .sendPasswordResetEmail(email: email)
@@ -274,9 +232,5 @@ class FirebaseAuthService {
 
   bool userDocIsValid(Map<String, dynamic> doc) {
     return doc['username'] != null && doc['displayName'] != null;
-  }
-
-  bool userIsValid(MyPuttUser? user) {
-    return user?.username != null && user?.displayName != null;
   }
 }

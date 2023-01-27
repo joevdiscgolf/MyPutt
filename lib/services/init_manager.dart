@@ -4,15 +4,18 @@ import 'dart:developer';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/controllers/screen_controller.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/services/app_info_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
+import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/string_helpers.dart';
+import 'package:myputt/utils/user_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'firebase_auth_service.dart';
-import 'firebase/app_info_data_loader.dart';
 
 class InitManager {
   final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
@@ -29,7 +32,18 @@ class InitManager {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String version = packageInfo.version;
 
-    final String? minimumVersion = await getMinimumAppVersion();
+    late final String? minimumVersion;
+    try {
+      minimumVersion =
+          await locator.get<AppInfoService>().getMinimumAppVersion();
+    } catch (e, trace) {
+      print('catching app verison error');
+      log(e.toString());
+      log(trace.toString());
+      minimumVersion = null;
+    }
+
+    print('got past app version');
 
     if (minimumVersion != null &&
         versionToNumber(minimumVersion) > versionToNumber(version)) {
@@ -40,13 +54,25 @@ class InitManager {
       return;
     }
 
-    final bool? userSetUpInCloud = await _authService.userIsSetup();
+    bool? userSetUpInCloud;
+
+    await locator.get<UserService>().getUser().then((MyPuttUser? user) {
+      userSetUpInCloud = userIsValid(user);
+    }).catchError((e, trace) async {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[AuthService][userIsSetup] get User timeout',
+      );
+    });
+
+    print('got past user is set up check');
     if (userSetUpInCloud == true) {
       await locator.get<SharedPreferencesService>().markUserIsSetUp(true);
     }
+
     final bool? isSetUp =
         await locator.get<SharedPreferencesService>().userIsSetUp();
-    print('is set up: $isSetUp');
     if (isSetUp == null) {
       controller.add(AppScreenState.connectionError);
       return;
@@ -56,6 +82,7 @@ class InitManager {
     }
 
     try {
+      print('got to this spot');
       fetchLocalRepositoryData();
       fetchRepositoryData().timeout(shortTimeout);
     } catch (e, trace) {

@@ -18,16 +18,14 @@ class UserService {
 
   Future<MyPuttUser?> getUser() {
     final HttpsCallable callable =
-        FirebaseFunctions.instance.httpsCallable('getEvent');
+        FirebaseFunctions.instance.httpsCallable('getUser');
     return callable().then((HttpsCallableResult<dynamic> response) {
       return GetUserResponse.fromJson(response.data).user;
     }).catchError((e, trace) async {
-      log(e.toString());
-      log(trace.toString());
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[EventsService][getEvent] exception',
+        reason: '[UsersService][getUser] exception',
       );
       throw e;
     });

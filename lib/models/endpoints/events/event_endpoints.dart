@@ -9,7 +9,7 @@ part 'event_endpoints.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventRequest {
-  GetEventRequest({required this.eventId});
+  const GetEventRequest({required this.eventId});
   final String eventId;
 
   factory GetEventRequest.fromJson(Map<String, dynamic> json) =>
@@ -20,7 +20,7 @@ class GetEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventResponse {
-  GetEventResponse({this.event, required this.inEvent});
+  const GetEventResponse({this.event, required this.inEvent});
   final MyPuttEvent? event;
   final bool inEvent;
 
@@ -32,7 +32,7 @@ class GetEventResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class JoinEventRequest {
-  JoinEventRequest({required this.division, required this.eventId});
+  const JoinEventRequest({required this.division, required this.eventId});
   final Division division;
   final String eventId;
 
@@ -44,7 +44,7 @@ class JoinEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class JoinEventWithCodeRequest {
-  JoinEventWithCodeRequest({
+  const JoinEventWithCodeRequest({
     required this.division,
     this.code,
     this.codeRequired,
@@ -61,7 +61,7 @@ class JoinEventWithCodeRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class JoinEventResponse {
-  JoinEventResponse({required this.success, this.error});
+  const JoinEventResponse({required this.success, this.error});
   final bool success;
   final String? error;
 
@@ -73,7 +73,7 @@ class JoinEventResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class SearchEventsRequest {
-  SearchEventsRequest({required this.keyword});
+  const SearchEventsRequest({required this.keyword});
   final String keyword;
 
   factory SearchEventsRequest.fromJson(Map<String, dynamic> json) =>
@@ -84,7 +84,7 @@ class SearchEventsRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventsResponse {
-  GetEventsResponse({required this.events});
+  const GetEventsResponse({required this.events});
   final List<MyPuttEvent> events;
 
   factory GetEventsResponse.fromJson(Map<String, dynamic> json) =>
@@ -95,7 +95,7 @@ class GetEventsResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class SavePlayerSetsRequest {
-  SavePlayerSetsRequest({
+  const SavePlayerSetsRequest({
     required this.eventId,
     required this.sets,
     this.lockedIn,
@@ -112,7 +112,7 @@ class SavePlayerSetsRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class SavePlayerSetsResponse {
-  SavePlayerSetsResponse({required this.success, this.eventStatus});
+  const SavePlayerSetsResponse({required this.success, this.eventStatus});
   final bool success;
   final EventStatus? eventStatus;
 
@@ -124,7 +124,7 @@ class SavePlayerSetsResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventPlayerDataRequest {
-  GetEventPlayerDataRequest({required this.eventId});
+  const GetEventPlayerDataRequest({required this.eventId});
   final String eventId;
 
   factory GetEventPlayerDataRequest.fromJson(Map<String, dynamic> json) =>
@@ -135,7 +135,7 @@ class GetEventPlayerDataRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetEventPlayerDataResponse {
-  GetEventPlayerDataResponse({this.eventPlayerData});
+  const GetEventPlayerDataResponse({this.eventPlayerData});
   final EventPlayerData? eventPlayerData;
 
   factory GetEventPlayerDataResponse.fromJson(Map<String, dynamic> json) =>
@@ -146,7 +146,7 @@ class GetEventPlayerDataResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class ExitEventRequest {
-  ExitEventRequest({required this.eventId});
+  const ExitEventRequest({required this.eventId});
   final String eventId;
 
   factory ExitEventRequest.fromJson(Map<String, dynamic> json) =>
@@ -157,7 +157,7 @@ class ExitEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class ExitEventResponse {
-  ExitEventResponse({required this.success});
+  const ExitEventResponse({required this.success});
   final bool success;
 
   factory ExitEventResponse.fromJson(Map<String, dynamic> json) =>
@@ -168,7 +168,7 @@ class ExitEventResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class CreateEventRequest {
-  CreateEventRequest({
+  const CreateEventRequest({
     required this.eventCreateParams,
     this.clubId,
   });
@@ -183,7 +183,7 @@ class CreateEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class CreateEventResponse {
-  CreateEventResponse({this.eventId});
+  const CreateEventResponse({this.eventId});
   final String? eventId;
 
   factory CreateEventResponse.fromJson(Map<String, dynamic> json) =>
@@ -194,7 +194,7 @@ class CreateEventResponse {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class EventCreateParams {
-  EventCreateParams({
+  const EventCreateParams({
     required this.name,
     required this.description,
     required this.verificationRequired,
@@ -219,7 +219,7 @@ class EventCreateParams {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class EndEventRequest {
-  EndEventRequest({required this.eventId});
+  const EndEventRequest({required this.eventId});
   final String eventId;
 
   factory EndEventRequest.fromJson(Map<String, dynamic> json) =>
@@ -230,7 +230,7 @@ class EndEventRequest {
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class EndEventResponse {
-  EndEventResponse({required this.success});
+  const EndEventResponse({required this.success});
   final bool success;
 
   factory EndEventResponse.fromJson(Map<String, dynamic> json) =>

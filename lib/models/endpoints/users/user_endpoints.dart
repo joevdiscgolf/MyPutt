@@ -5,7 +5,7 @@ part 'user_endpoints.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class GetUserResponse {
-  GetUserResponse({this.user});
+  const GetUserResponse({this.user});
   final MyPuttUser? user;
 
   factory GetUserResponse.fromJson(Map<String, dynamic> json) =>
