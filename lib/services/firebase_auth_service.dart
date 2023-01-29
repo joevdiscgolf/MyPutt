@@ -7,7 +7,6 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/username_doc.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
-import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;

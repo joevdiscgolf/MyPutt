@@ -121,8 +121,7 @@ class DatabaseService {
   }
 
   Future<MyPuttUser?> getCurrentUser() {
-    final uid = _authService.getCurrentUserId();
-    return _userDataLoader.getUser(uid!);
+    return _userDataLoader.getUser();
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

@@ -10,16 +10,35 @@ import 'package:myputt/services/firebase/utils/fb_constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBUserDataLoader {
-  Future<MyPuttUser?> getUser(String uid) async {
-    final currentSessionReference = firestore.doc('$usersCollection/$uid');
-    final snapshot = await currentSessionReference.get();
-    if (snapshot.exists &&
-        isValidUser(snapshot.data() as Map<String, dynamic>)) {
-      final Map<String, dynamic> data = snapshot.data()!;
-      return MyPuttUser.fromJson(data);
-    } else {
+  static final FBUserDataLoader instance = FBUserDataLoader._internal();
+
+  factory FBUserDataLoader() {
+    return instance;
+  }
+
+  FBUserDataLoader._internal();
+
+  Future<MyPuttUser?> getUser() async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
       return null;
     }
+
+    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
+      if (!snapshot.exists ||
+          !isValidUser(snapshot.data() as Map<String, dynamic>)) {
+        return null;
+      }
+      final Map<String, dynamic> data = snapshot.data()!;
+      return MyPuttUser.fromJson(data);
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FBUserDataLoader][getUser] firestore exception',
+      );
+      return null;
+    });
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/stats/stats.dart';
-import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
@@ -12,7 +11,6 @@ part 'sessions_state.dart';
 
 class SessionsCubit extends Cubit<SessionsState> {
   final SessionRepository _sessionRepository = locator.get<SessionRepository>();
-  final UserRepository _userRepository = locator.get<UserRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   SessionsCubit()
@@ -56,42 +54,35 @@ class SessionsCubit extends Cubit<SessionsState> {
   }
 
   Future<void> startNewSession() async {
-    final String? currentUid = _userRepository.currentUser?.uid;
-    if (currentUid != null) {
-      final int now = DateTime.now().millisecondsSinceEpoch;
-      final PuttingSession newSession = PuttingSession(
-        timeStamp: now,
-        id: '$currentUid~$now',
-      );
-      _sessionRepository.currentSession = newSession;
-      emit(
-        SessionInProgressState(
-          sessions: _sessionRepository.completedSessions,
-          currentSession: _sessionRepository.currentSession!,
-          individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.completedSessions),
-          currentSessionStats: _statsService.getStatsForSession(
-            _sessionRepository.completedSessions,
-            _sessionRepository.currentSession!,
-          ),
+    emit(
+      SessionInProgressState(
+        sessions: _sessionRepository.completedSessions,
+        currentSession: _sessionRepository.currentSession!,
+        individualStats: _statsService
+            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        currentSessionStats: _statsService.getStatsForSession(
+          _sessionRepository.completedSessions,
+          _sessionRepository.currentSession!,
         ),
-      );
-      final bool success = await _sessionRepository.startNewSession(newSession);
-      if (success) {
-        emit(SessionInProgressState(
-            sessions: _sessionRepository.completedSessions,
-            currentSession: _sessionRepository.currentSession!,
-            individualStats: _statsService
-                .generateSessionsStatsMap(_sessionRepository.completedSessions),
-            currentSessionStats: _statsService.getStatsForSession(
-                _sessionRepository.completedSessions,
-                _sessionRepository.currentSession!)));
-      } else {
-        emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
-      }
-    } else {
-      emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+      ),
+    );
+    final bool success = await _sessionRepository.startActiveSession();
+    if (!success || _sessionRepository.currentSession == null) {
+      // toast error
+      return;
     }
+    emit(
+      SessionInProgressState(
+        sessions: _sessionRepository.completedSessions,
+        currentSession: _sessionRepository.currentSession!,
+        individualStats: _statsService
+            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        currentSessionStats: _statsService.getStatsForSession(
+          _sessionRepository.completedSessions,
+          _sessionRepository.currentSession!,
+        ),
+      ),
+    );
   }
 
   void continueSession() {

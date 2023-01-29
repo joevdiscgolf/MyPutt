@@ -18,7 +18,7 @@ class SessionRepository {
   List<PuttingSession> completedSessions = [];
   final DatabaseService _databaseService = DatabaseService();
 
-  Future<bool> startNewSession(PuttingSession session) async {
+  Future<bool> startActiveSession() async {
     final String? currentUid =
         locator.get<FirebaseAuthService>().getCurrentUserId();
     final String? deviceId = locator.get<DeviceService>().getDeviceId;
@@ -29,14 +29,20 @@ class SessionRepository {
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;
-    currentSession = PuttingSession(timeStamp: now, id: '$currentUid~$now');
+
+    final PuttingSession newSession = PuttingSession(
+      timeStamp: now,
+      id: '$currentUid~$now',
+      deviceId: deviceId,
+    );
+    currentSession = newSession;
 
     final bool localSaveSuccess = await _storeCurrentSessionInLocalDB();
     if (!localSaveSuccess) {
       return false;
     }
 
-    FBSessionsDataWriter.instance.setCurrentSession(session);
+    FBSessionsDataWriter.instance.setCurrentSession(newSession);
     return true;
   }
 
@@ -108,12 +114,10 @@ class SessionRepository {
       final PuttingSession? cloudCurrentSession =
           await _databaseService.getCurrentSession();
 
-      if (currentSession != null) {
-        if (currentSession?.deviceId != cloudCurrentSession?.deviceId) {
-          currentSession = cloudCurrentSession;
-        }
-      } else {
+      // overwrite the current local session with the cloud session if and only if there is no local active session.
+      if (currentSession == null && cloudCurrentSession != null) {
         currentSession = cloudCurrentSession;
+        _storeCurrentSessionInLocalDB();
       }
     } catch (e) {
       return;
@@ -127,7 +131,7 @@ class SessionRepository {
         .then((success) {
       final PuttingSession? currentLocalSession =
           locator.get<LocalDBService>().retrieveCurrentSession();
-      print('local current session: ${currentLocalSession?.toJson()}');
+      log('local current session: ${currentLocalSession?.toJson()}');
       return success;
     });
   }
@@ -136,7 +140,7 @@ class SessionRepository {
     final List<PuttingSession>? localDbSessions =
         locator.get<LocalDBService>().retrieveCompletedSessions();
 
-    print('fetched ${localDbSessions?.length} local DB sessions');
+    log('fetched ${localDbSessions?.length} local DB sessions');
     if (localDbSessions != null) {
       completedSessions = localDbSessions;
     }
@@ -224,8 +228,7 @@ class SessionRepository {
       final int sessionsLengthAfter =
           locator.get<LocalDBService>().retrieveCompletedSessions()?.length ??
               0;
-      print(
-          'sessions before: $sessionsLengthBefore, sessions after: $sessionsLengthAfter');
+      log('sessions before: $sessionsLengthBefore, sessions after: $sessionsLengthAfter');
       return success;
     });
   }
@@ -252,5 +255,6 @@ class SessionRepository {
   void clearData() {
     currentSession = null;
     completedSessions = [];
+    locator.get<LocalDBService>().deleteCompletedSessions();
   }
 }

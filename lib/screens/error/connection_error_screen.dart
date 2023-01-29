@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/spinner_button.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/services/init_manager.dart';
+import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ConnectionErrorScreen extends StatefulWidget {
@@ -13,8 +13,6 @@ class ConnectionErrorScreen extends StatefulWidget {
 }
 
 class _ConnectionErrorScreenState extends State<ConnectionErrorScreen> {
-  final InitManager _initManager = locator.get<InitManager>();
-
   bool _repeat = true;
 
   @override
@@ -68,7 +66,7 @@ class _ConnectionErrorScreenState extends State<ConnectionErrorScreen> {
                   onPressed: () async {
                     if (!mounted) return;
                     setState(() => _repeat = true);
-                    await _initManager.init();
+                    await BlocProvider.of<AppPhaseCubit>(context).init();
                     if (!mounted) return;
                     setState(() => _repeat = false);
                   },

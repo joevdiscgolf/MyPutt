@@ -1,19 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:myputt/controllers/screen_controller.dart';
+import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/app_info_service.dart';
+import 'package:myputt/services/connectivity_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/events_service.dart';
-import 'package:myputt/services/init_manager.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
@@ -32,9 +31,10 @@ Future<void> setUpLocator() async {
     optOutTrackingDefault: false,
   );
   locator.registerSingleton<Mixpanel>(mixpanel);
+  locator.registerSingleton<AppPhaseCubit>(AppPhaseCubit());
+  locator.registerSingleton<ConnectivityService>(ConnectivityService());
   locator
       .registerSingleton<SharedPreferencesService>(SharedPreferencesService());
-  locator.registerSingleton<ScreenController>(ScreenController());
   locator.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
   locator.registerSingleton<DatabaseService>(DatabaseService());
   locator.registerSingleton<UserService>(UserService());
@@ -45,11 +45,9 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<EventsRepository>(EventsRepository());
   locator.registerLazySingleton(() => StatsService());
   locator.registerLazySingleton(() => MyPuttAuthService());
-  locator.registerLazySingleton(() => InitManager());
   locator.registerLazySingleton(() => WebScraperService());
   locator.registerLazySingleton(() => DynamicLinkService());
   locator.registerLazySingleton(() => EventsService());
-  locator.registerLazySingleton(() => AppInfoService());
   locator.registerSingleton<BetaAccessService>(BetaAccessService());
   locator.registerSingleton<LocalDBService>(LocalDBService());
   locator.registerLazySingleton(() => NavigationService());

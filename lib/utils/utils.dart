@@ -9,6 +9,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/localDB/local_db_service.dart';
 
 void fetchLocalRepositoryData() {
   locator.get<SessionRepository>().fetchLocalCompletedSessions();
@@ -38,7 +39,7 @@ void reloadCubits(BuildContext context) {
   BlocProvider.of<MyProfileCubit>(context).reload();
 }
 
-bool isConnected(ConnectivityResult connectivityResult) {
+bool isConnected(ConnectivityResult? connectivityResult) {
   return [
     ConnectivityResult.wifi,
     ConnectivityResult.mobile,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -24,7 +25,18 @@ class SessionsScreenAppBar extends StatelessWidget
         children: [
           Row(
             children: [
-              const Expanded(child: SizedBox()),
+              Expanded(
+                child: kDebugMode
+                    ? ElevatedButton(
+                        onPressed: () async {
+                          locator
+                              .get<SessionRepository>()
+                              .fetchLocalCompletedSessions();
+                        },
+                        child: const Text('Load sessions'),
+                      )
+                    : Container(),
+              ),
               Text(
                 'Sessions',
                 style: Theme.of(context)
@@ -36,7 +48,14 @@ class SessionsScreenAppBar extends StatelessWidget
                 child: kDebugMode
                     ? ElevatedButton(
                         onPressed: () async {
-                          await locator.get<LocalDBService>().deleteAllData();
+                          print(await locator
+                              .get<LocalDBService>()
+                              .deleteCompletedSessions());
+
+                          await Future.delayed(const Duration(seconds: 3));
+                          print(locator
+                              .get<LocalDBService>()
+                              .retrieveCompletedSessions());
                         },
                         child: const Text('clear sessions'),
                       )
