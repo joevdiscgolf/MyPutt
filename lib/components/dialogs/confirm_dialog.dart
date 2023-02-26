@@ -59,7 +59,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
             widget.title,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -72,7 +72,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
               widget.message!,
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.gray[400], fontSize: 16),
               textAlign: TextAlign.center,
             ),

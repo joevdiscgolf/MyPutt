@@ -34,7 +34,7 @@ class DivisionRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(8)),
         child: Text(
           division.name.toUpperCase(),
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: selected ? MyPuttColors.white : MyPuttColors.darkBlue,
               fontSize: 14),
         ),

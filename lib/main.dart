@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ void main() async {
     persistenceEnabled: false,
   );
   if (kDebugMode && !isPhysicalDevice) {
-    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+    // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -48,22 +47,24 @@ void main() async {
   await locator.get<AppPhaseCubit>().init();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
-    (_) => runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => SessionsCubit()),
-          BlocProvider(create: (_) => HomeScreenCubit()),
-          BlocProvider(create: (_) => SessionSummaryCubit()),
-          BlocProvider(create: (_) => ChallengesCubit()),
-          BlocProvider(create: (_) => MyProfileCubit()),
-          BlocProvider(create: (_) => SearchUserCubit()),
-          BlocProvider(create: (_) => EventDetailCubit()),
-          BlocProvider(create: (_) => EventStandingsCubit()),
-          BlocProvider(create: (_) => locator.get<AppPhaseCubit>())
-        ],
-        child: const MyApp(),
-      ),
-    ),
+    (_) {
+      runApp(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => HomeScreenCubit()),
+            BlocProvider(create: (_) => SessionSummaryCubit()),
+            BlocProvider(create: (_) => ChallengesCubit()),
+            BlocProvider(create: (_) => MyProfileCubit()),
+            BlocProvider(create: (_) => SearchUserCubit()),
+            BlocProvider(create: (_) => EventDetailCubit()),
+            BlocProvider(create: (_) => EventStandingsCubit()),
+            BlocProvider(create: (_) => locator.get<AppPhaseCubit>()),
+            BlocProvider(create: (_) => SessionsCubit()),
+          ],
+          child: const MyApp(),
+        ),
+      );
+    },
   );
 }
 

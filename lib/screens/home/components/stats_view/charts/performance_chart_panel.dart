@@ -66,11 +66,6 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     int? limit =
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
@@ -185,7 +180,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
             '$distance',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             maxLines: 1,
           ),

@@ -38,7 +38,7 @@ class PdgaStatTile extends StatelessWidget {
             value ?? 'N/A',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             maxLines: 1,
           ),
@@ -47,7 +47,7 @@ class PdgaStatTile extends StatelessWidget {
             description,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.gray[400], fontSize: 12),
             maxLines: 1,
           ),

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
@@ -10,7 +9,6 @@ import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
-import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
 class SessionRepository {
@@ -131,7 +129,7 @@ class SessionRepository {
         .then((success) {
       final PuttingSession? currentLocalSession =
           locator.get<LocalDBService>().retrieveCurrentSession();
-      log('local current session: ${currentLocalSession?.toJson()}');
+      log('local current session: ${currentLocalSession != null ? 'exists' : 'does not exist'}');
       return success;
     });
   }
@@ -140,10 +138,10 @@ class SessionRepository {
     final List<PuttingSession>? localDbSessions =
         locator.get<LocalDBService>().retrieveCompletedSessions();
 
-    log('fetched ${localDbSessions?.length} local DB sessions');
     if (localDbSessions != null) {
       completedSessions = localDbSessions;
     }
+    log('completed sessions after loading local: ${completedSessions.length}');
   }
 
   Future<void> syncLocalSessionsToCloud() async {
@@ -175,13 +173,7 @@ class SessionRepository {
 
   Future<void> fetchCloudCompletedSessions() async {
     List<PuttingSession>? cloudSessions;
-    try {
-      cloudSessions = await _databaseService
-          .getCompletedSessions()
-          .timeout(standardTimeout);
-    } catch (e, trace) {
-      await FirebaseCrashlytics.instance.recordError(e, trace);
-    }
+    cloudSessions = await _databaseService.getCompletedSessions();
 
     if (cloudSessions != null) {
       cloudSessions = SessionHelpers.setSyncedToTrue(cloudSessions);
@@ -255,6 +247,6 @@ class SessionRepository {
   void clearData() {
     currentSession = null;
     completedSessions = [];
-    locator.get<LocalDBService>().deleteCompletedSessions();
+    locator.get<LocalDBService>().deleteAllSessions();
   }
 }

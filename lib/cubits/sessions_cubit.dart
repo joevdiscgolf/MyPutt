@@ -14,9 +14,7 @@ class SessionsCubit extends Cubit<SessionsState> {
   final StatsService _statsService = locator.get<StatsService>();
 
   SessionsCubit()
-      : super(const SessionLoadingState(sessions: <PuttingSession>[])) {
-    reload();
-  }
+      : super(const SessionLoadingState(sessions: <PuttingSession>[]));
 
   Future<void> reloadSessions() async {
     await Future.wait(
@@ -54,6 +52,11 @@ class SessionsCubit extends Cubit<SessionsState> {
   }
 
   Future<void> startNewSession() async {
+    final bool success = await _sessionRepository.startActiveSession();
+    if (!success || _sessionRepository.currentSession == null) {
+      // toast error
+      return;
+    }
     emit(
       SessionInProgressState(
         sessions: _sessionRepository.completedSessions,
@@ -66,11 +69,7 @@ class SessionsCubit extends Cubit<SessionsState> {
         ),
       ),
     );
-    final bool success = await _sessionRepository.startActiveSession();
-    if (!success || _sessionRepository.currentSession == null) {
-      // toast error
-      return;
-    }
+
     emit(
       SessionInProgressState(
         sessions: _sessionRepository.completedSessions,

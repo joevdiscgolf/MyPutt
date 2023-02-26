@@ -43,7 +43,7 @@ class _ShareSheetState extends State<ShareSheet> {
                 'Send Challenge',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
+                    .titleLarge!
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 32),
               ),
               const SizedBox(height: 8),
@@ -80,7 +80,7 @@ class _ShareSheetState extends State<ShareSheet> {
       maxLength: 24,
       style: Theme.of(context)
           .textTheme
-          .subtitle1!
+          .titleMedium!
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
@@ -90,7 +90,7 @@ class _ShareSheetState extends State<ShareSheet> {
         isDense: true,
         hintStyle: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,

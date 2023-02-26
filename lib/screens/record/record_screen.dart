@@ -99,7 +99,7 @@ class _RecordScreenState extends State<RecordScreen> {
         title: Text('Record',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
       ),
       body: _mainBody(context),
@@ -142,7 +142,7 @@ class _RecordScreenState extends State<RecordScreen> {
                         Text(
                           'Putts made',
                           style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
                                     color: MyPuttColors.darkGray,
                                     fontSize: 24,
                                   ),
@@ -224,7 +224,7 @@ class _RecordScreenState extends State<RecordScreen> {
             'Details',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 24, color: MyPuttColors.darkGray),
           ),
         ),
@@ -287,7 +287,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 '-',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
               ),
               onPressed: () {
@@ -315,14 +315,14 @@ class _RecordScreenState extends State<RecordScreen> {
                   const SizedBox(height: 0),
                   Text(
                     _setLength.toString(),
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w600),
                   ),
                   Text(
                     'putters',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 16,
                           color: MyPuttColors.darkGray,
                         ),
@@ -336,7 +336,7 @@ class _RecordScreenState extends State<RecordScreen> {
                 '+',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
               ),
               onPressed: () {

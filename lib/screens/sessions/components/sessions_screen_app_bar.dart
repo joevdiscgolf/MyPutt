@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/session_repository.dart';
-import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
@@ -41,22 +40,13 @@ class SessionsScreenAppBar extends StatelessWidget
                 'Sessions',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
               ),
               Expanded(
                 child: kDebugMode
                     ? ElevatedButton(
-                        onPressed: () async {
-                          print(await locator
-                              .get<LocalDBService>()
-                              .deleteCompletedSessions());
-
-                          await Future.delayed(const Duration(seconds: 3));
-                          print(locator
-                              .get<LocalDBService>()
-                              .retrieveCompletedSessions());
-                        },
+                        onPressed: () async {},
                         child: const Text('clear sessions'),
                       )
                     : Container(),
@@ -70,7 +60,7 @@ class SessionsScreenAppBar extends StatelessWidget
                 : '${allSessions.length} total',
             style: Theme.of(context)
                 .textTheme
-                .headline6!
+                .titleLarge!
                 .copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
             textAlign: TextAlign.center,
           ),

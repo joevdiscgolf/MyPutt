@@ -50,7 +50,7 @@ class PrimaryButton extends StatelessWidget {
     final Widget text = Text(
       label,
       maxLines: 1,
-      style: Theme.of(context).textTheme.headline6!.copyWith(
+      style: Theme.of(context).textTheme.titleLarge!.copyWith(
             color: labelColor,
             fontSize: fontSize,
             fontWeight: fontWeight,

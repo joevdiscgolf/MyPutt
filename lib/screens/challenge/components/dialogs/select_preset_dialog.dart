@@ -55,7 +55,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             'Presets',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             textAlign: TextAlign.center,
           ),
@@ -64,7 +64,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             'Select one before continuing',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
             textAlign: TextAlign.center,
           ),

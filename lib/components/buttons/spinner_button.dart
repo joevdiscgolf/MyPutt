@@ -116,7 +116,7 @@ class _SpinnerButtonState extends State<SpinnerButton>
             ),
             AutoSizeText(
               widget.title,
-              style: Theme.of(context).textTheme.subtitle1?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color:
                       widget.disabled ? MyPuttColors.white : widget.textColor,
                   fontSize: widget.textSize,

@@ -194,7 +194,7 @@ class FirebaseAuthService {
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[FirebaseAuthService][saveUserInfo] firestore exception',
+        reason: '[FirebaseAuthService][saveUserInfo] Firestore Exception',
       );
     });
   }

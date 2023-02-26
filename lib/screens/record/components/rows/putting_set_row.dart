@@ -49,7 +49,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
               child: AutoSizeText('${widget.index + 1}',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(color: MyPuttColors.gray[600], fontSize: 20),
                   maxLines: 1),
             ),
@@ -64,7 +64,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                   '${widget.set.puttsMade}/${widget.set.puttsAttempted}',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(color: MyPuttColors.blue, fontSize: 20),
                   maxLines: 1),
             ),
@@ -78,7 +78,7 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                 child: AutoSizeText('${widget.set.distance} ft',
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(color: MyPuttColors.gray[600], fontSize: 20),
                     maxLines: 1),
               )),

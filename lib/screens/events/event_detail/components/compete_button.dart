@@ -137,7 +137,7 @@ class CompeteButton extends StatelessWidget {
   }
 
   List<TextSpan> _getTextSpans(BuildContext context, double percentComplete) {
-    final TextStyle? style = Theme.of(context).textTheme.headline6?.copyWith(
+    final TextStyle? style = Theme.of(context).textTheme.titleLarge?.copyWith(
           color: MyPuttColors.darkGray,
           fontSize: 16,
           fontWeight: FontWeight.w500,

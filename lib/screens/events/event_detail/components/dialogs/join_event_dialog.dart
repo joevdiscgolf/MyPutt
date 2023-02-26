@@ -71,7 +71,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
             'Join ${widget.event.name}',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -94,7 +94,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
             _dialogErrorText ?? '',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkRed, fontSize: 12),
           ),
           const SizedBox(height: 16),
@@ -134,7 +134,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
       maxLength: 24,
       style: Theme.of(context)
           .textTheme
-          .subtitle1!
+          .titleMedium!
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
@@ -144,7 +144,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
         isDense: true,
         hintStyle: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,

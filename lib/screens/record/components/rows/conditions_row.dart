@@ -63,7 +63,7 @@ class _ConditionsRowState extends State<ConditionsRow> {
             widget.label,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
           ),
           const Spacer(),

@@ -5,9 +5,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import '../shared/utils.dart' show CalendarFormat;
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
+import 'package:table_calendar/table_calendar.dart' show CalendarFormat;
 
 class FormatButton extends StatelessWidget {
   final CalendarFormat calendarFormat;

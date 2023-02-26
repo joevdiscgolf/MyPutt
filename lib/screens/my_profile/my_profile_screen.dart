@@ -208,7 +208,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     'Edit',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headline6
+                                        .titleLarge
                                         ?.copyWith(
                                             color: MyPuttColors.darkGray,
                                             fontSize: 16),
@@ -223,7 +223,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           state.myUser.displayName,
                           style: Theme.of(context)
                               .textTheme
-                              .headline6
+                              .titleLarge
                               ?.copyWith(
                                   color: MyPuttColors.lightBlue, fontSize: 40),
                           maxLines: 1,
@@ -232,7 +232,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           '@${state.myUser.username}',
                           style: Theme.of(context)
                               .textTheme
-                              .headline6
+                              .titleLarge
                               ?.copyWith(
                                   color: MyPuttColors.gray[300], fontSize: 16),
                           maxLines: 1,
@@ -262,7 +262,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             'Percentages',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
           ),
         ),
@@ -292,7 +292,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         }),
                         const SizedBox(height: 12),
                         Text('Circle 1X',
-                            style: Theme.of(context).textTheme.headline6),
+                            style: Theme.of(context).textTheme.titleLarge),
                       ],
                     ),
                   ),
@@ -311,7 +311,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           }),
                           const SizedBox(height: 12),
                           Text('Circle 2',
-                              style: Theme.of(context).textTheme.headline6),
+                              style: Theme.of(context).textTheme.titleLarge),
                         ],
                       );
                     }),
@@ -331,7 +331,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           }),
                           const SizedBox(height: 12),
                           Text('All',
-                              style: Theme.of(context).textTheme.headline6),
+                              style: Theme.of(context).textTheme.titleLarge),
                         ],
                       );
                     }),
@@ -359,7 +359,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   'Lifetime Stats',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                 ),
               ),

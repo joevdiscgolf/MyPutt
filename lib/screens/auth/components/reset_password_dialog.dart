@@ -51,7 +51,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
             'Reset password',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -63,7 +63,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
           const SizedBox(height: 24),
           AutoSizeText(
             'Check spam folder if the email does not appear',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: MyPuttColors.gray[400],
                   fontSize: 12,
                 ),
@@ -111,7 +111,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
         maxLength: 32,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: 'Email',
@@ -120,7 +120,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,

@@ -34,7 +34,7 @@ class BetaAccessService {
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[BetaAccessService][loadFeatureAccess] firestore exception',
+        reason: '[BetaAccessService][loadFeatureAccess] Firestore Exception',
       );
       return null;
     });

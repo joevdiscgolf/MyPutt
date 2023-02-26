@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -54,7 +54,7 @@ class ChallengesList extends StatelessWidget {
                     "No ${challengeCategoryToName[category] ?? ''} challenges yet.",
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   ),

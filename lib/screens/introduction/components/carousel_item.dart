@@ -56,7 +56,7 @@ class CarouselItem extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
           ),
@@ -64,7 +64,7 @@ class CarouselItem extends StatelessWidget {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6!.copyWith(
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   color: MyPuttColors.gray[600],
                 ),
           ),

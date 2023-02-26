@@ -19,7 +19,7 @@ class EventCategoryTab extends StatelessWidget {
         child: FittedBox(
           child: Text(
             label,
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: MyPuttColors.darkGray,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

@@ -40,14 +40,14 @@ class SettingsRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 12,
                         color: MyPuttColors.gray[400],
                       ),

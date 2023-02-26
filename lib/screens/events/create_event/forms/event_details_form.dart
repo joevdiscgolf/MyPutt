@@ -94,7 +94,7 @@ class EventDetailsForm extends StatelessWidget {
         Expanded(
           child: Text(
             'Signature verification\n(recommended)',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: MyPuttColors.darkGray,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

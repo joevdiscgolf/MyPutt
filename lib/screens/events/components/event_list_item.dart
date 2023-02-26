@@ -73,7 +73,7 @@ class _EventListItemState extends State<EventListItem> {
                       _event.name,
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .titleLarge
                           ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
                       maxLines: 1,
                     ),
@@ -82,7 +82,7 @@ class _EventListItemState extends State<EventListItem> {
                     eventTypeToName[_event.eventType]!,
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                   ),
                 ],
@@ -95,7 +95,7 @@ class _EventListItemState extends State<EventListItem> {
                 _dateLabel(context),
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
               ),
             ),
@@ -130,7 +130,7 @@ class _EventListItemState extends State<EventListItem> {
                   const SizedBox(width: 8),
                   Text(
                     '${_event.creator.displayName}${_event.admins.length > 1 ? '+ ${_event.admins.length - 1} more' : ''}',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: MyPuttColors.darkGray,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -194,7 +194,7 @@ class _EventListItemState extends State<EventListItem> {
         const SizedBox(width: 8),
         Text(
           '$numParticipants  players',
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: MyPuttColors.darkGray,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

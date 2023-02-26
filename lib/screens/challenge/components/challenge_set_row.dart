@@ -28,7 +28,7 @@ class ChallengeSetRow extends StatelessWidget {
             Text('$distance ft',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400])),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,7 +41,7 @@ class ChallengeSetRow extends StatelessWidget {
                   '$currentUserMade/$setLength',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
                   maxLines: 1,
                 ),
@@ -80,7 +80,7 @@ class ChallengeSetRow extends StatelessWidget {
                   '${opponentMade ?? '-'}/$setLength',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
                   maxLines: 1,
                 ),

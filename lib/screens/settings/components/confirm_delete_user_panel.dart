@@ -29,7 +29,7 @@ class _ConfirmDeleteUserPanelState extends State<ConfirmDeleteUserPanel> {
         children: [
           Text(
             'Delete account',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 32,
                   color: MyPuttColors.darkGray,
                   fontWeight: FontWeight.bold,
@@ -38,7 +38,7 @@ class _ConfirmDeleteUserPanelState extends State<ConfirmDeleteUserPanel> {
           const SizedBox(height: 8),
           Text(
             'All data including your sessions and challenges will be removed from our records.',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 16,
                   color: MyPuttColors.gray[400],
                 ),

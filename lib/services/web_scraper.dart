@@ -14,6 +14,7 @@ class WebScraperService {
             reason:
                 '[WebScraperService][getPDGAData] webScraper.loadWebPage() exception',
           );
+          return false;
         },
       )) {
         List<Map<String, dynamic>> nameHTML = webScraper
@@ -35,7 +36,6 @@ class WebScraperService {
         List<Map<String, dynamic>> nextEventHTML =
             webScraper.getElement('li.next-event', []);
 
-        // print('getPDGAData | $location\n');
         int? pdgaNum;
         String? name;
         String? location;

@@ -69,7 +69,7 @@ class ShadowCircularIndicator extends StatelessWidget {
                                   '${(decimal! * 100).toStringAsFixed(0)} %',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline6
+                                      .titleLarge
                                       ?.copyWith(
                                           color: MyPuttColors.gray[400],
                                           fontSize: 12),

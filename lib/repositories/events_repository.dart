@@ -22,4 +22,8 @@ class EventsRepository {
           currentPlayerData!.sets,
         );
   }
+
+  void clearData() {
+    // implement
+  }
 }

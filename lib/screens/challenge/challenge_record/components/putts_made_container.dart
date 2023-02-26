@@ -45,7 +45,7 @@ class PuttsMadeContainer extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Putts made',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 20,
                           color: MyPuttColors.darkGray,
                         ),

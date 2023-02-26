@@ -92,7 +92,7 @@ class _EventsState extends State<EventsScreen>
           'Events',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 24, color: MyPuttColors.blue),
         ),
         centerTitle: true,
@@ -193,7 +193,7 @@ class _EventsState extends State<EventsScreen>
                 "We couldn't find any events matching your search.",
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: MyPuttColors.darkGray),
                 textAlign: TextAlign.center,
               )
@@ -224,7 +224,7 @@ class _EventsState extends State<EventsScreen>
         maxLength: 24,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: 'Search by name or code',
@@ -233,7 +233,7 @@ class _EventsState extends State<EventsScreen>
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
           enabledBorder: Theme.of(context)
               .inputDecorationTheme

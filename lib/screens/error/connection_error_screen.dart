@@ -44,14 +44,14 @@ class _ConnectionErrorScreenState extends State<ConnectionErrorScreen> {
                   "Oops!",
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
                 Text(
                   "We experienced a connection issue, please try again",
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),

@@ -47,7 +47,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                 '$distance ft',
                 style: Theme.of(context)
                     .textTheme
-                    .headline4
+                    .headlineMedium
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
               const AnimatedArrows(),
@@ -55,7 +55,7 @@ class ChallengeDirectorPanel extends StatelessWidget {
                 '$setLength putts',
                 style: Theme.of(context)
                     .textTheme
-                    .headline5
+                    .headlineSmall
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
             ],

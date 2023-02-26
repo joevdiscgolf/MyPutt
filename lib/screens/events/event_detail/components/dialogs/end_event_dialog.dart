@@ -91,7 +91,7 @@ class _EndEventDialogState extends State<EndEventDialog> {
                   'Finish event',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -103,7 +103,7 @@ class _EndEventDialogState extends State<EndEventDialog> {
                   'This will lock players out of continuing the event.',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(color: MyPuttColors.gray[400], fontSize: 16),
                   textAlign: TextAlign.center,
                 ),

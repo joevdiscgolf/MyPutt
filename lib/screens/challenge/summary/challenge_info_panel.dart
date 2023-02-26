@@ -98,7 +98,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                             getMessageFromDifference(difference),
                             style: Theme.of(context)
                                 .textTheme
-                                .headline6
+                                .titleLarge
                                 ?.copyWith(
                                     fontSize: 40,
                                     color: getColorFromDifference(difference)),
@@ -110,7 +110,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                             '${widget.challenge.challengeStructure.length} sets, ${totalAttemptsFromStructure(widget.challenge.challengeStructure)} putts',
                             style: Theme.of(context)
                                 .textTheme
-                                .headline6
+                                .titleLarge
                                 ?.copyWith(
                                     fontSize: 16,
                                     color: MyPuttColors.gray[600]),
@@ -124,7 +124,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                               Text(currentUserPuttsMade.toString(),
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline6
+                                      .titleLarge
                                       ?.copyWith(
                                           fontSize: 20,
                                           color: difference == 0
@@ -136,7 +136,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                               Text(' : ',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline6
+                                      .titleLarge
                                       ?.copyWith(
                                           fontSize: 20,
                                           color: MyPuttColors.gray[400])),
@@ -146,7 +146,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                               Text(opponentPuttsMade.toString(),
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline6
+                                      .titleLarge
                                       ?.copyWith(
                                           fontSize: 20,
                                           color: difference == 0
@@ -186,7 +186,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                           widget.challenge.currentUser.displayName,
                           style: Theme.of(context)
                               .textTheme
-                              .headline6
+                              .titleLarge
                               ?.copyWith(
                                   fontSize: 16, color: MyPuttColors.gray[600]),
                         )
@@ -200,7 +200,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                               'Unknown',
                           style: Theme.of(context)
                               .textTheme
-                              .headline6
+                              .titleLarge
                               ?.copyWith(
                                   fontSize: 16, color: MyPuttColors.gray[600]),
                         ),
@@ -235,7 +235,7 @@ class _ChallengeInfoPanelState extends State<ChallengeInfoPanel> {
                   '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? widget.challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(widget.challenge.completionTimeStamp ?? widget.challenge.creationTimeStamp))}',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
                   textAlign: TextAlign.center,
                 ),

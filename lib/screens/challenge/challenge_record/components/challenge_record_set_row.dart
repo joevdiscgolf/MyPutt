@@ -66,7 +66,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
           'Set $setNumber',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.darkGray, fontSize: 14),
         ),
         const SizedBox(
@@ -79,7 +79,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
               '$currentUserPuttsMade/$setLength',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.blue, fontSize: 20),
             ),
             const SizedBox(
@@ -89,7 +89,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
               ':',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.darkGray, fontSize: 20),
             ),
             const SizedBox(
@@ -99,7 +99,7 @@ class ChallengeRecordSetRow extends StatelessWidget {
               '${opponentPuttsMade ?? '--'}/$setLength',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.red, fontSize: 20),
             )
           ],

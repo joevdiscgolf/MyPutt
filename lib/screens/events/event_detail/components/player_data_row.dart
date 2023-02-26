@@ -75,7 +75,7 @@ class PlayerDataRow extends StatelessWidget {
             child: Center(
               child: AutoSizeText(
                 position,
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MyPuttColors.darkGray,
                     fontSize: 16,
                     fontWeight: FontWeight.w600),
@@ -98,7 +98,7 @@ class PlayerDataRow extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     eventPlayerData.usermetadata.displayName,
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontSize: 16,
                         fontWeight: FontWeight.w600),
@@ -106,7 +106,7 @@ class PlayerDataRow extends StatelessWidget {
                   ),
                   AutoSizeText(
                     '@${eventPlayerData.usermetadata.username}',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: MyPuttColors.gray[400],
                           fontSize: 12,
                         ),
@@ -124,14 +124,14 @@ class PlayerDataRow extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: '$puttsMade/',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: MyPuttColors.darkBlue,
                             fontSize: 14,
                           ),
                     ),
                     TextSpan(
                       text: '$puttsAttempted',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: MyPuttColors.darkGray,
                             fontSize: 14,
                           ),

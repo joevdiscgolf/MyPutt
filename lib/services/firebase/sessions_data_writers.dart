@@ -132,7 +132,11 @@ class FBSessionsDataWriter {
     final WriteBatch batch = firestore.batch();
 
     for (PuttingSession session in sessionsToDelete) {
-      batch.delete(firestore.doc('$sessionsCollection/$uid/${session.id}'));
+      batch.delete(
+        firestore.doc(
+          '$sessionsCollection/$uid/$completedSessionsCollection/${session.id}',
+        ),
+      );
     }
 
     return batch.commit().then((_) => true).catchError(
@@ -159,7 +163,8 @@ class FBSessionsDataWriter {
 
     for (PuttingSession session in sessions) {
       batch.set(
-        firestore.doc('$sessionsCollection/$uid/${session.id}'),
+        firestore.doc(
+            '$sessionsCollection/$uid/$completedSessionsCollection/${session.id}'),
         session.toJson(),
       );
     }

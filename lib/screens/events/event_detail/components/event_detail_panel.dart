@@ -28,7 +28,7 @@ class EventDetailsPanel extends StatelessWidget {
         children: [
           Text(
             event.name,
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: textColor, fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
@@ -36,7 +36,7 @@ class EventDetailsPanel extends StatelessWidget {
             _dateLabel(context),
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 16, color: textColor),
           ),
         ],

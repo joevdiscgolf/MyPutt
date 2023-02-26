@@ -87,7 +87,7 @@ class DatabaseService {
     if (currentUser == null) {
       return null;
     }
-    return _challengesDataLoader.getPuttingChallengeByid(
+    return _challengesDataLoader.getPuttingChallengeById(
         currentUser, challengeId);
   }
 
@@ -118,10 +118,6 @@ class DatabaseService {
   Future<StoragePuttingChallenge?> getChallengeByUid(
       String uid, String challengeId) {
     return _challengesDataLoader.getChallengeByUid(uid, challengeId);
-  }
-
-  Future<MyPuttUser?> getCurrentUser() {
-    return _userDataLoader.getUser();
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

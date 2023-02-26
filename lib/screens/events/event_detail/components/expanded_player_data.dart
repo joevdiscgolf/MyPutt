@@ -40,14 +40,14 @@ class ExpandedPlayerData extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '#${playerData.usermetadata.pdgaNum}',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: MyPuttColors.gray[400], fontSize: 16),
                     ),
                   ),
                   if (playerData.usermetadata.pdgaRating != null)
                     Text(
                       'Rating: ${playerData.usermetadata.pdgaRating}',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: MyPuttColors.gray[400], fontSize: 16),
                     ),
                 ],
@@ -104,7 +104,7 @@ class ExpandedPlayerData extends StatelessWidget {
           message,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.darkGray, fontSize: 14),
         )
       ],
@@ -117,7 +117,7 @@ class ExpandedPlayerData extends StatelessWidget {
         width: 64,
         child: Text(
           'Set',
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: MyPuttColors.darkGray,
               fontWeight: FontWeight.w600,
               fontSize: 14),
@@ -132,7 +132,7 @@ class ExpandedPlayerData extends StatelessWidget {
             '${entry.key + 1}',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             textAlign: TextAlign.center,
           ),
@@ -154,7 +154,7 @@ class ExpandedPlayerData extends StatelessWidget {
         child: Text(
           'Score',
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: MyPuttColors.darkGray,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
@@ -177,14 +177,14 @@ class ExpandedPlayerData extends StatelessWidget {
               children: [
                 TextSpan(
                   text: '${puttsMade ?? '--'}/',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontSize: 14,
                       ),
                 ),
                 TextSpan(
                   text: '$setLength',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontSize: 14,
                       ),
@@ -209,7 +209,7 @@ class ExpandedPlayerData extends StatelessWidget {
         child: Text(
           'Dist (ft)',
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: MyPuttColors.darkGray,
               fontWeight: FontWeight.w600,
               fontSize: 14),
@@ -226,7 +226,7 @@ class ExpandedPlayerData extends StatelessWidget {
             '${structureItem.distance}',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             textAlign: TextAlign.center,
           ),

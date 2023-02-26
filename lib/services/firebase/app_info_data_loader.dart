@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
@@ -19,7 +17,7 @@ class FBAppInfoDataLoader {
     return FirebaseFirestore.instance
         .doc('$appInfoCollection/$minimumVersionDoc')
         .get()
-        .then((snapshot) {
+        .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
       if (snapshot.exists && snapshot.data()?['minimumVersion'] != null) {
         return snapshot.data()!['minimumVersion'] as String;
       } else {
@@ -29,9 +27,39 @@ class FBAppInfoDataLoader {
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[AppInfoDataLoader][getMinimumAppVersion] firestore timeout',
+        reason: '[AppInfoDataLoader][getMinimumAppVersion] Firestore timeout',
       );
       return null;
     });
+
+    // try {
+    //   return FirebaseFirestore.instance
+    //       .doc('$appInfoCollection/$minimumVersionDoc')
+    //       .get()
+    //       .then((snapshot) {
+    //     print('minimum app version snapshot existss: ${snapshot.exists}');
+
+    //   });
+    // } catch (e) {
+    //   print('minimum app version error');
+    //   return null;
+    // }
+    // return FirebaseFirestore.instance
+    //     .doc('$appInfoCollection/$minimumVersionDoc')
+    //     .get()
+    //     .then((snapshot) {
+    //   if (snapshot.exists && snapshot.data()?['minimumVersion'] != null) {
+    //     return snapshot.data()!['minimumVersion'] as String;
+    //   } else {
+    //     return null;
+    //   }
+    // }).catchError((e, trace) {
+    //   FirebaseCrashlytics.instance.recordError(
+    //     e,
+    //     trace,
+    //     reason: '[AppInfoDataLoader][getMinimumAppVersion] firestore timeout',
+    //   );
+    //   return null;
+    // });
   }
 }

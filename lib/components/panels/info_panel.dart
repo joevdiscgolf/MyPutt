@@ -24,7 +24,7 @@ class InfoPanel extends StatelessWidget {
               bodyText,
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.gray[600], fontSize: 16),
               textAlign: TextAlign.center,
             ),

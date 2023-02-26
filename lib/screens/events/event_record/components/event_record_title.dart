@@ -20,7 +20,7 @@ class EventRecordTitle extends StatelessWidget {
               text: TextSpan(children: [
                 TextSpan(
                   text: 'Set ',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
@@ -29,7 +29,7 @@ class EventRecordTitle extends StatelessWidget {
                 TextSpan(
                   text:
                       '${state.currentPlayerData.sets.length == state.event.eventCustomizationData.challengeStructure.length ? state.currentPlayerData.sets.length : state.currentPlayerData.sets.length + 1}',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
@@ -38,7 +38,7 @@ class EventRecordTitle extends StatelessWidget {
                 TextSpan(
                   text:
                       '/${state.event.eventCustomizationData.challengeStructure.length}',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,

@@ -35,7 +35,29 @@ class FBUserDataLoader {
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
-        reason: '[FBUserDataLoader][getUser] firestore exception',
+        reason: '[FBUserDataLoader][getUser] Firestore Exception',
+      );
+      return null;
+    });
+  }
+
+  Future<Map<String, dynamic>?> getUserJson() async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return null;
+    }
+
+    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FBUserDataLoader][getUserJson] Firestore Exception',
       );
       return null;
     });
@@ -47,11 +69,31 @@ class FBUserDataLoader {
     if (currentUid == null) {
       return [];
     }
-    QuerySnapshot querySnapshot = await firestore
+    return firestore
         .collection(usersCollection)
         .where('keywords', arrayContains: username)
         .get()
-        .catchError((e, trace) {
+        .then(
+      (QuerySnapshot querySnapshot) {
+        final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
+          if (doc.exists) {
+            return MyPuttUser.fromJson(doc.data() as Map<String, dynamic>);
+          } else {
+            return null;
+          }
+        }).toList();
+
+        List<MyPuttUser> existingUsers = [];
+
+        for (var user in users) {
+          if (user != null && user.uid != currentUid) {
+            existingUsers.add(user);
+          }
+        }
+
+        return existingUsers;
+      },
+    ).catchError((e, trace) {
       log(e);
       FirebaseCrashlytics.instance.recordError(
         e,
@@ -59,25 +101,8 @@ class FBUserDataLoader {
         reason:
             '[FBUserDataLoader][getUsersByUsername] firestore read exception',
       );
+      return <MyPuttUser>[];
     });
-
-    final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
-      if (doc.exists) {
-        return MyPuttUser.fromJson(doc.data() as Map<String, dynamic>);
-      } else {
-        return null;
-      }
-    }).toList();
-
-    List<MyPuttUser> existingUsers = [];
-
-    for (var user in users) {
-      if (user != null && user.uid != currentUid) {
-        existingUsers.add(user);
-      }
-    }
-
-    return existingUsers;
   }
 
   bool isValidUser(Map<String, dynamic>? data) {

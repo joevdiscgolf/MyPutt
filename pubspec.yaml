@@ -80,6 +80,13 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
+dependency_overrides:
+  firebase_core_platform_interface: 4.5.1
+  modal_bottom_sheet:
+    git:
+      url: https://github.com/danReynolds/modal_bottom_sheet.git
+      path: modal_bottom_sheet
+
 
 dev_dependencies:
   flutter_test:

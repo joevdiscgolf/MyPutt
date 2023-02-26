@@ -42,7 +42,7 @@ class SelectorRow extends StatelessWidget {
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: MyPuttColors.darkGray, fontSize: 14),
               ),
             ),

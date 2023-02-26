@@ -76,13 +76,13 @@ class LocalDBService {
     }
   }
 
-  Future<bool> deleteCompletedSessions() async {
+  Future<bool> deleteAllSessions() async {
     try {
       return _sessionsBox.deleteAll(_sessionsBox.keys).then((_) async {
         return true;
       });
     } catch (e) {
-      print(e);
+      log(e.toString());
       return false;
     }
   }

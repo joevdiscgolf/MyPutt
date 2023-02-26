@@ -47,7 +47,7 @@ class StatRow extends StatelessWidget {
                   title,
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
                 ),
                 const SizedBox(
@@ -57,7 +57,7 @@ class StatRow extends StatelessWidget {
                   subtitle,
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 12, color: MyPuttColors.gray[400]),
                 )
               ],

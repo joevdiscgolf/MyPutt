@@ -22,7 +22,7 @@ class EventDetailAppBar extends StatelessWidget implements PreferredSizeWidget {
             title,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
           ),
           const Spacer()

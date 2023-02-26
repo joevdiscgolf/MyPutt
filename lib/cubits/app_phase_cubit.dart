@@ -7,6 +7,7 @@ import 'package:myputt/services/firebase/app_info_data_loader.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/user_helpers.dart';
 import 'package:myputt/utils/utils.dart';
@@ -21,11 +22,34 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String version = packageInfo.version;
 
-    final String? minimumVersion =
-        await FBAppInfoDataLoader.instance.getMinimumAppVersion();
+    late final String? minimumVersion;
+    late final MyPuttUser? currentUser;
+
+    try {
+      await Future.wait(
+        [
+          FBAppInfoDataLoader.instance.getMinimumAppVersion(),
+          FBUserDataLoader.instance.getUser()
+        ],
+      ).then(
+        (results) {
+          minimumVersion = results[0] as String?;
+          currentUser = results[1] as MyPuttUser?;
+        },
+      ).timeout(tinyTimeout);
+    } catch (e, trace) {
+      minimumVersion = null;
+      currentUser = null;
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[AppPhaseCubit][init] minimum version and current user timeout',
+      );
+    }
 
     if (minimumVersion != null &&
-        versionToNumber(minimumVersion) > versionToNumber(version)) {
+        versionToNumber(minimumVersion!) > versionToNumber(version)) {
       emit(const ForceUpgradePhase());
       return;
     }
@@ -35,17 +59,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
       return;
     }
 
-    bool? userSetUpInCloud;
-
-    await FBUserDataLoader.instance.getUser().then((MyPuttUser? user) {
-      userSetUpInCloud = userIsValid(user);
-    }).catchError((e, trace) async {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason: '[AuthService][userIsSetup] get User timeout',
-      );
-    });
+    final bool? userSetUpInCloud = userIsValid(currentUser);
 
     if (userSetUpInCloud == true) {
       await locator.get<SharedPreferencesService>().markUserIsSetUp(true);
@@ -61,7 +75,6 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
       }
     }
 
-    fetchLocalRepositoryData();
     await fetchRepositoryData();
 
     emit(const LoggedInPhase());

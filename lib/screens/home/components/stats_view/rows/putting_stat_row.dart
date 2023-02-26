@@ -47,7 +47,7 @@ class PuttingStatRow extends StatelessWidget {
                 distance.toString() + ' ft',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: MyPuttColors.darkGray, fontSize: 24),
                 textAlign: TextAlign.center,
               ),
@@ -71,13 +71,15 @@ class PuttingStatRow extends StatelessWidget {
                                     .toStringAsFixed(1)
                                     .toString() +
                                 ' %',
-                            style:
-                                Theme.of(context).textTheme.headline6?.copyWith(
-                                      fontSize: 12,
-                                      color: percentage! < allTimePercentage!
-                                          ? MyPuttColors.red
-                                          : MyPuttColors.lightBlue,
-                                    ))
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontSize: 12,
+                                  color: percentage! < allTimePercentage!
+                                      ? MyPuttColors.red
+                                      : MyPuttColors.lightBlue,
+                                ))
                       ]),
                 );
               } else {

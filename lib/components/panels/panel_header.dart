@@ -22,7 +22,7 @@ class PanelHeader extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
-              .headline6!
+              .titleLarge!
               .copyWith(fontWeight: FontWeight.w600, fontSize: 20),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,

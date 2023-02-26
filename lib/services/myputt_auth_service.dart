@@ -12,7 +12,6 @@ import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/user_helpers.dart';
 import 'package:myputt/utils/utils.dart';
-import 'package:myputt/utils/enums.dart';
 
 class MyPuttAuthService {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
@@ -21,8 +20,6 @@ class MyPuttAuthService {
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   String errorMessage = '';
-
-  AppScreenState currentAppScreenState = AppScreenState.notLoggedIn;
 
   Future<bool> deleteCurrentUser() {
     return _firebaseAuthService.deleteCurrentUser().then((success) {
@@ -58,7 +55,6 @@ class MyPuttAuthService {
       return false;
     } else {
       locator.get<AppPhaseCubit>().emitState(const SetUpPhase());
-      currentAppScreenState = AppScreenState.setup;
       return true;
     }
   }
@@ -106,7 +102,6 @@ class MyPuttAuthService {
       return false;
     } else if (isSetup == false) {
       locator.get<AppPhaseCubit>().emitState(const SetUpPhase());
-      currentAppScreenState = AppScreenState.setup;
       return true;
     }
 
@@ -120,9 +115,8 @@ class MyPuttAuthService {
 
     try {
       fetchLocalRepositoryData();
-      fetchRepositoryData().timeout(shortTimeout);
+      fetchRepositoryData();
       locator.get<AppPhaseCubit>().emitState(const LoggedInPhase());
-      currentAppScreenState = AppScreenState.loggedIn;
     } catch (e, trace) {
       log('[myputt_auth_service][attemptSigninWithEmail] Failed to fetch repository data. Error: $e');
       log(trace.toString());
@@ -172,7 +166,6 @@ class MyPuttAuthService {
 
     _userRepository.currentUser = newUser;
     locator.get<AppPhaseCubit>().emitState(const LoggedInPhase());
-    currentAppScreenState = AppScreenState.loggedIn;
     return true;
   }
 
@@ -185,6 +178,5 @@ class MyPuttAuthService {
     locator.get<SharedPreferencesService>().markUserIsSetUp(false);
     _firebaseAuthService.logOut();
     locator.get<AppPhaseCubit>().emitState(const LoggedOutPhase());
-    currentAppScreenState = AppScreenState.notLoggedIn;
   }
 }

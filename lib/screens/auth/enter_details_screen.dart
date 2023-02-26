@@ -117,7 +117,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
                 ? null
                 : Text(
                     _errorText!,
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: MyPuttColors.red,
                         ),
                   ),
@@ -140,7 +140,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
           'Create an account',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.blue, fontSize: 32),
         ),
         const SizedBox(
@@ -150,7 +150,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
           'Please fill out the information below',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
         ),
       ],

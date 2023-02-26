@@ -6,18 +6,31 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
   Future<List<PuttingChallenge>> getPuttingChallengesByStatus(
       MyPuttUser currentUser, String status) async {
-    QuerySnapshot querySnapshot = await firestore
+    return firestore
         .collection(
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
         .where('status', isEqualTo: status)
         .get()
-        .catchError((e, trace) {
+        .then(
+      (QuerySnapshot querySnapshot) {
+        return querySnapshot.docs.map(
+          (doc) {
+            return PuttingChallenge.fromStorageChallenge(
+              StoragePuttingChallenge.fromJson(
+                  doc.data() as Map<String, dynamic>),
+              currentUser,
+            );
+          },
+        ).toList();
+      },
+    ).catchError((e, trace) async {
       log('[getPuttingChallenges] $e, status: $status');
       FirebaseCrashlytics.instance.recordError(
         e,
@@ -25,41 +38,47 @@ class FBChallengesDataLoader {
         reason:
             '[FBChallengesDataLoader][getPuttingChallengesByStatus] firestore read exception',
       );
+      return <PuttingChallenge>[];
     });
-
-    return querySnapshot.docs.map((doc) {
-      return PuttingChallenge.fromStorageChallenge(
-          StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
-          currentUser);
-    }).toList();
   }
 
   Future<List<PuttingChallenge>> getAllChallenges(
-      MyPuttUser currentUser) async {
-    QuerySnapshot querySnapshot = await firestore
+    MyPuttUser currentUser,
+  ) async {
+    return firestore
         .collection(
             '$challengesCollection/${currentUser.uid}/$challengesCollection')
         .get()
-        .catchError(
+        .then(
+      (final QuerySnapshot querySnapshot) {
+        return querySnapshot.docs.map(
+          (doc) {
+            return PuttingChallenge.fromStorageChallenge(
+              StoragePuttingChallenge.fromJson(
+                doc.data() as Map<String, dynamic>,
+              ),
+              currentUser,
+            );
+          },
+        ).toList();
+      },
+    ).catchError(
       (e, trace) {
-        log('[FBChallengesDataLoader][getAllChallenges] $e');
         FirebaseCrashlytics.instance.recordError(
           e,
           trace,
           reason:
-              '[FBChallengesDataLoader][getAllChallenges] firestore read exception',
+              '[FBChallengesDataLoader][getAllChallenges] Firestore read exception',
         );
+        return <PuttingChallenge>[];
       },
-    );
-
-    return querySnapshot.docs.map((doc) {
-      return PuttingChallenge.fromStorageChallenge(
-          StoragePuttingChallenge.fromJson(doc.data() as Map<String, dynamic>),
-          currentUser);
-    }).toList();
+    ).timeout(tinyTimeout, onTimeout: () async {
+      log('[FBChallengesDataLoader][getAllChallenges] Firestore timeout');
+      return <PuttingChallenge>[];
+    });
   }
 
-  Future<PuttingChallenge?> getPuttingChallengeByid(
+  Future<PuttingChallenge?> getPuttingChallengeById(
       MyPuttUser currentUser, String challengeId) async {
     final DocumentSnapshot<dynamic> snapshot = await firestore
         .doc(
