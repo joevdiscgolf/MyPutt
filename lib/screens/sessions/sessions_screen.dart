@@ -63,30 +63,31 @@ class _SessionsState extends State<SessionsScreen> {
           List<Widget> children = [];
           if (state is SessionInProgressState) {
             children.add(
-              SessionListRow(
-                session: state.currentSession,
-                delete: () {
-                  _mixpanel.track('Sessions Screen Delete Session Confirmed');
-                  BlocProvider.of<SessionsCubit>(context)
-                      .deleteCurrentSession();
-                },
-                onTap: () {
-                  Vibrate.feedback(FeedbackType.light);
-                  _mixpanel.track('Sessions Screen Current Session Row Pressed',
-                      properties: {
-                        'Set Count': state.currentSession.sets.length,
-                      });
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => BlocProvider.value(
-                        value: BlocProvider.of<SessionsCubit>(context),
-                        child: const RecordScreen(),
-                      ),
-                    ),
-                  );
-                },
-                isCurrentSession: true,
-              ),
+              ResumeSessionCard(currentSession: state.currentSession),
+              // SessionListRow(
+              //   session: state.currentSession,
+              //   delete: () {
+              //     _mixpanel.track('Sessions Screen Delete Session Confirmed');
+              //     BlocProvider.of<SessionsCubit>(context)
+              //         .deleteCurrentSession();
+              //   },
+              //   onTap: () {
+              //     Vibrate.feedback(FeedbackType.light);
+              //     _mixpanel.track('Sessions Screen Current Session Row Pressed',
+              //         properties: {
+              //           'Set Count': state.currentSession.sets.length,
+              //         });
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (BuildContext context) => BlocProvider.value(
+              //           value: BlocProvider.of<SessionsCubit>(context),
+              //           child: const RecordScreen(),
+              //         ),
+              //       ),
+              //     );
+              //   },
+              //   isCurrentSession: true,
+              // ),
             );
           }
           children.addAll(
