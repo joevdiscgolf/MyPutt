@@ -108,7 +108,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                             'Putts made',
                             style: Theme.of(context)
                                 .textTheme
-                                .headline6
+                                .titleLarge
                                 ?.copyWith(
                                     color: MyPuttColors.darkGray, fontSize: 20),
                           ),

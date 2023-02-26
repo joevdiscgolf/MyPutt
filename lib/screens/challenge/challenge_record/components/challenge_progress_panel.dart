@@ -127,7 +127,7 @@ class ChallengeProgressPanel extends StatelessWidget {
               'Set $setNumber / $maxSets',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
             ),
           ],
@@ -155,7 +155,7 @@ class ChallengeProgressPanel extends StatelessWidget {
                 currentUser.displayName,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -168,7 +168,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             'VS',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -188,7 +188,7 @@ class ChallengeProgressPanel extends StatelessWidget {
                 opponentUser?.displayName ?? 'Unknown',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.gray),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -230,7 +230,7 @@ class ChallengeProgressPanel extends StatelessWidget {
                         '${(value * 100).toInt()} %',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
+                            .titleLarge
                             ?.copyWith(fontSize: 12, color: MyPuttColors.gray),
                       ),
                     ),
@@ -256,7 +256,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             '$distance ft',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
           ),
           const AnimatedArrows(),
@@ -264,7 +264,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             '$setLength putts',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
           ),
         ],
@@ -274,7 +274,7 @@ class ChallengeProgressPanel extends StatelessWidget {
 
   Widget _puttsDifferenceText(BuildContext context, int puttsMadeDifference) {
     return Builder(builder: (context) {
-      final TextStyle? style = Theme.of(context).textTheme.headline6;
+      final TextStyle? style = Theme.of(context).textTheme.titleLarge;
       if (puttsMadeDifference > 0) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -283,7 +283,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             Text('$puttsMadeDifference ',
                 style: Theme.of(context)
                     .textTheme
-                    .headline5
+                    .headlineSmall
                     ?.copyWith(color: MyPuttColors.blue)),
             Text(puttsMadeDifference == 1 ? 'putt' : 'putts', style: style),
           ],
@@ -296,7 +296,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             Text('${puttsMadeDifference.abs()} ',
                 style: Theme.of(context)
                     .textTheme
-                    .headline5
+                    .headlineSmall
                     ?.copyWith(color: MyPuttColors.red)),
             Text(puttsMadeDifference == -1 ? 'putt' : 'putts', style: style),
           ],

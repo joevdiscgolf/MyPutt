@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
@@ -8,11 +8,8 @@ import 'package:myputt/utils/colors.dart';
 import 'event_list_item.dart';
 
 class EventsList extends StatelessWidget {
-  const EventsList({
-    Key? key,
-    required this.events,
-    this.onRefresh,
-  }) : super(key: key);
+  const EventsList({Key? key, required this.events, this.onRefresh})
+      : super(key: key);
 
   final List<MyPuttEvent> events;
   final Function? onRefresh;
@@ -44,7 +41,7 @@ class EventsList extends StatelessWidget {
                         'No events yet',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
+                            .titleLarge
                             ?.copyWith(color: MyPuttColors.darkGray),
                       ),
                     ],

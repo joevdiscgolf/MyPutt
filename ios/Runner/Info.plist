@@ -66,5 +66,7 @@
 	<string>MyPutt would like to access the microphone.</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

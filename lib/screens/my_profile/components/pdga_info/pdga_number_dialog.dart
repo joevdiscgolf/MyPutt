@@ -48,7 +48,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
             'Enter PDGA number',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -109,7 +109,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
       maxLength: 24,
       style: Theme.of(context)
           .textTheme
-          .subtitle1!
+          .titleMedium!
           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
@@ -119,7 +119,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
         isDense: true,
         hintStyle: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(color: MyPuttColors.gray[300], fontSize: 18),
         enabledBorder: Theme.of(context).inputDecorationTheme.border,
         focusedBorder: Theme.of(context).inputDecorationTheme.border,

@@ -51,7 +51,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       BlocProvider.of<HomeScreenCubit>(context).reload();
     });
     _totalSets = _statsService.getTotalPuttingSets(
-      _sessionRepository.allSessions,
+      _sessionRepository.completedSessions,
       _challengesRepository.completedChallenges,
       _selectedDistance,
     );
@@ -66,17 +66,12 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     int? limit =
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
     final List<ChartPoint> _points =
         _statsService.getPointsWithDistanceAndLimit(
-            _sessionRepository.allSessions,
+            _sessionRepository.completedSessions,
             _challengesRepository.completedChallenges,
             _selectedDistance,
             limit);
@@ -92,7 +87,8 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
             _sessionRangeTabBar(context),
             _points.isEmpty
                 ? EmptyStateChart(
-                    hasSessions: _sessionRepository.allSessions.isNotEmpty,
+                    hasSessions:
+                        _sessionRepository.completedSessions.isNotEmpty,
                   )
                 : PerformanceChart(data: smoothData),
             Row(
@@ -164,7 +160,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         setState(() {
           _selectedDistance = distance;
           _totalSets = _statsService.getTotalPuttingSets(
-            _sessionRepository.allSessions,
+            _sessionRepository.completedSessions,
             _challengesRepository.completedChallenges,
             distance,
           );
@@ -184,7 +180,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
             '$distance',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 16),
             maxLines: 1,
           ),

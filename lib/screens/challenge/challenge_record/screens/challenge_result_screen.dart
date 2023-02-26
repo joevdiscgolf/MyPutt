@@ -76,7 +76,7 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
                     children: [
                       Text(
                         '${getMessageFromDifference(_difference)}!',
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontSize: 40,
                             color: getColorFromDifference(_difference)),
                       ),
@@ -85,7 +85,7 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
                       ),
                       AutoSizeText(
                         _subtitle,
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontSize: 20, color: MyPuttColors.gray[300]),
                         maxLines: 1,
                       ),
@@ -143,7 +143,7 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
           displayName,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[500]),
         ),
         const SizedBox(
@@ -176,17 +176,17 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
             Text(currentUserPuttsMade.toString(),
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.blue)),
             Text(' : ',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.gray[400])),
             Text(opponentPuttsMade.toString(),
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.red))
           ],
         ),

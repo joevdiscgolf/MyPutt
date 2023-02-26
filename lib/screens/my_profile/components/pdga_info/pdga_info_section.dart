@@ -75,7 +75,7 @@ class PDGAInfoSection extends StatelessWidget {
         children: [
           Text(
             'Hello,',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   color: MyPuttColors.gray[400],
                 ),
@@ -84,7 +84,7 @@ class PDGAInfoSection extends StatelessWidget {
           const SizedBox(height: 4),
           AutoSizeText(
             state.pdgaPlayerInfo!.name!,
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   color: MyPuttColors.darkGray,
                 ),
@@ -95,7 +95,7 @@ class PDGAInfoSection extends StatelessWidget {
     } else {
       return AutoSizeText(
         'PDGA player info',
-        style: Theme.of(context).textTheme.headline6?.copyWith(
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontSize: 20,
               color: MyPuttColors.darkGray,
             ),
@@ -120,7 +120,7 @@ class PDGAInfoSection extends StatelessWidget {
                 'Link your PDGA number by\n clicking the edit button above.',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 14, color: MyPuttColors.darkGray),
                 textAlign: TextAlign.center,
               )),

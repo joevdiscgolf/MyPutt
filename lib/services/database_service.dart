@@ -13,7 +13,6 @@ import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase/event_data_loader.dart';
 import 'package:myputt/services/firebase/event_data_writer.dart';
 import 'package:myputt/services/firebase/sessions_data_loaders.dart';
-import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
@@ -22,7 +21,6 @@ import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
   final FBSessionsDataLoader _sessionsDataLoader = FBSessionsDataLoader();
-  final FBSessionsDataWriter _sessionsDataWriter = FBSessionsDataWriter();
   final FBChallengesDataWriter _challengesDataWriter = FBChallengesDataWriter();
   final FBChallengesDataLoader _challengesDataLoader = FBChallengesDataLoader();
   final FBUserDataLoader _userDataLoader = FBUserDataLoader();
@@ -30,36 +28,6 @@ class DatabaseService {
   final EventDataLoader _eventDataLoader = EventDataLoader();
 
   final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
-
-  Future<bool> startCurrentSession(PuttingSession currentSession) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.setCurrentSession(currentSession, uid);
-  }
-
-  Future<bool> updateCurrentSession(PuttingSession currentSession) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.updateCurrentSession(currentSession, uid);
-  }
-
-  Future<bool> deleteCurrentSession() async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.deleteCurrentSession(uid);
-  }
-
-  Future<bool> addCompletedSession(PuttingSession sessionToAdd) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.addCompletedSession(sessionToAdd, uid);
-  }
-
-  Future<bool> deleteCompletedSession(PuttingSession sessionToDelete) async {
-    final uid = _authService.getCurrentUserId();
-
-    return _sessionsDataWriter.deleteCompletedSession(sessionToDelete, uid);
-  }
 
   Future<PuttingSession?> getCurrentSession() async {
     final uid = _authService.getCurrentUserId();
@@ -76,9 +44,7 @@ class DatabaseService {
   Future<List<PuttingSession>?> getCompletedSessions() async {
     final uid = _authService.getCurrentUserId();
 
-    final completedSessions =
-        await _sessionsDataLoader.getCompletedSessions(uid!);
-    return completedSessions?.toList();
+    return _sessionsDataLoader.getCompletedSessions(uid!);
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
@@ -121,7 +87,7 @@ class DatabaseService {
     if (currentUser == null) {
       return null;
     }
-    return _challengesDataLoader.getPuttingChallengeByid(
+    return _challengesDataLoader.getPuttingChallengeById(
         currentUser, challengeId);
   }
 
@@ -152,11 +118,6 @@ class DatabaseService {
   Future<StoragePuttingChallenge?> getChallengeByUid(
       String uid, String challengeId) {
     return _challengesDataLoader.getChallengeByUid(uid, challengeId);
-  }
-
-  Future<MyPuttUser?> getCurrentUser() {
-    final uid = _authService.getCurrentUserId();
-    return _userDataLoader.getUser(uid!);
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {

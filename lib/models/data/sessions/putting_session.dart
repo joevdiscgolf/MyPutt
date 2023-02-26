@@ -5,10 +5,17 @@ part 'putting_session.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSession {
-  PuttingSession({required this.id, required this.timeStamp});
+  PuttingSession({
+    required this.id,
+    required this.timeStamp,
+    this.isSynced = false,
+    this.deviceId,
+  });
   final String id;
   final int timeStamp;
   List<PuttingSet> sets = [];
+  final bool? isSynced;
+  final String? deviceId;
 
   num get totalPuttsMade {
     num total = 0;

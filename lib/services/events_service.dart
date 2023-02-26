@@ -31,7 +31,7 @@ class EventsService {
         trace,
         reason: '[EventsService][getEvent] exception',
       );
-      return GetEventResponse(inEvent: false);
+      return const GetEventResponse(inEvent: false);
     });
   }
 
@@ -51,7 +51,7 @@ class EventsService {
         trace,
         reason: '[EventsService][joinEventWithCode] exception',
       );
-      return JoinEventResponse(success: false);
+      return const JoinEventResponse(success: false);
     });
   }
 
@@ -71,7 +71,7 @@ class EventsService {
         trace,
         reason: '[EventsService][joinEvent] exception',
       );
-      return JoinEventResponse(success: false);
+      return const JoinEventResponse(success: false);
     });
   }
 
@@ -90,7 +90,7 @@ class EventsService {
         trace,
         reason: '[EventsService][exitEvent] exception',
       );
-      return ExitEventResponse(success: false);
+      return const ExitEventResponse(success: false);
     });
   }
 
@@ -186,7 +186,7 @@ class EventsService {
         trace,
         reason: '[EventsService][createEvent] exception',
       );
-      return CreateEventResponse();
+      return const CreateEventResponse();
     });
   }
 

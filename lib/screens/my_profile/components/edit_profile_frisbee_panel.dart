@@ -47,7 +47,7 @@ class _EditProfileFrisbeePanelState extends State<EditProfileFrisbeePanel> {
           'Edit icon',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
         ),
       ),

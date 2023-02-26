@@ -41,7 +41,7 @@ class EmptyState extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
             ),
@@ -49,7 +49,7 @@ class EmptyState extends StatelessWidget {
             Text(
               subtitle,
               maxLines: 2,
-              style: Theme.of(context).textTheme.subtitle2!.copyWith(
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   color: subtitleColor ?? Theme.of(context).primaryColorDark),
               textAlign: TextAlign.center,
             ),
@@ -92,7 +92,7 @@ class EmptyState extends StatelessWidget {
                           refreshLabel,
                           style: Theme.of(context)
                               .textTheme
-                              .subtitle1
+                              .titleMedium
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],

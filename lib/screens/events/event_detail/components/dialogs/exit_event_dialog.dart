@@ -56,7 +56,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
             'Exit ${widget.event.name}',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -74,7 +74,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
             _dialogErrorText ?? '',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkRed, fontSize: 12),
           ),
           const SizedBox(height: 16),

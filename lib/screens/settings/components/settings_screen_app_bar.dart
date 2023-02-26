@@ -27,7 +27,7 @@ class SettingsScreenAppBar extends StatelessWidget
             'Settings',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
           ),
           Expanded(child: Container()),

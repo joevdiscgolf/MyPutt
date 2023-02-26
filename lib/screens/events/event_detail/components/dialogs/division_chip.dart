@@ -28,7 +28,7 @@ class DivisionChip extends StatelessWidget {
             color: selected ? MyPuttColors.blue : Colors.transparent),
         child: Text(
           division.name.toUpperCase(),
-          style: Theme.of(context).textTheme.headline6?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: selected ? MyPuttColors.white : MyPuttColors.darkBlue,
               fontSize: 16),
         ),

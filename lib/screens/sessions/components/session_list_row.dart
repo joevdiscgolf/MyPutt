@@ -3,7 +3,6 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/locator.dart';
@@ -11,6 +10,7 @@ import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/panel_helpers.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 class SessionListRow extends StatelessWidget {
@@ -58,7 +58,7 @@ class SessionListRow extends StatelessWidget {
                   'In progress',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(color: MyPuttColors.red, fontSize: 12),
                 ),
                 const SizedBox(height: 8)
@@ -67,7 +67,7 @@ class SessionListRow extends StatelessWidget {
                 timestampToDate(session.timeStamp),
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: MyPuttColors.gray[600], fontSize: 12),
               ),
               const SizedBox(height: 8),
@@ -75,7 +75,7 @@ class SessionListRow extends StatelessWidget {
                 '$setCount sets, $puttsAttempted putts',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: MyPuttColors.blue, fontSize: 16),
               )
             ],
@@ -88,10 +88,9 @@ class SessionListRow extends StatelessWidget {
                     .get<Mixpanel>()
                     .track('Session Row Challenge Button Pressed');
                 Vibrate.feedback(FeedbackType.light);
-                showBarModalBottomSheet(
-                  topControl: Container(),
-                  context: context,
-                  builder: (BuildContext context) => ShareSheet(
+                displayBottomSheet(
+                  context,
+                  ShareSheet(
                     session: session,
                     onComplete: () => Navigator.pop(context),
                   ),
@@ -103,9 +102,7 @@ class SessionListRow extends StatelessWidget {
                 size: 24,
               ),
             ),
-          const SizedBox(
-            width: 12,
-          ),
+          const SizedBox(width: 12),
           Bounceable(
             onTap: () {
               Vibrate.feedback(FeedbackType.light);
@@ -136,9 +133,7 @@ class SessionListRow extends StatelessWidget {
               size: 20,
             ),
           ),
-          const SizedBox(
-            width: 8,
-          ),
+          const SizedBox(width: 8),
           Icon(
             FlutterRemix.arrow_right_s_line,
             color: MyPuttColors.gray[300]!,

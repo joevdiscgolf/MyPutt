@@ -156,7 +156,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                   'Wins',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
                   maxLines: 1,
                 )),
@@ -175,7 +175,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                 'Losses',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
                 maxLines: 1,
               ),
@@ -193,7 +193,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                 'Draws',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
                 maxLines: 1,
               ),
@@ -224,7 +224,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                 'No challenges yet',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 28, color: MyPuttColors.darkGray),
                 maxLines: 1,
               );
@@ -236,7 +236,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                     '${_winPercent?.toStringAsFixed(0)}%',
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontSize: 28, color: MyPuttColors.gray[600]),
                     maxLines: 2,
                     textAlign: TextAlign.center,
@@ -245,7 +245,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                     'Win rate',
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontSize: 20, color: MyPuttColors.gray[600]),
                     maxLines: 2,
                     textAlign: TextAlign.center,
@@ -264,7 +264,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                             '${challengeResultToCount()}',
                             style: Theme.of(context)
                                 .textTheme
-                                .headline6
+                                .titleLarge
                                 ?.copyWith(
                                     fontSize: 28, color: MyPuttColors.darkGray),
                             maxLines: 2,
@@ -274,7 +274,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                             getChallengeResultText(),
                             style: Theme.of(context)
                                 .textTheme
-                                .headline6
+                                .titleLarge
                                 ?.copyWith(
                                     fontSize: 16, color: MyPuttColors.darkGray),
                             maxLines: 2,

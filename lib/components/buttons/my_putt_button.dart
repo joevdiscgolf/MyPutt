@@ -98,7 +98,7 @@ class MyPuttButton extends StatelessWidget {
             ],
             AutoSizeText(
               title,
-              style: Theme.of(context).textTheme.headline6?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: disabled ? MyPuttColors.white : textColor,
                     fontSize: textSize,
                     decoration: underline ? TextDecoration.underline : null,

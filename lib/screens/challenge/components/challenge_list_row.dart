@@ -99,7 +99,7 @@ class ChallengeListRow extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     getMessageFromDifference(difference),
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         color: getColorFromDifference(difference)),
                     textAlign: TextAlign.center,
@@ -151,7 +151,7 @@ class ChallengeListRow extends StatelessWidget {
           displayName,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[500]),
           maxLines: 1,
           textAlign: TextAlign.center,
@@ -175,7 +175,7 @@ class ChallengeListRow extends StatelessWidget {
               '${challenge.challengeStructure.length} sets, ${totalAttemptsFromStructure(challenge.challengeStructure)} putts',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 16, color: MyPuttColors.darkGray),
             ),
             const SizedBox(height: 12),
@@ -215,7 +215,7 @@ class ChallengeListRow extends StatelessWidget {
               '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(challenge.creationTimeStamp))}',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 12, color: MyPuttColors.gray[400]),
             ),
             const SizedBox(height: 8),
@@ -226,19 +226,19 @@ class ChallengeListRow extends StatelessWidget {
                   currentUserPuttsMade.toString(),
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 20, color: MyPuttColors.blue),
                 ),
                 Text(
                   ' : ',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         color: MyPuttColors.gray[400],
                       ),
                 ),
                 Text(
                   opponentPuttsMade.toString(),
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         color: MyPuttColors.red,
                       ),

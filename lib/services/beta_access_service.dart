@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -29,7 +30,15 @@ class BetaAccessService {
         return null;
       }
       return snapshot.data();
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[BetaAccessService][loadFeatureAccess] Firestore Exception',
+      );
+      return null;
     });
+
     if (userDoc == null) {
       needsReload = true;
       return;

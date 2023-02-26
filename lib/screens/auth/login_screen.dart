@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text("Don't have an account?",
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(color: MyPuttColors.gray[400])),
                 const SizedBox(
                   height: 16,
@@ -142,17 +142,17 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
               children: [
                 TextSpan(
                     text: 'My',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontWeight: FontWeight.w600,
                         fontSize: 40)),
                 TextSpan(
                     text: 'Putt',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w600,
                         fontSize: 40)),
@@ -163,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Text(
             'Master your game',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   color: MyPuttColors.gray[400]!,
                   fontWeight: FontWeight.w600,
                 ),
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
         maxLength: 32,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: 'Email',
@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
@@ -226,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
         maxLength: 32,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: 'Password',
@@ -235,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isDense: true,
           hintStyle: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,

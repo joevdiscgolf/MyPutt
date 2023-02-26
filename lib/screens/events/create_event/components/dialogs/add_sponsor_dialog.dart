@@ -58,7 +58,7 @@ class _AddSponsorDialogState extends State<AddSponsorDialog> {
             'Add sponsor',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -80,7 +80,7 @@ class _AddSponsorDialogState extends State<AddSponsorDialog> {
             height: 24,
             child: Text(
               _dialogErrorText ?? '',
-              style: Theme.of(context).textTheme.headline6?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MyPuttColors.red,
                   ),
             ),

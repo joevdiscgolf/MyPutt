@@ -17,7 +17,7 @@ class ChallengesScreenAppBar extends StatelessWidget
         'Challenges',
         style: Theme.of(context)
             .textTheme
-            .headline6
+            .titleLarge
             ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
         textAlign: TextAlign.center,
       ),

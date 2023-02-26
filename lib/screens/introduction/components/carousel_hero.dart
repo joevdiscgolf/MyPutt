@@ -53,17 +53,17 @@ class CarouselHero extends StatelessWidget {
         children: <Widget>[
           RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
               children: [
                 TextSpan(
                     text: 'My',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkBlue,
                         fontWeight: FontWeight.w600,
                         fontSize: 40)),
                 TextSpan(
                     text: 'Putt',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.darkGray,
                         fontWeight: FontWeight.w600,
                         fontSize: 40)),
@@ -74,7 +74,7 @@ class CarouselHero extends StatelessWidget {
           Text(
             'Master your game',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline5!.copyWith(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   fontWeight: FontWeight.w600,
                   color: MyPuttColors.gray[400]!,
                 ),

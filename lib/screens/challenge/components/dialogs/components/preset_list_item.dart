@@ -88,7 +88,7 @@ class PresetListItem extends StatelessWidget {
               child: Text(challengePresetToText[presetType]!,
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .titleLarge
                       ?.copyWith(fontSize: 12, color: MyPuttColors.darkGray)),
             )
           ],
@@ -118,7 +118,7 @@ class PresetListItem extends StatelessWidget {
               '${totalAttemptsFromPresetInstructions(presetInstructions)} total',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 14, color: MyPuttColors.darkGray)),
         ],
       ),

@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
@@ -19,12 +22,36 @@ class SessionsScreenAppBar extends StatelessWidget
       padding: EdgeInsets.only(top: hasTopPadding(context) ? 48 : 24),
       child: Column(
         children: [
-          Text(
-            'Sessions',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
+          Row(
+            children: [
+              Expanded(
+                child: kDebugMode
+                    ? ElevatedButton(
+                        onPressed: () async {
+                          locator
+                              .get<SessionRepository>()
+                              .fetchLocalCompletedSessions();
+                        },
+                        child: const Text('Load sessions'),
+                      )
+                    : Container(),
+              ),
+              Text(
+                'Sessions',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
+              ),
+              Expanded(
+                child: kDebugMode
+                    ? ElevatedButton(
+                        onPressed: () async {},
+                        child: const Text('clear sessions'),
+                      )
+                    : Container(),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
@@ -33,7 +60,7 @@ class SessionsScreenAppBar extends StatelessWidget
                 : '${allSessions.length} total',
             style: Theme.of(context)
                 .textTheme
-                .headline6!
+                .titleLarge!
                 .copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
             textAlign: TextAlign.center,
           ),

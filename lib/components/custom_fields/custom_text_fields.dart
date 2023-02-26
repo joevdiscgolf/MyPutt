@@ -43,14 +43,14 @@ class CustomField extends StatelessWidget {
         maxLength: 32,
         style: Theme.of(context)
             .textTheme
-            .subtitle1!
+            .titleMedium!
             .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           hintText: hint,
           contentPadding: innerPadding,
           hintStyle: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(color: Colors.grey[400], fontSize: 18),
           enabledBorder: Theme.of(context).inputDecorationTheme.border,
           focusedBorder: Theme.of(context).inputDecorationTheme.border,
@@ -120,7 +120,7 @@ class _UsernameFieldState extends State<UsernameField> {
                 maxLength: 24,
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle1!
+                    .titleMedium!
                     .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
@@ -130,7 +130,7 @@ class _UsernameFieldState extends State<UsernameField> {
                   isDense: true,
                   hintStyle: Theme.of(context)
                       .textTheme
-                      .subtitle1!
+                      .titleMedium!
                       .copyWith(color: MyPuttColors.gray[400], fontSize: 14),
                   enabledBorder: Theme.of(context).inputDecorationTheme.border,
                   focusedBorder: Theme.of(context).inputDecorationTheme.border,
@@ -249,7 +249,7 @@ class DetailsTextField extends StatelessWidget {
           maxLength: maxLength,
           style: Theme.of(context)
               .textTheme
-              .subtitle1!
+              .titleMedium!
               .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           keyboardType: textInputType,
           decoration: InputDecoration(
@@ -259,7 +259,7 @@ class DetailsTextField extends StatelessWidget {
             isDense: true,
             hintStyle: Theme.of(context)
                 .textTheme
-                .subtitle1!
+                .titleMedium!
                 .copyWith(color: MyPuttColors.gray[400], fontSize: 14),
             enabledBorder: Theme.of(context).inputDecorationTheme.border,
             focusedBorder: Theme.of(context).inputDecorationTheme.border,

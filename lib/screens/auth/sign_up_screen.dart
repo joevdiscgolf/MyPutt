@@ -83,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'Sign up',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.blue, fontSize: 32),
         ),
         const SizedBox(height: 4),
@@ -91,14 +91,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'Please enter your email and password.',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[800]),
         ),
         Text(
           '\nYour password must be a least 8 characters.',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
         ),
       ],
@@ -148,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _errorText!,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: Colors.red),
                 maxLines: 1,
               ),

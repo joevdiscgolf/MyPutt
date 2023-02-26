@@ -161,7 +161,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ? null
               : Text(
                   _errorText!,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: MyPuttColors.red,
                         fontSize: 14,
                       ),

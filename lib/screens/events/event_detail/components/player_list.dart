@@ -36,7 +36,7 @@ class PlayerList extends StatelessWidget {
             'Event complete',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.white),
           ),
         ),

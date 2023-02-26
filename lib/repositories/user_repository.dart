@@ -1,6 +1,7 @@
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/user_service.dart';
@@ -23,7 +24,7 @@ class UserRepository {
     if (_authService.getCurrentUserId() == null) {
       return false;
     } else {
-      currentUser = await _databaseService.getCurrentUser();
+      currentUser = await FBUserDataLoader.instance.getUser();
       return currentUser != null;
     }
   }

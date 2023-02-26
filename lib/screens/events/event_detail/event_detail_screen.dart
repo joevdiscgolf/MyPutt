@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -241,7 +241,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           'Summer Sizzler',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.darkGray),
         ),
       ),
@@ -258,7 +258,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             child: Center(
               child: AutoSizeText(
                 'POS',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MyPuttColors.darkGray,
                     fontSize: 12,
                     fontWeight: FontWeight.w400),
@@ -274,7 +274,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               width: 48,
               child: AutoSizeText(
                 'NAME',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MyPuttColors.darkGray,
                     fontSize: 12,
                     fontWeight: FontWeight.w400),
@@ -288,7 +288,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             child: FittedBox(
               child: Text(
                 'PUTTS MADE',
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: MyPuttColors.darkGray,
                     fontSize: 12,
                     fontWeight: FontWeight.w400),
@@ -376,7 +376,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             children: [
               Text(
                 _division.name.toUpperCase(),
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: MyPuttColors.darkBlue,
                       fontSize: 14,
                     ),

@@ -64,7 +64,7 @@ class StructureDescriptionRow extends StatelessWidget {
           text,
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 14, color: MyPuttColors.darkGray),
           maxLines: 1,
         ),

@@ -56,7 +56,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
             'Distance',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
           ),
           const Spacer(),
@@ -65,7 +65,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
               '-',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             ),
             onPressed: () {
@@ -95,7 +95,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
                 const SizedBox(height: 0),
                 Text(
                   '${kDistanceOptions[_index]}',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         color: kDistanceOptions[_index] > CircleCutoffs.c2
                             ? MyPuttColors.darkBlue
@@ -105,7 +105,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
                 ),
                 Text(
                   'ft',
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 16,
                         color: MyPuttColors.darkGray,
                       ),
@@ -119,7 +119,7 @@ class _DistanceSelectionRowState extends State<DistanceSelectionRow> {
               '+',
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
             ),
             onPressed: () {

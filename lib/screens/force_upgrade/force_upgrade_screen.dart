@@ -14,7 +14,7 @@ class ForceUpgradeScreen extends StatelessWidget {
             children: [
               RichText(
                 text: TextSpan(
-                  style: Theme.of(context).textTheme.headline3,
+                  style: Theme.of(context).textTheme.headlineSmall,
                   children: const [
                     TextSpan(
                       text: 'My',

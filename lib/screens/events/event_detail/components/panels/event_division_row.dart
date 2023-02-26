@@ -19,7 +19,7 @@ class EventDivisionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           child: Text(
             division.name.toUpperCase(),
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: MyPuttColors.darkGray,
                 fontSize: 16,
                 fontWeight: FontWeight.bold),

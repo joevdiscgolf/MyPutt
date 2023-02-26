@@ -48,7 +48,7 @@ class ActiveSessionRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(timestampToDate(session.timeStamp),
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
                   Container(
@@ -61,7 +61,7 @@ class ActiveSessionRow extends StatelessWidget {
                         'CURRENT',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
+                            .titleLarge
                             ?.copyWith(color: Colors.blue, fontSize: 16),
                       )),
                 ],

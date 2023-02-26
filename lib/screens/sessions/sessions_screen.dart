@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -47,7 +47,7 @@ class _SessionsState extends State<SessionsScreen> {
           builder: (BuildContext context) {
             return Scaffold(
               appBar: SessionsScreenAppBar(
-                allSessions: _sessionRepository.allSessions,
+                allSessions: _sessionRepository.completedSessions,
               ),
               backgroundColor: MyPuttColors.white,
               floatingActionButton: _addButton(context),
@@ -105,7 +105,7 @@ class _SessionsState extends State<SessionsScreen> {
                       index: entry.key + 1,
                       delete: () {
                         BlocProvider.of<SessionsCubit>(context)
-                            .deleteSession(entry.value);
+                            .deleteCompletedSession(entry.value);
                         BlocProvider.of<HomeScreenCubit>(context).reload();
                       },
                       isCurrentSession: false,

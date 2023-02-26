@@ -32,7 +32,7 @@ class _CollapsingAppBarTitleState extends State<CollapsingAppBarTitle> {
   }
 
   void _addListener() {
-    _position = Scrollable.of(context)?.position;
+    _position = Scrollable.of(context).position;
     _position?.addListener(_positionListener);
     _positionListener();
   }

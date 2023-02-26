@@ -35,7 +35,7 @@ class EmptyStateChart extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'No data',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: MyPuttColors.darkGray,
                   fontWeight: FontWeight.bold,
                 ),
@@ -49,7 +49,7 @@ class EmptyStateChart extends StatelessWidget {
         children: [
           Text(
             "Let's get you started!",
-            style: Theme.of(context).textTheme.headline6?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: MyPuttColors.darkGray,
                   fontWeight: FontWeight.bold,
                 ),

@@ -13,7 +13,7 @@ class CreateEventHeader extends StatelessWidget {
           'Create an event',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(color: MyPuttColors.blue, fontSize: 24),
         ),
         const SizedBox(
@@ -23,7 +23,7 @@ class CreateEventHeader extends StatelessWidget {
           'Please fill out the information below',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge
               ?.copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
         ),
       ],

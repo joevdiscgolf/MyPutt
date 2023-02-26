@@ -1,31 +1,35 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
-import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-Future<String?> getMinimumAppVersion() async {
-  try {
-    DocumentSnapshot<dynamic> snapshot = await FirebaseFirestore.instance
+class FBAppInfoDataLoader {
+  static final FBAppInfoDataLoader instance = FBAppInfoDataLoader._internal();
+
+  factory FBAppInfoDataLoader() {
+    return instance;
+  }
+
+  FBAppInfoDataLoader._internal();
+
+  Future<String?> getMinimumAppVersion() async {
+    return FirebaseFirestore.instance
         .doc('$appInfoCollection/$minimumVersionDoc')
         .get()
-        .timeout(standardTimeout);
-    if (snapshot.exists && snapshot.data()['minimumVersion'] != null) {
-      return snapshot.data()['minimumVersion'];
-    } else {
+        .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      if (snapshot.exists && snapshot.data()?['minimumVersion'] != null) {
+        return snapshot.data()!['minimumVersion'] as String;
+      } else {
+        return null;
+      }
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[AppInfoDataLoader][getMinimumAppVersion] Firestore timeout',
+      );
       return null;
-    }
-  } catch (e, trace) {
-    log(e.toString());
-    log(trace.toString());
-    FirebaseCrashlytics.instance.recordError(
-      e,
-      trace,
-      reason: '[app_info_data_loader][getMinimumAppVersion] firestore timeout',
-    );
-    return null;
+    });
   }
 }

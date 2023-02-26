@@ -10,4 +10,14 @@ class SharedPreferencesService {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
     return myPrefs.getBool(key);
   }
+
+  Future<void> markUserIsSetUp(bool isSetUp) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    myPrefs.setBool('userIsSetUp', isSetUp);
+  }
+
+  Future<bool?> userIsSetUp() async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+    return myPrefs.getBool('userIsSetUp');
+  }
 }

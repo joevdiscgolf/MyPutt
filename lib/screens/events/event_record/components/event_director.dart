@@ -50,7 +50,7 @@ class EventDirector extends StatelessWidget {
                     '$distance ft',
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontSize: 32),
                   ),
                   const AnimatedArrows(),
@@ -58,7 +58,7 @@ class EventDirector extends StatelessWidget {
                     '$setLength putts',
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
+                        .titleLarge
                         ?.copyWith(fontSize: 24),
                   ),
                 ],
@@ -115,7 +115,7 @@ class EventDirector extends StatelessWidget {
                         '${(value * 100).toInt()} %',
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
+                            .titleLarge
                             ?.copyWith(fontSize: 12, color: MyPuttColors.gray),
                       ),
                     ),

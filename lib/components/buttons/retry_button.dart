@@ -84,7 +84,7 @@ class _RetryButtonState extends State<RetryButton>
             AutoSizeText('Retry',
                 style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(fontSize: 20, color: MyPuttColors.darkGray),
                 maxLines: 1)
           ],

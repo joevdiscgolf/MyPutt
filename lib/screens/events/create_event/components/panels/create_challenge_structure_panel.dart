@@ -64,7 +64,7 @@ class _CreateChallengeStructurePanelState
                         title: Text(
                           'Enter layout',
                           style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
                                     color: MyPuttColors.darkGray,
                                     fontSize: 24,
                                     fontWeight: FontWeight.w500,
@@ -120,7 +120,7 @@ class _CreateChallengeStructurePanelState
                       _errorText!,
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .titleLarge
                           ?.copyWith(color: MyPuttColors.red),
                     ),
             ),
@@ -149,7 +149,7 @@ class _CreateChallengeStructurePanelState
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray),
           ),
         ),
@@ -159,7 +159,7 @@ class _CreateChallengeStructurePanelState
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray),
           ),
         ),
@@ -169,7 +169,7 @@ class _CreateChallengeStructurePanelState
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray),
           ),
         ),

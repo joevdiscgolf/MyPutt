@@ -10,16 +10,57 @@ import 'package:myputt/services/firebase/utils/fb_constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBUserDataLoader {
-  Future<MyPuttUser?> getUser(String uid) async {
-    final currentSessionReference = firestore.doc('$usersCollection/$uid');
-    final snapshot = await currentSessionReference.get();
-    if (snapshot.exists &&
-        isValidUser(snapshot.data() as Map<String, dynamic>)) {
-      final Map<String, dynamic> data = snapshot.data()!;
-      return MyPuttUser.fromJson(data);
-    } else {
+  static final FBUserDataLoader instance = FBUserDataLoader._internal();
+
+  factory FBUserDataLoader() {
+    return instance;
+  }
+
+  FBUserDataLoader._internal();
+
+  Future<MyPuttUser?> getUser() async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
       return null;
     }
+
+    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
+      if (!snapshot.exists ||
+          !isValidUser(snapshot.data() as Map<String, dynamic>)) {
+        return null;
+      }
+      final Map<String, dynamic> data = snapshot.data()!;
+      return MyPuttUser.fromJson(data);
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FBUserDataLoader][getUser] Firestore Exception',
+      );
+      return null;
+    });
+  }
+
+  Future<Map<String, dynamic>?> getUserJson() async {
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (uid == null) {
+      return null;
+    }
+
+    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason: '[FBUserDataLoader][getUserJson] Firestore Exception',
+      );
+      return null;
+    });
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
@@ -28,11 +69,31 @@ class FBUserDataLoader {
     if (currentUid == null) {
       return [];
     }
-    QuerySnapshot querySnapshot = await firestore
+    return firestore
         .collection(usersCollection)
         .where('keywords', arrayContains: username)
         .get()
-        .catchError((e, trace) {
+        .then(
+      (QuerySnapshot querySnapshot) {
+        final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
+          if (doc.exists) {
+            return MyPuttUser.fromJson(doc.data() as Map<String, dynamic>);
+          } else {
+            return null;
+          }
+        }).toList();
+
+        List<MyPuttUser> existingUsers = [];
+
+        for (var user in users) {
+          if (user != null && user.uid != currentUid) {
+            existingUsers.add(user);
+          }
+        }
+
+        return existingUsers;
+      },
+    ).catchError((e, trace) {
       log(e);
       FirebaseCrashlytics.instance.recordError(
         e,
@@ -40,25 +101,8 @@ class FBUserDataLoader {
         reason:
             '[FBUserDataLoader][getUsersByUsername] firestore read exception',
       );
+      return <MyPuttUser>[];
     });
-
-    final List<MyPuttUser?> users = querySnapshot.docs.map((doc) {
-      if (doc.exists) {
-        return MyPuttUser.fromJson(doc.data() as Map<String, dynamic>);
-      } else {
-        return null;
-      }
-    }).toList();
-
-    List<MyPuttUser> existingUsers = [];
-
-    for (var user in users) {
-      if (user != null && user.uid != currentUid) {
-        existingUsers.add(user);
-      }
-    }
-
-    return existingUsers;
   }
 
   bool isValidUser(Map<String, dynamic>? data) {

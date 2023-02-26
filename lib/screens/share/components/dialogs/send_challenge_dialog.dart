@@ -65,7 +65,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
             'Send challenge',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.darkGray, fontSize: 32),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -75,7 +75,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
             widget.recipientUser.displayName,
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: MyPuttColors.blue, fontSize: 20),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -93,7 +93,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
               _dialogErrorText!,
               style: Theme.of(context)
                   .textTheme
-                  .headline6
+                  .titleLarge
                   ?.copyWith(color: MyPuttColors.red, fontSize: 12),
             ),
           const SizedBox(height: 8),
