@@ -57,27 +57,110 @@ class _RecordScreenState extends State<RecordScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyPuttColors.white,
-      appBar: RecordScreenAppBar(tabController: _tabController),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: MyPuttColors.darkGray),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        shadowColor: Colors.transparent,
+        leading: const AppBarBackButton(),
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: MyPuttButton(
+              backgroundColor: Colors.transparent,
+              textColor: MyPuttColors.darkGray,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (dialogContext) => ConfirmDialog(
+                          title: 'Finish session',
+                          icon: const ShadowIcon(
+                            icon: Icon(
+                              FlutterRemix.medal_2_fill,
+                              size: 80,
+                              color: MyPuttColors.black,
+                            ),
+                          ),
+                          buttonlabel: 'Finish',
+                          buttonColor: MyPuttColors.blue,
+                          actionPressed: () {
+                            _mixpanel.track(
+                              'Record Screen Finish Session Confirmed',
+                            );
+                            BlocProvider.of<SessionsCubit>(context)
+                                .completeSession();
+                            setState(() {
+                              sessionInProgress = false;
+                            });
+                          },
+                        )).then((value) => dialogCallBack());
+              },
+              title: 'Finish',
+              iconColor: MyPuttColors.darkGray,
+            ),
+          ),
+        ],
+        title: Text('Record',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontSize: 28, color: MyPuttColors.blue)),
+      ),
       body: _mainBody(context),
     );
   }
 
   Widget _mainBody(BuildContext context) {
-    return TabBarView(
-      controller: _tabController,
-      children: [
-        BlocBuilder<SessionsCubit, SessionsState>(
-          builder: (context, state) {
-            if (state is SessionInProgressState) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 24, bottom: 12),
-                child: Column(
-                  children: [
-                    const SelectionTilesRow(),
-                    const SizedBox(height: 32),
-                    const QuantityRow(),
-                    const SizedBox(height: 4),
-                    PuttsMadePicker(
+    return BlocBuilder<SessionsCubit, SessionsState>(
+      builder: (context, state) {
+        if (state is SessionInProgressState) {
+          List<Widget> previousSetsChildren =
+              List.from(state.currentSession.sets
+                  .asMap()
+                  .entries
+                  .map(
+                    (entry) => PuttingSetRow(
+                      deletable: true,
+                      set: entry.value,
+                      index: entry.key,
+                      delete: () {
+                        _mixpanel.track('Record Screen Set Deleted');
+                        BlocProvider.of<SessionsCubit>(context)
+                            .deleteSet(entry.value);
+                      },
+                    ),
+                  )
+                  .toList()
+                  .reversed);
+          return ListView(
+            children: [
+              _detailsPanel(context),
+              const SizedBox(height: 24),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Putts made',
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: MyPuttColors.darkGray,
+                                    fontSize: 24,
+                                  ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: _putterCountPicker(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  PuttsMadePicker(
                       length: _setLength,
                       initialIndex: _setLength.toDouble(),
                       challengeMode: false,
@@ -86,27 +169,203 @@ class _RecordScreenState extends State<RecordScreen>
                         setState(() {
                           _focusedIndex = newIndex;
                         });
-                      },
-                    ),
-                    const Expanded(child: StatsSection()),
-                    const AddSetButton(),
-                  ],
-                ),
-              );
-            } else {
-              return Center(
-                child: Center(
-                  child: EmptyState(
-                    onRetry: () => BlocProvider.of<SessionsCubit>(context)
-                        .continueSession(),
-                  ),
-                ),
-              );
-            }
+                      }),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                child: MyPuttButton(
+                    title: 'Add set',
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: 50,
+                    iconData: FlutterRemix.add_line,
+                    onPressed: () {
+                      _mixpanel.track(
+                        'Record Screen Add Set Button Pressed',
+                        properties: {
+                          'Putts Attempted': _setLength,
+                          'Putts Made': _focusedIndex
+                        },
+                      );
+                      BlocProvider.of<SessionsCubit>(context).addSet(
+                        PuttingSet(
+                          timeStamp: DateTime.now().millisecondsSinceEpoch,
+                          puttsMade: _focusedIndex,
+                          puttsAttempted: _setLength,
+                          distance: _distance,
+                        ),
+                      );
+                    }),
+              ),
+              const SizedBox(height: 10),
+              ...previousSetsChildren,
+            ],
+          );
+        } else {
+          return Center(
+            child: Center(
+              child: EmptyState(
+                onRetry: () =>
+                    BlocProvider.of<SessionsCubit>(context).continueSession(),
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _detailsPanel(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 16,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Details',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontSize: 24, color: MyPuttColors.darkGray),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // ConditionsRow(
+        //   onPressed: (WindCondition wind) =>
+        //       setState(() => _windCondition = wind),
+        //   iconData: FlutterRemix.windy_line,
+        //   label: 'Wind',
+        //   type: ConditionsType.wind,
+        // ),
+        // ConditionsRow(
+        //   onPressed: (WeatherCondition weather) =>
+        //       setState(() => _weatherCondition = weather),
+        //   iconData: FlutterRemix.sun_fill,
+        //   label: 'Weather',
+        //   type: ConditionsType.weather,
+        // ),
+        // ConditionsRow(
+        //   initialIndex: distanceToIndex[_distance]!,
+        //   onPressed: (int dist) {
+        //     _mixpanel.track(
+        //       'Record Screen Change Distance Button Pressed',
+        //       properties: {'Distance': dist},
+        //     );
+        //     setState(() => _distance = dist);
+        //   },
+        //   iconData: FlutterRemix.map_pin_2_line,
+        //   label: 'Distance',
+        //   type: ConditionsType.distance,
+        // ),
+        DistanceSelectionRow(
+          onIncreasePressed: (int dist) {
+            _mixpanel.track(
+              'Record Screen Decrease Distance Button Pressed',
+              properties: {'Distance': dist},
+            );
+            setState(() => _distance = dist);
           },
         ),
         Container()
       ],
     );
+  }
+
+  Widget _putterCountPicker(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          children: [
+            ElevatedButton(
+              child: Text(
+                '-',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
+              ),
+              onPressed: () {
+                puttsMadePickerKey.currentState?.focusToItem(_setLength - 2);
+                if (_setLength > 1) {
+                  setState(() {
+                    _setLength -= 1;
+                    _focusedIndex = _setLength;
+                  });
+                }
+                _mixpanel.track(
+                  'Record Screen Putter Count Changed',
+                  properties: {'Set Length': _setLength},
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent),
+            ),
+            const SizedBox(width: 4),
+            SizedBox(
+              width: 56,
+              child: Column(
+                children: [
+                  const SizedBox(height: 0),
+                  Text(
+                    _setLength.toString(),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 20,
+                        color: MyPuttColors.darkGray,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    'putters',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontSize: 16,
+                          color: MyPuttColors.darkGray,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            ElevatedButton(
+              child: Text(
+                '+',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontSize: 32, color: MyPuttColors.darkGray),
+              ),
+              onPressed: () {
+                setState(() {
+                  _setLength += 1;
+                });
+                setState(() {
+                  _focusedIndex = _setLength + 1;
+                });
+                _mixpanel.track(
+                  'Record Screen Putter Count Changed',
+                  properties: {'Set Length': _setLength},
+                );
+                Future.delayed(const Duration(milliseconds: 25), () {
+                  puttsMadePickerKey.currentState?.focusToItem(_setLength + 1);
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void dialogCallBack() {
+    if (!sessionInProgress) {
+      Navigator.pop(context);
+    }
   }
 }
