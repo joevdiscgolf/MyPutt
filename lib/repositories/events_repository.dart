@@ -24,6 +24,8 @@ class EventsRepository {
   }
 
   void clearData() {
-    // implement
+    currentEvent = null;
+    currentPlayerData = null;
   }
 }
+//

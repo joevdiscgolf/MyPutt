@@ -31,35 +31,5 @@ class FBAppInfoDataLoader {
       );
       return null;
     });
-
-    // try {
-    //   return FirebaseFirestore.instance
-    //       .doc('$appInfoCollection/$minimumVersionDoc')
-    //       .get()
-    //       .then((snapshot) {
-    //     print('minimum app version snapshot existss: ${snapshot.exists}');
-
-    //   });
-    // } catch (e) {
-    //   print('minimum app version error');
-    //   return null;
-    // }
-    // return FirebaseFirestore.instance
-    //     .doc('$appInfoCollection/$minimumVersionDoc')
-    //     .get()
-    //     .then((snapshot) {
-    //   if (snapshot.exists && snapshot.data()?['minimumVersion'] != null) {
-    //     return snapshot.data()!['minimumVersion'] as String;
-    //   } else {
-    //     return null;
-    //   }
-    // }).catchError((e, trace) {
-    //   FirebaseCrashlytics.instance.recordError(
-    //     e,
-    //     trace,
-    //     reason: '[AppInfoDataLoader][getMinimumAppVersion] firestore timeout',
-    //   );
-    //   return null;
-    // });
   }
 }
