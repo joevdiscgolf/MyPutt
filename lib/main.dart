@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,7 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/error/connection_error_screen.dart';
 import 'package:myputt/screens/force_upgrade/force_upgrade_screen.dart';
 import 'package:myputt/screens/introduction/intro_screen.dart';
@@ -22,8 +26,10 @@ import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/services/global_settings.dart';
 import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/hive_helpers.dart';
+import 'package:myputt/utils/utils.dart';
 import 'cubits/my_profile_cubit.dart';
 
 void main() async {
@@ -32,7 +38,7 @@ void main() async {
   final isPhysicalDevice = await DeviceService.isPhysicalDevice();
   FirebaseFirestore.instance.settings = const Settings(
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-    persistenceEnabled: false,
+    persistenceEnabled: GlobalSettings.useFirebaseCache,
   );
   if (kDebugMode && !isPhysicalDevice) {
     // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
@@ -68,8 +74,22 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    Connectivity().onConnectivityChanged.listen((result) {
+      _connectivityListener(result);
+    });
+    _initTimer();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +107,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: BlocBuilder<AppPhaseCubit, AppPhaseState>(
         builder: (context, state) {
-          return _getNewScreen(state);
+          return _getScreenFromState(state);
         },
       ),
     );
   }
 
-  Widget _getNewScreen(AppPhaseState state) {
+  Widget _getScreenFromState(AppPhaseState state) {
     if (state is LoggedInPhase) {
       return const MainWrapper();
     } else if (state is LoggedOutPhase || state is FirstRunPhase) {
@@ -105,5 +125,29 @@ class MyApp extends StatelessWidget {
     } else {
       return const EnterDetailsScreen();
     }
+  }
+
+  ConnectivityResult? _connectivityResult;
+
+  void _connectivityListener(ConnectivityResult result) {
+    if (_connectivityResult == null ||
+        (!hasConnectivity(_connectivityResult!) && hasConnectivity(result))) {
+      _onConnected();
+    }
+    _connectivityResult = result;
+  }
+
+  void _initTimer() {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (_connectivityResult != null &&
+          hasConnectivity(_connectivityResult!)) {
+        await locator.get<SessionRepository>().syncLocalSessionsToCloud();
+      }
+    });
+  }
+
+  Future<void> _onConnected() async {
+    await Future.delayed(const Duration(seconds: 3));
+    BlocProvider.of<SessionsCubit>(context).onConnectionEstablished();
   }
 }

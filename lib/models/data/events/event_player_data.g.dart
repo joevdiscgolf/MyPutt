@@ -9,7 +9,7 @@ part of 'event_player_data.dart';
 EventPlayerData _$EventPlayerDataFromJson(Map json) => EventPlayerData(
       usermetadata: MyPuttUserMetadata.fromJson(
           Map<String, dynamic>.from(json['usermetadata'] as Map)),
-      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      division: $enumDecode(_$DivisionEnumMap, json['division']),
       sets: (json['sets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
@@ -20,37 +20,11 @@ EventPlayerData _$EventPlayerDataFromJson(Map json) => EventPlayerData(
 Map<String, dynamic> _$EventPlayerDataToJson(EventPlayerData instance) =>
     <String, dynamic>{
       'usermetadata': instance.usermetadata.toJson(),
-      'division': _$DivisionEnumMap[instance.division],
+      'division': _$DivisionEnumMap[instance.division]!,
       'sets': instance.sets.map((e) => e.toJson()).toList(),
       'verificationImg': instance.verificationImg,
       'lockedIn': instance.lockedIn,
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
 
 const _$DivisionEnumMap = {
   Division.mpo: 'mpo',

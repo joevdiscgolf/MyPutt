@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/session_repository.dart';
+import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
@@ -46,7 +47,11 @@ class SessionsScreenAppBar extends StatelessWidget
               Expanded(
                 child: kDebugMode
                     ? ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          await locator
+                              .get<LocalDBService>()
+                              .deleteAllSessions();
+                        },
                         child: const Text('clear sessions'),
                       )
                     : Container(),

@@ -16,26 +16,26 @@ class SessionsCubit extends Cubit<SessionsState> {
   SessionsCubit()
       : super(const SessionLoadingState(sessions: <PuttingSession>[]));
 
-  Future<void> reloadSessions() async {
+  Future<void> reloadCloudSessions() async {
     await Future.wait(
       [
         _sessionRepository.fetchCloudCompletedSessions(),
         _sessionRepository.fetchCloudCurrentSession()
       ],
     );
-    reload();
+    emitUpdatedState();
   }
 
-  void reload() {
+  void emitUpdatedState() {
     if (_sessionRepository.currentSession != null) {
       emit(
         SessionInProgressState(
-          sessions: _sessionRepository.completedSessions,
+          sessions: _sessionRepository.validCompletedSessions,
           currentSession: _sessionRepository.currentSession!,
-          individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.completedSessions),
+          individualStats: _statsService.generateSessionsStatsMap(
+              _sessionRepository.validCompletedSessions),
           currentSessionStats: _statsService.getStatsForSession(
-            _sessionRepository.completedSessions,
+            _sessionRepository.validCompletedSessions,
             _sessionRepository.currentSession!,
           ),
         ),
@@ -43,9 +43,10 @@ class SessionsCubit extends Cubit<SessionsState> {
     } else {
       emit(
         NoActiveSessionState(
-          sessions: _sessionRepository.completedSessions,
-          individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.completedSessions),
+          sessions: _sessionRepository.validCompletedSessions,
+          individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions,
+          ),
         ),
       );
     }
@@ -59,12 +60,12 @@ class SessionsCubit extends Cubit<SessionsState> {
     }
     emit(
       SessionInProgressState(
-        sessions: _sessionRepository.completedSessions,
+        sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions),
         currentSessionStats: _statsService.getStatsForSession(
-          _sessionRepository.completedSessions,
+          _sessionRepository.validCompletedSessions,
           _sessionRepository.currentSession!,
         ),
       ),
@@ -72,12 +73,12 @@ class SessionsCubit extends Cubit<SessionsState> {
 
     emit(
       SessionInProgressState(
-        sessions: _sessionRepository.completedSessions,
+        sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions),
         currentSessionStats: _statsService.getStatsForSession(
-          _sessionRepository.completedSessions,
+          _sessionRepository.validCompletedSessions,
           _sessionRepository.currentSession!,
         ),
       ),
@@ -87,16 +88,17 @@ class SessionsCubit extends Cubit<SessionsState> {
   void continueSession() {
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
-        sessions: _sessionRepository.completedSessions,
+        sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions),
         currentSessionStats: _statsService.getStatsForSession(
-            _sessionRepository.completedSessions,
+            _sessionRepository.validCompletedSessions,
             _sessionRepository.currentSession!),
       ));
     } else {
-      emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+      emit(SessionErrorState(
+          sessions: _sessionRepository.validCompletedSessions));
     }
   }
 
@@ -105,26 +107,27 @@ class SessionsCubit extends Cubit<SessionsState> {
         .finishCurrentSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
     emit(NoActiveSessionState(
-        sessions: _sessionRepository.completedSessions,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions)));
+        sessions: _sessionRepository.validCompletedSessions,
+        individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions)));
   }
 
   void addSet(PuttingSet set) {
     _sessionRepository.addSet(set);
     if (_sessionRepository.currentSession != null) {
       emit(SessionInProgressState(
-        sessions: _sessionRepository.completedSessions,
+        sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
-        individualStats: _statsService
-            .generateSessionsStatsMap(_sessionRepository.completedSessions),
+        individualStats: _statsService.generateSessionsStatsMap(
+            _sessionRepository.validCompletedSessions),
         currentSessionStats: _statsService.getStatsForSession(
-          _sessionRepository.completedSessions,
+          _sessionRepository.validCompletedSessions,
           _sessionRepository.currentSession!,
         ),
       ));
     } else {
-      emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+      emit(SessionErrorState(
+          sessions: _sessionRepository.validCompletedSessions));
     }
   }
 
@@ -133,16 +136,17 @@ class SessionsCubit extends Cubit<SessionsState> {
     if (state is SessionInProgressState) {
       if (_sessionRepository.currentSession != null) {
         emit(SessionInProgressState(
-          sessions: _sessionRepository.completedSessions,
+          sessions: _sessionRepository.validCompletedSessions,
           currentSession: _sessionRepository.currentSession!,
-          individualStats: _statsService
-              .generateSessionsStatsMap(_sessionRepository.completedSessions),
+          individualStats: _statsService.generateSessionsStatsMap(
+              _sessionRepository.validCompletedSessions),
           currentSessionStats: _statsService.getStatsForSession(
-              _sessionRepository.completedSessions,
+              _sessionRepository.validCompletedSessions,
               _sessionRepository.currentSession!),
         ));
       } else {
-        emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+        emit(SessionErrorState(
+            sessions: _sessionRepository.validCompletedSessions));
       }
     }
   }
@@ -152,28 +156,30 @@ class SessionsCubit extends Cubit<SessionsState> {
     if (state is SessionInProgressState) {
       if (_sessionRepository.currentSession != null) {
         emit(SessionInProgressState(
-            sessions: _sessionRepository.completedSessions,
-            individualStats: _statsService
-                .generateSessionsStatsMap(_sessionRepository.completedSessions),
+            sessions: _sessionRepository.validCompletedSessions,
+            individualStats: _statsService.generateSessionsStatsMap(
+                _sessionRepository.validCompletedSessions),
             currentSessionStats: _statsService.getStatsForSession(
-                _sessionRepository.completedSessions,
+                _sessionRepository.validCompletedSessions,
                 _sessionRepository.currentSession!),
             currentSession: _sessionRepository.currentSession!));
       } else {
-        emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+        emit(SessionErrorState(
+            sessions: _sessionRepository.validCompletedSessions));
       }
     } else {
       if (_sessionRepository.currentSession == null) {
         emit(
           NoActiveSessionState(
-            sessions: _sessionRepository.completedSessions,
+            sessions: _sessionRepository.validCompletedSessions,
             individualStats: _statsService.generateSessionsStatsMap(
-              _sessionRepository.completedSessions,
+              _sessionRepository.validCompletedSessions,
             ),
           ),
         );
       } else {
-        emit(SessionErrorState(sessions: _sessionRepository.completedSessions));
+        emit(SessionErrorState(
+            sessions: _sessionRepository.validCompletedSessions));
       }
     }
   }
@@ -182,11 +188,17 @@ class SessionsCubit extends Cubit<SessionsState> {
     _sessionRepository.deleteCurrentSession();
     emit(
       NoActiveSessionState(
-        sessions: _sessionRepository.completedSessions,
+        sessions: _sessionRepository.validCompletedSessions,
         individualStats: _statsService.generateSessionsStatsMap(
-          _sessionRepository.completedSessions,
+          _sessionRepository.validCompletedSessions,
         ),
       ),
     );
+  }
+
+  Future<void> onConnectionEstablished() async {
+    await locator.get<SessionRepository>().fetchCloudCompletedSessions();
+    await locator.get<SessionRepository>().syncLocalSessionsToCloud();
+    emitUpdatedState();
   }
 }

@@ -20,8 +20,8 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventStandingsCubit extends Cubit<EventStandingsState> {
   EventStandingsCubit() : super(EventStandingsLoading()) {
-    Connectivity().checkConnectivity().then(
-        (connectivityResult) => _connected = isConnected(connectivityResult));
+    Connectivity().checkConnectivity().then((connectivityResult) =>
+        _connected = hasConnectivity(connectivityResult));
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -97,7 +97,7 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
   // Re-initialize subscription when back online.
   void _connectivityListener(ConnectivityResult result) {
     final bool wasConnected = _connected;
-    _connected = isConnected(result);
+    _connected = hasConnectivity(result);
 
     if (!wasConnected && _connected) {
       _eventStandingsSubscription?.cancel();

@@ -32,14 +32,13 @@ class _SessionsState extends State<SessionsScreen> {
 
   @override
   void initState() {
-    super.initState();
     _mixpanel.track('Sessions Screen Impression');
-    BlocProvider.of<SessionsCubit>(context).reload();
+    BlocProvider.of<SessionsCubit>(context).emitUpdatedState();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<SessionsCubit>(context).reload();
     return Navigator(
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
@@ -47,7 +46,7 @@ class _SessionsState extends State<SessionsScreen> {
           builder: (BuildContext context) {
             return Scaffold(
               appBar: SessionsScreenAppBar(
-                allSessions: _sessionRepository.completedSessions,
+                allSessions: _sessionRepository.validCompletedSessions,
               ),
               backgroundColor: MyPuttColors.white,
               floatingActionButton: _addButton(context),
@@ -139,7 +138,7 @@ class _SessionsState extends State<SessionsScreen> {
                     _mixpanel.track('Sessions Screen Pull To Refresh');
                     Vibrate.feedback(FeedbackType.light);
                     await BlocProvider.of<SessionsCubit>(context)
-                        .reloadSessions();
+                        .reloadCloudSessions();
                   },
                 ),
                 SliverList(
@@ -155,7 +154,8 @@ class _SessionsState extends State<SessionsScreen> {
           );
         } else {
           return EmptyState(
-            onRetry: () => BlocProvider.of<SessionsCubit>(context).reload(),
+            onRetry: () =>
+                BlocProvider.of<SessionsCubit>(context).emitUpdatedState(),
           );
         }
       },

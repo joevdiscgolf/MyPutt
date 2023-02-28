@@ -27,16 +27,16 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
   void reload() {
     final Stats stats = _statsService.getStatsForRange(
       indexToTimeRange[timeRangeIndex]!,
-      _sessionRepository.completedSessions,
+      _sessionRepository.validCompletedSessions,
       _challengesRepository.completedChallenges,
     );
     final List<Event> events = _statsService.getCalendarEvents(
-        _sessionRepository.completedSessions,
+        _sessionRepository.validCompletedSessions,
         _challengesRepository.completedChallenges);
     emit(HomeScreenLoaded(
         stats: stats,
         sessionRange: timeRangeIndex,
-        allSessions: _sessionRepository.completedSessions,
+        allSessions: _sessionRepository.validCompletedSessions,
         allChallenges: _challengesRepository.completedChallenges,
         events: events));
   }

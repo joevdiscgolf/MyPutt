@@ -23,8 +23,8 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventDetailCubit extends Cubit<EventDetailState> {
   EventDetailCubit() : super(EventDetailInitial()) {
-    Connectivity().checkConnectivity().then(
-        (connectivityResult) => _connected = isConnected(connectivityResult));
+    Connectivity().checkConnectivity().then((connectivityResult) =>
+        _connected = hasConnectivity(connectivityResult));
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -228,7 +228,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
 
   Future<void> _connectivityListener(ConnectivityResult result) async {
     final bool wasConnected = _connected;
-    _connected = isConnected(result);
+    _connected = hasConnectivity(result);
 
     // if (state is EventDetailLoaded) {
     //   emit(EventDetailLoaded(

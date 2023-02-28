@@ -7,7 +7,6 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/connectivity_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/beta_access_service.dart';
@@ -32,7 +31,6 @@ Future<void> setUpLocator() async {
   );
   locator.registerSingleton<Mixpanel>(mixpanel);
   locator.registerSingleton<AppPhaseCubit>(AppPhaseCubit());
-  locator.registerSingleton<ConnectivityService>(ConnectivityService());
   locator
       .registerSingleton<SharedPreferencesService>(SharedPreferencesService());
   locator.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
