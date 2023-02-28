@@ -45,9 +45,7 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: SessionsScreenAppBar(
-                allSessions: _sessionRepository.validCompletedSessions,
-              ),
+              appBar: const SessionsScreenAppBar(),
               backgroundColor: MyPuttColors.white,
               floatingActionButton: _addButton(context),
               floatingActionButtonLocation:

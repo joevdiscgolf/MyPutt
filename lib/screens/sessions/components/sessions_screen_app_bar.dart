@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -9,10 +11,7 @@ import 'package:myputt/utils/layout_helpers.dart';
 
 class SessionsScreenAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const SessionsScreenAppBar({Key? key, required this.allSessions})
-      : super(key: key);
-
-  final List<PuttingSession> allSessions;
+  const SessionsScreenAppBar({Key? key}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(100);
@@ -59,15 +58,19 @@ class SessionsScreenAppBar extends StatelessWidget
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            allSessions.isEmpty
-                ? 'No sessions yet'
-                : '${allSessions.length} total',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
-            textAlign: TextAlign.center,
+          BlocBuilder<SessionsCubit, SessionsState>(
+            builder: (context, state) {
+              return Text(
+                state.sessions.isEmpty
+                    ? 'No sessions yet'
+                    : '${state.sessions.length} total',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontSize: 16, color: MyPuttColors.gray[400]),
+                textAlign: TextAlign.center,
+              );
+            },
           ),
         ],
       ),
