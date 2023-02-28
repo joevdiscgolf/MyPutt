@@ -72,57 +72,6 @@ class SessionListRow extends StatelessWidget {
                 ],
               ),
             ),
-            // Bounceable(
-            //   onTap: () {
-            //     locator
-            //         .get<Mixpanel>()
-            //         .track('Session Row Challenge Button Pressed');
-            //     Vibrate.feedback(FeedbackType.light);
-            //     displayBottomSheet(
-            //       context,
-            //       ShareSheet(
-            //         session: session,
-            //         onComplete: () => Navigator.pop(context),
-            //       ),
-            //     );
-            //   },
-            //   child: const Icon(
-            //     FlutterRemix.sword_fill,
-            //     color: MyPuttColors.blue,
-            //     size: 24,
-            //   ),
-            // ),
-            // const SizedBox(width: 12),
-            // Bounceable(
-            //   onTap: () {
-            //     Vibrate.feedback(FeedbackType.light);
-            //     locator
-            //         .get<Mixpanel>()
-            //         .track('Session List Row Delete Button Pressed');
-            //     showDialog(
-            //       context: context,
-            //       builder: (BuildContext context) => ConfirmDialog(
-            //         actionPressed: delete,
-            //         title: 'Delete session',
-            //         message: 'Are you sure you want to delete this session?',
-            //         buttonlabel: 'Delete',
-            //         buttonColor: MyPuttColors.red,
-            //         icon: const ShadowIcon(
-            //           icon: Icon(
-            //             FlutterRemix.alert_line,
-            //             color: MyPuttColors.red,
-            //             size: 60,
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            //   child: const Icon(
-            //     FlutterRemix.delete_bin_7_line,
-            //     color: MyPuttColors.red,
-            //     size: 20,
-            //   ),
-            // ),
             Icon(
               FlutterRemix.arrow_right_s_line,
               color: MyPuttColors.gray[800]!,
