@@ -10,12 +10,15 @@ class PuttingSession {
     required this.timeStamp,
     this.isSynced = false,
     this.deviceId,
+    this.isDeleted,
   });
+
   final String id;
   final int timeStamp;
   List<PuttingSet> sets = [];
   final bool? isSynced;
   final String? deviceId;
+  final bool? isDeleted;
 
   num get totalPuttsMade {
     num total = 0;

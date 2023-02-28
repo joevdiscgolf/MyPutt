@@ -284,7 +284,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         Builder(builder: (context) {
                           final double? c1XPercentage =
                               _statsService.getPercentageWithCutoff(
-                                  _sessionRepository.completedSessions,
+                                  _sessionRepository.validCompletedSessions,
                                   _challengesRepository.completedChallenges,
                                   CircleCutoffs.c1x);
                           return ShadowCircularIndicator(
@@ -303,15 +303,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           Builder(builder: (context) {
                             final double? c2Percentage =
                                 _statsService.getPercentageWithCutoff(
-                                    _sessionRepository.completedSessions,
+                                    _sessionRepository.validCompletedSessions,
                                     _challengesRepository.completedChallenges,
                                     CircleCutoffs.c2);
                             return ShadowCircularIndicator(
                                 decimal: c2Percentage, size: 80);
                           }),
                           const SizedBox(height: 12),
-                          Text('Circle 2',
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text(
+                            'Circle 2',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
                         ],
                       );
                     }),
@@ -323,7 +325,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           Builder(builder: (context) {
                             final double? c2Percentage =
                                 _statsService.getPercentageWithCutoff(
-                                    _sessionRepository.completedSessions,
+                                    _sessionRepository.validCompletedSessions,
                                     _challengesRepository.completedChallenges,
                                     CircleCutoffs.none);
                             return ShadowCircularIndicator(
@@ -371,7 +373,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Total putts',
                   subtitle:
-                      '${_statsService.getPuttCountFromSessions(_sessionRepository.completedSessions, true) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.completedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.completedSessions, false) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.completedSessions, _challengesRepository.completedChallenges), false)}'),
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, true) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, false) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), false)}'),
               const SizedBox(
                 height: 4,
               ),
@@ -382,7 +384,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     size: 32,
                   ),
                   title: 'Sessions completed',
-                  subtitle: '${_sessionRepository.completedSessions.length}'),
+                  subtitle:
+                      '${_sessionRepository.validCompletedSessions.length}'),
               const SizedBox(
                 height: 4,
               ),

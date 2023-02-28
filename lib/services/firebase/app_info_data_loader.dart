@@ -18,6 +18,9 @@ class FBAppInfoDataLoader {
         .doc('$appInfoCollection/$minimumVersionDoc')
         .get()
         .then((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      if (snapshot.metadata.isFromCache) {
+        return null;
+      }
       if (snapshot.exists && snapshot.data()?['minimumVersion'] != null) {
         return snapshot.data()!['minimumVersion'] as String;
       } else {

@@ -30,41 +30,15 @@ Map<String, dynamic> _$GetEventResponseToJson(GetEventResponse instance) =>
     };
 
 JoinEventRequest _$JoinEventRequestFromJson(Map json) => JoinEventRequest(
-      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      division: $enumDecode(_$DivisionEnumMap, json['division']),
       eventId: json['eventId'] as String,
     );
 
 Map<String, dynamic> _$JoinEventRequestToJson(JoinEventRequest instance) =>
     <String, dynamic>{
-      'division': _$DivisionEnumMap[instance.division],
+      'division': _$DivisionEnumMap[instance.division]!,
       'eventId': instance.eventId,
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
 
 const _$DivisionEnumMap = {
   Division.mpo: 'mpo',
@@ -85,7 +59,7 @@ const _$DivisionEnumMap = {
 
 JoinEventWithCodeRequest _$JoinEventWithCodeRequestFromJson(Map json) =>
     JoinEventWithCodeRequest(
-      division: _$enumDecode(_$DivisionEnumMap, json['division']),
+      division: $enumDecode(_$DivisionEnumMap, json['division']),
       code: json['code'] as int?,
       codeRequired: json['codeRequired'] as bool?,
     );
@@ -93,7 +67,7 @@ JoinEventWithCodeRequest _$JoinEventWithCodeRequestFromJson(Map json) =>
 Map<String, dynamic> _$JoinEventWithCodeRequestToJson(
         JoinEventWithCodeRequest instance) =>
     <String, dynamic>{
-      'division': _$DivisionEnumMap[instance.division],
+      'division': _$DivisionEnumMap[instance.division]!,
       'code': instance.code,
       'codeRequired': instance.codeRequired,
     };
@@ -152,7 +126,7 @@ SavePlayerSetsResponse _$SavePlayerSetsResponseFromJson(Map json) =>
     SavePlayerSetsResponse(
       success: json['success'] as bool,
       eventStatus:
-          _$enumDecodeNullable(_$EventStatusEnumMap, json['eventStatus']),
+          $enumDecodeNullable(_$EventStatusEnumMap, json['eventStatus']),
     );
 
 Map<String, dynamic> _$SavePlayerSetsResponseToJson(
@@ -161,17 +135,6 @@ Map<String, dynamic> _$SavePlayerSetsResponseToJson(
       'success': instance.success,
       'eventStatus': _$EventStatusEnumMap[instance.eventStatus],
     };
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
-}
 
 const _$EventStatusEnumMap = {
   EventStatus.upcoming: 'upcoming',
@@ -250,7 +213,7 @@ EventCreateParams _$EventCreateParamsFromJson(Map json) => EventCreateParams(
       description: json['description'] as String?,
       verificationRequired: json['verificationRequired'] as bool,
       divisions: (json['divisions'] as List<dynamic>)
-          .map((e) => _$enumDecode(_$DivisionEnumMap, e))
+          .map((e) => $enumDecode(_$DivisionEnumMap, e))
           .toList(),
       startDate: json['startDate'] as String,
       endDate: json['endDate'] as String,
@@ -265,7 +228,8 @@ Map<String, dynamic> _$EventCreateParamsToJson(EventCreateParams instance) =>
       'name': instance.name,
       'description': instance.description,
       'verificationRequired': instance.verificationRequired,
-      'divisions': instance.divisions.map((e) => _$DivisionEnumMap[e]).toList(),
+      'divisions':
+          instance.divisions.map((e) => _$DivisionEnumMap[e]!).toList(),
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'challengeStructure':

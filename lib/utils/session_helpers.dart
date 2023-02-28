@@ -1,11 +1,36 @@
-import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
-import 'package:myputt/services/device_service.dart';
 
-class SessionHelpers {
+abstract class SessionHelpers {
   static List<PuttingSession> removeSession(
       String idToRemove, List<PuttingSession> allSessions) {
     return allSessions.where((session) => session.id != idToRemove).toList();
+  }
+
+  static List<PuttingSession> removeSessions(
+    List<PuttingSession> sessionsToRemove,
+    List<PuttingSession> allSessions,
+  ) {
+    final Iterable<String> idsToRemove =
+        sessionsToRemove.map((sessionToRemove) => sessionToRemove.id);
+    return allSessions
+        .where((session) => !idsToRemove.contains(session.id))
+        .toList();
+  }
+
+  static List<PuttingSession> setSessionToDeleted(
+    String idToDelete,
+    List<PuttingSession> allSessions,
+  ) {
+    try {
+      final int index =
+          allSessions.indexWhere((session) => session.id == idToDelete);
+      final Map<String, dynamic> sessionJson = allSessions[index].toJson();
+      sessionJson['deleted'] = true;
+      allSessions[index] = PuttingSession.fromJson(sessionJson);
+      return allSessions;
+    } catch (e) {
+      return allSessions;
+    }
   }
 
   static List<PuttingSession> setSyncedToTrue(
@@ -21,25 +46,20 @@ class SessionHelpers {
   }
 
   static List<PuttingSession> mergeCloudSessions(
-    List<PuttingSession> localUnsyncedSessions,
+    List<PuttingSession> localSessions,
     List<PuttingSession> cloudSessions,
   ) {
-    final String? deviceId = locator.get<DeviceService>().getDeviceId;
-    if (deviceId == null) {
-      return <PuttingSession>[];
-    }
-    final List<String> unsyncedSessionIds =
-        localUnsyncedSessions.map((session) => session.id).toList();
+    final List<String> localSessionIds =
+        localSessions.map((session) => session.id).toList();
 
     // include the local unsynced sessions
     // include cloud sessions if the cloud session is not stored locally and the device Id does not match
     // if the device id does match, that means the session has been deleted locally but not in the cloud yet
     return [
-      ...localUnsyncedSessions,
+      ...localSessions,
       ...cloudSessions.where(
-        (cloudSession) => !(unsyncedSessionIds.contains(cloudSession.id) ||
-            cloudSession.deviceId == deviceId),
-      ),
+        (cloudSession) => !localSessionIds.contains(cloudSession.id),
+      )
     ];
   }
 
@@ -70,23 +90,31 @@ class SessionHelpers {
         .where((cloudSession) => !localSessionIds.contains(cloudSession.id)));
   }
 
-  static List<PuttingSession> getDeletedSessions(
+  static List<PuttingSession> getSessionsDeletedInCloud(
     List<PuttingSession> localSessions,
     List<PuttingSession> cloudSessions,
   ) {
-    final String? deviceId = locator.get<DeviceService>().getDeviceId;
-    if (deviceId == null) {
-      return [];
-    }
+    final List<String> cloudSessionIds =
+        cloudSessions.map((cloudSession) => cloudSession.id).toList();
 
-    final List<String> localSessionIds =
-        localSessions.map((localSession) => localSession.id).toList();
+    final List<PuttingSession> syncedLocalSessions = localSessions
+        .where((localSession) => localSession.isSynced == true)
+        .toList();
 
-    // Cloud session deleted if If the session is not stored locally, and the device Id matches the current device
-    return cloudSessions
-        .where((cloudSession) =>
-            !localSessionIds.contains(cloudSession.id) &&
-            cloudSession.deviceId == deviceId)
+    // session has been deleted in the cloud if the synced local session exists, but not the cloud session.
+    return syncedLocalSessions
+        .where((syncedLocalSession) =>
+            !cloudSessionIds.contains(syncedLocalSession.id))
+        .toList();
+  }
+
+  static List<PuttingSession> getSessionsDeletedLocally(
+    List<PuttingSession> localSessions,
+    List<PuttingSession> cloudSessions,
+  ) {
+    // session has been deleted locally if marked as such.
+    return localSessions
+        .where((localSession) => localSession.isDeleted == true)
         .toList();
   }
 

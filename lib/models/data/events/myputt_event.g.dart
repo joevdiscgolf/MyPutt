@@ -14,11 +14,11 @@ MyPuttEvent _$MyPuttEventFromJson(Map json) => MyPuttEvent(
       description: json['description'] as String?,
       eventCustomizationData: EventCustomizationData.fromJson(
           Map<String, dynamic>.from(json['eventCustomizationData'] as Map)),
-      eventType: _$enumDecode(_$EventTypeEnumMap, json['eventType']),
+      eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
       startTimestamp: json['startTimestamp'] as int,
       endTimestamp: json['endTimestamp'] as int,
       completionTimestamp: json['completionTimestamp'] as int?,
-      status: _$enumDecode(_$EventStatusEnumMap, json['status']),
+      status: $enumDecode(_$EventStatusEnumMap, json['status']),
       bannerImgUrl: json['bannerImgUrl'] as String? ??
           'https://www.discgolfpark.com/wp-content/uploads/2018/04/simon_putt.jpg',
       participantCount: json['participantCount'] as int,
@@ -41,10 +41,10 @@ Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
       'name': instance.name,
       'description': instance.description,
       'eventCustomizationData': instance.eventCustomizationData.toJson(),
-      'eventType': _$EventTypeEnumMap[instance.eventType],
+      'eventType': _$EventTypeEnumMap[instance.eventType]!,
       'startTimestamp': instance.startTimestamp,
       'endTimestamp': instance.endTimestamp,
-      'status': _$EventStatusEnumMap[instance.status],
+      'status': _$EventStatusEnumMap[instance.status]!,
       'completionTimestamp': instance.completionTimestamp,
       'bannerImgUrl': instance.bannerImgUrl,
       'participantCount': instance.participantCount,
@@ -53,32 +53,6 @@ Map<String, dynamic> _$MyPuttEventToJson(MyPuttEvent instance) =>
       'admins': instance.admins.map((e) => e.toJson()).toList(),
       'adminUids': instance.adminUids,
     };
-
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
 
 const _$EventTypeEnumMap = {
   EventType.club: 'club',
@@ -98,7 +72,7 @@ EventCustomizationData _$EventCustomizationDataFromJson(Map json) =>
               Map<String, dynamic>.from(e as Map)))
           .toList(),
       divisions: (json['divisions'] as List<dynamic>)
-          .map((e) => _$enumDecode(_$DivisionEnumMap, e))
+          .map((e) => $enumDecode(_$DivisionEnumMap, e))
           .toList(),
       verificationRequired: json['verificationRequired'] as bool,
       codeRequired: json['codeRequired'] as bool?,
@@ -109,7 +83,8 @@ Map<String, dynamic> _$EventCustomizationDataToJson(
     <String, dynamic>{
       'challengeStructure':
           instance.challengeStructure.map((e) => e.toJson()).toList(),
-      'divisions': instance.divisions.map((e) => _$DivisionEnumMap[e]).toList(),
+      'divisions':
+          instance.divisions.map((e) => _$DivisionEnumMap[e]!).toList(),
       'verificationRequired': instance.verificationRequired,
       'codeRequired': instance.codeRequired,
     };

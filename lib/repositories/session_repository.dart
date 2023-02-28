@@ -12,9 +12,15 @@ import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
 class SessionRepository {
+  final DatabaseService _databaseService = DatabaseService();
+
   PuttingSession? currentSession;
   List<PuttingSession> completedSessions = [];
-  final DatabaseService _databaseService = DatabaseService();
+  List<PuttingSession> get validCompletedSessions {
+    return completedSessions
+        .where((session) => session.isDeleted != true)
+        .toList();
+  }
 
   Future<bool> startActiveSession() async {
     final String? currentUid =
@@ -91,15 +97,31 @@ class SessionRepository {
   }
 
   Future<bool> deleteCompletedSession(PuttingSession sessionToDelete) async {
-    completedSessions = SessionHelpers.removeSession(
+    // set deleted to true
+    completedSessions = SessionHelpers.setSessionToDeleted(
       sessionToDelete.id,
       completedSessions,
     );
+
     final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
     if (!localSaveSuccess) {
       return false;
     }
-    FBSessionsDataWriter.instance.deleteCompletedSession(sessionToDelete.id);
+
+    FBSessionsDataWriter.instance
+        .deleteCompletedSession(sessionToDelete.id)
+        .then((bool sessionDeletedInCloud) {
+      if (sessionDeletedInCloud) {
+        // remove completely
+        completedSessions = SessionHelpers.removeSession(
+          sessionToDelete.id,
+          completedSessions,
+        );
+        return _storeCompletedSessionsInLocalDB();
+      } else {
+        return false;
+      }
+    });
     return true;
   }
 
@@ -123,15 +145,7 @@ class SessionRepository {
   }
 
   Future<bool> _storeCurrentSessionInLocalDB() {
-    return locator
-        .get<LocalDBService>()
-        .storeCurrentSession(currentSession)
-        .then((success) {
-      final PuttingSession? currentLocalSession =
-          locator.get<LocalDBService>().retrieveCurrentSession();
-      log('local current session: ${currentLocalSession != null ? 'exists' : 'does not exist'}');
-      return success;
-    });
+    return locator.get<LocalDBService>().storeCurrentSession(currentSession);
   }
 
   void fetchLocalCompletedSessions() {
@@ -145,8 +159,11 @@ class SessionRepository {
   }
 
   Future<void> syncLocalSessionsToCloud() async {
-    List<PuttingSession> newlySyncedSessions =
-        completedSessions.where((session) => session.isSynced != true).toList();
+    // do not sync deleted sessions to cloud
+    List<PuttingSession> newlySyncedSessions = completedSessions
+        .where(
+            (session) => session.isSynced != true && session.isDeleted != true)
+        .toList();
     newlySyncedSessions = SessionHelpers.setSyncedToTrue(newlySyncedSessions);
 
     if (newlySyncedSessions.isEmpty) {
@@ -171,42 +188,85 @@ class SessionRepository {
     await _storeCompletedSessionsInLocalDB();
   }
 
-  Future<void> fetchCloudCompletedSessions() async {
+  Future<bool> fetchCloudCompletedSessions() async {
     List<PuttingSession>? cloudSessions;
+
+    final List<PuttingSession> unsyncedSessions =
+        completedSessions.where((session) => session.isSynced != true).toList();
     cloudSessions = await _databaseService.getCompletedSessions();
 
     if (cloudSessions != null) {
       cloudSessions = SessionHelpers.setSyncedToTrue(cloudSessions);
 
-      final List<PuttingSession> unsyncedSessions = completedSessions
-          .where((session) => session.isSynced != true)
-          .toList();
-      final List<PuttingSession> combinedSessions =
+      List<PuttingSession> combinedSessions =
           SessionHelpers.mergeCloudSessions(unsyncedSessions, cloudSessions);
 
       // store new sessions if necessary.
       final List<PuttingSession> newSessions =
           SessionHelpers.getNewSessions(completedSessions, cloudSessions);
 
-      // delete sessions that failed to delete if necessary.
-      final List<PuttingSession> deletedSessions =
-          SessionHelpers.getDeletedSessions(completedSessions, cloudSessions);
+      // sessions deleted locally that still exist in the cloud
+      final List<PuttingSession> sessionsDeletedLocally =
+          SessionHelpers.getSessionsDeletedLocally(
+        completedSessions,
+        cloudSessions,
+      );
 
-      if (newSessions.isNotEmpty) {
+      // sessions deleted in the cloud that still exist locally
+      final List<PuttingSession> sessionsDeletedInCloud =
+          SessionHelpers.getSessionsDeletedInCloud(
+        completedSessions,
+        cloudSessions,
+      );
+
+      // remove sessions that were deleted in the cloud
+      combinedSessions = SessionHelpers.removeSessions(
+        sessionsDeletedInCloud,
+        combinedSessions,
+      );
+
+      // update local sessions if there are new sessions or sessions have been removed
+      if (newSessions.isNotEmpty || sessionsDeletedInCloud.isNotEmpty) {
         final bool success = await locator
             .get<LocalDBService>()
             .storeCompletedSessions(combinedSessions);
         if (!success) {
-          log('Failed to save new cloud sessions in local DB');
+          log('[SessionsRepository][fetchCloudCompletedSessions] Failed to save new cloud sessions in local DB');
         }
       }
 
       completedSessions = combinedSessions;
 
-      if (deletedSessions.isNotEmpty) {
-        await FBSessionsDataWriter.instance
-            .deleteSessionsBatch(deletedSessions);
+      if (sessionsDeletedLocally.isNotEmpty) {
+        final bool deleteSuccess = await FBSessionsDataWriter.instance
+            .deleteSessionsBatch(sessionsDeletedLocally);
+        log('[SessionsRepository][fetchCloudCompletedSessions] delete sessions batch - success: $deleteSuccess');
+
+        // remove sessions locally permanently if deleted in cloud
+        if (deleteSuccess) {
+          completedSessions = SessionHelpers.removeSessions(
+            sessionsDeletedLocally,
+            completedSessions,
+          );
+          final bool localSaveSuccess =
+              await _storeCompletedSessionsInLocalDB();
+          log('[SessionsRepository][fetchCloudCompletedSessions] saved current sessions locally - success: $localSaveSuccess');
+        }
       }
+      if (sessionsDeletedInCloud.isNotEmpty) {
+        log('[SessionsRepository][fetchCloudCompletedSessions] deleting local sessions that were deleted in clouds');
+        completedSessions = SessionHelpers.removeSessions(
+          sessionsDeletedInCloud,
+          completedSessions,
+        );
+      }
+
+      final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
+      log('[SessionsRepository][fetchCloudCompletedSessions] saved current sessions locally - success: $localSaveSuccess');
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -220,7 +280,7 @@ class SessionRepository {
       final int sessionsLengthAfter =
           locator.get<LocalDBService>().retrieveCompletedSessions()?.length ??
               0;
-      log('sessions before: $sessionsLengthBefore, sessions after: $sessionsLengthAfter');
+      log('[SessionsRepository][_storeCompletedSessionsInLocalDB] local before: $sessionsLengthBefore, local sessions after: $sessionsLengthAfter');
       return success;
     });
   }

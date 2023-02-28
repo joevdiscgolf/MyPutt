@@ -36,12 +36,15 @@ void clearRepositoryData() {
 
 void reloadCubits(BuildContext context) {
   BlocProvider.of<HomeScreenCubit>(context).reload();
-  BlocProvider.of<SessionsCubit>(context).reload();
+  BlocProvider.of<SessionsCubit>(context).emitUpdatedState();
   BlocProvider.of<ChallengesCubit>(context).reload();
   BlocProvider.of<MyProfileCubit>(context).reload();
 }
 
-bool isConnected(ConnectivityResult? connectivityResult) {
+bool hasConnectivity(ConnectivityResult? connectivityResult) {
+  if (connectivityResult == null) {
+    return true;
+  }
   return [
     ConnectivityResult.wifi,
     ConnectivityResult.mobile,

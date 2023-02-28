@@ -34,8 +34,5 @@ class SessionErrorState extends SessionsState {
 }
 
 class SessionLoadingState extends SessionsState {
-  const SessionLoadingState({required sessions})
-      : super(
-          sessions: sessions,
-        );
+  const SessionLoadingState({required sessions}) : super(sessions: sessions);
 }

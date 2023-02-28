@@ -16,7 +16,7 @@ class SessionSummaryCubit extends Cubit<SessionSummaryState> {
   void openSessionSummary(PuttingSession session) {
     emit(SessionSummaryLoaded(
         stats: _statsService.getStatsForSession(
-            _sessionRepository.completedSessions, session),
+            _sessionRepository.validCompletedSessions, session),
         session: session));
   }
 }
