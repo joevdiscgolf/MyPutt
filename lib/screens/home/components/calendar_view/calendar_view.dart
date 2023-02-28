@@ -137,7 +137,6 @@ class _CalendarViewState extends State<CalendarView>
                           .deleteCompletedSession(session);
                       BlocProvider.of<HomeScreenCubit>(context).reload();
                     },
-                    isCurrentSession: false,
                     onTap: () {
                       Vibrate.feedback(FeedbackType.light);
                       BlocProvider.of<SessionSummaryCubit>(context)

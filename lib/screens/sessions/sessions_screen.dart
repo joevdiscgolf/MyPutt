@@ -37,6 +37,11 @@ class _SessionsState extends State<SessionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
+=======
+    BlocProvider.of<SessionsCubit>(context).reload();
+
+>>>>>>> 50244ad (Update sessions screen design)
     return Navigator(
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
@@ -104,7 +109,6 @@ class _SessionsState extends State<SessionsScreen> {
                             .deleteCompletedSession(entry.value);
                         BlocProvider.of<HomeScreenCubit>(context).reload();
                       },
-                      isCurrentSession: false,
                       onTap: () {
                         Vibrate.feedback(FeedbackType.light);
                         _mixpanel.track('Sessions Screen Session Row Pressed',
@@ -126,6 +130,7 @@ class _SessionsState extends State<SessionsScreen> {
                   .reversed,
             ),
           );
+<<<<<<< HEAD
           return Padding(
             padding: const EdgeInsets.all(8),
             child: CustomScrollView(
@@ -139,15 +144,30 @@ class _SessionsState extends State<SessionsScreen> {
                   },
                 ),
                 SliverList(
+=======
+          return CustomScrollView(
+            slivers: [
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  _mixpanel.track('Sessions Screen Pull To Refresh');
+                  Vibrate.feedback(FeedbackType.light);
+                  await BlocProvider.of<SessionsCubit>(context)
+                      .reloadSessions();
+                },
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                sliver: SliverList(
+>>>>>>> 50244ad (Update sessions screen design)
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return Column(children: children);
+                      return children[index];
                     },
-                    childCount: 1,
+                    childCount: children.length,
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           );
         } else {
           return EmptyState(
