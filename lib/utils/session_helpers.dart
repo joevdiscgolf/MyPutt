@@ -25,7 +25,7 @@ abstract class SessionHelpers {
       final int index =
           allSessions.indexWhere((session) => session.id == idToDelete);
       final Map<String, dynamic> sessionJson = allSessions[index].toJson();
-      sessionJson['deleted'] = true;
+      sessionJson['isDeleted'] = true;
       allSessions[index] = PuttingSession.fromJson(sessionJson);
       return allSessions;
     } catch (e) {

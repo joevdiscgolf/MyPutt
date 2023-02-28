@@ -153,12 +153,14 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   Future<void> deleteCompletedSession(PuttingSession session) async {
     await _sessionRepository.deleteCompletedSession(session);
+
     if (state is SessionInProgressState) {
       if (_sessionRepository.currentSession != null) {
         emit(SessionInProgressState(
             sessions: _sessionRepository.validCompletedSessions,
             individualStats: _statsService.generateSessionsStatsMap(
-                _sessionRepository.validCompletedSessions),
+              _sessionRepository.validCompletedSessions,
+            ),
             currentSessionStats: _statsService.getStatsForSession(
                 _sessionRepository.validCompletedSessions,
                 _sessionRepository.currentSession!),

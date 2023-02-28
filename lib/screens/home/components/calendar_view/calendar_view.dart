@@ -14,7 +14,7 @@ import 'package:myputt/screens/challenge/components/challenges_list.dart';
 import 'package:myputt/screens/home/components/calendar_view/performance_calendar_panel.dart';
 import 'package:myputt/screens/home/components/home_screen_tab.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
-import 'package:myputt/screens/sessions/session_summary_screen.dart';
+import 'package:myputt/screens/session_summary/session_summary_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -137,7 +137,6 @@ class _CalendarViewState extends State<CalendarView>
                           .deleteCompletedSession(session);
                       BlocProvider.of<HomeScreenCubit>(context).reload();
                     },
-                    isCurrentSession: false,
                     onTap: () {
                       Vibrate.feedback(FeedbackType.light);
                       BlocProvider.of<SessionSummaryCubit>(context)

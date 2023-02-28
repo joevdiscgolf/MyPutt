@@ -3,55 +3,69 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/dialogs/confirm_dialog.dart';
+import 'package:myputt/components/misc/shadow_icon.dart';
+import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.dart';
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
+import 'package:myputt/screens/session_summary/components/session_summary_app_bar.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class SessionSummaryScreen extends StatefulWidget {
-  const SessionSummaryScreen({
-    Key? key,
-    required this.session,
-  }) : super(key: key);
+  const SessionSummaryScreen({Key? key, required this.session})
+      : super(key: key);
 
   final PuttingSession session;
 
   @override
-  _SessionSummaryScreenState createState() => _SessionSummaryScreenState();
+  State<SessionSummaryScreen> createState() => _SessionSummaryScreenState();
 }
 
 class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
-  final Mixpanel _mixpanel = locator.get<Mixpanel>();
-
-  @override
-  void initState() {
-    super.initState();
-    _mixpanel.track('Session Summary Screen Impression');
-  }
+  bool _shouldPopOnDismiss = false;
 
   @override
   Widget build(BuildContext context) {
+    locator.get<Mixpanel>().track('Session Summary Screen Impression');
     return Scaffold(
         backgroundColor: MyPuttColors.white,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(
-            color: MyPuttColors.darkGray,
-          ),
-          title: Text(
-            'Session',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontSize: 28, color: MyPuttColors.blue),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
+        appBar: SessionSummaryAppBar(
+          showDeleteDialog: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => ConfirmDialog(
+                actionPressed: () {
+                  _onDelete(context);
+                  setState(() {
+                    _shouldPopOnDismiss = true;
+                  });
+                  // Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                title: 'Delete session',
+                message: 'Are you sure you want to delete this session?',
+                buttonlabel: 'Delete',
+                buttonColor: MyPuttColors.red,
+                icon: const ShadowIcon(
+                  icon: Icon(
+                    FlutterRemix.alert_line,
+                    color: MyPuttColors.red,
+                    size: 60,
+                  ),
+                ),
+              ),
+            ).then((_) {
+              if (_shouldPopOnDismiss) {
+                Navigator.of(context).pop();
+              }
+            });
+          },
         ),
         body: BlocBuilder<SessionSummaryCubit, SessionSummaryState>(
           builder: (context, state) {
@@ -105,7 +119,7 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         allTimePercentage: allTimePercentages[entry.key] ?? entry.value,
       ));
     }
-    children.addAll(List.from(widget.session.sets
+    children.addAll(List.from(session.sets
         .asMap()
         .entries
         .map((entry) => PuttingSetRow(
@@ -152,5 +166,11 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         ];
       },
     );
+  }
+
+  void _onDelete(BuildContext context) {
+    BlocProvider.of<SessionsCubit>(context)
+        .deleteCompletedSession(widget.session);
+    BlocProvider.of<HomeScreenCubit>(context).reload();
   }
 }

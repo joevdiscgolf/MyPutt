@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
-import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/sessions/components/create_new_session_button.dart';
+import 'package:myputt/screens/sessions/components/resume_session_card.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
-import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/sessions/components/sessions_screen_app_bar.dart';
 import 'package:myputt/utils/colors.dart';
-import 'session_summary_screen.dart';
+import '../session_summary/session_summary_screen.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -27,6 +27,7 @@ class SessionsScreen extends StatefulWidget {
 
 class _SessionsState extends State<SessionsScreen> {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -43,11 +44,11 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: const SessionsScreenAppBar(),
+              appBar: SessionsScreenAppBar(scrollController: _scrollController),
               backgroundColor: MyPuttColors.white,
-              floatingActionButton: _addButton(context),
+              floatingActionButton: const CreateNewSessionButton(),
               floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
+                  FloatingActionButtonLocation.endFloat,
               body: _mainBody(context),
             );
           },
@@ -61,34 +62,7 @@ class _SessionsState extends State<SessionsScreen> {
       builder: (context, state) {
         if (state is SessionInProgressState || state is NoActiveSessionState) {
           List<Widget> children = [];
-          if (state is SessionInProgressState) {
-            children.add(
-              SessionListRow(
-                session: state.currentSession,
-                delete: () {
-                  _mixpanel.track('Sessions Screen Delete Session Confirmed');
-                  BlocProvider.of<SessionsCubit>(context)
-                      .deleteCurrentSession();
-                },
-                onTap: () {
-                  Vibrate.feedback(FeedbackType.light);
-                  _mixpanel.track('Sessions Screen Current Session Row Pressed',
-                      properties: {
-                        'Set Count': state.currentSession.sets.length,
-                      });
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => BlocProvider.value(
-                        value: BlocProvider.of<SessionsCubit>(context),
-                        child: const RecordScreen(),
-                      ),
-                    ),
-                  );
-                },
-                isCurrentSession: true,
-              ),
-            );
-          }
+
           children.addAll(
             List.from(
               state.sessions
@@ -103,7 +77,6 @@ class _SessionsState extends State<SessionsScreen> {
                             .deleteCompletedSession(entry.value);
                         BlocProvider.of<HomeScreenCubit>(context).reload();
                       },
-                      isCurrentSession: false,
                       onTap: () {
                         Vibrate.feedback(FeedbackType.light);
                         _mixpanel.track('Sessions Screen Session Row Pressed',
@@ -125,28 +98,41 @@ class _SessionsState extends State<SessionsScreen> {
                   .reversed,
             ),
           );
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: CustomScrollView(
-              slivers: [
-                CupertinoSliverRefreshControl(
-                  onRefresh: () async {
-                    _mixpanel.track('Sessions Screen Pull To Refresh');
-                    Vibrate.feedback(FeedbackType.light);
-                    await BlocProvider.of<SessionsCubit>(context)
-                        .reloadCloudSessions();
-                  },
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              if (state is SessionInProgressState)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: SliverAppBarDelegate(
+                    ResumeSessionCard(currentSession: state.currentSession),
+                  ),
                 ),
-                SliverList(
+              CupertinoSliverRefreshControl(
+                onRefresh: () async {
+                  _mixpanel.track('Sessions Screen Pull To Refresh');
+                  Vibrate.feedback(FeedbackType.light);
+                  await BlocProvider.of<SessionsCubit>(context)
+                      .reloadCloudSessions();
+                },
+              ),
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: state is SessionInProgressState ? 20 : 0,
+                  bottom: 32,
+                ),
+                sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
-                      return Column(children: children);
+                      return children[index];
                     },
-                    childCount: 1,
+                    childCount: children.length,
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           );
         } else {
           return EmptyState(
@@ -154,41 +140,6 @@ class _SessionsState extends State<SessionsScreen> {
                 BlocProvider.of<SessionsCubit>(context).emitUpdatedState(),
           );
         }
-      },
-    );
-  }
-
-  Widget _addButton(BuildContext context) {
-    return BlocBuilder<SessionsCubit, SessionsState>(
-      builder: (context, state) {
-        if (state is SessionInProgressState) {
-          return Container();
-        }
-        return MyPuttButton(
-          iconData: FlutterRemix.add_line,
-          width: MediaQuery.of(context).size.width / 2,
-          shadowColor: MyPuttColors.gray[400],
-          onPressed: () {
-            Vibrate.feedback(FeedbackType.light);
-            _mixpanel.track(
-              'Sessions Screen New Session Button Pressed',
-              properties: {'Session Count': state.sessions.length},
-            );
-            if (state is! SessionInProgressState) {
-              BlocProvider.of<SessionsCubit>(context).startNewSession();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => BlocProvider.value(
-                    value: BlocProvider.of<SessionsCubit>(context),
-                    child: const RecordScreen(),
-                  ),
-                ),
-              );
-            }
-          },
-          title: 'New session',
-          textSize: 16,
-        );
       },
     );
   }
