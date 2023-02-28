@@ -9,7 +9,6 @@ import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
@@ -28,7 +27,6 @@ class SessionsScreen extends StatefulWidget {
 
 class _SessionsState extends State<SessionsScreen> {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
 
   @override
   void initState() {

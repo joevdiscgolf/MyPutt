@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/colors.dart';
