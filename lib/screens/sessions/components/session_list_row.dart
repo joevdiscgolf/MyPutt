@@ -63,7 +63,7 @@ class SessionListRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '$setCount sets, $puttsAttempted putts',
+                    '$setCount ${setCount == 1 ? 'set' : 'sets'}, $puttsAttempted ${puttsAttempted == 1 ? 'putt' : 'putts'}',
                     style: Theme.of(context)
                         .textTheme
                         .titleSmall
