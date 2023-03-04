@@ -5,8 +5,8 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 
-class AddSetButton extends StatelessWidget {
-  const AddSetButton({Key? key}) : super(key: key);
+class RecordAddSetButton extends StatelessWidget {
+  const RecordAddSetButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

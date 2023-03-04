@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final bool isSmallPhone =
+        MediaQuery.of(context).size.height <= kIPhone8Height;
     return FractionallySizedBox(
       heightFactor: 0.75,
       child: Container(
         constraints: const BoxConstraints(maxHeight: 40),
-        // color: MyPuttColors.pink.withOpacity(0.5),
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

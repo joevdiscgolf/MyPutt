@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
+import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -66,6 +67,7 @@ void main() async {
             BlocProvider(create: (_) => EventStandingsCubit()),
             BlocProvider(create: (_) => locator.get<AppPhaseCubit>()),
             BlocProvider(create: (_) => SessionsCubit()),
+            BlocProvider(create: (_) => RecordCubit()),
           ],
           child: const MyApp(),
         ),

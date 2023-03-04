@@ -5,18 +5,23 @@ import 'package:myputt/utils/colors.dart';
 
 class RecordScreenAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const RecordScreenAppBar({Key? key, required this.tabController})
-      : super(key: key);
+  const RecordScreenAppBar({
+    Key? key,
+    required this.tabController,
+    required this.topViewPadding,
+  }) : super(key: key);
 
   final TabController tabController;
+  final double topViewPadding;
+  static const double tabBarHeight = 48;
 
   @override
-  Size get preferredSize => const Size.fromHeight(68);
+  Size get preferredSize => const Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+    return Padding(
+      padding: EdgeInsets.only(top: topViewPadding),
       child: Column(
         children: [
           Row(
@@ -48,37 +53,40 @@ class RecordScreenAppBar extends StatelessWidget
               ),
             ],
           ),
-          TabBar(
-            controller: tabController,
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(color: MyPuttColors.darkGray),
+          SizedBox(
+            height: tabBarHeight,
+            child: TabBar(
+              controller: tabController,
+              indicator: const UnderlineTabIndicator(
+                borderSide: BorderSide(color: MyPuttColors.darkGray),
+              ),
+              tabs: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    'Record',
+                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                          color: tabController.index == 0
+                              ? MyPuttColors.darkGray
+                              : MyPuttColors.gray[300],
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    'Sets',
+                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                          color: tabController.index == 0
+                              ? MyPuttColors.darkGray
+                              : MyPuttColors.gray[300],
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+              ],
             ),
-            tabs: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Record',
-                  style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                        color: tabController.index == 0
-                            ? MyPuttColors.darkGray
-                            : MyPuttColors.gray[300],
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Sets',
-                  style: Theme.of(context).textTheme.subtitle2?.copyWith(
-                        color: tabController.index == 0
-                            ? MyPuttColors.darkGray
-                            : MyPuttColors.gray[300],
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ),
-            ],
           ),
         ],
       ),

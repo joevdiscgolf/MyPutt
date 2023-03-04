@@ -9,3 +9,11 @@ ChallengeStructureItem getCurrentChallengeStructureItem(
       : playerSets.length;
   return challengeStructure[index];
 }
+
+double percentageFromSet(PuttingSet set) {
+  if (set.puttsAttempted == 0) {
+    return 0;
+  } else {
+    return set.puttsMade / set.puttsAttempted;
+  }
+}

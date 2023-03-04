@@ -37,7 +37,6 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   Widget build(BuildContext context) {
     return Container(
         height: 124,
-        color: Colors.blue.withOpacity(0.5),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,

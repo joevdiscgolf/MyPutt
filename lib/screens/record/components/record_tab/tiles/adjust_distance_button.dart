@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AdjustDistanceButton extends StatefulWidget {
@@ -23,6 +25,8 @@ class _AdjustDistanceButtonState extends State<AdjustDistanceButton> {
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
+        BlocProvider.of<RecordCubit>(context)
+            .incrementDistance(widget.increment);
       },
       onTapDown: (_) {
         setState(() {
