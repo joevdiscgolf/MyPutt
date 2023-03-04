@@ -44,7 +44,7 @@ class _RecordScreenAppBarState extends State<RecordScreenAppBar> {
                 Expanded(
                   child: Text(
                     'Record',
-                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 20,
                           color: MyPuttColors.blue,
                           fontWeight: FontWeight.bold,

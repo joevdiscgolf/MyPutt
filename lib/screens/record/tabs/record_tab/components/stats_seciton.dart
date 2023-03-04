@@ -35,7 +35,7 @@ class StatsSection extends StatelessWidget {
                         TextSpan(
                           text: '$numSets',
                           style:
-                              Theme.of(context).textTheme.subtitle1?.copyWith(
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
                                     color: MyPuttColors.blue,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -43,7 +43,7 @@ class StatsSection extends StatelessWidget {
                         TextSpan(
                           text: ' ${numSets == 1 ? 'Set' : 'Sets'} completed',
                           style:
-                              Theme.of(context).textTheme.subtitle1?.copyWith(
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
                                     color: MyPuttColors.darkGray,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -74,7 +74,7 @@ class StatsSection extends StatelessWidget {
                             'Percentage',
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .titleMedium
                                 ?.copyWith(color: MyPuttColors.gray[300]),
                           ),
                         ],
@@ -97,7 +97,7 @@ class StatsSection extends StatelessWidget {
                             'Putts made',
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .titleMedium
                                 ?.copyWith(color: MyPuttColors.gray[300]),
                           ),
                         ],
@@ -127,7 +127,7 @@ class StatsSection extends StatelessWidget {
 
         return Text(
           '${(percentage * 100).toInt()}%',
-          style: Theme.of(context).textTheme.subtitle1?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: MyPuttColors.blue,
                 fontWeight: FontWeight.w600,
               ),
@@ -155,14 +155,14 @@ class StatsSection extends StatelessWidget {
             children: [
               TextSpan(
                 text: '$totalMade',
-                style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: MyPuttColors.blue,
                       fontWeight: FontWeight.w600,
                     ),
               ),
               TextSpan(
                 text: '/$totalAttempted',
-                style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: MyPuttColors.darkGray,
                       fontWeight: FontWeight.w600,
                     ),

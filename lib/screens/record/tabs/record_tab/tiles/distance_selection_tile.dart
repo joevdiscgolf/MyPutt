@@ -17,7 +17,7 @@ class DistanceSelectionTile extends StatelessWidget {
           children: [
             Text(
               'Distance',
-              style: Theme.of(context).textTheme.subtitle1?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: MyPuttColors.gray[400],
                   ),
@@ -39,10 +39,11 @@ class DistanceSelectionTile extends StatelessWidget {
                     Expanded(
                       child: AutoSizeText(
                         '${state.distance}',
-                        style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: MyPuttColors.darkGray,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: MyPuttColors.darkGray,
+                                ),
                         maxLines: 1,
                         textAlign: TextAlign.center,
                       ),
