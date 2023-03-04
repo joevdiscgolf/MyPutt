@@ -15,12 +15,12 @@ class AppBarBackButton extends StatelessWidget {
       child: Container(
         height: 32,
         width: 32,
-        alignment: Alignment.center,
+        color: Colors.transparent,
         child: const Center(
           child: Icon(
             FlutterRemix.arrow_left_s_line,
             color: MyPuttColors.black,
-            size: 26,
+            size: 20,
           ),
         ),
       ),

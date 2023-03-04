@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:flutter/services.dart';
 
 class PuttsMadePicker extends StatefulWidget {
   const PuttsMadePicker({
@@ -12,6 +12,7 @@ class PuttsMadePicker extends StatefulWidget {
     required this.sslKey,
     required this.onUpdate,
     required this.challengeMode,
+    this.height = 124,
   }) : super(key: key);
 
   final double initialIndex;
@@ -19,6 +20,7 @@ class PuttsMadePicker extends StatefulWidget {
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final bool challengeMode;
+  final double height;
 
   @override
   _PuttsMadePickerState createState() => _PuttsMadePickerState();
@@ -36,14 +38,8 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 120,
+        height: widget.height,
         padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(color: MyPuttColors.gray[50]!, boxShadow: [
-          BoxShadow(
-              offset: const Offset(0, 2),
-              color: MyPuttColors.gray[400]!,
-              blurRadius: 2)
-        ]),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,
           key: widget.sslKey,
@@ -76,7 +72,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
       focusedIndex = index;
     });
     widget.onUpdate(index);
-    HapticFeedback.mediumImpact();
+    Vibrate.feedback(FeedbackType.medium);
   }
 
   Widget _buildListItem(BuildContext context, int index) {

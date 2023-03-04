@@ -7,10 +7,12 @@ class CustomCircularProgressIndicator extends StatelessWidget {
     Key? key,
     required this.percentage,
     this.size = 52,
+    this.color,
   }) : super(key: key);
 
   final double percentage;
   final double size;
+  final Color? color;
 
   static const double _strokeWidth = 4;
 
@@ -53,7 +55,7 @@ class CustomCircularProgressIndicator extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: _strokeWidth,
                 value: percentage,
-                color: MyPuttColors.blue,
+                color: color ?? MyPuttColors.blue,
                 backgroundColor: MyPuttColors.gray[200],
               ),
             ),

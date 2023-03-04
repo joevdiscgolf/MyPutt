@@ -24,6 +24,7 @@ class MyPuttButton extends StatelessWidget {
     this.iconColor = Colors.white,
     this.textColor = Colors.white,
     this.textSize = 16,
+    this.fontWeight = FontWeight.normal,
     this.padding = const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     this.shadowColor,
     this.borderColor,
@@ -44,6 +45,7 @@ class MyPuttButton extends StatelessWidget {
   final Color? shadowColor;
   final Color? borderColor;
   final double textSize;
+  final FontWeight fontWeight;
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
   final ButtonState buttonState;
@@ -68,7 +70,8 @@ class MyPuttButton extends StatelessWidget {
             BoxShadow(
               offset: const Offset(0, 2),
               color: shadowColor ?? Colors.transparent,
-              blurRadius: 4,
+              blurRadius: 2,
+              spreadRadius: 0,
             )
           ],
           borderRadius: BorderRadius.circular(borderRadius),
@@ -102,6 +105,7 @@ class MyPuttButton extends StatelessWidget {
                     color: disabled ? MyPuttColors.white : textColor,
                     fontSize: textSize,
                     decoration: underline ? TextDecoration.underline : null,
+                    fontWeight: fontWeight,
                   ),
               maxLines: 1,
             ),
