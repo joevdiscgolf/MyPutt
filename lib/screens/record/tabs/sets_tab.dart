@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:collection/collection.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row_v2.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
@@ -14,7 +17,7 @@ class SetsTab extends StatelessWidget {
       builder: (context, state) {
         if (state is SessionInProgressState) {
           return ListView(
-            padding: const EdgeInsets.only(left: 24, right: 24, top: 4),
+            padding: const EdgeInsets.only(left: 24, top: 4),
             physics: const AlwaysScrollableScrollPhysics(),
             children: addDividers(
               [
@@ -25,7 +28,13 @@ class SetsTab extends StatelessWidget {
                     delete: () {
                       BlocProvider.of<SessionsCubit>(context).deleteSet(set);
                     },
-                    deletable: true,
+                    onDelete: () {
+                      Vibrate.feedback(FeedbackType.light);
+                      locator
+                          .get<Mixpanel>()
+                          .track('Record Screen Set Deleted');
+                      BlocProvider.of<SessionsCubit>(context).deleteSet(set);
+                    },
                   ),
                 )
               ],

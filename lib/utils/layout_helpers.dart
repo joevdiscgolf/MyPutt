@@ -45,3 +45,7 @@ List<Widget> addDividers(
   }
   return withDividers;
 }
+
+double bottomNavBarPadding(BuildContext context) {
+  return MediaQuery.of(context).viewPadding.bottom > 0 ? 32 : 16;
+}

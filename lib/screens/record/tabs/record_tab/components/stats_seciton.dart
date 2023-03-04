@@ -69,7 +69,7 @@ class StatsSection extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _percentageLabel(context),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Text(
                             'Percentage',
                             style: Theme.of(context)
@@ -92,7 +92,7 @@ class StatsSection extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _puttsMadeLabel(context),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Text(
                             'Putts made',
                             style: Theme.of(context)

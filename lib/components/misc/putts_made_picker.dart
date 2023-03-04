@@ -12,6 +12,7 @@ class PuttsMadePicker extends StatefulWidget {
     required this.sslKey,
     required this.onUpdate,
     required this.challengeMode,
+    this.height = 124,
   }) : super(key: key);
 
   final double initialIndex;
@@ -19,6 +20,7 @@ class PuttsMadePicker extends StatefulWidget {
   final GlobalKey<ScrollSnapListState> sslKey;
   final Function onUpdate;
   final bool challengeMode;
+  final double height;
 
   @override
   _PuttsMadePickerState createState() => _PuttsMadePickerState();
@@ -36,7 +38,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 124,
+        height: widget.height,
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: ScrollSnapList(
           initialIndex: widget.initialIndex,

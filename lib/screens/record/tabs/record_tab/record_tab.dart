@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
-import 'package:myputt/screens/record/tabs/record_tab/components/add_set_button.dart';
+import 'package:myputt/screens/record/tabs/record_tab/components/record_add_set_button.dart';
 import 'package:myputt/screens/record/tabs/record_tab/components/stats_seciton.dart';
 import 'package:myputt/screens/record/tabs/record_tab/components/quantity_row.dart';
 import 'package:myputt/screens/record/tabs/record_tab/components/selection_tiles.dart';
+import 'package:myputt/utils/constants.dart';
 
 class RecordTab extends StatelessWidget {
   const RecordTab({Key? key}) : super(key: key);
@@ -23,6 +24,9 @@ class RecordTab extends StatelessWidget {
               const QuantityRow(),
               const SizedBox(height: 4),
               PuttsMadePicker(
+                height: MediaQuery.of(context).size.height <= kIPhone8Height
+                    ? 116
+                    : 124,
                 length: state.setLength,
                 initialIndex: state.setLength.toDouble(),
                 challengeMode: false,

@@ -16,6 +16,7 @@ class RecordAddSetButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: MyPuttButton(
+          borderRadius: 8,
           title: 'Add set',
           width: double.infinity,
           height: 48,
