@@ -18,7 +18,7 @@ class QuantityRow extends StatelessWidget {
           Expanded(
             child: Text(
               'Quantity',
-              style: Theme.of(context).textTheme.subtitle1?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: MyPuttColors.gray[400],
                     fontWeight: FontWeight.w600,
                   ),
@@ -66,7 +66,7 @@ class QuantitySelector extends StatelessWidget {
                 builder: (context, state) {
                   return AutoSizeText(
                     '${state.setLength}',
-                    style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: MyPuttColors.darkGray,
                         ),

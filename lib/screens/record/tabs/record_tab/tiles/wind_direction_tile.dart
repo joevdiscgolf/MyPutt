@@ -19,7 +19,7 @@ class WindDirectionTile extends StatelessWidget {
       children: [
         Text(
           'Wind',
-          style: Theme.of(context).textTheme.subtitle1?.copyWith(
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: MyPuttColors.gray[400],
               ),
@@ -37,7 +37,7 @@ class WindDirectionTile extends StatelessWidget {
                 builder: (context, state) {
                   return Text(
                     _titleText(state.puttingConditions.windDirection),
-                    style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: _titleColor(
                             state.puttingConditions.windDirection,

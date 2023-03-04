@@ -88,7 +88,7 @@ class _RecordScreenTabBarState extends State<RecordScreenTabBar> {
   Widget _setsTabTitle(BuildContext context, int numSets) {
     final bool isSelected = widget.tabController.index == 1;
 
-    final TextStyle? style = Theme.of(context).textTheme.subtitle2?.copyWith(
+    final TextStyle? style = Theme.of(context).textTheme.titleSmall?.copyWith(
           color: widget.tabController.index == 1
               ? MyPuttColors.darkGray
               : MyPuttColors.gray[300],
