@@ -2,32 +2,28 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:myputt/cubits/record/record_cubit_helpers.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
+import 'package:myputt/models/data/conditions/conditions.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 part 'record_state.dart';
 
 class RecordCubit extends Cubit<RecordState> {
-  RecordCubit() : super(const RecordInitial());
+  RecordCubit()
+      : super(
+          RecordActive(
+            distance: 20,
+            setLength: 10,
+            puttsSelected: 10,
+            sslKey: GlobalKey<ScrollSnapListState>(),
+            puttingConditions: const PuttingConditions(),
+          ),
+        );
 
-  void openRecordScreen() {
-    emit(
-      RecordActive(
-        distance: 20,
-        setLength: 10,
-        puttsSelected: 10,
-        sslKey: GlobalKey<ScrollSnapListState>(),
-      ),
-    );
-  }
-
-  void updateDistance(int distance) {
-    if (state is! RecordActive) return;
+  void setExactDistance(int distance) {
     emit((state as RecordActive).copyWith(distance: distance));
   }
 
   void incrementDistance(bool increase) {
-    if (state is! RecordActive) return;
-
     final int newDistance = getNextDistancePreset(
       (state as RecordActive).distance,
       increase: increase,
@@ -36,17 +32,59 @@ class RecordCubit extends Cubit<RecordState> {
     emit((state as RecordActive).copyWith(distance: newDistance));
   }
 
-  void updateSetLength(int setLength) {
-    if (state is! RecordActive) return;
-    emit((state as RecordActive).copyWith(setLength: setLength));
+  void incrementSetLength(bool increase) {
+    emit(
+      (state as RecordActive).copyWith(
+        setLength:
+            getUpdatedSetLength((state as RecordActive).setLength, increase),
+      ),
+    );
+    _updatePuttsPickerIndex(increase);
   }
 
   void updatePuttsSelected(int puttsSelected) {
-    if (state is! RecordActive) return;
-    emit((state as RecordActive).copyWith(puttsSelected: puttsSelected));
+    if (puttsSelected != state.puttsSelected) {
+      emit((state as RecordActive).copyWith(puttsSelected: puttsSelected));
+    }
   }
 
-  void closeRecordScreen() {
-    emit(const RecordInitial());
+  void updatePuttingStance(PuttingStance? updatedStance) {
+    if (updatedStance !=
+        (state as RecordActive).puttingConditions.puttingStance) {
+      emit(
+        (state as RecordActive).copyWith(
+          puttingConditions: (state as RecordActive)
+              .puttingConditions
+              .copyWith({'puttingStance': updatedStance}),
+        ),
+      );
+    }
+  }
+
+  void updateWindDirection(WindDirection? updatedWindDirection) {
+    if (updatedWindDirection != state.puttingConditions.windDirection) {
+      emit(
+        (state as RecordActive).copyWith(
+          puttingConditions: state.puttingConditions.copyWith({
+            'windDirection': updatedWindDirection,
+          }),
+        ),
+      );
+    }
+  }
+
+  Future<void> _updatePuttsPickerIndex(bool increase) async {
+    if (increase) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    late final int newFocusedIndex;
+
+    if (increase) {
+      newFocusedIndex = state.setLength + 1;
+    } else {
+      newFocusedIndex = state.setLength;
+    }
+    state.puttsPickerKey.currentState?.focusToItem(newFocusedIndex);
   }
 }

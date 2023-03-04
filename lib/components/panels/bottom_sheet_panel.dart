@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/components/misc/panel_sliding_indicator.dart';
 import 'package:myputt/utils/colors.dart';
 
 class BottomSheetPanel extends StatelessWidget {
@@ -7,11 +8,15 @@ class BottomSheetPanel extends StatelessWidget {
     required this.child,
     this.backgroundColor = MyPuttColors.white,
     this.fullScreen = false,
+    this.hasSlidingIndicator = false,
+    this.scrollViewPadding,
   }) : super(key: key);
 
   final Widget child;
   final Color backgroundColor;
   final bool fullScreen;
+  final bool hasSlidingIndicator;
+  final EdgeInsetsGeometry? scrollViewPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +36,22 @@ class BottomSheetPanel extends StatelessWidget {
         ),
       ),
       child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          top: fullScreen ? MediaQuery.of(context).padding.top : 8,
-          bottom: 48,
-        ),
+        padding: scrollViewPadding ??
+            EdgeInsets.only(
+              top: fullScreen ? MediaQuery.of(context).padding.top : 8,
+              bottom: 48,
+            ),
         physics: const ClampingScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            if (hasSlidingIndicator)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: PanelSlidingIndicator(),
+              ),
             const SizedBox(height: 24),
             child,
           ],

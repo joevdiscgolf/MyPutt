@@ -6,7 +6,7 @@ part of 'conditions.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Conditions _$ConditionsFromJson(Map json) => Conditions(
+PuttingConditions _$PuttingConditionsFromJson(Map json) => PuttingConditions(
       windIntensity:
           $enumDecodeNullable(_$WindIntensityEnumMap, json['windIntensity']),
       weatherConditions: $enumDecodeNullable(
@@ -17,7 +17,7 @@ Conditions _$ConditionsFromJson(Map json) => Conditions(
           $enumDecodeNullable(_$PuttingStanceEnumMap, json['puttingStance']),
     );
 
-Map<String, dynamic> _$ConditionsToJson(Conditions instance) =>
+Map<String, dynamic> _$PuttingConditionsToJson(PuttingConditions instance) =>
     <String, dynamic>{
       'weatherConditions':
           _$WeatherConditionsEnumMap[instance.weatherConditions],

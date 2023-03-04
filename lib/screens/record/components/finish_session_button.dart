@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
@@ -43,6 +44,7 @@ class FinishSessionButton extends StatelessWidget {
   }
 
   void _onPressed(BuildContext context) {
+    Vibrate.feedback(FeedbackType.light);
     showDialog(
       context: context,
       builder: (dialogContext) => ConfirmDialog(

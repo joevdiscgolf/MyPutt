@@ -13,7 +13,7 @@ PuttingSet _$PuttingSetFromJson(Map json) => PuttingSet(
       timeStamp: json['timeStamp'] as int?,
     )..conditions = json['conditions'] == null
         ? null
-        : Conditions.fromJson(
+        : PuttingConditions.fromJson(
             Map<String, dynamic>.from(json['conditions'] as Map));
 
 Map<String, dynamic> _$PuttingSetToJson(PuttingSet instance) =>

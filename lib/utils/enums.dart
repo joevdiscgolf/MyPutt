@@ -19,17 +19,6 @@ enum ChallengePreset {
 
 enum ConditionsType { wind, weather, distance }
 
-enum WindCondition {
-  @JsonValue('Calm')
-  calm,
-  @JsonValue('Breezy')
-  breezy,
-  @JsonValue('Gusty')
-  gusty,
-  @JsonValue('Intense')
-  intense
-}
-
 enum WeatherCondition {
   @JsonValue('Sunny')
   sunny,

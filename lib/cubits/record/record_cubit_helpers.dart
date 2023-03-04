@@ -42,3 +42,13 @@ int getNextDistancePreset(int currentDistance, {required bool increase}) {
     }
   }
 }
+
+int getUpdatedSetLength(int currentSetLength, bool increase) {
+  if (increase) {
+    return currentSetLength + 1;
+  } else if (currentSetLength == 1) {
+    return 1;
+  } else {
+    return currentSetLength - 1;
+  }
+}

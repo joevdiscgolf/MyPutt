@@ -7,6 +7,8 @@ import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
 
+const double kNavBarHeight = 56;
+
 const kMixpanelProductionToken = 'ab0d6ddcbf4e268b5344eac8568449ec';
 const kMixpanelDevelopmentToken = '2b158a436ff4f818d5da5c4dc846696a';
 
@@ -34,20 +36,6 @@ abstract class CircleCutoffs {
   static const int c2 = 33;
   static const int none = 0;
 }
-
-const List<WindCondition> windConditions = [
-  WindCondition.calm,
-  WindCondition.breezy,
-  WindCondition.gusty,
-  WindCondition.intense,
-];
-
-const Map<WindCondition, String> windConditionsEnumMap = {
-  WindCondition.calm: 'Calm',
-  WindCondition.breezy: 'Breezy',
-  WindCondition.gusty: 'Gusty',
-  WindCondition.intense: 'Intense',
-};
 
 const List<WeatherCondition> weatherConditions = [
   WeatherCondition.sunny,

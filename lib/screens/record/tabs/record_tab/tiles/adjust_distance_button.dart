@@ -42,6 +42,7 @@ class _AdjustDistanceButtonState extends State<AdjustDistanceButton> {
         children: [
           Expanded(
             child: Container(
+              width: 48,
               decoration: BoxDecoration(
                 color: _isPressed ? MyPuttColors.blue : Colors.transparent,
                 borderRadius: widget.increment

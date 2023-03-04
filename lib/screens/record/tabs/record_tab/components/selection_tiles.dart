@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/screens/record/components/record_tab/tiles/stance_selection_tile.dart';
-import 'package:myputt/screens/record/components/record_tab/tiles/distance_selection_tile.dart';
-import 'package:myputt/screens/record/components/record_tab/tiles/wind_selection_tile.dart';
+import 'package:myputt/screens/record/tabs/record_tab/tiles/distance_selection_tile.dart';
+import 'package:myputt/screens/record/tabs/record_tab/tiles/stance_selection_tile.dart';
+import 'package:myputt/screens/record/tabs/record_tab/tiles/wind_direction_tile.dart';
 
 class SelectionTilesRow extends StatelessWidget {
   const SelectionTilesRow({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class SelectionTilesRow extends StatelessWidget {
           SizedBox(width: 12),
           Expanded(child: StanceSelectionTile()),
           SizedBox(width: 12),
-          Expanded(child: WindSelectionTile()),
+          Expanded(child: WindDirectionTile()),
         ],
       ),
     );

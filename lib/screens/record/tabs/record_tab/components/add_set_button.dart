@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
+import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 
 class RecordAddSetButton extends StatelessWidget {
@@ -20,19 +23,24 @@ class RecordAddSetButton extends StatelessWidget {
           fontWeight: FontWeight.w600,
           iconData: FlutterRemix.add_line,
           onPressed: () {
-            // locator.get<Mixpanel>().track(
-            //   'Record Screen Add Set Button Pressed',
-            //   properties: {
-            //     'Putts Attempted': _setLength,
-            //     'Putts Made': _focusedIndex
-            //   },
-            // );
+            final RecordState recordState =
+                BlocProvider.of<RecordCubit>(context).state;
+
+            locator.get<Mixpanel>().track(
+              'Record Screen Add Set Button Pressed',
+              properties: {
+                'Putts Attempted': recordState.setLength,
+                'Putts Made': recordState.puttsSelected,
+              },
+            );
+
             BlocProvider.of<SessionsCubit>(context).addSet(
               PuttingSet(
                 timeStamp: DateTime.now().millisecondsSinceEpoch,
-                puttsMade: 10,
-                puttsAttempted: 10,
-                distance: 10,
+                puttsMade: recordState.puttsSelected,
+                puttsAttempted: recordState.setLength,
+                distance: recordState.distance,
+                conditions: recordState.puttingConditions,
               ),
             );
           }),

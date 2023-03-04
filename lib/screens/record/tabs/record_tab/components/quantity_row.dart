@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
 class QuantityRow extends StatelessWidget {
@@ -60,14 +62,18 @@ class QuantitySelector extends StatelessWidget {
             ),
             SizedBox(
               width: 32,
-              child: AutoSizeText(
-                '10',
-                style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: MyPuttColors.darkGray,
-                    ),
-                maxLines: 1,
-                textAlign: TextAlign.center,
+              child: BlocBuilder<RecordCubit, RecordState>(
+                builder: (context, state) {
+                  return AutoSizeText(
+                    '${state.setLength}',
+                    style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: MyPuttColors.darkGray,
+                        ),
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  );
+                },
               ),
             ),
             VerticalDivider(
@@ -97,11 +103,14 @@ class _AdjustQuantityButtonState extends State<AdjustQuantityButton> {
   static const double _iconSize = 20;
   static const double _borderRadius = 8;
   bool _isPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
+        BlocProvider.of<RecordCubit>(context)
+            .incrementSetLength(widget.increment);
       },
       onTapDown: (_) {
         setState(() {
@@ -114,6 +123,7 @@ class _AdjustQuantityButtonState extends State<AdjustQuantityButton> {
         });
       },
       child: Container(
+        height: 32,
         width: 32,
         decoration: BoxDecoration(
           color: _isPressed ? MyPuttColors.blue : Colors.transparent,

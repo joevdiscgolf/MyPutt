@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:myputt/utils/colors.dart';
 
 bool hasTopPadding(BuildContext context) =>
@@ -13,4 +13,35 @@ List<BoxShadow> standardBoxShadow() {
       spreadRadius: 0,
     )
   ];
+}
+
+List<Widget> addDividers(
+  List<Widget> children, {
+  double padding = 0,
+  bool includeLastDivider = false,
+  double height = 1,
+  double thickness = 1,
+}) {
+  List<Widget> withDividers = [];
+  for (int i = 0; i < children.length; i++) {
+    withDividers.add(children[i]);
+
+    final int numDividers =
+        includeLastDivider ? children.length : children.length - 1;
+
+    if (i < numDividers) {
+      withDividers.add(
+        Center(
+          child: Divider(
+            color: MyPuttColors.gray[50]!,
+            thickness: thickness,
+            height: height,
+            endIndent: padding,
+            indent: padding,
+          ),
+        ),
+      );
+    }
+  }
+  return withDividers;
 }

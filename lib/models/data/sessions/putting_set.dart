@@ -10,13 +10,14 @@ class PuttingSet {
     required this.puttsAttempted,
     required this.distance,
     this.timeStamp,
+    this.conditions,
   });
 
   final int? timeStamp;
   final int puttsMade;
   final int puttsAttempted;
   final int distance;
-  Conditions? conditions;
+  PuttingConditions? conditions;
 
   factory PuttingSet.fromJson(Map<String, dynamic> json) =>
       _$PuttingSetFromJson(json);

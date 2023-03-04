@@ -2,43 +2,49 @@ part of 'record_cubit.dart';
 
 @immutable
 abstract class RecordState {
-  const RecordState();
-}
+  const RecordState({
+    required this.distance,
+    required this.setLength,
+    required this.puttsSelected,
+    required this.puttsPickerKey,
+    required this.puttingConditions,
+  });
 
-class RecordInitial extends RecordState {
-  const RecordInitial();
+  final int distance;
+  final int setLength;
+  final int puttsSelected;
+  final GlobalKey<ScrollSnapListState> puttsPickerKey;
+  final PuttingConditions puttingConditions;
 }
 
 class RecordActive extends RecordState {
   const RecordActive({
-    required this.distance,
-    required this.setLength,
-    required this.puttsSelected,
-    required this.sslKey,
-    this.stance,
-    this.weatherConditions,
-  });
-  final int distance;
-  final int setLength;
-  final int puttsSelected;
-  final GlobalKey<ScrollSnapListState> sslKey;
-  final PuttingStance? stance;
-  final WeatherConditions? weatherConditions;
+    required int distance,
+    required int setLength,
+    required int puttsSelected,
+    required GlobalKey<ScrollSnapListState> sslKey,
+    required PuttingConditions puttingConditions,
+  }) : super(
+          distance: distance,
+          setLength: setLength,
+          puttsSelected: puttsSelected,
+          puttsPickerKey: sslKey,
+          puttingConditions: puttingConditions,
+        );
+
   RecordActive copyWith({
     int? distance,
     int? setLength,
     int? puttsSelected,
-    GlobalKey<ScrollSnapListState>? sslKey,
-    PuttingStance? stance,
-    WeatherConditions? weatherConditions,
+    GlobalKey<ScrollSnapListState>? puttsPickerKey,
+    PuttingConditions? puttingConditions,
   }) {
     return RecordActive(
       distance: distance ?? this.distance,
       setLength: setLength ?? this.setLength,
       puttsSelected: puttsSelected ?? this.puttsSelected,
-      sslKey: sslKey ?? this.sslKey,
-      stance: stance ?? this.stance,
-      weatherConditions: weatherConditions ?? this.weatherConditions,
+      sslKey: puttsPickerKey ?? this.puttsPickerKey,
+      puttingConditions: puttingConditions ?? this.puttingConditions,
     );
   }
 }

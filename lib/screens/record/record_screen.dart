@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/screens/record/components/record_screen_app_bar.dart';
-import 'package:myputt/screens/record/tabs/record_tab.dart';
+import 'package:myputt/screens/record/tabs/record_tab/record_tab.dart';
 import 'package:myputt/screens/record/tabs/sets_tab.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
@@ -35,30 +35,13 @@ class _RecordScreenState extends State<RecordScreen>
         tabController: _tabController,
         topViewPadding: MediaQuery.of(context).viewPadding.top,
       ),
-      // body:
-      // NestedScrollView(
-      //   physics: const NeverScrollableScrollPhysics(),
-      //   headerSliverBuilder: (context, _) {
-      //     return [
-      //       SliverPersistentHeader(
-      //         pinned: true,
-      //         delegate: SliverAppBarDelegate(
-      //           RecordScreenAppBar(
-      //             tabController: _tabController,
-      //             topViewPadding: MediaQuery.of(context).viewPadding.top,
-      //           ),
-      //         ),
-      //       )
-      //     ];
-      //   },
-      //   body: _mainBody(context),
-      // )
       body: _mainBody(context),
     );
   }
 
   Widget _mainBody(BuildContext context) {
     return TabBarView(
+      physics: const NeverScrollableScrollPhysics(),
       controller: _tabController,
       children: const [
         RecordTab(),
