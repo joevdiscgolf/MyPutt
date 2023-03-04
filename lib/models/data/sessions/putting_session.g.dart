@@ -11,10 +11,7 @@ PuttingSession _$PuttingSessionFromJson(Map json) => PuttingSession(
       timeStamp: json['timeStamp'] as int,
       isSynced: json['isSynced'] as bool? ?? false,
       deviceId: json['deviceId'] as String?,
-<<<<<<< HEAD
       isDeleted: json['isDeleted'] as bool?,
-=======
->>>>>>> 60600e0 ([jv][MyPutt-mobile] Sessions local sync (#66))
     )..sets = (json['sets'] as List<dynamic>)
         .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
@@ -26,8 +23,5 @@ Map<String, dynamic> _$PuttingSessionToJson(PuttingSession instance) =>
       'sets': instance.sets.map((e) => e.toJson()).toList(),
       'isSynced': instance.isSynced,
       'deviceId': instance.deviceId,
-<<<<<<< HEAD
       'isDeleted': instance.isDeleted,
-=======
->>>>>>> 60600e0 ([jv][MyPutt-mobile] Sessions local sync (#66))
     };
