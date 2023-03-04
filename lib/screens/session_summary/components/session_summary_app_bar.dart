@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/layout_helpers.dart';
 
 class SessionSummaryAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const SessionSummaryAppBar({Key? key, required this.showDeleteDialog})
-      : super(key: key);
+  const SessionSummaryAppBar({
+    Key? key,
+    required this.showDeleteDialog,
+    required this.onShareChallenge,
+  }) : super(key: key);
 
   final Function showDeleteDialog;
+  final Function onShareChallenge;
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -37,27 +44,61 @@ class SessionSummaryAppBar extends StatelessWidget
                 ),
           ),
           Expanded(
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: Bounceable(
-                onTap: () {
-                  Vibrate.feedback(FeedbackType.light);
-                  showDeleteDialog();
-                },
-                child: Container(
-                  width: 52,
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.transparent,
-                  child: const Icon(
-                    FlutterRemix.delete_bin_7_line,
-                    size: 16,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _circleIconButton(
+                    context,
+                    FlutterRemix.sword_line,
+                    onPressed: () {
+                      Vibrate.feedback(FeedbackType.light);
+                      locator
+                          .get<Mixpanel>()
+                          .track('Session Row Challenge Button Pressed');
+                      onShareChallenge();
+                    },
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  _circleIconButton(
+                    context,
+                    FlutterRemix.delete_bin_7_line,
+                    onPressed: () {
+                      Vibrate.feedback(FeedbackType.light);
+                      showDeleteDialog();
+                    },
+                  ),
+                ],
               ),
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _circleIconButton(
+    BuildContext context,
+    IconData iconData, {
+    required Function onPressed,
+  }) {
+    return Bounceable(
+      onTap: () {
+        onPressed();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: MyPuttColors.white,
+          boxShadow: standardBoxShadow(),
+          shape: BoxShape.circle,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          color: Colors.transparent,
+          child: Icon(iconData, size: 20),
+        ),
       ),
     );
   }

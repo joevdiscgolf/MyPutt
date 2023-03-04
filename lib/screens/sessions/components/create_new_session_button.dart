@@ -8,6 +8,7 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/layout_helpers.dart';
 
 class CreateNewSessionButton extends StatelessWidget {
   const CreateNewSessionButton({Key? key}) : super(key: key);
@@ -41,6 +42,7 @@ class CreateNewSessionButton extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyPuttColors.gray[800]!,
+                boxShadow: standardBoxShadow(),
               ),
               child: const Icon(
                 FlutterRemix.add_fill,

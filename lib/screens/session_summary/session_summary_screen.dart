@@ -14,9 +14,11 @@ import 'package:myputt/screens/home/components/stats_view/rows/putting_stat_row.
 import 'package:myputt/screens/my_profile/components/stat_row.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row.dart';
 import 'package:myputt/screens/session_summary/components/session_summary_app_bar.dart';
+import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/panel_helpers.dart';
 
 class SessionSummaryScreen extends StatefulWidget {
   const SessionSummaryScreen({Key? key, required this.session})
@@ -38,33 +40,10 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         backgroundColor: MyPuttColors.white,
         appBar: SessionSummaryAppBar(
           showDeleteDialog: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) => ConfirmDialog(
-                actionPressed: () {
-                  _onDelete(context);
-                  setState(() {
-                    _shouldPopOnDismiss = true;
-                  });
-                  // Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                title: 'Delete session',
-                message: 'Are you sure you want to delete this session?',
-                buttonlabel: 'Delete',
-                buttonColor: MyPuttColors.red,
-                icon: const ShadowIcon(
-                  icon: Icon(
-                    FlutterRemix.alert_line,
-                    color: MyPuttColors.red,
-                    size: 60,
-                  ),
-                ),
-              ),
-            ).then((_) {
-              if (_shouldPopOnDismiss) {
-                Navigator.of(context).pop();
-              }
-            });
+            _showDeleteDialog(context);
+          },
+          onShareChallenge: () {
+            _onShareChallenge(context);
           },
         ),
         body: BlocBuilder<SessionSummaryCubit, SessionSummaryState>(
@@ -172,5 +151,45 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
     BlocProvider.of<SessionsCubit>(context)
         .deleteCompletedSession(widget.session);
     BlocProvider.of<HomeScreenCubit>(context).reload();
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => ConfirmDialog(
+        actionPressed: () {
+          _onDelete(context);
+          setState(() {
+            _shouldPopOnDismiss = true;
+          });
+          // Navigator.of(context).popUntil((route) => route.isFirst);
+        },
+        title: 'Delete session',
+        message: 'Are you sure you want to delete this session?',
+        buttonlabel: 'Delete',
+        buttonColor: MyPuttColors.red,
+        icon: const ShadowIcon(
+          icon: Icon(
+            FlutterRemix.alert_line,
+            color: MyPuttColors.red,
+            size: 60,
+          ),
+        ),
+      ),
+    ).then((_) {
+      if (_shouldPopOnDismiss) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  void _onShareChallenge(BuildContext context) {
+    displayBottomSheet(
+      context,
+      ShareSheet(
+        session: widget.session,
+        onComplete: () => Navigator.pop(context),
+      ),
+    );
   }
 }
