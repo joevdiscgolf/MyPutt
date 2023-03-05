@@ -7,7 +7,7 @@ import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
 
-const double kNavBarHeight = 56;
+const double kTopNavBarHeight = 56;
 
 const kMixpanelProductionToken = 'ab0d6ddcbf4e268b5344eac8568449ec';
 const kMixpanelDevelopmentToken = '2b158a436ff4f818d5da5c4dc846696a';
@@ -36,6 +36,16 @@ abstract class CircleCutoffs {
   static const int c2 = 33;
   static const int none = 0;
 }
+
+const Map<Circles, String> circleToNameMap = {
+  Circles.circle1: 'Circle 1',
+  Circles.circle2: 'Circle 2'
+};
+
+const Map<Circles, String> circleToShortNameMap = {
+  Circles.circle1: 'C1',
+  Circles.circle2: 'C2'
+};
 
 const List<WeatherCondition> weatherConditions = [
   WeatherCondition.sunny,

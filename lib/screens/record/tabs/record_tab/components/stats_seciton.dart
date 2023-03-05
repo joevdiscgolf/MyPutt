@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/session_helpers.dart';
+import 'package:myputt/utils/set_helpers.dart';
 
 class StatsSection extends StatelessWidget {
   const StatsSection({Key? key}) : super(key: key);
@@ -119,8 +119,7 @@ class StatsSection extends StatelessWidget {
         late final double percentage;
 
         if (state is SessionInProgressState) {
-          percentage =
-              SessionHelpers.percentageFromSession(state.currentSession);
+          percentage = percentageFromSets(state.currentSession.sets);
         } else {
           percentage = 0;
         }

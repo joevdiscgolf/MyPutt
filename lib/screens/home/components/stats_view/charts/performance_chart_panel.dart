@@ -71,10 +71,11 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
     final List<ChartPoint> _points =
         _statsService.getPointsWithDistanceAndLimit(
-            _sessionRepository.validCompletedSessions,
-            _challengesRepository.completedChallenges,
-            _selectedDistance,
-            limit);
+      _sessionRepository.validCompletedSessions,
+      _challengesRepository.completedChallenges,
+      _selectedDistance,
+      limit,
+    );
     PerformanceChartData smoothData = smoothChart(
       PerformanceChartData(points: _points),
       _smoothRange,

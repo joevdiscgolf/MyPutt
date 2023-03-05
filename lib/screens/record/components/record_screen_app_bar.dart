@@ -17,7 +17,8 @@ class RecordScreenAppBar extends StatefulWidget implements PreferredSizeWidget {
   static const double tabBarHeight = 48;
 
   @override
-  Size get preferredSize => const Size.fromHeight(kNavBarHeight + tabBarHeight);
+  Size get preferredSize =>
+      const Size.fromHeight(kTopNavBarHeight + tabBarHeight);
 
   @override
   State<RecordScreenAppBar> createState() => _RecordScreenAppBarState();
@@ -31,7 +32,7 @@ class _RecordScreenAppBarState extends State<RecordScreenAppBar> {
       child: Column(
         children: [
           SizedBox(
-            height: kNavBarHeight,
+            height: kTopNavBarHeight,
             child: Row(
               children: [
                 Expanded(
