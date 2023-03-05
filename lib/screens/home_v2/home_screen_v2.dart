@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/screens/home_v2/components/circle_stats_section/circle_stats_section.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_wrapper.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar.dart';
@@ -12,7 +14,11 @@ class HomeScreenV2 extends StatelessWidget {
       appBar: HomeScreenV2AppBar(
         topViewPadding: MediaQuery.of(context).viewPadding.top,
       ),
-      body: _mainBody(context),
+      body: BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
+        builder: (context, state) {
+          return _mainBody(context);
+        },
+      ),
     );
   }
 

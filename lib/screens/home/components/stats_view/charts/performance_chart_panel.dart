@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/empty_state/empty_state_chart/empty_state_chart.dart';
-import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/locator.dart';

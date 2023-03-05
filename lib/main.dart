@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
@@ -20,7 +21,7 @@ import 'package:myputt/screens/force_upgrade/force_upgrade_screen.dart';
 import 'package:myputt/screens/introduction/intro_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
-import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
@@ -59,6 +60,7 @@ void main() async {
         MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => HomeScreenCubit()),
+            BlocProvider(create: (_) => HomeScreenV2Cubit()),
             BlocProvider(create: (_) => SessionSummaryCubit()),
             BlocProvider(create: (_) => ChallengesCubit()),
             BlocProvider(create: (_) => MyProfileCubit()),

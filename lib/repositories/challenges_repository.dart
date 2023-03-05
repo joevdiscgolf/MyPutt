@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -10,17 +11,54 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 
-class ChallengesRepository {
+class ChallengesRepository extends ChangeNotifier {
   final DatabaseService _databaseService = locator.get<DatabaseService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
   final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
 
-  PuttingChallenge? currentChallenge;
-  PuttingChallenge? finishedChallenge;
-  List<PuttingChallenge> pendingChallenges = [];
-  List<PuttingChallenge> activeChallenges = [];
-  List<PuttingChallenge> completedChallenges = [];
-  List<StoragePuttingChallenge> deepLinkChallenges = [];
+  PuttingChallenge? _currentChallenge;
+  PuttingChallenge? _finishedChallenge;
+  List<PuttingChallenge> _pendingChallenges = [];
+  List<PuttingChallenge> _activeChallenges = [];
+  List<PuttingChallenge> _completedChallenges = [];
+  List<StoragePuttingChallenge> _deepLinkChallenges = [];
+
+  PuttingChallenge? get currentChallenge => _currentChallenge;
+  PuttingChallenge? get finishedChallenge => _finishedChallenge;
+  List<PuttingChallenge> get pendingChallenges => _pendingChallenges;
+  List<PuttingChallenge> get activeChallenges => _activeChallenges;
+  List<PuttingChallenge> get completedChallenges => _completedChallenges;
+  List<StoragePuttingChallenge> get deepLinkChallenges => _deepLinkChallenges;
+
+  set currentChallenge(PuttingChallenge? challenge) {
+    _currentChallenge = challenge;
+    notifyListeners();
+  }
+
+  set finishedChallenge(PuttingChallenge? challenge) {
+    _finishedChallenge = challenge;
+    notifyListeners();
+  }
+
+  set pendingChallenges(List<PuttingChallenge> pendingChallenges) {
+    _pendingChallenges = pendingChallenges;
+    notifyListeners();
+  }
+
+  set activeChallenges(List<PuttingChallenge> activeChallenges) {
+    _activeChallenges = activeChallenges;
+    notifyListeners();
+  }
+
+  set completedChallenges(List<PuttingChallenge> completedChallenges) {
+    _completedChallenges = completedChallenges;
+    notifyListeners();
+  }
+
+  set deepLinkChallenges(List<StoragePuttingChallenge> deepLinkChallenges) {
+    _deepLinkChallenges = deepLinkChallenges;
+    notifyListeners();
+  }
 
   Future<void> fetchAllChallenges() async {
     final List<PuttingChallenge>? allChallenges =
