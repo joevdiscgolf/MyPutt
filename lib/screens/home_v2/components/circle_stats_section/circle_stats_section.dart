@@ -12,8 +12,8 @@ class CircleStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<Circles, List<PuttingSetsInterval>> circleToSetsIntervals =
-        locator.get<StatsService>().getSetIntervals(
+    final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+        circleToSetsIntervals = locator.get<StatsService>().getSetIntervals(
               locator.get<StatsService>().getSetsByDistance(
                     locator.get<SessionRepository>().validCompletedSessions,
                     locator.get<ChallengesRepository>().completedChallenges,
@@ -27,14 +27,16 @@ class CircleStats extends StatelessWidget {
           Expanded(
             child: CircleStatsCard(
               circle: Circles.circle1,
-              setIntervals: circleToSetsIntervals[Circles.circle1] ?? [],
+              intervalToPuttingSetsData:
+                  circleToSetsIntervals[Circles.circle1] ?? {},
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: CircleStatsCard(
               circle: Circles.circle2,
-              setIntervals: circleToSetsIntervals[Circles.circle2] ?? [],
+              intervalToPuttingSetsData:
+                  circleToSetsIntervals[Circles.circle2] ?? {},
             ),
           )
         ],

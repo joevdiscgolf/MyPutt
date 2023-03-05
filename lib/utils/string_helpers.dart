@@ -32,3 +32,7 @@ String getMessageFromDifference(int difference) {
 String timestampToDate(int timestamp) {
   return '${DateFormat.yMMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(timestamp)).toString()}, ${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(timestamp)).toString()}';
 }
+
+String encodeDistanceRange(int lowerBound, int upperBound) {
+  return '$lowerBound-$upperBound';
+}

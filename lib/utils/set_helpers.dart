@@ -47,10 +47,11 @@ Map<int, List<PuttingSet>> sortSetsByDistance(
 }
 
 List<PuttingSet> getPuttingSetsFromIntervals(
-    List<PuttingSetsInterval> intervals) {
+  Map<DistanceInterval, PuttingSetInterval> intervalToSetsDataMap,
+) {
   final List<PuttingSet> setsInInterval = [];
 
-  for (PuttingSetsInterval interval in intervals) {
+  for (PuttingSetInterval interval in intervalToSetsDataMap.values) {
     setsInInterval.addAll(interval.sets);
   }
 

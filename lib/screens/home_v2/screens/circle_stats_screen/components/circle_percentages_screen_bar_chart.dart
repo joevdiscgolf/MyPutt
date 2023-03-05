@@ -6,11 +6,11 @@ import 'package:myputt/utils/enums.dart';
 
 class CirclePercentagesScreenBarChart extends StatelessWidget {
   const CirclePercentagesScreenBarChart(
-      {Key? key, required this.circle, required this.setIntervals})
+      {Key? key, required this.circle, required this.setIntervalsMap})
       : super(key: key);
 
   final Circles circle;
-  final List<PuttingSetsInterval> setIntervals;
+  final Map<DistanceInterval, PuttingSetInterval> setIntervalsMap;
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,15 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 12),
-          ...setIntervals.map(
-            (interval) => _barChartRow(
-              context,
-              '${interval.lowerBound}-${interval.upperBound} ft',
-              interval.setsPercentage,
-            ),
+          ...setIntervalsMap.entries.map(
+            (MapEntry<DistanceInterval, PuttingSetInterval> entry) {
+              final DistanceInterval interval = entry.key;
+              return _barChartRow(
+                context,
+                '${interval.lowerBound}-${interval.upperBound} ft',
+                entry.value.setsPercentage,
+              );
+            },
           )
         ],
       ),

@@ -16,7 +16,7 @@ class TimeRangeChipsRow extends StatelessWidget {
               (range) => Expanded(
                 child: TimeRangeChip(
                   range: range,
-                  isSelected: range == TimeRange.lastFive,
+                  isSelected: range == TimeRange.allTime,
                 ),
               ),
             )

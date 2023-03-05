@@ -7,30 +7,34 @@ import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/screens/circle_stats_screen/circle_stats_screen.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/distance_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 import 'package:myputt/utils/set_helpers.dart';
 
 class CircleStatsCard extends StatelessWidget {
   const CircleStatsCard(
-      {Key? key, required this.circle, required this.setIntervals})
+      {Key? key, required this.circle, required this.intervalToPuttingSetsData})
       : super(key: key);
 
   final Circles circle;
-  final List<PuttingSetsInterval> setIntervals;
+  final Map<DistanceInterval, PuttingSetInterval> intervalToPuttingSetsData;
 
   @override
   Widget build(BuildContext context) {
+    DistanceHelpers.getPrimaryDistanceInterval({});
     final List<PuttingSet> allSetsInCircle =
-        getPuttingSetsFromIntervals(setIntervals);
+        getPuttingSetsFromIntervals(intervalToPuttingSetsData);
 
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) =>
-                CircleStatsScreen(circle: circle, setIntervals: setIntervals),
+            builder: (context) => CircleStatsScreen(
+              circle: circle,
+              intervalToPuttingSetsData: intervalToPuttingSetsData,
+            ),
           ),
         );
       },
@@ -87,7 +91,7 @@ class CircleStatsCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.end,
-      children: setIntervals
+      children: intervalToPuttingSetsData.values
           .map(
         (setInterval) =>
             setInterval.sets.isEmpty ? null : setInterval.setsPercentage,

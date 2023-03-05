@@ -516,11 +516,13 @@ class StatsService {
     return setsByDistance;
   }
 
-  Map<Circles, List<PuttingSetsInterval>> getSetIntervals(
+  Map<Circles, Map<DistanceInterval, PuttingSetInterval>> getSetIntervals(
     Map<int, List<PuttingSet>> setsByDistanceMap,
   ) {
-    final List<PuttingSetsInterval> circle1SetIntervals = [];
-    final List<PuttingSetsInterval> circle2SetIntervals = [];
+    final Map<DistanceInterval, PuttingSetInterval> circle1IntervalToDataMap =
+        {};
+    final Map<DistanceInterval, PuttingSetInterval> circle2IntervalToDataMap =
+        {};
 
     // circle 1 intervals
     for (int i = 0; i < kC1DistanceIntervals.length - 1; i++) {
@@ -532,19 +534,19 @@ class StatsService {
       }
       final int upperBound = kC1DistanceIntervals[i + 1];
 
+      final DistanceInterval distanceInterval =
+          DistanceInterval(lowerBound: lowerBound, upperBound: upperBound);
+
       for (int distance in setsByDistanceMap.keys) {
         // if distance in interval
         if (distance >= lowerBound && distance <= upperBound) {
           puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
         }
       }
-      circle1SetIntervals.add(
-        PuttingSetsInterval(
-          lowerBound: lowerBound,
-          upperBound: upperBound,
-          sets: puttingSetsInInterval,
-          setsPercentage: percentageFromSets(puttingSetsInInterval),
-        ),
+      circle1IntervalToDataMap[distanceInterval] = PuttingSetInterval(
+        distanceInterval: distanceInterval,
+        sets: puttingSetsInInterval,
+        setsPercentage: percentageFromSets(puttingSetsInInterval),
       );
     }
 
@@ -558,25 +560,25 @@ class StatsService {
       }
       final int upperBound = kC2DistanceIntervals[i + 1];
 
+      final DistanceInterval distanceInterval =
+          DistanceInterval(lowerBound: lowerBound, upperBound: upperBound);
+
       for (int distance in setsByDistanceMap.keys) {
         // if distance in interval
         if (distance >= lowerBound && distance <= upperBound) {
           puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
         }
       }
-      circle2SetIntervals.add(
-        PuttingSetsInterval(
-          lowerBound: lowerBound,
-          upperBound: upperBound,
-          sets: puttingSetsInInterval,
-          setsPercentage: percentageFromSets(puttingSetsInInterval),
-        ),
+      circle2IntervalToDataMap[distanceInterval] = PuttingSetInterval(
+        distanceInterval: distanceInterval,
+        sets: puttingSetsInInterval,
+        setsPercentage: percentageFromSets(puttingSetsInInterval),
       );
     }
 
     return {
-      Circles.circle1: circle1SetIntervals,
-      Circles.circle2: circle2SetIntervals
+      Circles.circle1: circle1IntervalToDataMap,
+      Circles.circle2: circle2IntervalToDataMap
     };
   }
 }
