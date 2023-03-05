@@ -1,5 +1,4 @@
 import 'package:myputt/models/data/sessions/putting_session.dart';
-import 'package:myputt/utils/calculators.dart';
 
 abstract class SessionHelpers {
   static List<PuttingSession> removeSession(
@@ -127,16 +126,5 @@ abstract class SessionHelpers {
     final List<PuttingSession> selectedSessions =
         completedSessions.take(range).toList();
     return range == 0 ? completedSessions : selectedSessions;
-  }
-
-  static double percentageFromSession(PuttingSession session) {
-    final int totalAttempts = totalAttemptsFromSets(session.sets);
-    final int totalMade = totalMadeFromSets(session.sets);
-
-    if (totalAttempts == 0) {
-      return 0;
-    } else {
-      return totalMade / totalAttempts;
-    }
   }
 }

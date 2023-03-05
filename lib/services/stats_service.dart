@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:myputt/models/data/chart/chart_point.dart';
+import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/models/data/stats/stats.dart';
 import 'package:myputt/models/data/stats/general_stats.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
@@ -10,7 +11,9 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/calendar_view/utils.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
+import 'package:myputt/utils/constants/distance_constants.dart';
 import 'package:myputt/utils/enums.dart';
+import 'package:myputt/utils/set_helpers.dart';
 
 import 'firebase_auth_service.dart';
 
@@ -123,14 +126,15 @@ class StatsService {
     }
 
     return Stats(
-        circleOnePercentages: circleOneRangeFractions,
-        circleTwoPercentages: circleTwoRangeFractions,
-        circleOneOverall: circleOneOverallFractions,
-        circleTwoOverall: circleTwoOverallFractions,
-        generalStats: GeneralStats(
-          totalAttempts: totalAttempts,
-          totalMade: totalMade,
-        ));
+      circleOnePercentages: circleOneRangeFractions,
+      circleTwoPercentages: circleTwoRangeFractions,
+      circleOneOverall: circleOneOverallFractions,
+      circleTwoOverall: circleTwoOverallFractions,
+      generalStats: GeneralStats(
+        totalAttempts: totalAttempts,
+        totalMade: totalMade,
+      ),
+    );
   }
 
   Stats getStatsForSession(
@@ -490,5 +494,87 @@ class StatsService {
           item: challenge));
     }
     return events;
+  }
+
+  Map<int, List<PuttingSet>> getSetsByDistance(
+    List<PuttingSession> validSessions,
+    List<PuttingChallenge> puttingChallenges,
+  ) {
+    Map<int, List<PuttingSet>> setsByDistance = {};
+
+    for (PuttingSession validSession in validSessions) {
+      setsByDistance = sortSetsByDistance(validSession.sets, setsByDistance);
+    }
+
+    for (PuttingChallenge challenge in puttingChallenges) {
+      setsByDistance = sortSetsByDistance(
+        challenge.currentUserSets,
+        setsByDistance,
+      );
+    }
+
+    return setsByDistance;
+  }
+
+  Map<Circles, List<PuttingSetsInterval>> getSetIntervals(
+    Map<int, List<PuttingSet>> setsByDistanceMap,
+  ) {
+    final List<PuttingSetsInterval> circle1SetIntervals = [];
+    final List<PuttingSetsInterval> circle2SetIntervals = [];
+
+    // circle 1 intervals
+    for (int i = 0; i < kC1DistanceIntervals.length - 2; i++) {
+      final List<PuttingSet> puttingSetsInInterval = [];
+
+      int lowerBound = kC1DistanceIntervals[i];
+      if (i > 0) {
+        lowerBound++;
+      }
+      final int upperBound = kC1DistanceIntervals[i + 1];
+
+      for (int distance in setsByDistanceMap.keys) {
+        // if distance in interval
+        if (distance >= lowerBound && distance <= upperBound) {
+          puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
+        }
+      }
+      circle1SetIntervals.add(
+        PuttingSetsInterval(
+          lowerBound: lowerBound,
+          upperBound: upperBound,
+          sets: puttingSetsInInterval,
+        ),
+      );
+    }
+
+    // circle 2 intervals
+    for (int i = 0; i < kC2DistanceIntervals.length - 2; i++) {
+      final List<PuttingSet> puttingSetsInInterval = [];
+
+      int lowerBound = kC2DistanceIntervals[i];
+      if (i > 0) {
+        lowerBound++;
+      }
+      final int upperBound = kC2DistanceIntervals[i + 1];
+
+      for (int distance in setsByDistanceMap.keys) {
+        // if distance in interval
+        if (distance >= lowerBound && distance <= upperBound) {
+          puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
+        }
+      }
+      circle2SetIntervals.add(
+        PuttingSetsInterval(
+          lowerBound: lowerBound,
+          upperBound: upperBound,
+          sets: puttingSetsInInterval,
+        ),
+      );
+    }
+
+    return {
+      Circles.circle1: circle1SetIntervals,
+      Circles.circle2: circle2SetIntervals
+    };
   }
 }
