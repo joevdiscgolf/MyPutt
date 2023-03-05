@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/components/lines/dashed_line.dart';
+import 'package:myputt/components/bars/bar_chart.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
+import 'package:myputt/screens/home_v2/screens/circle_stats_screen/circle_stats_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -20,11 +21,18 @@ class CircleStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<PuttingSet> sets = getPuttingSetsFromIntervals(setIntervals);
+    final List<PuttingSet> allSetsInCircle =
+        getPuttingSetsFromIntervals(setIntervals);
 
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                CircleStatsScreen(circle: circle, setIntervals: setIntervals),
+          ),
+        );
       },
       child: Container(
         height: 124,
@@ -52,7 +60,7 @@ class CircleStatsCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${(percentageFromSets(sets) * 100).toInt()}%',
+                        '${(percentageFromSets(allSetsInCircle) * 100).toInt()}%',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: MyPuttColors.blue,
                               fontWeight: FontWeight.w600,
@@ -76,48 +84,17 @@ class CircleStatsCard extends StatelessWidget {
   }
 
   Widget _barsRow(BuildContext context) {
-    return Column(
-      children: [
-        Transform.translate(
-          offset: const Offset(0, -12),
-          child: DashedLine(
-            height: 1,
-            width: double.infinity,
-            color: MyPuttColors.gray[100]!,
-          ),
-        ),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: setIntervals
-                  .map((setInterval) => setInterval.sets.isEmpty
-                      ? null
-                      : percentageFromSets(setInterval.sets))
-                  .map((value) => _bar(value))
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _bar(double? percentage) {
-    return FractionallySizedBox(
-      heightFactor: percentage,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        width: 8,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color:
-              percentage != null ? MyPuttColors.blue : MyPuttColors.gray[100],
-          boxShadow: percentage != null ? standardBoxShadow() : null,
-        ),
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: setIntervals
+          .map(
+        (setInterval) =>
+            setInterval.sets.isEmpty ? null : setInterval.setsPercentage,
+      )
+          .map((percentage) {
+        return Expanded(child: VerticalBarChartBar(percentage: percentage));
+      }).toList(),
     );
   }
 }

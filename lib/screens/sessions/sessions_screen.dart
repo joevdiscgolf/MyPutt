@@ -3,18 +3,18 @@ import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/session_summary/session_summary_screen.dart';
 import 'package:myputt/screens/sessions/components/create_new_session_button.dart';
 import 'package:myputt/screens/sessions/components/resume_session_card.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
-import 'package:myputt/screens/sessions/components/sessions_screen_app_bar.dart';
 import 'package:myputt/utils/colors.dart';
-import '../session_summary/session_summary_screen.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
@@ -44,7 +44,11 @@ class _SessionsState extends State<SessionsScreen> {
           settings: settings,
           builder: (BuildContext context) {
             return Scaffold(
-              appBar: SessionsScreenAppBar(scrollController: _scrollController),
+              appBar: MyPuttAppBar(
+                title: 'Sessions',
+                controller: _scrollController,
+                hasBackButton: false,
+              ),
               backgroundColor: MyPuttColors.white,
               floatingActionButton: const CreateNewSessionButton(),
               floatingActionButtonLocation:

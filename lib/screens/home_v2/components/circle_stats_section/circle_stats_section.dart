@@ -3,7 +3,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
-import 'package:myputt/screens/home_v2/components/circle_stats/circle_stats_card.dart';
+import 'package:myputt/screens/home_v2/components/circle_stats_section/circle_stats_card.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/enums.dart';
 

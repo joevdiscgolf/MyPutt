@@ -12,7 +12,9 @@ import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class HomeScreenChartV2 extends StatelessWidget {
-  const HomeScreenChartV2({Key? key}) : super(key: key);
+  const HomeScreenChartV2({Key? key, this.height = 200}) : super(key: key);
+
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class HomeScreenChartV2 extends StatelessWidget {
               indexToTimeRange[0]!,
             );
     return SizedBox(
-      height: 200,
+      height: height,
       child: LineChart(
         mainData(
           context,

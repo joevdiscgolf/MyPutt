@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2.dart';
+import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/home_screen_chart_screen.dart';
 import 'package:myputt/utils/colors.dart';
 
 class HomeScreenChartV2Wrapper extends StatelessWidget {
@@ -12,6 +13,11 @@ class HomeScreenChartV2Wrapper extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreenChartScreen(),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.only(top: 8),

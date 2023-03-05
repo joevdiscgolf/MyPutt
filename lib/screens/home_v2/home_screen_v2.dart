@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/screens/home_v2/components/circle_stats/circle_stats.dart';
+import 'package:myputt/screens/home_v2/components/circle_stats_section/circle_stats_section.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_wrapper.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar.dart';
 

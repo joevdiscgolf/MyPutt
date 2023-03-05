@@ -100,7 +100,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 children: [
                   Expanded(
                     child: MyPuttBottomNavItem(
-                      iconData: FlutterRemix.home_2_line,
+                      iconData: FlutterRemix.home_2_fill,
                       isSelected: _currentIndex == 0,
                       bottomPadding: bottomPadding,
                       onPressed: () {
@@ -112,7 +112,7 @@ class _MainWrapperState extends State<MainWrapper> {
                   ),
                   Expanded(
                     child: MyPuttBottomNavItem(
-                      iconData: FlutterRemix.record_circle_line,
+                      iconData: FlutterRemix.record_circle_fill,
                       isSelected: _currentIndex == 1,
                       bottomPadding: bottomPadding,
                       onPressed: () {
@@ -124,7 +124,7 @@ class _MainWrapperState extends State<MainWrapper> {
                   ),
                   Expanded(
                     child: MyPuttBottomNavItem(
-                      iconData: FlutterRemix.sword_line,
+                      iconData: FlutterRemix.sword_fill,
                       isSelected: _currentIndex == 2,
                       bottomPadding: bottomPadding,
                       onPressed: () {
@@ -149,7 +149,7 @@ class _MainWrapperState extends State<MainWrapper> {
                     ),
                   Expanded(
                     child: MyPuttBottomNavItem(
-                      iconData: FlutterRemix.user_3_line,
+                      iconData: FlutterRemix.user_3_fill,
                       isSelected: _currentIndex == (_showEventsTab ? 4 : 3),
                       bottomPadding: bottomPadding,
                       onPressed: () {

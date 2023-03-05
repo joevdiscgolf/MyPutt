@@ -523,7 +523,7 @@ class StatsService {
     final List<PuttingSetsInterval> circle2SetIntervals = [];
 
     // circle 1 intervals
-    for (int i = 0; i < kC1DistanceIntervals.length - 2; i++) {
+    for (int i = 0; i < kC1DistanceIntervals.length - 1; i++) {
       final List<PuttingSet> puttingSetsInInterval = [];
 
       int lowerBound = kC1DistanceIntervals[i];
@@ -543,12 +543,13 @@ class StatsService {
           lowerBound: lowerBound,
           upperBound: upperBound,
           sets: puttingSetsInInterval,
+          setsPercentage: percentageFromSets(puttingSetsInInterval),
         ),
       );
     }
 
     // circle 2 intervals
-    for (int i = 0; i < kC2DistanceIntervals.length - 2; i++) {
+    for (int i = 0; i < kC2DistanceIntervals.length - 1; i++) {
       final List<PuttingSet> puttingSetsInInterval = [];
 
       int lowerBound = kC2DistanceIntervals[i];
@@ -568,6 +569,7 @@ class StatsService {
           lowerBound: lowerBound,
           upperBound: upperBound,
           sets: puttingSetsInInterval,
+          setsPercentage: percentageFromSets(puttingSetsInInterval),
         ),
       );
     }

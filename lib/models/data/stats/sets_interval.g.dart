@@ -13,6 +13,7 @@ PuttingSetsInterval _$PuttingSetsIntervalFromJson(Map json) =>
       sets: (json['sets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
+      setsPercentage: (json['setsPercentage'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$PuttingSetsIntervalToJson(
@@ -21,4 +22,5 @@ Map<String, dynamic> _$PuttingSetsIntervalToJson(
       'lowerBound': instance.lowerBound,
       'upperBound': instance.upperBound,
       'sets': instance.sets.map((e) => e.toJson()).toList(),
+      'setsPercentage': instance.setsPercentage,
     };
