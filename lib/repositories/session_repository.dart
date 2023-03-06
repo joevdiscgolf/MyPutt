@@ -25,7 +25,6 @@ class SessionRepository extends ChangeNotifier {
 
   set completedSessions(List<PuttingSession> sessions) {
     _completedSessions = sessions;
-    _storeCompletedSessionsInLocalDB();
     notifyListeners();
   }
 
@@ -262,7 +261,7 @@ class SessionRepository extends ChangeNotifier {
         }
       }
       if (sessionsDeletedInCloud.isNotEmpty) {
-        log('[SessionsRepository][fetchCloudCompletedSessions] deleting local sessions that were deleted in clouds');
+        log('[SessionsRepository][fetchCloudCompletedSessions] deleting local sessions that were deleted in cloud');
         completedSessions = SessionHelpers.removeSessions(
           sessionsDeletedInCloud,
           _completedSessions,

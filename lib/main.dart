@@ -52,7 +52,7 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<BetaAccessService>().loadFeatureAccess();
-  locator.get<HomeScreenV2Cubit>().listenForChanges();
+  locator.get<HomeScreenV2Cubit>().listenForRepositoryChanges();
   await locator.get<AppPhaseCubit>().init();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(

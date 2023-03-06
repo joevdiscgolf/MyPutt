@@ -2,36 +2,30 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
-import 'package:myputt/repositories/challenges_repository.dart';
-import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
-import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/colors.dart';
-import 'package:myputt/utils/constants.dart';
 
 class HomeScreenChartV2 extends StatelessWidget {
-  const HomeScreenChartV2({Key? key, this.height = 200}) : super(key: key);
+  const HomeScreenChartV2({
+    Key? key,
+    required this.chartPoints,
+    this.height = 200,
+  }) : super(key: key);
 
+  final List<ChartPoint> chartPoints;
   final double height;
 
   @override
   Widget build(BuildContext context) {
-    final List<ChartPoint> _points =
-        locator.get<StatsService>().getPointsWithDistanceAndLimit(
-              locator.get<SessionRepository>().validCompletedSessions,
-              locator.get<ChallengesRepository>().completedChallenges,
-              20,
-              indexToTimeRange[0]!,
-            );
     return SizedBox(
       height: height,
       child: LineChart(
         mainData(
           context,
-          PerformanceChartData(points: _points),
+          PerformanceChartData(points: chartPoints),
         ),
+        swapAnimationDuration: const Duration(milliseconds: 0),
       ),
     );
   }

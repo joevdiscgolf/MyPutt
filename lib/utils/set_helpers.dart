@@ -33,10 +33,8 @@ double percentageFromSets(List<PuttingSet> sets) {
   }
 }
 
-Map<int, List<PuttingSet>> sortSetsByDistance(
-  List<PuttingSet> sets,
-  Map<int, List<PuttingSet>> setsByDistance,
-) {
+Map<int, List<PuttingSet>> sortSetsByDistance(List<PuttingSet> sets) {
+  final Map<int, List<PuttingSet>> setsByDistance = {};
   for (PuttingSet set in sets) {
     if (setsByDistance.containsKey(set.distance)) {
       setsByDistance[set.distance]!.add(set);

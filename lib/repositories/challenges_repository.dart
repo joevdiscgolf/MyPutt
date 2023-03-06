@@ -27,7 +27,6 @@ class ChallengesRepository extends ChangeNotifier {
   List<PuttingChallenge> get completedChallenges => _completedChallenges;
 
   set completedChallenges(List<PuttingChallenge> completedChallenges) {
-    print('setting completed challenges');
     _completedChallenges = completedChallenges;
     notifyListeners();
   }

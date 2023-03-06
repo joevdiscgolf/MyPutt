@@ -31,14 +31,18 @@ class HomeScreenCubit extends Cubit<HomeScreenState> {
       _challengesRepository.completedChallenges,
     );
     final List<Event> events = _statsService.getCalendarEvents(
-        _sessionRepository.validCompletedSessions,
-        _challengesRepository.completedChallenges);
-    emit(HomeScreenLoaded(
+      _sessionRepository.validCompletedSessions,
+      _challengesRepository.completedChallenges,
+    );
+    emit(
+      HomeScreenLoaded(
         stats: stats,
         sessionRange: timeRangeIndex,
         allSessions: _sessionRepository.validCompletedSessions,
         allChallenges: _challengesRepository.completedChallenges,
-        events: events));
+        events: events,
+      ),
+    );
   }
 
   void updateTimeRangeIndex(int newIndex) {

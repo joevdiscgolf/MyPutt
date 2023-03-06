@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/app_bars/myputt_app_bar.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_builder.dart';
 import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/components/time_range_chips_row.dart';
 
 class HomeScreenChartScreen extends StatelessWidget {
@@ -16,7 +16,7 @@ class HomeScreenChartScreen extends StatelessWidget {
           children: const [
             TimeRangeChipsRow(),
             SizedBox(height: 40),
-            HomeScreenChartV2(height: 240),
+            HomeScreenChartV2Builder(height: 240),
           ],
         ),
       ),
