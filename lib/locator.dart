@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/cubits/app_phase_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
@@ -31,6 +32,7 @@ Future<void> setUpLocator() async {
   );
   locator.registerSingleton<Mixpanel>(mixpanel);
   locator.registerSingleton<AppPhaseCubit>(AppPhaseCubit());
+  locator.registerSingleton<HomeScreenV2Cubit>(HomeScreenV2Cubit());
   locator
       .registerSingleton<SharedPreferencesService>(SharedPreferencesService());
   locator.registerSingleton<FirebaseAuthService>(FirebaseAuthService());

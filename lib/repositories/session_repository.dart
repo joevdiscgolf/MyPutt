@@ -27,7 +27,6 @@ class SessionRepository extends ChangeNotifier {
     _completedSessions = sessions;
     _storeCompletedSessionsInLocalDB();
     notifyListeners();
-    print('notified listeners');
   }
 
   Future<bool> startActiveSession() async {

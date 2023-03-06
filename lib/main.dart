@@ -52,6 +52,7 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<BetaAccessService>().loadFeatureAccess();
+  locator.get<HomeScreenV2Cubit>().listenForChanges();
   await locator.get<AppPhaseCubit>().init();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
@@ -60,7 +61,7 @@ void main() async {
         MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => HomeScreenCubit()),
-            BlocProvider(create: (_) => HomeScreenV2Cubit()),
+            BlocProvider(create: (_) => locator.get<HomeScreenV2Cubit>()),
             BlocProvider(create: (_) => SessionSummaryCubit()),
             BlocProvider(create: (_) => ChallengesCubit()),
             BlocProvider(create: (_) => MyProfileCubit()),
