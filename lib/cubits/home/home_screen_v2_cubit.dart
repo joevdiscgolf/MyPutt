@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/cubits/home/data/home_screen_cubit_data.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
@@ -77,6 +78,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
             puttingActivityTypes: PuttingActivityType.values,
             puttingConditions: const PuttingConditions(),
           ),
+          chartDragData: null,
         ),
       );
     }
@@ -126,8 +128,13 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
             puttingActivityTypes: PuttingActivityType.values,
             puttingConditions: const PuttingConditions(),
           ),
+          chartDragData: null,
         ),
       );
     }
+  }
+
+  void onDragUpdate(double horizontalOffset, List<ChartPoint> points) {
+    if (state is! HomeScreenV2Loaded) return;
   }
 }

@@ -29,7 +29,7 @@ class HomeScreenChartV2Wrapper extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _puttsMadeRow(context),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
             const HomeScreenChartV2Builder(),
           ],
         ),

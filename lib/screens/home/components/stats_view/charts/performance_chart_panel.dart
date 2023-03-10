@@ -76,10 +76,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       _selectedDistance,
       limit,
     );
-    PerformanceChartData smoothData = smoothChart(
-      PerformanceChartData(points: _points),
-      _smoothRange,
-    );
+    List<ChartPoint> smoothPoints = smoothChart(_points, _smoothRange);
     return Column(
       children: [
         Column(
@@ -91,7 +88,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
                     hasSessions:
                         _sessionRepository.validCompletedSessions.isNotEmpty,
                   )
-                : PerformanceChart(data: smoothData),
+                : PerformanceChart(points: smoothPoints),
             Row(
               children: distancesRow
                   .map((distance) =>

@@ -20,30 +20,22 @@ class HomeScreenChartV2Builder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
       builder: (context, state) {
-        PerformanceChartData performanceChartData =
-            PerformanceChartData(points: []);
-
+        List<ChartPoint> points = [];
         if (state is HomeScreenV2Loaded) {
-          final List<ChartPoint> points =
-              locator.get<ChartService>().generateChartPointsForInterval(
-                    state.sets,
-                    state.chartDistanceInterval ?? kPreferredDistanceInterval,
-                  );
+          points = locator.get<ChartService>().generateChartPointsForInterval(
+                state.sets,
+                state.chartDistanceInterval ?? kPreferredDistanceInterval,
+              );
 
-          final int smoothPower = max(1, points.length ~/ 50);
+          final int smoothPower = max(1, points.length ~/ 20);
 
-          performanceChartData = smoothChart(
-            PerformanceChartData(
-              points: points,
-            ),
+          points = smoothChart(
+            points,
             smoothPower,
           );
         }
 
-        return HomeScreenChartV2(
-          height: height,
-          chartPoints: performanceChartData.points,
-        );
+        return HomeScreenChartV2(height: height, chartPoints: points);
       },
     );
   }

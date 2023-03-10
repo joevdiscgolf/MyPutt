@@ -17,6 +17,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     required this.chartDistanceInterval,
     required this.chartDistance,
     required this.homeChartFilters,
+    required this.chartDragData,
   });
 
   final List<PuttingSet> sets;
@@ -26,6 +27,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
   final DistanceInterval? chartDistanceInterval;
   final int? chartDistance;
   final HomeChartFilters homeChartFilters;
+  final ChartDragData? chartDragData;
 
   HomeScreenV2Loaded copyWith(Map<String, dynamic> valuesToUpdate) {
     List<PuttingSet> sets = this.sets;
@@ -35,6 +37,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     DistanceInterval? chartDistanceInterval = this.chartDistanceInterval;
     int? chartDistance = this.chartDistance;
     HomeChartFilters homeChartFilters = this.homeChartFilters;
+    ChartDragData? chartDragData = this.chartDragData;
 
     if (valuesToUpdate.containsKey('sets')) {
       sets = valuesToUpdate['sets'];
@@ -54,6 +57,9 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     if (valuesToUpdate.containsKey('homeChartFilters')) {
       homeChartFilters = valuesToUpdate['homeChartFilters'];
     }
+    if (valuesToUpdate.containsKey('chartDragData')) {
+      chartDragData = valuesToUpdate['chartDragData'];
+    }
 
     return HomeScreenV2Loaded(
       sets: sets,
@@ -62,6 +68,9 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
       chartDistanceInterval: chartDistanceInterval,
       chartDistance: chartDistance,
       homeChartFilters: homeChartFilters,
+      chartDragData: chartDragData,
     );
   }
 }
+
+class ChartDragData {}

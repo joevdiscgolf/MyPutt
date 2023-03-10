@@ -7,11 +7,12 @@ import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 
-PerformanceChartData smoothChart(
-    PerformanceChartData data, int comparisonRange) {
-  final List<ChartPoint> points = data.points;
+List<ChartPoint> smoothChart(
+  List<ChartPoint> points,
+  int comparisonRange,
+) {
   if (comparisonRange == 0) {
-    return PerformanceChartData(points: points);
+    return points;
   }
   final List<ChartPoint> newPoints = [];
   for (int index = 0; index < points.length; index++) {
@@ -27,7 +28,7 @@ PerformanceChartData smoothChart(
           index: index));
     }
   }
-  return PerformanceChartData(points: newPoints);
+  return newPoints;
 }
 
 double weightedAverageOfAdjacent(

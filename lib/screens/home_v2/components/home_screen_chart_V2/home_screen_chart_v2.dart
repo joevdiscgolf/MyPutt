@@ -2,8 +2,12 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/components/chart_scrubber.dart';
 import 'package:myputt/utils/colors.dart';
 
 class HomeScreenChartV2 extends StatelessWidget {
@@ -20,12 +24,89 @@ class HomeScreenChartV2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: LineChart(
-        mainData(
-          context,
-          PerformanceChartData(points: chartPoints),
-        ),
-        swapAnimationDuration: const Duration(milliseconds: 0),
+      child: Stack(
+        children: [
+          // chart crosshair
+          BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
+            builder: (context, homeScreenV2State) {
+              return ChartScrubber(
+                crossHairOffset: Offset(200, 0),
+                dateScrubberOffset: Offset(0, 100),
+                chartHeight: height,
+                dateLabel: 'march 10',
+                percentage: 0.5,
+                labelHorizontalOffset: 0,
+              );
+            },
+          ),
+          SizedBox(
+            height: height,
+            width: MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  Vibrate.feedback(FeedbackType.heavy);
+
+                  // BlocProvider.of<PortfolioChartCubit>(context).handleDrag(
+                  //   dragOffset: details.localPosition,
+                  //   points: points,
+                  //   screenWidth: screenWidth,
+                  //   chartHeight: chartHeight,
+                  //   tappedDown: true,
+                  //   maxScrubberWidth: maxScrubberWidth,
+                  //   isPositionsScreen: isPositionsScreen,
+                  // );
+                },
+                onTapUp: (TapUpDetails details) {
+                  // BlocProvider.of<PortfolioChartCubit>(context).onDragEnd(
+                  //   points,
+                  //   chartHeight,
+                  //   isPositionsScreen: isPositionsScreen,
+                  // );
+                },
+                onHorizontalDragStart: (DragStartDetails details) {
+                  // BlocProvider.of<PortfolioChartCubit>(context).handleDrag(
+                  //   dragOffset: details.localPosition,
+                  //   points: points,
+                  //   screenWidth: screenWidth,
+                  //   chartHeight: chartHeight,
+                  //   horizontalDragStart: true,
+                  //   maxScrubberWidth: maxScrubberWidth,
+                  //   isPositionsScreen: isPositionsScreen,
+                  // );
+                },
+                onHorizontalDragUpdate: (DragUpdateDetails details) {
+                  // BlocProvider.of<PortfolioChartCubit>(context).handleDrag(
+                  //   dragOffset: details.localPosition,
+                  //   points: points,
+                  //   screenWidth: screenWidth,
+                  //   chartHeight: chartHeight,
+                  //   maxScrubberWidth: maxScrubberWidth,
+                  //   isPositionsScreen: isPositionsScreen,
+                  // );
+                },
+                onHorizontalDragEnd: (DragEndDetails details) {
+                  // BlocProvider.of<PortfolioChartCubit>(context).onDragEnd(
+                  //   points,
+                  //   chartHeight,
+                  //   isPositionsScreen: isPositionsScreen,
+                  // );
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            height: height,
+            child: LineChart(
+              mainData(
+                context,
+                PerformanceChartData(points: chartPoints),
+              ),
+              swapAnimationDuration: const Duration(milliseconds: 0),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -40,7 +121,7 @@ class HomeScreenChartV2 extends StatelessWidget {
 
     return LineChartData(
       lineTouchData: LineTouchData(enabled: false),
-      clipData: FlClipData(bottom: true, left: true, top: true, right: true),
+      // clipData: FlClipData(bottom: true, left: true, top: true, right: true),
       axisTitleData: FlAxisTitleData(
         leftTitle: AxisTitle(
           margin: 0,
