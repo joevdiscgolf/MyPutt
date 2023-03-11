@@ -73,4 +73,47 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
   }
 }
 
-class ChartDragData {}
+class ChartDragData {
+  const ChartDragData({
+    this.dragging = false,
+    this.draggedDate,
+    this.draggedValue = 0,
+    this.crossHairOffset,
+    this.labelHorizontalOffset = 0,
+    this.tappedDown = false,
+    this.draggedIndex,
+    this.tappedDownAt,
+  });
+  final bool dragging;
+  final DateTime? draggedDate;
+  final double? draggedValue;
+  final Offset? crossHairOffset;
+  final double? labelHorizontalOffset;
+  final bool? tappedDown;
+  final int? draggedIndex;
+  final DateTime? tappedDownAt;
+
+  ChartDragData copyWith({
+    bool? dragging,
+    DateTime? draggedDate,
+    double? draggedValue,
+    double? changePercentage,
+    Offset? crossHairOffset,
+    double? labelHorizontalOffset,
+    bool? tappedDown,
+    DateTime? tappedDownAt,
+    int? draggedIndex,
+  }) {
+    return ChartDragData(
+      dragging: dragging ?? this.dragging,
+      draggedDate: draggedDate ?? this.draggedDate,
+      draggedValue: draggedValue ?? this.draggedValue,
+      crossHairOffset: crossHairOffset ?? this.crossHairOffset,
+      labelHorizontalOffset:
+          labelHorizontalOffset ?? this.labelHorizontalOffset,
+      tappedDown: tappedDown ?? this.tappedDown,
+      draggedIndex: draggedIndex ?? this.draggedIndex,
+      tappedDownAt: tappedDownAt ?? this.tappedDownAt,
+    );
+  }
+}

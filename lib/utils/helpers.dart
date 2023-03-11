@@ -68,3 +68,11 @@ extension SafeList<T> on List<T> {
     return newList;
   }
 }
+
+T? tryCast<T>(dynamic x) {
+  try {
+    return (x as T);
+  } on TypeError catch (_) {
+    return null;
+  }
+}

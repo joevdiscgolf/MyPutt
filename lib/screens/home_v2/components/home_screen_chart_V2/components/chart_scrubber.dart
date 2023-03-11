@@ -7,7 +7,6 @@ class ChartScrubber extends StatelessWidget {
   const ChartScrubber({
     Key? key,
     required this.crossHairOffset,
-    required this.dateScrubberOffset,
     required this.chartHeight,
     required this.dateLabel,
     this.noData,
@@ -17,17 +16,16 @@ class ChartScrubber extends StatelessWidget {
 
   final double chartHeight;
   final Offset crossHairOffset;
-  final Offset dateScrubberOffset;
   final String dateLabel;
   final bool? noData;
   final double percentage;
   final double labelHorizontalOffset;
 
   static const double _dotSize = 8;
+  static const double _chartScrubberVerticalPadding = 8;
 
   @override
   Widget build(BuildContext context) {
-    final double lineHeight = chartHeight * percentage;
     return Container(
       color: Colors.transparent,
       height: chartHeight,
@@ -36,7 +34,7 @@ class ChartScrubber extends StatelessWidget {
         alignment: Alignment.topLeft,
         children: [
           Transform.translate(
-            offset: Offset(crossHairOffset.dx, 0),
+            offset: Offset(crossHairOffset.dx, -_chartScrubberVerticalPadding),
             child: Stack(
               alignment: Alignment.topLeft,
               children: [
@@ -47,12 +45,16 @@ class ChartScrubber extends StatelessWidget {
                 ),
                 CustomLine(
                   color: MyPuttColors.gray[800]!,
-                  height: chartHeight * percentage,
+                  height: chartHeight * (1 - percentage) +
+                      (_dotSize / 2) +
+                      _chartScrubberVerticalPadding,
                 ),
                 Transform.translate(
                   offset: Offset(
                     -_dotSize / 2,
-                    lineHeight - _dotSize,
+                    chartHeight * (1 - percentage) +
+                        (_dotSize / 2) +
+                        _chartScrubberVerticalPadding,
                   ),
                   child: Container(
                     height: _dotSize,

@@ -12,14 +12,20 @@ class ChartService {
     sets.sort((s1, s2) => (s2.timeStamp ?? 0).compareTo(s1.timeStamp ?? 0));
 
     return [
-      ...sets.mapIndexed(
-        (index, set) => ChartPoint(
-          distance: set.distance,
-          decimal: percentageFromSet(set),
-          timeStamp: set.timeStamp ?? 0,
-          index: index,
-        ),
-      )
+      ...sets
+          .where(
+            (set) =>
+                set.distance >= distanceInterval.lowerBound &&
+                set.distance <= distanceInterval.upperBound,
+          )
+          .mapIndexed(
+            (index, set) => ChartPoint(
+              distance: set.distance,
+              decimal: percentageFromSet(set),
+              timeStamp: set.timeStamp ?? 0,
+              index: index,
+            ),
+          )
     ];
   }
 }

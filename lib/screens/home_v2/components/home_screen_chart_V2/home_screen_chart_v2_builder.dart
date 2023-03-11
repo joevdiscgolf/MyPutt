@@ -9,6 +9,7 @@ import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_scre
 import 'package:myputt/services/chart_service.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
+import 'package:myputt/utils/helpers.dart';
 
 class HomeScreenChartV2Builder extends StatelessWidget {
   const HomeScreenChartV2Builder({Key? key, this.height = 200})
@@ -18,24 +19,45 @@ class HomeScreenChartV2Builder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
+    return BlocConsumer<HomeScreenV2Cubit, HomeScreenV2State>(
+      listener: (_, __) {},
+      listenWhen: (_, __) => false,
+      buildWhen: (previous, current) {
+        final HomeScreenV2Loaded? previousLoadedState =
+            tryCast<HomeScreenV2Loaded>(previous);
+        final HomeScreenV2Loaded? currentLoadedState =
+            tryCast<HomeScreenV2Loaded>(current);
+        if (previousLoadedState == null || currentLoadedState == null) {
+          return true;
+        }
+        return previousLoadedState.chartDistanceInterval !=
+                currentLoadedState.chartDistanceInterval ||
+            previousLoadedState.circleToIntervalsMap !=
+                currentLoadedState.circleToIntervalsMap ||
+            previousLoadedState.timeRange != currentLoadedState.timeRange;
+      },
       builder: (context, state) {
+        bool noData = false;
         List<ChartPoint> points = [];
         if (state is HomeScreenV2Loaded) {
+          noData = state.sets.isEmpty;
+
           points = locator.get<ChartService>().generateChartPointsForInterval(
                 state.sets,
                 state.chartDistanceInterval ?? kPreferredDistanceInterval,
               );
 
-          final int smoothPower = max(1, points.length ~/ 20);
+          final int smoothPower = max(1, points.length ~/ 50);
 
-          points = smoothChart(
-            points,
-            smoothPower,
-          );
+          points = smoothChart(points, smoothPower);
         }
 
-        return HomeScreenChartV2(height: height, chartPoints: points);
+        return HomeScreenChartV2(
+          height: height,
+          points: points,
+          screenWidth: MediaQuery.of(context).size.width,
+          noData: noData,
+        );
       },
     );
   }

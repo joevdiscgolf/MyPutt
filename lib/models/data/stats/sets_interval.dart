@@ -32,6 +32,11 @@ class DistanceInterval extends Equatable {
   final int lowerBound;
   final int upperBound;
 
+  @override
+  String toString() {
+    return '$lowerBound-$upperBound';
+  }
+
   factory DistanceInterval.fromJson(Map<String, dynamic> json) =>
       _$DistanceIntervalFromJson(json);
 
