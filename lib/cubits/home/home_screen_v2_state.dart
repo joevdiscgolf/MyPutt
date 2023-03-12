@@ -2,11 +2,13 @@ part of 'home_screen_v2_cubit.dart';
 
 @immutable
 abstract class HomeScreenV2State {
-  const HomeScreenV2State();
+  const HomeScreenV2State({this.tappedDownAt});
+  final DateTime? tappedDownAt;
 }
 
 class HomeScreenV2Initial extends HomeScreenV2State {
-  const HomeScreenV2Initial();
+  const HomeScreenV2Initial({DateTime? tappedDownAt})
+      : super(tappedDownAt: tappedDownAt);
 }
 
 class HomeScreenV2Loaded extends HomeScreenV2State {
@@ -18,7 +20,8 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     required this.chartDistance,
     required this.homeChartFilters,
     required this.chartDragData,
-  });
+    DateTime? tappedDownAt,
+  }) : super(tappedDownAt: tappedDownAt);
 
   final List<PuttingSet> sets;
   final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
@@ -38,6 +41,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     int? chartDistance = this.chartDistance;
     HomeChartFilters homeChartFilters = this.homeChartFilters;
     ChartDragData? chartDragData = this.chartDragData;
+    DateTime? tappedDownAt = this.tappedDownAt;
 
     if (valuesToUpdate.containsKey('sets')) {
       sets = valuesToUpdate['sets'];
@@ -60,6 +64,9 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     if (valuesToUpdate.containsKey('chartDragData')) {
       chartDragData = valuesToUpdate['chartDragData'];
     }
+    if (valuesToUpdate.containsKey('tappedDownAt')) {
+      tappedDownAt = valuesToUpdate['tappedDownAt'];
+    }
 
     return HomeScreenV2Loaded(
       sets: sets,
@@ -69,6 +76,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
       chartDistance: chartDistance,
       homeChartFilters: homeChartFilters,
       chartDragData: chartDragData,
+      tappedDownAt: tappedDownAt,
     );
   }
 }
@@ -82,7 +90,6 @@ class ChartDragData {
     this.labelHorizontalOffset = 0,
     this.tappedDown = false,
     this.draggedIndex,
-    this.tappedDownAt,
   });
   final bool dragging;
   final DateTime? draggedDate;
@@ -91,7 +98,6 @@ class ChartDragData {
   final double? labelHorizontalOffset;
   final bool? tappedDown;
   final int? draggedIndex;
-  final DateTime? tappedDownAt;
 
   ChartDragData copyWith({
     bool? dragging,
@@ -113,7 +119,6 @@ class ChartDragData {
           labelHorizontalOffset ?? this.labelHorizontalOffset,
       tappedDown: tappedDown ?? this.tappedDown,
       draggedIndex: draggedIndex ?? this.draggedIndex,
-      tappedDownAt: tappedDownAt ?? this.tappedDownAt,
     );
   }
 }

@@ -160,7 +160,13 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
     bool? tappedDown,
     bool horizontalDragStart = false,
   }) {
-    if (state is! HomeScreenV2Loaded) return;
+    if (state is! HomeScreenV2Loaded) {
+      if (tappedDown == true) {
+        // state is HomeScreenV2Initial if not HomeScreenV2Loaded
+        emit(HomeScreenV2Initial(tappedDownAt: DateTime.now()));
+      }
+      return;
+    }
 
     HomeScreenV2Loaded loadedState = state as HomeScreenV2Loaded;
 
@@ -219,6 +225,8 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
     emit(
       loadedState.copyWith(
         {
+          'tappedDownAt':
+              tappedDown == true ? DateTime.now() : loadedState.tappedDownAt,
           'chartDragData': ChartDragData(
             draggedValue: draggedValue,
             draggedDate: DateTime.fromMillisecondsSinceEpoch(
@@ -228,9 +236,6 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
             tappedDown: tappedDown ?? chartDragData?.tappedDown,
             dragging: true,
             draggedIndex: draggedIndex,
-            tappedDownAt: tappedDown == true
-                ? DateTime.now()
-                : chartDragData?.tappedDownAt,
           )
         },
       ),
@@ -238,11 +243,11 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
   }
 
   void handleDragEnd(BuildContext context) {
-    if (state is! HomeScreenV2Loaded) return;
+    final DateTime? tappedDownAt = state.tappedDownAt;
 
-    final DateTime? tappedDownAt =
-        (state as HomeScreenV2Loaded).chartDragData?.tappedDownAt;
-    emit((state as HomeScreenV2Loaded).copyWith({'chartDragData': null}));
+    if (state is HomeScreenV2Loaded) {
+      emit((state as HomeScreenV2Loaded).copyWith({'chartDragData': null}));
+    }
 
     if (tappedDownAt != null &&
         DateTime.now().millisecondsSinceEpoch -
