@@ -499,25 +499,6 @@ class StatsService {
     return events;
   }
 
-  // Map<int, List<PuttingSet>> getSetsByDistance(
-  //   List<PuttingSet> sets,
-  // ) {
-  //   Map<int, List<PuttingSet>> setsByDistance = {};
-  //
-  //   for (PuttingSession validSession in validSessions) {
-  //     setsByDistance = sortSetsByDistance(validSession.sets, setsByDistance);
-  //   }
-  //
-  //   for (PuttingChallenge challenge in puttingChallenges) {
-  //     setsByDistance = sortSetsByDistance(
-  //       challenge.currentUserSets,
-  //       setsByDistance,
-  //     );
-  //   }
-  //
-  //   return setsByDistance;
-  // }
-
   Map<Circles, Map<DistanceInterval, PuttingSetInterval>> getSetIntervals(
     List<PuttingSet> sets,
   ) {

@@ -68,20 +68,6 @@ class ChartScrubber extends StatelessWidget {
               ],
             ),
           ),
-          // Transform.translate(
-          //   offset: Offset(
-          //     crosshairOffset.dx - _dotSize / 2,
-          //     crosshairOffset.dy + _dotSize / 2,
-          //   ),
-          //   child: Container(
-          //     height: _dotSize,
-          //     width: _dotSize,
-          //     decoration: const BoxDecoration(
-          //       shape: BoxShape.circle,
-          //       color: Color(0xffD1E8FF),
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
