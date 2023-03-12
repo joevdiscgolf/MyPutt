@@ -6,7 +6,7 @@ import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
-import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/session_summary/session_summary_screen.dart';

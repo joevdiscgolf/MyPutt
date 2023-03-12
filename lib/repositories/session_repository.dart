@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
@@ -11,15 +12,20 @@ import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
-class SessionRepository {
+class SessionRepository extends ChangeNotifier {
   final DatabaseService _databaseService = DatabaseService();
 
   PuttingSession? currentSession;
-  List<PuttingSession> completedSessions = [];
+  List<PuttingSession> _completedSessions = [];
   List<PuttingSession> get validCompletedSessions {
-    return completedSessions
+    return _completedSessions
         .where((session) => session.isDeleted != true)
         .toList();
+  }
+
+  set completedSessions(List<PuttingSession> sessions) {
+    _completedSessions = sessions;
+    notifyListeners();
   }
 
   Future<bool> startActiveSession() async {
@@ -78,7 +84,7 @@ class SessionRepository {
   }
 
   Future<bool> finishCurrentSession(PuttingSession sessionToAdd) async {
-    completedSessions.add(sessionToAdd);
+    _completedSessions.add(sessionToAdd);
     final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
 
     if (!localSaveSuccess) {
@@ -100,7 +106,7 @@ class SessionRepository {
     // set deleted to true
     completedSessions = SessionHelpers.setSessionToDeleted(
       sessionToDelete.id,
-      completedSessions,
+      _completedSessions,
     );
 
     final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
@@ -115,7 +121,7 @@ class SessionRepository {
         // remove completely
         completedSessions = SessionHelpers.removeSession(
           sessionToDelete.id,
-          completedSessions,
+          _completedSessions,
         );
         return _storeCompletedSessionsInLocalDB();
       } else {
@@ -155,12 +161,12 @@ class SessionRepository {
     if (localDbSessions != null) {
       completedSessions = localDbSessions;
     }
-    log('completed sessions after loading local: ${completedSessions.length}');
+    log('completed sessions after loading local: ${_completedSessions.length}');
   }
 
   Future<void> syncLocalSessionsToCloud() async {
     // do not sync deleted sessions to cloud
-    List<PuttingSession> newlySyncedSessions = completedSessions
+    List<PuttingSession> newlySyncedSessions = _completedSessions
         .where(
             (session) => session.isSynced != true && session.isDeleted != true)
         .toList();
@@ -181,7 +187,7 @@ class SessionRepository {
 
     completedSessions = SessionHelpers.mergeSyncedSessions(
       newlySyncedSessions,
-      completedSessions,
+      _completedSessions,
     );
 
     // store newly-synced sessions
@@ -191,8 +197,9 @@ class SessionRepository {
   Future<bool> fetchCloudCompletedSessions() async {
     List<PuttingSession>? cloudSessions;
 
-    final List<PuttingSession> unsyncedSessions =
-        completedSessions.where((session) => session.isSynced != true).toList();
+    final List<PuttingSession> unsyncedSessions = _completedSessions
+        .where((session) => session.isSynced != true)
+        .toList();
     cloudSessions = await _databaseService.getCompletedSessions();
 
     if (cloudSessions != null) {
@@ -203,19 +210,19 @@ class SessionRepository {
 
       // store new sessions if necessary.
       final List<PuttingSession> newSessions =
-          SessionHelpers.getNewSessions(completedSessions, cloudSessions);
+          SessionHelpers.getNewSessions(_completedSessions, cloudSessions);
 
       // sessions deleted locally that still exist in the cloud
       final List<PuttingSession> sessionsDeletedLocally =
           SessionHelpers.getSessionsDeletedLocally(
-        completedSessions,
+        _completedSessions,
         cloudSessions,
       );
 
       // sessions deleted in the cloud that still exist locally
       final List<PuttingSession> sessionsDeletedInCloud =
           SessionHelpers.getSessionsDeletedInCloud(
-        completedSessions,
+        _completedSessions,
         cloudSessions,
       );
 
@@ -246,7 +253,7 @@ class SessionRepository {
         if (deleteSuccess) {
           completedSessions = SessionHelpers.removeSessions(
             sessionsDeletedLocally,
-            completedSessions,
+            _completedSessions,
           );
           final bool localSaveSuccess =
               await _storeCompletedSessionsInLocalDB();
@@ -254,10 +261,10 @@ class SessionRepository {
         }
       }
       if (sessionsDeletedInCloud.isNotEmpty) {
-        log('[SessionsRepository][fetchCloudCompletedSessions] deleting local sessions that were deleted in clouds');
+        log('[SessionsRepository][fetchCloudCompletedSessions] deleting local sessions that were deleted in cloud');
         completedSessions = SessionHelpers.removeSessions(
           sessionsDeletedInCloud,
-          completedSessions,
+          _completedSessions,
         );
       }
 
@@ -275,7 +282,7 @@ class SessionRepository {
         locator.get<LocalDBService>().retrieveCompletedSessions()?.length ?? 0;
     return locator
         .get<LocalDBService>()
-        .storeCompletedSessions(completedSessions)
+        .storeCompletedSessions(_completedSessions)
         .then((success) {
       final int sessionsLengthAfter =
           locator.get<LocalDBService>().retrieveCompletedSessions()?.length ??
@@ -287,8 +294,8 @@ class SessionRepository {
 
   Future<bool> _setCompletedSessionToSynced(PuttingSession session) async {
     int? sessionIndex;
-    for (int i = 0; i < completedSessions.length; i++) {
-      final PuttingSession completedSession = completedSessions[i];
+    for (int i = 0; i < _completedSessions.length; i++) {
+      final PuttingSession completedSession = _completedSessions[i];
       if (completedSession.id == session.id) {
         sessionIndex = i;
       }
@@ -297,7 +304,7 @@ class SessionRepository {
       final Map<String, dynamic> sessionJson = session.toJson();
       sessionJson['isSynced'] = true;
       final PuttingSession syncedSession = PuttingSession.fromJson(sessionJson);
-      completedSessions[sessionIndex] = syncedSession;
+      _completedSessions[sessionIndex] = syncedSession;
       return _storeCompletedSessionsInLocalDB();
     } else {
       return false;

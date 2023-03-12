@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:myputt/locator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
-import 'package:myputt/repositories/challenges_repository.dart';
-import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/home_v2/components/circle_stats_section/circle_stats_card.dart';
-import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/enums.dart';
 
 class CircleStats extends StatelessWidget {
@@ -12,35 +10,40 @@ class CircleStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
-        circleToSetsIntervals = locator.get<StatsService>().getSetIntervals(
-              locator.get<StatsService>().getSetsByDistance(
-                    locator.get<SessionRepository>().validCompletedSessions,
-                    locator.get<ChallengesRepository>().completedChallenges,
-                  ),
-            );
+    return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
+      builder: (context, state) {
+        late final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+            circleToIntervalsMap;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          Expanded(
-            child: CircleStatsCard(
-              circle: Circles.circle1,
-              intervalToPuttingSetsData:
-                  circleToSetsIntervals[Circles.circle1] ?? {},
-            ),
+        if (state is HomeScreenV2Loaded) {
+          circleToIntervalsMap = state.circleToIntervalsMap;
+        } else {
+          circleToIntervalsMap = {};
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            children: [
+              Expanded(
+                child: CircleStatsCard(
+                  circle: Circles.circle1,
+                  intervalToPuttingSetsData:
+                      circleToIntervalsMap[Circles.circle1] ?? {},
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CircleStatsCard(
+                  circle: Circles.circle2,
+                  intervalToPuttingSetsData:
+                      circleToIntervalsMap[Circles.circle2] ?? {},
+                ),
+              )
+            ],
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: CircleStatsCard(
-              circle: Circles.circle2,
-              intervalToPuttingSetsData:
-                  circleToSetsIntervals[Circles.circle2] ?? {},
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 }

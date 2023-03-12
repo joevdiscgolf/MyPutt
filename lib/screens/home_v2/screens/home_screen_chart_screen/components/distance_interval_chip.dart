@@ -3,17 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
+import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
-class TimeRangeChip extends StatelessWidget {
-  const TimeRangeChip({
+class DistanceIntervalChip extends StatelessWidget {
+  const DistanceIntervalChip({
     Key? key,
-    required this.range,
+    required this.distanceInterval,
     required this.isSelected,
   }) : super(key: key);
 
-  final int range;
+  final DistanceInterval distanceInterval;
   final bool isSelected;
 
   @override
@@ -21,32 +22,24 @@ class TimeRangeChip extends StatelessWidget {
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
-        BlocProvider.of<HomeScreenV2Cubit>(context).updateTimeRange(range);
+        BlocProvider.of<HomeScreenV2Cubit>(context)
+            .updateDistanceInterval(distanceInterval);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: isSelected ? MyPuttColors.gray[50] : MyPuttColors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(40),
           boxShadow: standardBoxShadow(),
         ),
         child: Text(
-          _getTitle(),
+          distanceInterval.toString(),
           style: Theme.of(context)
               .textTheme
-              .titleSmall
+              .bodyLarge
               ?.copyWith(color: MyPuttColors.gray[isSelected ? 800 : 400]),
         ),
       ),
     );
-  }
-
-  String _getTitle() {
-    if (range == 0) {
-      return 'All time';
-    } else {
-      return 'Last $range';
-    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
 
+const int kTapThresholdMilliseconds = 200;
 const double kTopNavBarHeight = 56;
 
 const kMixpanelProductionToken = 'ab0d6ddcbf4e268b5344eac8568449ec';

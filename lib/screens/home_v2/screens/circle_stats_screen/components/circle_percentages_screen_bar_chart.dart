@@ -34,6 +34,7 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
                 context,
                 '${interval.lowerBound}-${interval.upperBound} ft',
                 entry.value.setsPercentage,
+                entry.value.sets.length,
               );
             },
           )
@@ -42,7 +43,12 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
     );
   }
 
-  Widget _barChartRow(BuildContext context, String label, double percentage) {
+  Widget _barChartRow(
+    BuildContext context,
+    String label,
+    double percentage,
+    int numSets,
+  ) {
     return Row(
       children: [
         Container(
@@ -59,6 +65,17 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
           ),
         ),
         Expanded(child: HorizontalBarChartBar(percentage: percentage)),
+        Container(
+          alignment: Alignment.centerRight,
+          width: 48,
+          child: Text(
+            '${numSets == 0 ? '--' : (percentage * 100).toInt()}%',
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.w500),
+          ),
+        )
       ],
     );
   }

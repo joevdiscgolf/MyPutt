@@ -7,19 +7,19 @@ import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PerformanceChart extends StatelessWidget {
-  const PerformanceChart({Key? key, required this.data}) : super(key: key);
+  const PerformanceChart({Key? key, required this.points}) : super(key: key);
 
-  final PerformanceChartData data;
+  final List<ChartPoint> points;
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(5),
         height: 250,
-        child: LineChart(mainData(context, data)));
+        child: LineChart(mainData(context, points)));
   }
 
-  LineChartData mainData(BuildContext context, PerformanceChartData chartData) {
+  LineChartData mainData(BuildContext context, List<ChartPoint> points) {
     return LineChartData(
       lineTouchData: LineTouchData(
         touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
@@ -37,7 +37,7 @@ class PerformanceChart extends StatelessWidget {
           getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
             return touchedBarSpots.map((barSpot) {
               final flSpot = barSpot;
-              final ChartPoint point = chartData.points[flSpot.x.toInt()];
+              final ChartPoint point = points[flSpot.x.toInt()];
               return LineTooltipItem(
                 '${DateFormat.yMMMd('en_US').format(DateTime.fromMillisecondsSinceEpoch(point.timeStamp))}\n${double.parse((point.decimal * 100).toStringAsFixed(4))} %',
                 Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -66,12 +66,12 @@ class PerformanceChart extends StatelessWidget {
       titlesData: LineTitles.getTitleData(),
       borderData: FlBorderData(show: false),
       minX: 0,
-      maxX: chartData.points.length.toDouble() - 1,
+      maxX: points.length.toDouble() - 1,
       minY: 0,
       maxY: 105,
       lineBarsData: [
         LineChartBarData(
-          spots: chartData.points
+          spots: points
               .asMap()
               .entries
               .map((entry) => FlSpot(entry.key.toDouble(),

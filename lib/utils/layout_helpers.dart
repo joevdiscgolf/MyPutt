@@ -67,3 +67,34 @@ List<Widget> addRunSpacing(
   }
   return spacedChildren;
 }
+
+double getTextWidth(String text, TextStyle style) {
+  final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr)
+    ..layout(minWidth: 0, maxWidth: double.infinity);
+  return textPainter.size.width;
+}
+
+List<Widget> spacedChildren(
+  Iterable<Widget> children, {
+  double spacing = 16,
+  Axis axis = Axis.horizontal,
+}) {
+  final List<Widget> childrenList = children.toList();
+  final List<Widget> spacedChildren = [];
+  for (int i = 0; i < childrenList.length; i++) {
+    spacedChildren.addAll(
+      [
+        childrenList[i],
+        if (i < children.length - 1)
+          SizedBox(
+            height: axis == Axis.horizontal ? 0 : spacing,
+            width: axis == Axis.horizontal ? spacing : 0,
+          )
+      ],
+    );
+  }
+  return spacedChildren;
+}

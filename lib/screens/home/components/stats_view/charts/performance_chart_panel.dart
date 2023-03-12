@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/empty_state/empty_state_chart/empty_state_chart.dart';
-import 'package:myputt/cubits/home_screen_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/locator.dart';
@@ -76,10 +76,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
       _selectedDistance,
       limit,
     );
-    PerformanceChartData smoothData = smoothChart(
-      PerformanceChartData(points: _points),
-      _smoothRange,
-    );
+    List<ChartPoint> smoothPoints = smoothChart(_points, _smoothRange);
     return Column(
       children: [
         Column(
@@ -91,7 +88,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
                     hasSessions:
                         _sessionRepository.validCompletedSessions.isNotEmpty,
                   )
-                : PerformanceChart(data: smoothData),
+                : PerformanceChart(points: smoothPoints),
             Row(
               children: distancesRow
                   .map((distance) =>

@@ -6,9 +6,9 @@ class DistanceHelpers {
     Map<DistanceInterval, PuttingSetInterval> intervalToPuttingSetsMap,
   ) {
     // if the user has sets in the preferred distance interval (21-25 feet)
-    if (intervalToPuttingSetsMap[preferredDistanceInterval]?.sets.isNotEmpty ==
+    if (intervalToPuttingSetsMap[kPreferredDistanceInterval]?.sets.isNotEmpty ==
         true) {
-      return preferredDistanceInterval;
+      return kPreferredDistanceInterval;
     }
     // else, find the interval that the user has the most putts in
     else {

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/models/data/stats/stats.dart';
@@ -13,7 +14,9 @@ import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
 import 'package:myputt/utils/enums.dart';
+import 'package:myputt/utils/helpers.dart';
 import 'package:myputt/utils/set_helpers.dart';
+import 'package:myputt/utils/sorting_helpers.dart';
 
 import 'firebase_auth_service.dart';
 
@@ -496,29 +499,12 @@ class StatsService {
     return events;
   }
 
-  Map<int, List<PuttingSet>> getSetsByDistance(
-    List<PuttingSession> validSessions,
-    List<PuttingChallenge> puttingChallenges,
-  ) {
-    Map<int, List<PuttingSet>> setsByDistance = {};
-
-    for (PuttingSession validSession in validSessions) {
-      setsByDistance = sortSetsByDistance(validSession.sets, setsByDistance);
-    }
-
-    for (PuttingChallenge challenge in puttingChallenges) {
-      setsByDistance = sortSetsByDistance(
-        challenge.currentUserSets,
-        setsByDistance,
-      );
-    }
-
-    return setsByDistance;
-  }
-
   Map<Circles, Map<DistanceInterval, PuttingSetInterval>> getSetIntervals(
-    Map<int, List<PuttingSet>> setsByDistanceMap,
+    List<PuttingSet> sets,
   ) {
+    final Map<int, List<PuttingSet>> setsByDistanceMap =
+        sortSetsByDistance(sets);
+
     final Map<DistanceInterval, PuttingSetInterval> circle1IntervalToDataMap =
         {};
     final Map<DistanceInterval, PuttingSetInterval> circle2IntervalToDataMap =
@@ -580,5 +566,31 @@ class StatsService {
       Circles.circle1: circle1IntervalToDataMap,
       Circles.circle2: circle2IntervalToDataMap
     };
+  }
+
+  List<dynamic> getPuttingActivitiesByTimeRange(
+    List<PuttingSession> sessions,
+    List<PuttingChallenge> challenges,
+    List<PuttingActivityType> puttingActivityTypes,
+    int timeRange,
+  ) {
+    List<dynamic> allActivities = [];
+
+    if (puttingActivityTypes.contains(PuttingActivityType.session)) {
+      allActivities.addAll(sessions);
+    }
+    if (puttingActivityTypes.contains(PuttingActivityType.challenge)) {
+      allActivities.addAll(challenges);
+    }
+
+    // sorted, merged list of sessions and challenges
+    allActivities = sortSessionsAndChallengesByDate(allActivities);
+
+    // 'all time' time range
+    if (timeRange == 0) {
+      return allActivities;
+    } else {
+      return allActivities.safeSubList(0, timeRange);
+    }
   }
 }

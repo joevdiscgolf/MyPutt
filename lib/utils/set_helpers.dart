@@ -1,4 +1,6 @@
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/utils/calculators.dart';
@@ -31,10 +33,8 @@ double percentageFromSets(List<PuttingSet> sets) {
   }
 }
 
-Map<int, List<PuttingSet>> sortSetsByDistance(
-  List<PuttingSet> sets,
-  Map<int, List<PuttingSet>> setsByDistance,
-) {
+Map<int, List<PuttingSet>> sortSetsByDistance(List<PuttingSet> sets) {
+  final Map<int, List<PuttingSet>> setsByDistance = {};
   for (PuttingSet set in sets) {
     if (setsByDistance.containsKey(set.distance)) {
       setsByDistance[set.distance]!.add(set);
@@ -56,4 +56,20 @@ List<PuttingSet> getPuttingSetsFromIntervals(
   }
 
   return setsInInterval;
+}
+
+List<PuttingSet> puttingSetsFromPuttingActivities(
+  List<dynamic> puttingActivities,
+) {
+  final List<PuttingSet> sets = [];
+
+  for (var activity in puttingActivities) {
+    if (activity is PuttingSession) {
+      sets.addAll(activity.sets);
+    } else if (activity is PuttingChallenge) {
+      sets.addAll(activity.currentUserSets);
+    }
+  }
+
+  return sets;
 }
