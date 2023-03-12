@@ -10,7 +10,6 @@ import 'package:myputt/screens/challenge_v2/components/challenges_list_v2.dart';
 import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
-import 'package:myputt/screens/challenge/components/challenges_list.dart';
 
 class ChallengesScreenV2 extends StatefulWidget {
   const ChallengesScreenV2({Key? key}) : super(key: key);
@@ -113,12 +112,13 @@ class _ChallengesState extends State<ChallengesScreenV2>
             challengeCategory: ChallengeCategory.active,
           ),
           ChallengesListV2(
-            challenges: state.pendingChallenges.reversed.toList(),
+            challenges: state.activeChallenges.reversed.toList(),
             challengeCategory: ChallengeCategory.pending,
           ),
-          ChallengesList(
-              category: ChallengeCategory.complete,
-              challenges: List.from(state.completedChallenges.reversed)),
+          ChallengesListV2(
+            challenges: state.completedChallenges.reversed.toList(),
+            challengeCategory: ChallengeCategory.complete,
+          ),
         ],
       );
     });

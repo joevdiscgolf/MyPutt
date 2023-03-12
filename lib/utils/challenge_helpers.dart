@@ -3,6 +3,8 @@ import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
+import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/enums.dart';
 
 bool currentUserSetsComplete(PuttingChallenge challenge) {
   return challenge.currentUserSets.length ==
@@ -44,4 +46,16 @@ List<ChallengeStructureItem> challengeStructureFromInstructions(
     ];
   }
   return items;
+}
+
+ChallengeResult resultFromChallenge(PuttingChallenge challenge) {
+  final int differenceInPuttsMade = getDifferenceFromChallenge(challenge);
+
+  if (differenceInPuttsMade > 0) {
+    return ChallengeResult.win;
+  } else if (differenceInPuttsMade < 0) {
+    return ChallengeResult.loss;
+  } else {
+    return ChallengeResult.draw;
+  }
 }

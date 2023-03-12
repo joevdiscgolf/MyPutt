@@ -7,17 +7,21 @@ import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/record/record_screen.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants/challenge_constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
-class ActiveChallengeRowV2 extends StatelessWidget {
-  const ActiveChallengeRowV2({Key? key, required this.challenge})
+class CompletedChallengeRowV2 extends StatelessWidget {
+  const CompletedChallengeRowV2({Key? key, required this.challenge})
       : super(key: key);
 
   final PuttingChallenge challenge;
 
   @override
   Widget build(BuildContext context) {
+    final ChallengeResult challengeResult = resultFromChallenge(challenge);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       color: MyPuttColors.white,
@@ -45,7 +49,7 @@ class ActiveChallengeRowV2 extends StatelessWidget {
                     'assets/images/winthrop_hole_6_putt.JPG',
                   ),
                   colorFilter: ColorFilter.mode(
-                    MyPuttColors.gray[700]!.withOpacity(0.9),
+                    MyPuttColors.gray[700]!.withOpacity(0.95),
                     BlendMode.srcOver,
                   ),
                 ),
@@ -58,9 +62,17 @@ class ActiveChallengeRowV2 extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.only(right: 24),
                       alignment: Alignment.topRight,
-                      child: _challengeScoreRichText(context),
+                      child: Text(
+                        '${challengeResultToName[challengeResult]}',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color:
+                                  _getChallengeResultTextColor(challengeResult),
+                            ),
+                      ),
                     ),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -95,11 +107,17 @@ class ActiveChallengeRowV2 extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 16, right: 16),
-                          child: Icon(
-                            FlutterRemix.arrow_right_s_line,
-                            color: MyPuttColors.white,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16, right: 16),
+                          child: Row(
+                            children: [
+                              _challengeScoreRichText(context),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                FlutterRemix.arrow_right_s_line,
+                                color: MyPuttColors.white,
+                              ),
+                            ],
                           ),
                         )
                       ],
@@ -144,5 +162,16 @@ class ActiveChallengeRowV2 extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getChallengeResultTextColor(ChallengeResult result) {
+    switch (result) {
+      case ChallengeResult.win:
+        return MyPuttColors.skyBlue;
+      case ChallengeResult.loss:
+        return MyPuttColors.lightRed;
+      case ChallengeResult.draw:
+        return MyPuttColors.gray[200]!;
+    }
   }
 }

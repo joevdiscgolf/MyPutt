@@ -6,6 +6,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge_v2/components/rows/active_challenge_row_v2.dart';
+import 'package:myputt/screens/challenge_v2/components/rows/completed_challenge_row_v2.dart';
 import 'package:myputt/screens/challenge_v2/components/rows/pending_challenge_row_v2.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -34,7 +35,7 @@ class ChallengesListV2 extends StatelessWidget {
               case ChallengeCategory.active:
                 return ActiveChallengeRowV2(challenge: challenge);
               case ChallengeCategory.complete:
-                return Container();
+                return CompletedChallengeRowV2(challenge: challenge);
               case ChallengeCategory.pending:
                 return PendingChallengeRowV2(challenge: challenge);
             }
