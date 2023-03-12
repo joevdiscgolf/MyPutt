@@ -10,12 +10,14 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.hasBackButton = true,
     this.icon,
     this.controller,
+    required this.topViewPadding,
   }) : super(key: key);
 
   final String title;
   final bool hasBackButton;
   final Widget? icon;
   final ScrollController? controller;
+  final double topViewPadding;
 
   @override
   Size get preferredSize => const Size.fromHeight(kTopNavBarHeight);
@@ -34,25 +36,27 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       child: Container(
         color: Colors.transparent,
-        height: kTopNavBarHeight + MediaQuery.of(context).viewPadding.top,
-        padding: const EdgeInsets.only(top: kTopNavBarHeight),
-        child: Row(
-          children: [
-            Expanded(
-              child: hasBackButton
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 16),
-                      child: const AppBarBackButton(),
-                    )
-                  : const SizedBox(),
-            ),
-            Text(
-              title,
-              style: MyPuttStyles.appBarTitleStyle(context),
-            ),
-            Expanded(child: icon ?? const SizedBox()),
-          ],
+        padding: EdgeInsets.only(top: topViewPadding),
+        child: SizedBox(
+          height: kTopNavBarHeight,
+          child: Row(
+            children: [
+              Expanded(
+                child: hasBackButton
+                    ? Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(left: 16),
+                        child: const AppBarBackButton(),
+                      )
+                    : const SizedBox(),
+              ),
+              Text(
+                title,
+                style: MyPuttStyles.appBarTitleStyle(context),
+              ),
+              Expanded(child: icon ?? const SizedBox()),
+            ],
+          ),
         ),
       ),
     );

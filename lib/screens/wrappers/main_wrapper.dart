@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/challenge_v2/challenges_screen_v2.dart';
 import 'package:myputt/screens/events/events_screen.dart';
 import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/home_v2/home_screen_v2.dart';
@@ -13,6 +14,7 @@ import 'package:myputt/screens/wrappers/components/myputt_bottom_nav_item.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants/beta_access_constants.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
 class MainWrapper extends StatefulWidget {
@@ -29,8 +31,9 @@ class _MainWrapperState extends State<MainWrapper> {
   int _currentIndex = 0;
 
   late final List<Widget> _screens;
-  late final bool _showEventsTab;
+  late final bool _eventsV1Beta;
   late final bool _homeScreenV2;
+  late final bool _challengesV2Screen;
 
   late final StreamSubscription<int> _tabStreamSubscription;
 
@@ -48,17 +51,23 @@ class _MainWrapperState extends State<MainWrapper> {
         _currentIndex = newIndex;
       });
     });
-    _showEventsTab = locator
+    _eventsV1Beta = locator
         .get<BetaAccessService>()
-        .hasFeatureAccess(featureName: 'events');
+        .hasFeatureAccess(featureName: kEventsV1Beta);
     _homeScreenV2 = locator
         .get<BetaAccessService>()
-        .hasFeatureAccess(featureName: 'homeScreenV2');
+        .hasFeatureAccess(featureName: kHomeScreenV2Beta);
+    _challengesV2Screen = locator
+        .get<BetaAccessService>()
+        .hasFeatureAccess(featureName: kChallengesScreenV2Beta);
+
     _screens = <Widget>[
       _homeScreenV2 ? const HomeScreenV2() : const HomeScreen(),
       const SessionsScreen(),
-      const ChallengesScreen(),
-      if (_showEventsTab) const EventsScreen(),
+      _challengesV2Screen
+          ? const ChallengesScreenV2()
+          : const ChallengesScreen(),
+      if (_eventsV1Beta) const EventsScreen(),
       const MyProfileScreen(),
     ];
     super.initState();
@@ -134,7 +143,7 @@ class _MainWrapperState extends State<MainWrapper> {
                       },
                     ),
                   ),
-                  if (_showEventsTab)
+                  if (_eventsV1Beta)
                     Expanded(
                       child: MyPuttBottomNavItem(
                         iconData: FlutterRemix.medal_2_fill,
@@ -150,11 +159,11 @@ class _MainWrapperState extends State<MainWrapper> {
                   Expanded(
                     child: MyPuttBottomNavItem(
                       iconData: FlutterRemix.user_3_fill,
-                      isSelected: _currentIndex == (_showEventsTab ? 4 : 3),
+                      isSelected: _currentIndex == (_eventsV1Beta ? 4 : 3),
                       bottomPadding: bottomPadding,
                       onPressed: () {
                         setState(() {
-                          _currentIndex = (_showEventsTab ? 4 : 3);
+                          _currentIndex = (_eventsV1Beta ? 4 : 3);
                         });
                       },
                     ),

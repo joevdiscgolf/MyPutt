@@ -4,7 +4,7 @@ enum PerformanceViewMode { calendar, chart }
 
 enum ChallengeResult { win, loss, draw, none }
 
-enum ChallengeCategory { pending, active, complete, none }
+enum ChallengeCategory { pending, active, complete }
 
 enum ChallengePreset {
   @JsonValue('Circle 1 basics')

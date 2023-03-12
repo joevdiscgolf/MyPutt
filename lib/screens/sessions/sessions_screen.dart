@@ -48,6 +48,7 @@ class _SessionsState extends State<SessionsScreen> {
                 title: 'Sessions',
                 controller: _scrollController,
                 hasBackButton: false,
+                topViewPadding: MediaQuery.of(context).viewPadding.top,
               ),
               backgroundColor: MyPuttColors.white,
               body: Stack(

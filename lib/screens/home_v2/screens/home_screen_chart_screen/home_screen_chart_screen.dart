@@ -14,7 +14,10 @@ class HomeScreenChartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyPuttAppBar(title: 'Performance'),
+      appBar: MyPuttAppBar(
+        title: 'Performance',
+        topViewPadding: MediaQuery.of(context).viewPadding.top,
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 24),
         child: Column(
