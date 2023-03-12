@@ -50,10 +50,15 @@ class _SessionsState extends State<SessionsScreen> {
                 hasBackButton: false,
               ),
               backgroundColor: MyPuttColors.white,
-              floatingActionButton: const CreateNewSessionButton(),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.endFloat,
-              body: _mainBody(context),
+              body: Stack(
+                children: [
+                  _mainBody(context),
+                  const Align(
+                    alignment: Alignment.bottomRight,
+                    child: CreateNewSessionButton(),
+                  ),
+                ],
+              ),
             );
           },
         );

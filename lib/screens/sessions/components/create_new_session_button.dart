@@ -15,46 +15,50 @@ class CreateNewSessionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionsCubit, SessionsState>(
-      builder: (context, state) {
-        if (state is! SessionInProgressState) {
-          return Bounceable(
-            onTap: () {
-              Vibrate.feedback(FeedbackType.light);
-              locator.get<Mixpanel>().track(
-                'Sessions Screen New Session Button Pressed',
-                properties: {'Session Count': state.sessions.length},
-              );
-              BlocProvider.of<SessionsCubit>(context).startNewSession();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => BlocProvider.value(
-                    value: BlocProvider.of<SessionsCubit>(context),
-                    child: const RecordScreen(),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8, right: 8),
+      padding: const EdgeInsets.all(8.0),
+      child: BlocBuilder<SessionsCubit, SessionsState>(
+        builder: (context, state) {
+          if (state is! SessionInProgressState) {
+            return Bounceable(
+              onTap: () {
+                Vibrate.feedback(FeedbackType.light);
+                locator.get<Mixpanel>().track(
+                  'Sessions Screen New Session Button Pressed',
+                  properties: {'Session Count': state.sessions.length},
+                );
+                BlocProvider.of<SessionsCubit>(context).startNewSession();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => BlocProvider.value(
+                      value: BlocProvider.of<SessionsCubit>(context),
+                      child: const RecordScreen(),
+                    ),
                   ),
+                );
+              },
+              child: Container(
+                alignment: Alignment.center,
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: MyPuttColors.gray[800]!,
+                  boxShadow: standardBoxShadow(),
                 ),
-              );
-            },
-            child: Container(
-              alignment: Alignment.center,
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: MyPuttColors.gray[800]!,
-                boxShadow: standardBoxShadow(),
+                child: const Icon(
+                  FlutterRemix.add_fill,
+                  color: MyPuttColors.white,
+                  size: 32,
+                ),
               ),
-              child: const Icon(
-                FlutterRemix.add_fill,
-                color: MyPuttColors.white,
-                size: 32,
-              ),
-            ),
-          );
-        } else {
-          return const SizedBox();
-        }
-      },
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
     );
   }
 }
