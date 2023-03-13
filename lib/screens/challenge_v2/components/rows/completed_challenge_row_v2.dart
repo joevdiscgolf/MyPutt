@@ -5,7 +5,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
-import 'package:myputt/screens/record/record_screen.dart';
+import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
@@ -30,9 +30,8 @@ class CompletedChallengeRowV2 extends StatelessWidget {
           Vibrate.feedback(FeedbackType.light);
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (BuildContext context) {
-                return const RecordScreen();
-              },
+              builder: (BuildContext context) =>
+                  ChallengeSummaryScreen(challenge: challenge),
             ),
           );
         },

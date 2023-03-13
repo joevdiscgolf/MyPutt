@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
-import 'package:myputt/screens/record/record_screen.dart';
+import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -24,11 +26,11 @@ class ActiveChallengeRowV2 extends StatelessWidget {
       child: Bounceable(
         onTap: () {
           Vibrate.feedback(FeedbackType.light);
+          BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (BuildContext context) {
-                return const RecordScreen();
-              },
+              builder: (BuildContext context) =>
+                  ChallengeRecordScreen(challenge: challenge),
             ),
           );
         },

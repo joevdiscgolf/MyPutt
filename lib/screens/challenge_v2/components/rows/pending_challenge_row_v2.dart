@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
+import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
-import 'package:myputt/screens/record/record_screen.dart';
+import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
@@ -20,16 +21,7 @@ class PendingChallengeRowV2 extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       color: MyPuttColors.white,
       child: Bounceable(
-        onTap: () {
-          Vibrate.feedback(FeedbackType.light);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) {
-                return const RecordScreen();
-              },
-            ),
-          );
-        },
+        onTap: () {},
         child: Stack(
           children: [
             Container(
@@ -117,7 +109,15 @@ class PendingChallengeRowV2 extends StatelessWidget {
   Widget _acceptButton(BuildContext context) {
     return Bounceable(
       onTap: () {
-        // on accept
+        BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => BlocProvider.value(
+              value: BlocProvider.of<ChallengesCubit>(context),
+              child: ChallengeRecordScreen(challenge: challenge),
+            ),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -139,7 +139,7 @@ class PendingChallengeRowV2 extends StatelessWidget {
   Widget _declineButton(BuildContext context) {
     return Bounceable(
       onTap: () {
-        // on declines
+        BlocProvider.of<ChallengesCubit>(context).declineChallenge(challenge);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -159,3 +159,33 @@ class PendingChallengeRowV2 extends StatelessWidget {
     );
   }
 }
+/*
+  accept: () {
+                                    locator.get<Mixpanel>().track(
+                                          'Challenges Screen Pending Challenge Accepted',
+                                        );
+                                    BlocProvider.of<ChallengesCubit>(
+                                      context,
+                                    ).openChallenge(challenge);
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            BlocProvider.value(
+                                          value:
+                                              BlocProvider.of<ChallengesCubit>(
+                                                  context),
+                                          child: ChallengeRecordScreen(
+                                            challenge: challenge,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  decline: () {
+                                    locator.get<Mixpanel>().track(
+                                          'Challenges Screen Pending Challenge Declined',
+                                        );
+                                    BlocProvider.of<ChallengesCubit>(context)
+                                        .declineChallenge(challenge);
+                                  },
+ */
