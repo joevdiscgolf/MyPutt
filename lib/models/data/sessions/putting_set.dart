@@ -1,11 +1,12 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
 
 part 'putting_set.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class PuttingSet {
-  PuttingSet({
+class PuttingSet extends Equatable {
+  const PuttingSet({
     required this.puttsMade,
     required this.puttsAttempted,
     required this.distance,
@@ -17,10 +18,14 @@ class PuttingSet {
   final int puttsMade;
   final int puttsAttempted;
   final int distance;
-  PuttingConditions? conditions;
+  final PuttingConditions? conditions;
 
   factory PuttingSet.fromJson(Map<String, dynamic> json) =>
       _$PuttingSetFromJson(json);
 
   Map<String, dynamic> toJson() => _$PuttingSetToJson(this);
+
+  @override
+  List<Object?> get props =>
+      [timeStamp, puttsMade, puttsAttempted, distance, conditions];
 }

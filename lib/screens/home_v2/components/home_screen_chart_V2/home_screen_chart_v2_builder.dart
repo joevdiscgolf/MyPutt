@@ -19,9 +19,7 @@ class HomeScreenChartV2Builder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeScreenV2Cubit, HomeScreenV2State>(
-      listener: (_, __) {},
-      listenWhen: (_, __) => false,
+    return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
       buildWhen: (previous, current) {
         final HomeScreenV2Loaded? previousLoadedState =
             tryCast<HomeScreenV2Loaded>(previous);
@@ -34,7 +32,8 @@ class HomeScreenChartV2Builder extends StatelessWidget {
                 currentLoadedState.chartDistanceInterval ||
             previousLoadedState.circleToIntervalsMap !=
                 currentLoadedState.circleToIntervalsMap ||
-            previousLoadedState.timeRange != currentLoadedState.timeRange;
+            previousLoadedState.timeRange != currentLoadedState.timeRange ||
+            previousLoadedState.sets != currentLoadedState.sets;
       },
       builder: (context, state) {
         bool noData = false;

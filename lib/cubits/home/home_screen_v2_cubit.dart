@@ -63,7 +63,10 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
     if (state is HomeScreenV2Loaded) {
       emit(
         (state as HomeScreenV2Loaded).copyWith(
-          {'circleToIntervalsMap': circleToIntervalsMap},
+          {
+            'circleToIntervalsMap': circleToIntervalsMap,
+            'sets': setsInActivities
+          },
         ),
       );
     } else {
@@ -164,6 +167,15 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
       if (tappedDown == true) {
         // state is HomeScreenV2Initial if not HomeScreenV2Loaded
         emit(HomeScreenV2Initial(tappedDownAt: DateTime.now()));
+      }
+      return;
+    } else if (points.isEmpty) {
+      if (tappedDown == true) {
+        emit(
+          (state as HomeScreenV2Loaded).copyWith({
+            'tappedDownAt': DateTime.now(),
+          }),
+        );
       }
       return;
     }

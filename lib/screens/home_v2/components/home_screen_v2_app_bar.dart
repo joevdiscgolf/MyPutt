@@ -22,8 +22,9 @@ class HomeScreenV2AppBar extends StatelessWidget
             );
     return Padding(
       padding: EdgeInsets.only(top: topViewPadding),
-      // alignment: Alignment.center,
-      child: Center(
+      child: Container(
+        height: kTopNavBarHeight,
+        alignment: Alignment.center,
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(

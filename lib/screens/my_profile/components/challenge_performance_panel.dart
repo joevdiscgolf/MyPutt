@@ -28,7 +28,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
 
-  ChallengeResult _challengeResult = ChallengeResult.none;
+  ChallengeResult? _challengeResult;
   late final List<PuttingChallenge> _completedChallenges;
   late final int _wins;
   late final int _losses;
@@ -39,19 +39,20 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   final List<int> _spacerIndices = [];
   int _numCategories = 0;
 
-  late final List<ChartData> _chartData;
-  List<ChartData> _spacerChartData = [];
+  late final List<ChallengeResultChartData> _chartData;
+  List<ChallengeResultChartData> _spacerChartData = [];
 
   @override
   void initState() {
     _completedChallenges = _challengesRepository.completedChallenges;
     if (_completedChallenges.isEmpty) {
       _chartData = [
-        ChartData(
-            value: 1,
-            color: MyPuttColors.gray[200]!,
-            label: 'Not complete',
-            challengeResult: ChallengeResult.none)
+        ChallengeResultChartData(
+          value: 1,
+          color: MyPuttColors.gray[200]!,
+          label: 'Not complete',
+          challengeResult: null,
+        )
       ];
       _spacerChartData = _chartData;
       _winPercent = null;
@@ -75,19 +76,19 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
 
       _chartData = [
         if (_wins > 0)
-          ChartData(
+          ChallengeResultChartData(
               value: _wins.toDouble(),
               color: MyPuttColors.darkBlue,
               label: 'Wins',
               challengeResult: ChallengeResult.win),
         if (_losses > 0)
-          ChartData(
+          ChallengeResultChartData(
               value: _losses.toDouble(),
               color: MyPuttColors.darkRed,
               label: 'Losses',
               challengeResult: ChallengeResult.loss),
         if (_draws > 0)
-          ChartData(
+          ChallengeResultChartData(
               value: _draws.toDouble(),
               color: MyPuttColors.gray,
               label: 'Draws',
@@ -97,13 +98,16 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         _spacerChartData = _chartData;
       } else {
         for (int i = 0; i < _chartData.length; i++) {
-          final ChartData data = _chartData[i];
+          final ChallengeResultChartData data = _chartData[i];
           _spacerChartData.add(data);
-          _spacerChartData.add(ChartData(
-              challengeResult: ChallengeResult.none,
+          _spacerChartData.add(
+            ChallengeResultChartData(
+              challengeResult: null,
               value: _completedChallenges.length * 0.01,
               color: Colors.transparent,
-              label: 'spacer'));
+              label: 'spacer',
+            ),
+          );
           _spacerIndices.add(i * 2 + 1);
         }
       }
@@ -210,7 +214,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         Vibrate.feedback(FeedbackType.light);
         setState(() {
           _selectedIndices = _allIndices;
-          _challengeResult = ChallengeResult.none;
+          _challengeResult = null;
         });
       },
       child: Container(
@@ -228,7 +232,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                     ?.copyWith(fontSize: 28, color: MyPuttColors.darkGray),
                 maxLines: 1,
               );
-            } else if (_challengeResult == ChallengeResult.none) {
+            } else if (_challengeResult == null) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -323,7 +327,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
         selectionGesture: ActivationMode.singleTap,
         onSelectionChanged: (SelectionArgs args) => _onSelection(args),
         series: <CircularSeries>[
-          DoughnutSeries<ChartData, String>(
+          DoughnutSeries<ChallengeResultChartData, String>(
               animationDuration: 0,
               selectionBehavior: SelectionBehavior(
                 enable: true,
@@ -338,9 +342,10 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
                   : CornerStyle.bothCurve,
               dataSource: _spacerChartData,
               strokeWidth: 30,
-              pointColorMapper: (ChartData data, _) => data.color,
-              xValueMapper: (ChartData data, _) => data.label,
-              yValueMapper: (ChartData data, _) => data.value)
+              pointColorMapper: (ChallengeResultChartData data, _) =>
+                  data.color,
+              xValueMapper: (ChallengeResultChartData data, _) => data.label,
+              yValueMapper: (ChallengeResultChartData data, _) => data.value)
         ],
       ),
     );
@@ -349,7 +354,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   void _onSelection(SelectionArgs args) {
     final int index = args.pointIndex;
     _mixpanel.track('My Profile Screen Challenge Result Chart Pressed');
-    if (_spacerChartData[index].challengeResult != ChallengeResult.none) {
+    if (_spacerChartData[index].challengeResult != null) {
       Vibrate.feedback(FeedbackType.light);
       setState(() {
         _challengeResult = _spacerChartData[index].challengeResult;
@@ -366,13 +371,14 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   }
 }
 
-class ChartData {
-  ChartData(
-      {required this.challengeResult,
-      required this.value,
-      required this.color,
-      required this.label});
-  final ChallengeResult challengeResult;
+class ChallengeResultChartData {
+  ChallengeResultChartData({
+    this.challengeResult,
+    required this.value,
+    required this.color,
+    required this.label,
+  });
+  final ChallengeResult? challengeResult;
   final double value;
   final Color color;
   final String label;
