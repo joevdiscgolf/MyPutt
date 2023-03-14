@@ -24,7 +24,7 @@ class UserRepository {
     if (_authService.getCurrentUserId() == null) {
       return false;
     } else {
-      currentUser = await FBUserDataLoader.instance.getUser();
+      currentUser = await FBUserDataLoader.instance.getCurrentUser();
       return currentUser != null;
     }
   }

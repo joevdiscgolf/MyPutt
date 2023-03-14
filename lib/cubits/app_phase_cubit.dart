@@ -29,7 +29,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
       await Future.wait(
         [
           FBAppInfoDataLoader.instance.getMinimumAppVersion(),
-          FBUserDataLoader.instance.getUser()
+          FBUserDataLoader.instance.getCurrentUser()
         ],
       ).then(
         (results) {

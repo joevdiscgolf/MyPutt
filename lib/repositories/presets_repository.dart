@@ -54,6 +54,6 @@ class PresetsRepository {
       ChallengePreset preset) {
     List<GeneratedChallengeInstruction> instructions =
         presetInstructions[preset] ?? [];
-    return challengeStructureFromInstructions(instructions);
+    return ChallengeHelpers.challengeStructureFromInstructions(instructions);
   }
 }

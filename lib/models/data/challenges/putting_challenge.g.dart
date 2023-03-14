@@ -33,6 +33,8 @@ PuttingChallenge _$PuttingChallengeFromJson(Map json) => PuttingChallenge(
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
       completionTimeStamp: json['completionTimeStamp'] as int?,
+      isSynced: json['isSynced'] as bool?,
+      isDeleted: json['isDeleted'] as bool?,
     );
 
 Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
@@ -50,4 +52,6 @@ Map<String, dynamic> _$PuttingChallengeToJson(PuttingChallenge instance) =>
       'opponentSets': instance.opponentSets.map((e) => e.toJson()).toList(),
       'currentUserSets':
           instance.currentUserSets.map((e) => e.toJson()).toList(),
+      'isSynced': instance.isSynced,
+      'isDeleted': instance.isDeleted,
     };

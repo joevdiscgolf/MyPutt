@@ -28,7 +28,8 @@ class StatsService {
     List<PuttingChallenge> challenges,
   ) {
     // filtering out challenges that were generated from a session of the user.
-    challenges = filterDuplicateChallenges(sessions, challenges);
+    challenges =
+        ChallengeHelpers.filterDuplicateChallenges(sessions, challenges);
 
     Map<int, dynamic> timestampToSessionOrChallenge = {};
     for (PuttingSession session in sessions) {
@@ -405,7 +406,8 @@ class StatsService {
     }
     List<ChartPoint> points = [];
 
-    challenges = filterDuplicateChallenges(sessions, challenges);
+    challenges =
+        ChallengeHelpers.filterDuplicateChallenges(sessions, challenges);
 
     Map<int, dynamic> timestampToSessionOrChallenge = {};
     for (PuttingSession session in sessions) {

@@ -14,6 +14,7 @@ import 'package:myputt/repositories/user_repository.dart';
 void fetchLocalRepositoryData() {
   locator.get<SessionRepository>().fetchLocalCompletedSessions();
   locator.get<SessionRepository>().fetchLocalCurrentSession();
+  locator.get<ChallengesRepository>().fetchLocalChallenges();
 }
 
 Future<void> fetchRepositoryData() async {
@@ -22,7 +23,7 @@ Future<void> fetchRepositoryData() async {
   await Future.wait([
     locator.get<SessionRepository>().fetchCloudCompletedSessions(),
     locator.get<SessionRepository>().fetchCloudCurrentSession(),
-    locator.get<ChallengesRepository>().fetchAllChallenges(),
+    locator.get<ChallengesRepository>().fetchCloudChallenges(),
   ]);
   await locator.get<ChallengesRepository>().addDeepLinkChallenges();
 }

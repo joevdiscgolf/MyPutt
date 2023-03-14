@@ -85,7 +85,7 @@ class MyPuttAuthService {
 
     bool? isSetup;
 
-    await FBUserDataLoader.instance.getUser().then(
+    await FBUserDataLoader.instance.getCurrentUser().then(
       (MyPuttUser? user) {
         isSetup = userIsValid(user);
       },
@@ -143,7 +143,7 @@ class MyPuttAuthService {
     }
     bool? isSetUp;
 
-    await FBUserDataLoader.instance.getUser().then(
+    await FBUserDataLoader.instance.getCurrentUser().then(
       (MyPuttUser? user) {
         isSetUp = userIsValid(user);
       },

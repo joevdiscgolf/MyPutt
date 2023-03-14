@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myputt/models/data/events/event_enums.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
@@ -8,6 +8,8 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase/event_data_loader.dart';
@@ -16,7 +18,6 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
-import 'package:myputt/utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -62,25 +63,31 @@ class DatabaseService {
   }
 
   Future<List<PuttingChallenge>?> getAllChallenges() async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
+    log('fetching current user...');
+    final MyPuttUser? currentUser =
+        await FBUserDataLoader.instance.getCurrentUser();
+    log('fetched current user: $currentUser');
     if (currentUser == null) {
       return [];
     }
 
-    try {
-      return _challengesDataLoader
-          .getAllChallenges(currentUser)
-          .timeout(shortTimeout);
-    } catch (e, trace) {
-      log(e.toString());
-      log(trace.toString());
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason: '[DatabaseService][getAllChallenges] timeout',
-      );
+    final QuerySnapshot<Map<String, dynamic>>? snapshot = await firestoreQuery(
+      path: '$challengesCollection/${currentUser.uid}/$challengesCollection',
+    );
+
+    log('cloud challenges snapshot: $snapshot');
+    if (snapshot == null) {
       return null;
+    } else {
+      log('returning cloud snapshot docs');
+      return snapshot.docs.map(
+        (doc) {
+          return PuttingChallenge.fromStorageChallenge(
+            StoragePuttingChallenge.fromJson(doc.data()),
+            currentUser,
+          );
+        },
+      ).toList();
     }
   }
 

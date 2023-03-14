@@ -119,7 +119,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> reload() async {
-    await _challengesRepository.fetchAllChallenges();
+    await _challengesRepository.fetchCloudChallenges();
     if (_challengesRepository.currentChallenge == null) {
       if (_challengesRepository.finishedChallenge != null) {
         emit(_challengeFinished());
@@ -282,7 +282,9 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     return state
         .currentChallenge!
         .challengeStructure[state.currentChallenge!.currentUserSets.length -
-            (currentUserSetsComplete(state.currentChallenge!) ? 1 : 0)]
+            (ChallengeHelpers.currentUserSetsComplete(state.currentChallenge!)
+                ? 1
+                : 0)]
         .setLength;
   }
 }

@@ -6,56 +6,141 @@ import 'package:collection/collection.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/enums.dart';
 
-bool currentUserSetsComplete(PuttingChallenge challenge) {
-  return challenge.currentUserSets.length ==
-      challenge.challengeStructure.length;
-}
+class ChallengeHelpers {
+  static bool currentUserSetsComplete(PuttingChallenge challenge) {
+    return challenge.currentUserSets.length ==
+        challenge.challengeStructure.length;
+  }
 
-bool isDuplicateChallenge(
-    List<PuttingSession> sessions, PuttingChallenge challenge) {
-  final PuttingSession? match = sessions.firstWhereOrNull(
-    (session) => session.id == challenge.id,
-  );
-  return match != null;
-}
+  static bool isDuplicateChallenge(
+      List<PuttingSession> sessions, PuttingChallenge challenge) {
+    final PuttingSession? match = sessions.firstWhereOrNull(
+      (session) => session.id == challenge.id,
+    );
+    return match != null;
+  }
 
-List<PuttingChallenge> filterDuplicateChallenges(
-    List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
-  return challenges
-      .where((challenge) => !isDuplicateChallenge(sessions, challenge))
-      .toList();
-}
+  static List<PuttingChallenge> filterDuplicateChallenges(
+      List<PuttingSession> sessions, List<PuttingChallenge> challenges) {
+    return challenges
+        .where((challenge) => !isDuplicateChallenge(sessions, challenge))
+        .toList();
+  }
 
-List<ChallengeStructureItem> challengeStructureFromSession(
-    PuttingSession session) {
-  return session.sets
-      .map((set) => ChallengeStructureItem(
-          distance: set.distance.toInt(),
-          setLength: set.puttsAttempted.toInt()))
-      .toList();
-}
+  static List<ChallengeStructureItem> challengeStructureFromSession(
+      PuttingSession session) {
+    return session.sets
+        .map((set) => ChallengeStructureItem(
+            distance: set.distance.toInt(),
+            setLength: set.puttsAttempted.toInt()))
+        .toList();
+  }
 
-List<ChallengeStructureItem> challengeStructureFromInstructions(
-    List<GeneratedChallengeInstruction> instructions) {
-  List<ChallengeStructureItem> items = [];
-  for (var instruction in instructions) {
-    items = [
-      for (var i = 0; i < instruction.setCount; i++)
-        ChallengeStructureItem(
-            distance: instruction.distance, setLength: instruction.setLength)
+  static List<ChallengeStructureItem> challengeStructureFromInstructions(
+      List<GeneratedChallengeInstruction> instructions) {
+    List<ChallengeStructureItem> items = [];
+    for (var instruction in instructions) {
+      items = [
+        for (var i = 0; i < instruction.setCount; i++)
+          ChallengeStructureItem(
+              distance: instruction.distance, setLength: instruction.setLength)
+      ];
+    }
+    return items;
+  }
+
+  static ChallengeResult resultFromChallenge(PuttingChallenge challenge) {
+    final int differenceInPuttsMade = getDifferenceFromChallenge(challenge);
+
+    if (differenceInPuttsMade > 0) {
+      return ChallengeResult.win;
+    } else if (differenceInPuttsMade < 0) {
+      return ChallengeResult.loss;
+    } else {
+      return ChallengeResult.draw;
+    }
+  }
+
+  static List<PuttingChallenge> setSyncedToTrue(
+    List<PuttingChallenge> unsyncedChallenges,
+  ) {
+    List<PuttingChallenge> syncedChallenges = [];
+    for (PuttingChallenge challenge in unsyncedChallenges) {
+      final Map<String, dynamic> json = challenge.toJson();
+      json['isSynced'] = true;
+      syncedChallenges.add(PuttingChallenge.fromJson(json));
+    }
+    return syncedChallenges;
+  }
+
+  static List<PuttingChallenge> mergeCloudChallenges(
+    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> cloudChallenges,
+  ) {
+    final List<String> localChallengeIds =
+        localChallenges.map((challenge) => challenge.id).toList();
+
+    // include the local unsynced challenges
+    // include cloud challenges if the cloud challenge is not stored locally and the device Id does not match
+    // if the device id does match, that means the challenge has been deleted locally but not in the cloud yet
+    return [
+      ...localChallenges,
+      ...cloudChallenges.where(
+        (cloudChallenge) => !localChallengeIds.contains(cloudChallenge.id),
+      )
     ];
   }
-  return items;
-}
 
-ChallengeResult resultFromChallenge(PuttingChallenge challenge) {
-  final int differenceInPuttsMade = getDifferenceFromChallenge(challenge);
+  static List<PuttingChallenge> getNewChallenges(
+    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> cloudChallenges,
+  ) {
+    final List<String> localChallengeIds = List.from(
+      localChallenges.map((challenge) => challenge.id),
+    );
 
-  if (differenceInPuttsMade > 0) {
-    return ChallengeResult.win;
-  } else if (differenceInPuttsMade < 0) {
-    return ChallengeResult.loss;
-  } else {
-    return ChallengeResult.draw;
+    return cloudChallenges
+        .where(
+            (cloudChallenge) => !localChallengeIds.contains(cloudChallenge.id))
+        .toList();
+  }
+
+  static List<PuttingChallenge> getChallengesDeletedInCloud(
+    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> cloudChallenges,
+  ) {
+    final List<String> cloudChallengeIds =
+        cloudChallenges.map((cloudChallenge) => cloudChallenge.id).toList();
+
+    final List<PuttingChallenge> syncedLocalChallenges = localChallenges
+        .where((localChallenge) => localChallenge.isSynced == true)
+        .toList();
+
+    // challenge has been deleted in the cloud if the synced local challenge exists, but not the cloud challenge.
+    return syncedLocalChallenges
+        .where((syncedLocalChallenge) =>
+            !cloudChallengeIds.contains(syncedLocalChallenge.id))
+        .toList();
+  }
+
+  static List<PuttingChallenge> getChallengesDeletedLocally(
+    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> cloudChallenges,
+  ) {
+    // challenge has been deleted locally if marked as such.
+    return localChallenges
+        .where((localChallenges) => localChallenges.isDeleted == true)
+        .toList();
+  }
+
+  static List<PuttingChallenge> removeChallenges(
+    List<PuttingChallenge> challengesToRemove,
+    List<PuttingChallenge> allChallenges,
+  ) {
+    final Iterable<String> idsToRemove =
+        challengesToRemove.map((challengeToRemove) => challengeToRemove.id);
+    return allChallenges
+        .where((challenge) => !idsToRemove.contains(challenge.id))
+        .toList();
   }
 }

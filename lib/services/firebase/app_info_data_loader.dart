@@ -27,6 +27,7 @@ class FBAppInfoDataLoader {
         return null;
       }
     }).catchError((e, trace) {
+      print('exception here joe');
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,

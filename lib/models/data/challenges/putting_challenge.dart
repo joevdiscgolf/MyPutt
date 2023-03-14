@@ -21,6 +21,8 @@ class PuttingChallenge {
     required this.opponentSets,
     required this.currentUserSets,
     this.completionTimeStamp,
+    this.isSynced,
+    this.isDeleted,
   });
 
   String status;
@@ -34,14 +36,18 @@ class PuttingChallenge {
   final List<ChallengeStructureItem> challengeStructure;
   List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
+  final bool? isSynced;
+  final bool? isDeleted;
 
   factory PuttingChallenge.fromStorageChallenge(
-      StoragePuttingChallenge storageChallenge, MyPuttUser currentUser) {
+    StoragePuttingChallenge storageChallenge,
+    MyPuttUser currentUser,
+  ) {
     final String? currentUid =
         locator.get<FirebaseAuthService>().getCurrentUserId();
     MyPuttUser recipientUser;
 
-    // recipient user is only the current user if it's null and the current user is not the challenger.
+    // the current user is the recipient user is the recipient user is null and the current user did not create the challenge.
     if (storageChallenge.recipientUser == null &&
         storageChallenge.challengerUser.uid != currentUid) {
       recipientUser = currentUser;
@@ -67,27 +73,28 @@ class PuttingChallenge {
         recipientUser: recipientUser,
         completionTimeStamp: storageChallenge.completionTimeStamp,
       );
+    } else {
+      return PuttingChallenge(
+        status: storageChallenge.status,
+        creationTimeStamp: storageChallenge.creationTimeStamp,
+        id: storageChallenge.id,
+        opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
+            ? storageChallenge.recipientUser
+            : storageChallenge.challengerUser,
+        currentUser: storageChallenge.recipientUser!.uid == currentUser.uid
+            ? storageChallenge.recipientUser!
+            : storageChallenge.challengerUser,
+        challengeStructure: storageChallenge.challengeStructure,
+        opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
+            ? storageChallenge.recipientSets
+            : storageChallenge.challengerSets,
+        currentUserSets: storageChallenge.recipientUser!.uid == currentUser.uid
+            ? storageChallenge.recipientSets
+            : storageChallenge.challengerSets,
+        challengerUser: storageChallenge.challengerUser,
+        recipientUser: storageChallenge.recipientUser,
+      );
     }
-    return PuttingChallenge(
-      status: storageChallenge.status,
-      creationTimeStamp: storageChallenge.creationTimeStamp,
-      id: storageChallenge.id,
-      opponentUser: storageChallenge.challengerUser.uid == currentUser.uid
-          ? storageChallenge.recipientUser
-          : storageChallenge.challengerUser,
-      currentUser: storageChallenge.recipientUser!.uid == currentUser.uid
-          ? storageChallenge.recipientUser!
-          : storageChallenge.challengerUser,
-      challengeStructure: storageChallenge.challengeStructure,
-      opponentSets: storageChallenge.challengerUser.uid == currentUser.uid
-          ? storageChallenge.recipientSets
-          : storageChallenge.challengerSets,
-      currentUserSets: storageChallenge.recipientUser!.uid == currentUser.uid
-          ? storageChallenge.recipientSets
-          : storageChallenge.challengerSets,
-      challengerUser: storageChallenge.challengerUser,
-      recipientUser: storageChallenge.recipientUser,
-    );
   }
 
   factory PuttingChallenge.fromJson(Map<String, dynamic> json) =>

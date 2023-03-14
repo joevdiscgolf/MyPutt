@@ -12,7 +12,7 @@ FirebaseFirestore firestore = FirebaseFirestore.instance;
 class FBSessionsDataLoader {
   Future<SessionsDocument?> getUserSessionsDocument(String uid) async {
     try {
-      return fetchFirestoreDocument('$sessionsCollection/$uid').then(
+      return firestoreFetch('$sessionsCollection/$uid').then(
         (snapshot) {
           if (snapshot != null && snapshot.data() != null) {
             return SessionsDocument.fromJson(snapshot.data()!);

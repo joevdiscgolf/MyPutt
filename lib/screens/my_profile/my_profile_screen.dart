@@ -373,7 +373,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Total putts',
                   subtitle:
-                      '${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, true) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, false) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), false)}'),
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, true) + _statsService.getPuttCountFromChallenges(ChallengeHelpers.filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, false) + _statsService.getPuttCountFromChallenges(ChallengeHelpers.filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), false)}'),
               const SizedBox(
                 height: 4,
               ),

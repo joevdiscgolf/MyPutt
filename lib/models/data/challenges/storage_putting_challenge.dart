@@ -82,7 +82,8 @@ class StoragePuttingChallenge {
       status: ChallengeStatus.pending,
       creationTimeStamp: now,
       id: session.id,
-      challengeStructure: challengeStructureFromSession(session),
+      challengeStructure:
+          ChallengeHelpers.challengeStructureFromSession(session),
       recipientSets: [],
       challengerSets: session.sets,
       challengerUser: currentUser,

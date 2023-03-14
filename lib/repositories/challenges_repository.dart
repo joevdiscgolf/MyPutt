@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:myputt/locator.dart';
@@ -9,7 +11,11 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
+import 'package:myputt/services/localDB/local_db_service.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/enums.dart';
 
 class ChallengesRepository extends ChangeNotifier {
@@ -19,31 +25,40 @@ class ChallengesRepository extends ChangeNotifier {
 
   PuttingChallenge? currentChallenge;
   PuttingChallenge? finishedChallenge;
-  List<PuttingChallenge> pendingChallenges = [];
-  List<PuttingChallenge> activeChallenges = [];
   List<PuttingChallenge> _completedChallenges = [];
+  List<PuttingChallenge> _activeChallenges = [];
+  List<PuttingChallenge> _pendingChallenges = [];
+
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   List<PuttingChallenge> get completedChallenges => _completedChallenges;
+  List<PuttingChallenge> get activeChallenges => _activeChallenges;
+  List<PuttingChallenge> get pendingChallenges => _pendingChallenges;
+  List<PuttingChallenge> get allChallenges =>
+      [...completedChallenges, ...activeChallenges, ...pendingChallenges];
 
   set completedChallenges(List<PuttingChallenge> completedChallenges) {
     _completedChallenges = completedChallenges;
     notifyListeners();
   }
 
-  Future<void> fetchAllChallenges() async {
-    final List<PuttingChallenge>? allChallenges =
-        await databaseService.getAllChallenges();
+  set activeChallenges(List<PuttingChallenge> activeChallenges) {
+    _activeChallenges = activeChallenges;
+    notifyListeners();
+  }
 
-    if (allChallenges == null) {
-      return;
-    }
+  set pendingChallenges(List<PuttingChallenge> pendingChallenges) {
+    _pendingChallenges = pendingChallenges;
+    notifyListeners();
+  }
 
-    final MyPuttUser? currentUser = userRepository.currentUser;
+  set allChallenges(List<PuttingChallenge> allChallenges) {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
     pendingChallenges = allChallenges
         .where((challenge) =>
             challenge.status == ChallengeStatus.pending &&
-            currentUser?.uid != challenge.challengerUser.uid)
+            currentUid != challenge.challengerUser.uid)
         .toList();
     activeChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)
@@ -53,11 +68,124 @@ class ChallengesRepository extends ChangeNotifier {
         .toList();
   }
 
+  void fetchLocalChallenges() {
+    final List<PuttingChallenge>? localDbChallenges =
+        locator.get<LocalDBService>().retrievePuttingChallenges();
+    if (localDbChallenges != null) {
+      allChallenges = localDbChallenges;
+    }
+    _log(
+        '[ChallengesRepository][fetchLocalChallenges] Local challenges: ${localDbChallenges?.length}');
+  }
+
+  Future<bool> fetchCloudChallenges() async {
+    return false;
+    final List<PuttingChallenge> unsyncedChallenges =
+        allChallenges.where((challenge) => challenge.isSynced != true).toList();
+
+    List<PuttingChallenge>? cloudChallenges =
+        await databaseService.getAllChallenges();
+
+    print('cloud challenges: $cloudChallenges');
+
+    if (cloudChallenges == null) {
+      return false;
+    }
+
+    final MyPuttUser? currentUser = userRepository.currentUser;
+    pendingChallenges = cloudChallenges
+        .where((challenge) =>
+            challenge.status == ChallengeStatus.pending &&
+            currentUser?.uid != challenge.challengerUser.uid)
+        .toList();
+    activeChallenges = cloudChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.active)
+        .toList();
+    completedChallenges = cloudChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.complete)
+        .toList();
+
+    cloudChallenges = ChallengeHelpers.setSyncedToTrue(cloudChallenges);
+
+    List<PuttingChallenge> combinedChallenges =
+        ChallengeHelpers.mergeCloudChallenges(
+      unsyncedChallenges,
+      cloudChallenges,
+    );
+
+    // store new challenges if necessary.
+    final List<PuttingChallenge> newChallenges =
+        ChallengeHelpers.getNewChallenges(allChallenges, cloudChallenges);
+
+    // challenges deleted locally that still exist in the cloud
+    final List<PuttingChallenge> challengesDeletedLocally =
+        ChallengeHelpers.getChallengesDeletedLocally(
+      allChallenges,
+      cloudChallenges,
+    );
+
+    // challenges deleted in the cloud that still exist locally
+    final List<PuttingChallenge> challengesDeletedInCloud =
+        ChallengeHelpers.getChallengesDeletedInCloud(
+      allChallenges,
+      cloudChallenges,
+    );
+
+    // remove challenges that were deleted in the cloud
+    combinedChallenges = ChallengeHelpers.removeChallenges(
+      challengesDeletedInCloud,
+      combinedChallenges,
+    );
+
+    // update local challenges if there are new challenges or challenges have been removed
+    if (newChallenges.isNotEmpty || challengesDeletedInCloud.isNotEmpty) {
+      final bool success = await locator
+          .get<LocalDBService>()
+          .storeChallenges(combinedChallenges);
+      if (!success) {
+        _log(
+            '[ChallengesRepository][fetchCloudChallenges] Failed to save new cloud challenges in local DB');
+      }
+    }
+
+    allChallenges = combinedChallenges;
+
+    // if (challengesDeletedLocally.isNotEmpty) {
+    //   final bool deleteSuccess = await FBSessionsDataWriter.instance
+    //       .deleteSessionsBatch(challengesDeletedLocally);
+    //   _log('[ChallengesRepository][fetchCloudChallenges] delete sessions batch - success: $deleteSuccess');
+    //
+    //   // remove sessions locally permanently if deleted in cloud
+    //   if (deleteSuccess) {
+    //     completedSessions = ChallengeHelpers.removeChallenges(
+    //       challengesDeletedLocally,
+    //       _completedSessions,
+    //     );
+    //     final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
+    //     _log('[ChallengesRepository][fetchCloudChallenges] saved current sessions locally - success: $localSaveSuccess');
+    //   }
+    // }
+    // if (challengesDeletedInCloud.isNotEmpty) {
+    //   _log('[ChallengesRepository][fetchCloudChallenges] deleting local sessions that were deleted in cloud');
+    //   completedSessions = ChallengeHelpers.removeChallenges(
+    //     challengesDeletedInCloud,
+    //     _completedSessions,
+    //   );
+    // }
+
+    final bool localSaveSuccess = await _storeChallengesInLocalDB();
+    _log(
+        '[ChallengesRepository][fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess');
+
+    return true;
+  }
+
   void clearData() {
     currentChallenge = null;
     pendingChallenges = [];
     activeChallenges = [];
     completedChallenges = [];
+    locator.get<LocalDBService>().deleteChallengesData();
   }
 
   Future<bool> sendChallengeWithPreset(
@@ -231,5 +359,22 @@ class ChallengesRepository extends ChangeNotifier {
     return listToFilter
         .where((challenge) => challengeToRemove.id != challenge.id)
         .toList();
+  }
+
+  Future<bool> _storeChallengesInLocalDB() {
+    return locator
+        .get<LocalDBService>()
+        .storeChallenges(allChallenges)
+        .then((success) {
+      _log(
+          '[ChallengesRepository][_storeChallengesInLocalDB] success: $success');
+      return success;
+    });
+  }
+
+  void _log(String message) {
+    if (kChallengesRepositoryLogs) {
+      log(message);
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 
@@ -18,26 +19,20 @@ class FBUserDataLoader {
 
   FBUserDataLoader._internal();
 
-  Future<MyPuttUser?> getUser() async {
+  Future<MyPuttUser?> getCurrentUser() async {
     final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
     if (uid == null) {
       return null;
     }
 
-    return firestore.doc('$usersCollection/$uid').get().then((snapshot) {
-      if (!snapshot.exists ||
+    return firestoreFetch('$usersCollection/$uid').then((snapshot) {
+      if (snapshot == null ||
+          !snapshot.exists ||
           !isValidUser(snapshot.data() as Map<String, dynamic>)) {
         return null;
       }
       final Map<String, dynamic> data = snapshot.data()!;
       return MyPuttUser.fromJson(data);
-    }).catchError((e, trace) {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason: '[FBUserDataLoader][getUser] Firestore Exception',
-      );
-      return null;
     });
   }
 
