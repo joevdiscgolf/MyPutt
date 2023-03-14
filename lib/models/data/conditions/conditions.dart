@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
 
 part 'conditions.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class PuttingConditions {
+class PuttingConditions extends Equatable {
   const PuttingConditions({
     this.windIntensity,
     this.weatherConditions,
@@ -46,4 +47,8 @@ class PuttingConditions {
       _$PuttingConditionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$PuttingConditionsToJson(this);
+
+  @override
+  List<Object?> get props =>
+      [windIntensity, weatherConditions, windDirection, puttingStance];
 }

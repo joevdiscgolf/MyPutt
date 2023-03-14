@@ -43,7 +43,11 @@ class DatabaseService {
   Future<List<PuttingSession>?> getCompletedSessions() async {
     final uid = _authService.getCurrentUserId();
 
-    return _sessionsDataLoader.getCompletedSessions(uid!);
+    if (uid == null) {
+      return null;
+    }
+
+    return _sessionsDataLoader.getCompletedSessions(uid);
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
