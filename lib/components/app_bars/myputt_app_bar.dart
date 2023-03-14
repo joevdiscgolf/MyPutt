@@ -37,7 +37,8 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         color: Colors.transparent,
         padding: EdgeInsets.only(top: topViewPadding),
-        child: SizedBox(
+        child: Container(
+          color: Colors.white,
           height: kTopNavBarHeight,
           child: Row(
             children: [
