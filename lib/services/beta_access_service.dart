@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 
 import 'firebase_auth_service.dart';
 import 'firebase/utils/fb_constants.dart';
@@ -21,22 +20,14 @@ class BetaAccessService {
       return;
     }
 
-    final Map<String, dynamic>? userDoc = await FirebaseFirestore.instance
-        .collection(usersCollection)
-        .doc(uid)
-        .get()
+    final Map<String, dynamic>? userDoc = await firestoreFetch(
+            '$usersCollection/$uid',
+            timeoutDuration: const Duration(seconds: 3))
         .then((snapshot) {
-      if (!snapshot.exists || snapshot.data() == null) {
+      if (snapshot == null || snapshot.exists || snapshot.data() == null) {
         return null;
       }
       return snapshot.data();
-    }).catchError((e, trace) {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason: '[BetaAccessService][loadFeatureAccess] Firestore Exception',
-      );
-      return null;
     });
 
     if (userDoc == null) {

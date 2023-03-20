@@ -10,6 +10,7 @@ import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
@@ -201,8 +202,8 @@ class SessionRepository extends ChangeNotifier {
         .where((session) => session.isSynced != true)
         .toList();
 
-    List<PuttingSession>? cloudSessions =
-        await _databaseService.getCompletedSessions();
+    List<PuttingSession>? cloudSessions = await _databaseService
+        .getCompletedSessions(timeoutDuration: shortTimeout);
 
     if (cloudSessions != null) {
       cloudSessions = SessionHelpers.setSyncedToTrue(cloudSessions);

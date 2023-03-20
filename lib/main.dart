@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -43,7 +45,7 @@ void main() async {
     persistenceEnabled: GlobalSettings.useFirebaseCache,
   );
   if (kDebugMode && !isPhysicalDevice) {
-    // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -51,13 +53,17 @@ void main() async {
   await initLocalDatabase();
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
+
+  log('[BetaAccessService] loading feature access...');
   await locator.get<BetaAccessService>().loadFeatureAccess();
+  log('[BetaAccessService] loaded feature access...');
   if (locator
       .get<BetaAccessService>()
       .hasFeatureAccess(featureName: 'homeScreenV2')) {
     locator.get<HomeScreenV2Cubit>().listenForRepositoryChanges();
   }
   await locator.get<AppPhaseCubit>().init();
+  log('[AppPhaseCubit][init] App Phase Init Complete');
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {

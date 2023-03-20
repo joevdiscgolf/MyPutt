@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:meta/meta.dart';
@@ -22,9 +24,10 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String version = packageInfo.version;
 
-    late final String? minimumVersion;
-    late final MyPuttUser? currentUser;
+    String? minimumVersion;
+    MyPuttUser? currentUser;
 
+    log('[AppPhaseCubit][init] loading minimum version and current user...');
     try {
       await Future.wait(
         [
@@ -36,10 +39,17 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
           minimumVersion = results[0] as String?;
           currentUser = results[1] as MyPuttUser?;
         },
-      ).timeout(tinyTimeout);
+      ).timeout(tinyTimeout, onTimeout: () {
+        log('[AppPhaseCubit][init] load version and user on timeout');
+      }).catchError((e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[AppPhaseCubit][init] minimum version and current user timeout',
+        );
+      });
     } catch (e, trace) {
-      minimumVersion = null;
-      currentUser = null;
       FirebaseCrashlytics.instance.recordError(
         e,
         trace,
@@ -47,6 +57,8 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
             '[AppPhaseCubit][init] minimum version and current user timeout',
       );
     }
+
+    log('[AppPhaseCubit][init] minimum version: $minimumVersion, current user: $currentUser');
 
     if (minimumVersion != null &&
         versionToNumber(minimumVersion!) > versionToNumber(version)) {
@@ -76,6 +88,8 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
     }
 
     await fetchRepositoryData();
+
+    log('[AppPhaseCubit][init] fetched repository data');
 
     emit(const LoggedInPhase());
   }

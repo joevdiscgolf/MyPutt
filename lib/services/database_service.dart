@@ -18,6 +18,7 @@ import 'package:myputt/services/firebase/sessions_data_loaders.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
+import 'package:myputt/utils/constants.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -41,14 +42,19 @@ class DatabaseService {
     return result?.currentSession;
   }
 
-  Future<List<PuttingSession>?> getCompletedSessions() async {
+  Future<List<PuttingSession>?> getCompletedSessions({
+    Duration timeoutDuration = shortTimeout,
+  }) async {
     final uid = _authService.getCurrentUserId();
 
     if (uid == null) {
       return null;
     }
 
-    return _sessionsDataLoader.getCompletedSessions(uid);
+    return _sessionsDataLoader.getCompletedSessions(
+      uid,
+      timeoutDuration: timeoutDuration,
+    );
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
@@ -63,12 +69,12 @@ class DatabaseService {
   }
 
   Future<List<PuttingChallenge>?> getAllChallenges() async {
-    log('fetching current user...');
-    final MyPuttUser? currentUser =
-        await FBUserDataLoader.instance.getCurrentUser();
-    log('fetched current user: $currentUser');
+    log('[DatabaseService][getAllChallenges] Fetching current user...');
+    final MyPuttUser? currentUser = await FBUserDataLoader.instance
+        .getCurrentUser(timeoutDuration: tinyTimeout);
+    log('[DatabaseService][getAllChallenges] Fetched current user: $currentUser');
     if (currentUser == null) {
-      return [];
+      return null;
     }
 
     final QuerySnapshot<Map<String, dynamic>>? snapshot = await firestoreQuery(

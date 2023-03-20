@@ -6,6 +6,7 @@ import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/models/data/sessions/sessions_document.dart';
 import 'package:myputt/services/firebase/utils/firebase_utils.dart';
+import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -32,7 +33,10 @@ class FBSessionsDataLoader {
     }
   }
 
-  Future<List<PuttingSession>?> getCompletedSessions(String uid) async {
+  Future<List<PuttingSession>?> getCompletedSessions(
+    String uid, {
+    Duration timeoutDuration = shortTimeout,
+  }) async {
     try {
       return firestoreQuery(
         path: '$sessionsCollection/$uid/$completedSessionsCollection',

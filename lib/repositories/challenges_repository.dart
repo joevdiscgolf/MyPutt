@@ -35,7 +35,7 @@ class ChallengesRepository extends ChangeNotifier {
   List<PuttingChallenge> get activeChallenges => _activeChallenges;
   List<PuttingChallenge> get pendingChallenges => _pendingChallenges;
   List<PuttingChallenge> get allChallenges =>
-      [...completedChallenges, ...activeChallenges, ...pendingChallenges];
+      [..._completedChallenges, ..._activeChallenges, ..._pendingChallenges];
 
   set completedChallenges(List<PuttingChallenge> completedChallenges) {
     _completedChallenges = completedChallenges;
@@ -79,14 +79,13 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   Future<bool> fetchCloudChallenges() async {
-    return false;
     final List<PuttingChallenge> unsyncedChallenges =
         allChallenges.where((challenge) => challenge.isSynced != true).toList();
 
     List<PuttingChallenge>? cloudChallenges =
         await databaseService.getAllChallenges();
 
-    print('cloud challenges: $cloudChallenges');
+    log('cloud challenges: ${cloudChallenges?.length}');
 
     if (cloudChallenges == null) {
       return false;
@@ -336,16 +335,23 @@ class ChallengesRepository extends ChangeNotifier {
         if (storageChallenge.challengerUser.uid != currentUser.uid) {
           final StoragePuttingChallenge? existingChallenge =
               await databaseService.getChallengeByUid(
-                  currentUser.uid, storageChallenge.id);
+            currentUser.uid,
+            storageChallenge.id,
+          );
           if (existingChallenge == null) {
             final PuttingChallenge challenge =
                 PuttingChallenge.fromStorageChallenge(
-                    storageChallenge, currentUser);
+              storageChallenge,
+              currentUser,
+            );
             challenge.status = ChallengeStatus.active;
             activeChallenges.add(challenge);
             await databaseService.setStorageChallenge(
-                StoragePuttingChallenge.fromPuttingChallenge(
-                    challenge, currentUser));
+              StoragePuttingChallenge.fromPuttingChallenge(
+                challenge,
+                currentUser,
+              ),
+            );
             await databaseService.removeUnclaimedChallenge(challenge.id);
           }
         }
@@ -362,6 +368,7 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   Future<bool> _storeChallengesInLocalDB() {
+    log('[ChallengesRepository][_storeChallengesInLocalDB] storing ${allChallenges.length} challenges in local db');
     return locator
         .get<LocalDBService>()
         .storeChallenges(allChallenges)

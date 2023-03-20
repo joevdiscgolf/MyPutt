@@ -7,6 +7,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -19,13 +20,17 @@ class FBUserDataLoader {
 
   FBUserDataLoader._internal();
 
-  Future<MyPuttUser?> getCurrentUser() async {
+  Future<MyPuttUser?> getCurrentUser({
+    Duration timeoutDuration = shortTimeout,
+  }) async {
     final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
     if (uid == null) {
       return null;
     }
 
-    return firestoreFetch('$usersCollection/$uid').then((snapshot) {
+    return firestoreFetch('$usersCollection/$uid',
+            timeoutDuration: timeoutDuration)
+        .then((snapshot) {
       if (snapshot == null ||
           !snapshot.exists ||
           !isValidUser(snapshot.data() as Map<String, dynamic>)) {

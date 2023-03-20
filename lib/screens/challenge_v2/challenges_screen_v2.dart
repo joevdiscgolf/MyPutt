@@ -7,7 +7,7 @@ import 'package:myputt/cubits/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/challenge_v2/components/challenges_v2_app_bar.dart';
 import 'package:myputt/screens/challenge_v2/components/challenges_list_v2.dart';
-import 'package:myputt/screens/events/components/event_search_loading_screen.dart';
+import 'package:myputt/screens/challenge_v2/components/loading/challenges_v2_loading_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/enums.dart';
 
@@ -66,6 +66,7 @@ class _ChallengesState extends State<ChallengesScreenV2>
     return Scaffold(
       backgroundColor: MyPuttColors.white,
       body: NestedScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         body: _mainBody(context),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
@@ -91,7 +92,7 @@ class _ChallengesState extends State<ChallengesScreenV2>
         return EmptyState(
             onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
       } else if (state is ChallengesLoading || state is ChallengesInitial) {
-        return const EventSearchLoadingScreen();
+        return const ChallengesV2LoadingScreen();
       }
       state.activeChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));

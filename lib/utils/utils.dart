@@ -10,6 +10,7 @@ import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/utils/constants.dart';
 
 void fetchLocalRepositoryData() {
   locator.get<SessionRepository>().fetchLocalCompletedSessions();
@@ -19,13 +20,16 @@ void fetchLocalRepositoryData() {
 
 Future<void> fetchRepositoryData() async {
   fetchLocalRepositoryData();
-  await locator.get<UserRepository>().fetchCurrentUser();
+  await locator
+      .get<UserRepository>()
+      .fetchCurrentUser(timeoutDuration: tinyTimeout);
   await Future.wait([
     locator.get<SessionRepository>().fetchCloudCompletedSessions(),
     locator.get<SessionRepository>().fetchCloudCurrentSession(),
     locator.get<ChallengesRepository>().fetchCloudChallenges(),
   ]);
-  await locator.get<ChallengesRepository>().addDeepLinkChallenges();
+  // TODO: add back deep link challenge functionality in the future
+  // await locator.get<ChallengesRepository>().addDeepLinkChallenges();
 }
 
 void clearRepositoryData() {

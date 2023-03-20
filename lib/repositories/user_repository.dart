@@ -5,6 +5,7 @@ import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/user_service.dart';
+import 'package:myputt/utils/constants.dart';
 
 class UserRepository {
   MyPuttUser? currentUser;
@@ -20,11 +21,14 @@ class UserRepository {
     currentUser = newUser;
   }
 
-  Future<bool> fetchCurrentUser() async {
+  Future<bool> fetchCurrentUser(
+      {Duration timeoutDuration = shortTimeout}) async {
     if (_authService.getCurrentUserId() == null) {
       return false;
     } else {
-      currentUser = await FBUserDataLoader.instance.getCurrentUser();
+      currentUser = await FBUserDataLoader.instance.getCurrentUser(
+        timeoutDuration: timeoutDuration,
+      );
       return currentUser != null;
     }
   }
