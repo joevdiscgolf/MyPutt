@@ -167,7 +167,14 @@ class SessionRepository extends ChangeNotifier {
         'completed sessions after loading local: ${_completedSessions.length}');
   }
 
-  Future<void> syncLocalSessionsToCloud() async {
+  Future<void> syncAllLocalSessionsToCloud() {
+    return Future.wait([
+      syncLocalCompletedSessionsToCloud(),
+      syncCurrentLocalSessionToCloud()
+    ]);
+  }
+
+  Future<void> syncLocalCompletedSessionsToCloud() async {
     // do not sync deleted sessions to cloud
     List<PuttingSession> newlySyncedSessions = _completedSessions
         .where(
@@ -180,10 +187,10 @@ class SessionRepository extends ChangeNotifier {
     }
 
     // save unsynced sessions in firestore.
-    final bool success = await FBSessionsDataWriter.instance
+    final bool saveSuccess = await FBSessionsDataWriter.instance
         .setSessionsBatch(newlySyncedSessions);
 
-    if (!success) {
+    if (!saveSuccess) {
       // trigger error toast
       return;
     }
@@ -195,6 +202,13 @@ class SessionRepository extends ChangeNotifier {
 
     // store newly-synced sessions
     await _storeCompletedSessionsInLocalDB();
+  }
+
+  Future<void> syncCurrentLocalSessionToCloud() async {
+    if (currentSession == null) return;
+
+    // save current session in firestore.
+    await FBSessionsDataWriter.instance.setCurrentSession(currentSession!);
   }
 
   Future<bool> fetchCloudCompletedSessions() async {
@@ -327,7 +341,7 @@ class SessionRepository extends ChangeNotifier {
   }
 
   void _log(String message) {
-    if (kSessionRepositoryLogs) {
+    if (Flags.kSessionRepositoryLogs) {
       log(message);
     }
   }

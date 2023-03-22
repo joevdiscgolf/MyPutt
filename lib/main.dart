@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -54,16 +53,13 @@ void main() async {
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
 
-  log('[BetaAccessService] loading feature access...');
   await locator.get<BetaAccessService>().loadFeatureAccess();
-  log('[BetaAccessService] loaded feature access...');
   if (locator
       .get<BetaAccessService>()
       .hasFeatureAccess(featureName: 'homeScreenV2')) {
     locator.get<HomeScreenV2Cubit>().listenForRepositoryChanges();
   }
   await locator.get<AppPhaseCubit>().init();
-  log('[AppPhaseCubit][init] App Phase Init Complete');
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {
@@ -156,7 +152,7 @@ class _MyAppState extends State<MyApp> {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (_connectivityResult != null &&
           hasConnectivity(_connectivityResult!)) {
-        await locator.get<SessionRepository>().syncLocalSessionsToCloud();
+        await locator.get<SessionRepository>().syncAllLocalSessionsToCloud();
       }
     });
   }

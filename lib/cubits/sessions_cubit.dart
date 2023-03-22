@@ -200,7 +200,7 @@ class SessionsCubit extends Cubit<SessionsState> {
 
   Future<void> onConnectionEstablished() async {
     await locator.get<SessionRepository>().fetchCloudCompletedSessions();
-    await locator.get<SessionRepository>().syncLocalSessionsToCloud();
+    await locator.get<SessionRepository>().syncLocalCompletedSessionsToCloud();
     emitUpdatedState();
   }
 }

@@ -1,13 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
+import 'package:myputt/services/firebase_auth_service.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataWriter {
+  static final FBChallengesDataWriter instance =
+      FBChallengesDataWriter._internal();
+
+  factory FBChallengesDataWriter() {
+    return instance;
+  }
+
+  FBChallengesDataWriter._internal();
+
   Future<bool> setPuttingChallenge(String recipientUid, String challengerUid,
       StoragePuttingChallenge storageChallenge) {
     WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -86,7 +97,9 @@ class FBChallengesDataWriter {
   }
 
   Future<bool> deleteChallenge(
-      String currentUid, PuttingChallenge challengeToDelete) {
+    String currentUid,
+    PuttingChallenge challengeToDelete,
+  ) {
     return firestore
         .doc(
             '$challengesCollection/$currentUid/$challengesCollection/${challengeToDelete.id}')
@@ -99,6 +112,39 @@ class FBChallengesDataWriter {
           trace,
           reason:
               '[FBChallengesDataWriter][deleteChallenge] firestore delete exception',
+        );
+        return false;
+      },
+    );
+  }
+
+  Future<bool> deleteChallengesBatch(
+    List<PuttingChallenge> challengesToDelete,
+  ) async {
+    return true;
+    final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    if (uid == null) {
+      return false;
+    }
+
+    final WriteBatch batch = firestore.batch();
+
+    for (PuttingChallenge challenge in challengesToDelete) {
+      batch.delete(
+        firestore.doc(
+          '$sessionsCollection/$uid/$completedSessionsCollection/${challenge.id}',
+        ),
+      );
+    }
+
+    return batch.commit().then((_) => true).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataWriter][deleteChallengesBatch] firestore delete exception',
         );
         return false;
       },

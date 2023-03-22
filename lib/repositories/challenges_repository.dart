@@ -11,6 +11,7 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/database_service.dart';
+import 'package:myputt/services/firebase/challenges_data_writer.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
@@ -85,17 +86,20 @@ class ChallengesRepository extends ChangeNotifier {
     List<PuttingChallenge>? cloudChallenges =
         await databaseService.getAllChallenges();
 
-    log('cloud challenges: ${cloudChallenges?.length}');
+    _log(
+        '[ChallengesRepository][fetchCloudChallenges] cloud challenges count: ${cloudChallenges?.length}');
 
     if (cloudChallenges == null) {
       return false;
     }
 
-    final MyPuttUser? currentUser = userRepository.currentUser;
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+
     pendingChallenges = cloudChallenges
         .where((challenge) =>
             challenge.status == ChallengeStatus.pending &&
-            currentUser?.uid != challenge.challengerUser.uid)
+            currentUid != challenge.challengerUser.uid)
         .toList();
     activeChallenges = cloudChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)
@@ -149,32 +153,37 @@ class ChallengesRepository extends ChangeNotifier {
 
     allChallenges = combinedChallenges;
 
-    // if (challengesDeletedLocally.isNotEmpty) {
-    //   final bool deleteSuccess = await FBSessionsDataWriter.instance
-    //       .deleteSessionsBatch(challengesDeletedLocally);
-    //   _log('[ChallengesRepository][fetchCloudChallenges] delete sessions batch - success: $deleteSuccess');
-    //
-    //   // remove sessions locally permanently if deleted in cloud
-    //   if (deleteSuccess) {
-    //     completedSessions = ChallengeHelpers.removeChallenges(
-    //       challengesDeletedLocally,
-    //       _completedSessions,
-    //     );
-    //     final bool localSaveSuccess = await _storeCompletedSessionsInLocalDB();
-    //     _log('[ChallengesRepository][fetchCloudChallenges] saved current sessions locally - success: $localSaveSuccess');
-    //   }
-    // }
-    // if (challengesDeletedInCloud.isNotEmpty) {
-    //   _log('[ChallengesRepository][fetchCloudChallenges] deleting local sessions that were deleted in cloud');
-    //   completedSessions = ChallengeHelpers.removeChallenges(
-    //     challengesDeletedInCloud,
-    //     _completedSessions,
-    //   );
-    // }
+    if (challengesDeletedLocally.isNotEmpty) {
+      final bool deleteSuccess = await FBChallengesDataWriter.instance
+          .deleteChallengesBatch(challengesDeletedLocally);
+      _log(
+          '[ChallengesRepository][fetchCloudChallenges] delete challenges batch - success: $deleteSuccess');
+
+      // remove local deleted challenges permanently if successfully deleted in cloud
+      if (deleteSuccess) {
+        allChallenges = ChallengeHelpers.removeChallenges(
+          challengesDeletedLocally,
+          allChallenges,
+        );
+        final bool localSaveSuccess = await _storeChallengesInLocalDB();
+        _log(
+            '[ChallengesRepository][fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess');
+      }
+    }
+    if (challengesDeletedInCloud.isNotEmpty) {
+      _log(
+        '[ChallengesRepository][fetchCloudChallenges] deleting challenges locally that were deleted in cloud',
+      );
+      allChallenges = ChallengeHelpers.removeChallenges(
+        challengesDeletedInCloud,
+        allChallenges,
+      );
+    }
 
     final bool localSaveSuccess = await _storeChallengesInLocalDB();
     _log(
-        '[ChallengesRepository][fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess');
+      '[ChallengesRepository][fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess',
+    );
 
     return true;
   }
@@ -368,7 +377,8 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   Future<bool> _storeChallengesInLocalDB() {
-    log('[ChallengesRepository][_storeChallengesInLocalDB] storing ${allChallenges.length} challenges in local db');
+    _log(
+        '[ChallengesRepository][_storeChallengesInLocalDB] storing ${allChallenges.length} challenges in local db');
     return locator
         .get<LocalDBService>()
         .storeChallenges(allChallenges)
@@ -380,7 +390,7 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   void _log(String message) {
-    if (kChallengesRepositoryLogs) {
+    if (Flags.kChallengesRepositoryLogs) {
       log(message);
     }
   }

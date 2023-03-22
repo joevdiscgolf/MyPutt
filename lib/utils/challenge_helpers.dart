@@ -4,6 +4,7 @@ import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 
 class ChallengeHelpers {
@@ -13,11 +14,24 @@ class ChallengeHelpers {
   }
 
   static bool isDuplicateChallenge(
-      List<PuttingSession> sessions, PuttingChallenge challenge) {
+    List<PuttingSession> sessions,
+    PuttingChallenge challenge,
+  ) {
     final PuttingSession? match = sessions.firstWhereOrNull(
       (session) => session.id == challenge.id,
     );
     return match != null;
+  }
+
+  static bool challengeSetsUpdated(
+    PuttingChallenge previousChallenge,
+    PuttingChallenge currentChallenge,
+  ) {
+    final bool opponentSetsEqual =
+        previousChallenge.opponentSets == currentChallenge.opponentSets;
+    final bool currentSetsEqual =
+        previousChallenge.currentUserSets == currentChallenge.currentUserSets;
+    return !(opponentSetsEqual && currentSetsEqual);
   }
 
   static List<PuttingChallenge> filterDuplicateChallenges(
@@ -59,6 +73,34 @@ class ChallengeHelpers {
     } else {
       return ChallengeResult.draw;
     }
+  }
+
+  static List<PuttingChallenge> updatedActiveChallenges(
+    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> cloudChallenges,
+  ) {
+    final List<String> cloudActiveChallengeIds = cloudChallenges
+        .where((challenge) => challenge.status == ChallengeStatus.active)
+        .map((challenge) => challenge.id)
+        .toList();
+
+    final List<PuttingChallenge> localIntersectionChallenges = localChallenges
+        .where((challenge) => cloudActiveChallengeIds.contains(challenge.id))
+        .toList();
+
+    final List<String> intersectionChallengeIds =
+        localIntersectionChallenges.map((challenge) => challenge.id).toList();
+
+    final List<PuttingChallenge> cloudIntersectionChallenges = cloudChallenges
+        .where((challenge) => intersectionChallengeIds.contains(challenge.id))
+        .toList();
+
+    return localIntersectionChallenges.where((localIntersectingChallenge) {
+      return !ChallengeHelpers.challengeSetsUpdated(
+        localIntersectingChallenge,
+        localIntersectingChallenge,
+      );
+    }).toList();
   }
 
   static List<PuttingChallenge> setSyncedToTrue(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/locator.dart';
@@ -30,7 +28,6 @@ class FBSessionsDataWriter {
 
     final currentSessionReference = firestore.doc('$sessionsCollection/$uid');
 
-    log('setting current session, device id: ${currentSession.deviceId}');
     return currentSessionReference
         .set(
           {'currentSession': currentSession.toJson()},

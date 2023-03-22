@@ -19,6 +19,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/constants/flags.dart';
 import 'firebase/challenges_data_loader.dart';
 
 class DatabaseService {
@@ -69,10 +70,11 @@ class DatabaseService {
   }
 
   Future<List<PuttingChallenge>?> getAllChallenges() async {
-    log('[DatabaseService][getAllChallenges] Fetching current user...');
+    _log('[DatabaseService][getAllChallenges] Fetching current user...');
     final MyPuttUser? currentUser = await FBUserDataLoader.instance
         .getCurrentUser(timeoutDuration: tinyTimeout);
-    log('[DatabaseService][getAllChallenges] Fetched current user: $currentUser');
+    _log(
+        '[DatabaseService][getAllChallenges] Fetched current user: $currentUser');
     if (currentUser == null) {
       return null;
     }
@@ -81,11 +83,11 @@ class DatabaseService {
       path: '$challengesCollection/${currentUser.uid}/$challengesCollection',
     );
 
-    log('cloud challenges snapshot: $snapshot');
+    _log('cloud challenges snapshot: $snapshot');
     if (snapshot == null) {
       return null;
     } else {
-      log('returning cloud snapshot docs');
+      _log('returning cloud snapshot docs');
       return snapshot.docs.map(
         (doc) {
           return PuttingChallenge.fromStorageChallenge(
@@ -181,4 +183,10 @@ class DatabaseService {
 
   Future<List<EventPlayerData>> loadEventStandings(String eventId) async =>
       _eventDataLoader.getEventStandings(eventId);
+
+  void _log(String message) {
+    if (Flags.kDatabaseServiceLogs) {
+      log(message);
+    }
+  }
 }

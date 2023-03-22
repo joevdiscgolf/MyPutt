@@ -10,6 +10,7 @@ import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/string_helpers.dart';
 import 'package:myputt/utils/user_helpers.dart';
 import 'package:myputt/utils/utils.dart';
@@ -27,7 +28,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
     String? minimumVersion;
     MyPuttUser? currentUser;
 
-    log('[AppPhaseCubit][init] loading minimum version and current user...');
+    _log('[AppPhaseCubit][init] loading minimum version and current user...');
     try {
       await Future.wait(
         [
@@ -40,7 +41,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
           currentUser = results[1] as MyPuttUser?;
         },
       ).timeout(tinyTimeout, onTimeout: () {
-        log('[AppPhaseCubit][init] load version and user on timeout');
+        _log('[AppPhaseCubit][init] load version and user on timeout');
       }).catchError((e, trace) {
         FirebaseCrashlytics.instance.recordError(
           e,
@@ -58,7 +59,8 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
       );
     }
 
-    log('[AppPhaseCubit][init] minimum version: $minimumVersion, current user: $currentUser');
+    _log(
+        '[AppPhaseCubit][init] minimum version: $minimumVersion, current user: $currentUser');
 
     if (minimumVersion != null &&
         versionToNumber(minimumVersion!) > versionToNumber(version)) {
@@ -89,12 +91,19 @@ class AppPhaseCubit extends Cubit<AppPhaseState> {
 
     await fetchRepositoryData();
 
-    log('[AppPhaseCubit][init] fetched repository data');
+    _log('[AppPhaseCubit][init] fetched repository data');
 
     emit(const LoggedInPhase());
+    _log('[AppPhaseCubit][init] App Phase Init Complete');
   }
 
   void emitState(AppPhaseState appPhaseState) {
     emit(appPhaseState);
+  }
+
+  void _log(String message) {
+    if (Flags.kAppPhaseCubitLogs) {
+      log(message);
+    }
   }
 }
