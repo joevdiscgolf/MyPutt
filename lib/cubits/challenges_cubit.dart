@@ -40,7 +40,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     return CurrentUserComplete(
       currentChallenge: _challengesRepository.currentChallenge!,
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
     );
   }
@@ -49,7 +49,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     return OpponentUserComplete(
       currentChallenge: _challengesRepository.currentChallenge!,
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
     );
   }
@@ -58,7 +58,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     return BothUsersComplete(
       currentChallenge: _challengesRepository.currentChallenge!,
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
     );
   }
@@ -67,7 +67,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     return ChallengeInProgress(
       currentChallenge: _challengesRepository.currentChallenge!,
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
     );
   }
@@ -75,7 +75,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   NoCurrentChallenge _noCurrentChallenge() {
     return NoCurrentChallenge(
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
       currentChallenge: null,
     );
@@ -84,7 +84,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   ChallengeFinished _challengeFinished() {
     return ChallengeFinished(
       activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.pendingChallenges,
+      pendingChallenges: _challengesRepository.incomingPendingChallenges,
       completedChallenges: _challengesRepository.completedChallenges,
       finishedChallenge: _challengesRepository.finishedChallenge!,
       currentChallenge: null,

@@ -28,15 +28,23 @@ class ChallengesRepository extends ChangeNotifier {
   PuttingChallenge? finishedChallenge;
   List<PuttingChallenge> _completedChallenges = [];
   List<PuttingChallenge> _activeChallenges = [];
-  List<PuttingChallenge> _pendingChallenges = [];
+  List<PuttingChallenge> _incomingPendingChallenges = [];
+  List<PuttingChallenge> _outgoingPendingChallenges = [];
 
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   List<PuttingChallenge> get completedChallenges => _completedChallenges;
   List<PuttingChallenge> get activeChallenges => _activeChallenges;
-  List<PuttingChallenge> get pendingChallenges => _pendingChallenges;
-  List<PuttingChallenge> get allChallenges =>
-      [..._completedChallenges, ..._activeChallenges, ..._pendingChallenges];
+  List<PuttingChallenge> get incomingPendingChallenges =>
+      _incomingPendingChallenges;
+  List<PuttingChallenge> get outgoingPendingChallenges =>
+      _outgoingPendingChallenges;
+  List<PuttingChallenge> get allChallenges => [
+        ..._completedChallenges,
+        ..._activeChallenges,
+        ..._incomingPendingChallenges,
+        ..._outgoingPendingChallenges,
+      ];
 
   set completedChallenges(List<PuttingChallenge> completedChallenges) {
     _completedChallenges = completedChallenges;
@@ -48,24 +56,39 @@ class ChallengesRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  set pendingChallenges(List<PuttingChallenge> pendingChallenges) {
-    _pendingChallenges = pendingChallenges;
+  set incomingPendingChallenges(
+    List<PuttingChallenge> incomingPendingChallenges,
+  ) {
+    _incomingPendingChallenges = incomingPendingChallenges;
+    notifyListeners();
+  }
+
+  set outgoingPendingChallenges(
+    List<PuttingChallenge> outgoingPendingChallenges,
+  ) {
+    _outgoingPendingChallenges = outgoingPendingChallenges;
     notifyListeners();
   }
 
   set allChallenges(List<PuttingChallenge> allChallenges) {
     final String? currentUid =
         locator.get<FirebaseAuthService>().getCurrentUserId();
-    pendingChallenges = allChallenges
-        .where((challenge) =>
-            challenge.status == ChallengeStatus.pending &&
-            currentUid != challenge.challengerUser.uid)
-        .toList();
+
     activeChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)
         .toList();
     completedChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.complete)
+        .toList();
+    incomingPendingChallenges = allChallenges
+        .where((challenge) =>
+            challenge.status == ChallengeStatus.pending &&
+            currentUid != challenge.challengerUser.uid)
+        .toList();
+    outgoingPendingChallenges = allChallenges
+        .where((challenge) =>
+            challenge.status == ChallengeStatus.pending &&
+            currentUid == challenge.challengerUser.uid)
         .toList();
   }
 
@@ -76,7 +99,8 @@ class ChallengesRepository extends ChangeNotifier {
       allChallenges = localDbChallenges;
     }
     _log(
-        '[ChallengesRepository][fetchLocalChallenges] Local challenges: ${localDbChallenges?.length}');
+      '[ChallengesRepository][fetchLocalChallenges] Local challenges: ${localDbChallenges?.length}',
+    );
   }
 
   Future<bool> fetchCloudChallenges() async {
@@ -87,7 +111,8 @@ class ChallengesRepository extends ChangeNotifier {
         await databaseService.getAllChallenges();
 
     _log(
-        '[ChallengesRepository][fetchCloudChallenges] cloud challenges count: ${cloudChallenges?.length}');
+      '[ChallengesRepository][fetchCloudChallenges] cloud challenges count: ${cloudChallenges?.length}',
+    );
 
     if (cloudChallenges == null) {
       return false;
@@ -96,23 +121,29 @@ class ChallengesRepository extends ChangeNotifier {
     final String? currentUid =
         locator.get<FirebaseAuthService>().getCurrentUserId();
 
-    pendingChallenges = cloudChallenges
-        .where((challenge) =>
-            challenge.status == ChallengeStatus.pending &&
-            currentUid != challenge.challengerUser.uid)
-        .toList();
-    activeChallenges = cloudChallenges
-        .where((challenge) => challenge.status == ChallengeStatus.active)
-        .toList();
-    completedChallenges = cloudChallenges
-        .where((challenge) => challenge.status == ChallengeStatus.complete)
-        .toList();
+    // incomingPendingChallenges = cloudChallenges
+    //     .where((challenge) =>
+    //         challenge.status == ChallengeStatus.pending &&
+    //         currentUid != challenge.challengerUser.uid)
+    //     .toList();
+    // activeChallenges = cloudChallenges
+    //     .where((challenge) => challenge.status == ChallengeStatus.active)
+    //     .toList();
+    // completedChallenges = cloudChallenges
+    //     .where((challenge) => challenge.status == ChallengeStatus.complete)
+    //     .toList();
 
     cloudChallenges = ChallengeHelpers.setSyncedToTrue(cloudChallenges);
 
     List<PuttingChallenge> combinedChallenges =
         ChallengeHelpers.mergeCloudChallenges(
       unsyncedChallenges,
+      cloudChallenges,
+    );
+
+    List<PuttingChallenge> updatedActiveChallenges =
+        ChallengeHelpers.updatedActiveChallenges(
+      allChallenges,
       cloudChallenges,
     );
 
@@ -190,9 +221,7 @@ class ChallengesRepository extends ChangeNotifier {
 
   void clearData() {
     currentChallenge = null;
-    pendingChallenges = [];
-    activeChallenges = [];
-    completedChallenges = [];
+    allChallenges = [];
     locator.get<LocalDBService>().deleteChallengesData();
   }
 
@@ -274,8 +303,8 @@ class ChallengesRepository extends ChangeNotifier {
     if (currentChallenge?.status == ChallengeStatus.pending) {
       currentChallenge?.status = ChallengeStatus.active;
     }
-    if (pendingChallenges.contains(challenge)) {
-      pendingChallenges.remove(challenge);
+    if (incomingPendingChallenges.contains(challenge)) {
+      incomingPendingChallenges.remove(challenge);
       activeChallenges.add(currentChallenge!);
       databaseService.setStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
@@ -318,8 +347,8 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
-    if (pendingChallenges.contains(challenge)) {
-      pendingChallenges.remove(challenge);
+    if (incomingPendingChallenges.contains(challenge)) {
+      incomingPendingChallenges.remove(challenge);
       // database event here
     } else if (activeChallenges.contains(challenge)) {
       activeChallenges =
@@ -329,7 +358,7 @@ class ChallengesRepository extends ChangeNotifier {
   }
 
   void declineChallenge(PuttingChallenge challenge) {
-    pendingChallenges.remove(challenge);
+    incomingPendingChallenges.remove(challenge);
     databaseService.deleteChallenge(challenge);
   }
 

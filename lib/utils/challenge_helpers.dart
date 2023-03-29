@@ -75,32 +75,54 @@ class ChallengeHelpers {
     }
   }
 
+  // find challenges where the current user sets are different between the cloud and local.
+  // Determine which is source of truth based on currentUserSetsUpdatedAt.
   static List<PuttingChallenge> updatedActiveChallenges(
     List<PuttingChallenge> localChallenges,
     List<PuttingChallenge> cloudChallenges,
   ) {
-    final List<String> cloudActiveChallengeIds = cloudChallenges
-        .where((challenge) => challenge.status == ChallengeStatus.active)
-        .map((challenge) => challenge.id)
+    final List<PuttingChallenge> mergedActiveChallenges = [];
+
+    final List<PuttingChallenge> cloudActiveChallenges = cloudChallenges
+        .where(
+            (cloudChallenge) => cloudChallenge.status == ChallengeStatus.active)
+        .toList();
+    final List<PuttingChallenge> localActiveChallenges = localChallenges
+        .where(
+            (localChallenge) => localChallenge.status == ChallengeStatus.active)
         .toList();
 
-    final List<PuttingChallenge> localIntersectionChallenges = localChallenges
-        .where((challenge) => cloudActiveChallengeIds.contains(challenge.id))
-        .toList();
-
-    final List<String> intersectionChallengeIds =
-        localIntersectionChallenges.map((challenge) => challenge.id).toList();
-
-    final List<PuttingChallenge> cloudIntersectionChallenges = cloudChallenges
-        .where((challenge) => intersectionChallengeIds.contains(challenge.id))
-        .toList();
-
-    return localIntersectionChallenges.where((localIntersectingChallenge) {
-      return !ChallengeHelpers.challengeSetsUpdated(
-        localIntersectingChallenge,
-        localIntersectingChallenge,
+    // Add matching challenges to mergedChallenges list and determine source of truth challenge.
+    for (PuttingChallenge cloudChallenge in cloudActiveChallenges) {
+      final PuttingChallenge? matchingLocalChallenge =
+          localChallenges.firstWhereOrNull(
+        (localChallenge) {
+          return localChallenge.id == cloudChallenge.id;
+        },
       );
-    }).toList();
+
+      if (matchingLocalChallenge == null) continue;
+
+      mergedActiveChallenges.add(
+        ChallengeHelpers.determineSourceOfTruthChallenge(
+          cloudChallenge,
+          matchingLocalChallenge,
+        ),
+      );
+    }
+
+    List<String> mergedChallengeIds = mergedActiveChallenges
+        .map((mergedChallenge) => mergedChallenge.id)
+        .toList();
+
+    // Add local challenges if they have not been already.
+    for (PuttingChallenge localChallenge in localActiveChallenges) {
+      if (!mergedChallengeIds.contains(localChallenge.id)) {
+        mergedActiveChallenges.add(localChallenge);
+      }
+    }
+
+    return mergedActiveChallenges;
   }
 
   static List<PuttingChallenge> setSyncedToTrue(
@@ -184,5 +206,45 @@ class ChallengeHelpers {
     return allChallenges
         .where((challenge) => !idsToRemove.contains(challenge.id))
         .toList();
+  }
+
+  static PuttingChallenge determineSourceOfTruthChallenge(
+    PuttingChallenge cloudChallenge,
+    PuttingChallenge localChallenge,
+  ) {
+    final bool currentUserSetsChanged =
+        cloudChallenge.currentUserSets != localChallenge.currentUserSets;
+
+    if (!currentUserSetsChanged) {
+      return cloudChallenge;
+    }
+
+    if (cloudChallenge.currentUserSetsUpdatedAt != null &&
+        localChallenge.currentUserSetsUpdatedAt != null) {
+      final int cloudChallengeUpdatedAtMs =
+          DateTime.parse(cloudChallenge.currentUserSetsUpdatedAt!)
+              .millisecondsSinceEpoch;
+      final int localChallengeUpdatedAtMs =
+          DateTime.parse(localChallenge.currentUserSetsUpdatedAt!)
+              .millisecondsSinceEpoch;
+
+      // local challenge updated more recently
+      if (localChallengeUpdatedAtMs > cloudChallengeUpdatedAtMs) {
+        // copy the cloud challenge with the current user sets of the local challenge.
+        // All other data in the cloud challenge is most up to date.
+        return cloudChallenge.copyWith(
+          currentUserSets: localChallenge.currentUserSets,
+        );
+      } else {
+        // if cloud challenge updated more recently
+        return cloudChallenge;
+      }
+    } else if (cloudChallenge.currentUserSetsUpdatedAt == null) {
+      return cloudChallenge.copyWith(
+        currentUserSets: localChallenge.currentUserSets,
+      );
+    } else {
+      return cloudChallenge;
+    }
   }
 }

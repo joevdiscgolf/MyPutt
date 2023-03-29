@@ -50,9 +50,6 @@ class StoragePuttingChallenge {
     late final MyPuttUser challengerUser;
     late final List<PuttingSet> challengerSets;
 
-    late final String? challengerSetsUpdatedAt;
-    late final String? recipientSetsUpdatedAt;
-
     final bool currentUserIsChallenger =
         challenge.challengerUser.uid == currentUser.uid;
 
@@ -60,6 +57,7 @@ class StoragePuttingChallenge {
       recipientUser = null;
       recipientSets = [];
     } else {
+      // current user is challenger, opponent is recipient
       if (currentUserIsChallenger) {
         challengerUser = challenge.currentUser;
         challengerSets = challenge.currentUserSets;
@@ -67,8 +65,10 @@ class StoragePuttingChallenge {
         recipientUser = challenge.opponentUser;
         recipientSets = challenge.opponentSets;
       } else {
+        // current user is recipient, opponent is challenger.
         challengerSets = challenge.opponentSets;
         challengerUser = challenge.opponentUser!;
+
         recipientUser = challenge.currentUser;
         recipientSets = challenge.currentUserSets;
       }

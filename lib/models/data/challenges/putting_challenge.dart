@@ -94,6 +94,52 @@ class PuttingChallenge {
       completionTimeStamp: storageChallenge.completionTimeStamp,
       currentUserSetsUpdatedAt: currentUserSetsUpdatedAt,
       opponentSetsUpdatedAt: opponentSetsUpdatedAt,
+      challengerSetsUpdatedAt: storageChallenge.challengerSetsUpdatedAt,
+      recipientSetsUpdatedAt: storageChallenge.recipientSetsUpdatedAt,
+    );
+  }
+
+  PuttingChallenge copyWith({
+    String? status,
+    int? creationTimeStamp,
+    int? completionTimeStamp,
+    String? id,
+    MyPuttUser? opponentUser,
+    MyPuttUser? currentUser,
+    MyPuttUser? challengerUser,
+    MyPuttUser? recipientUser,
+    List<ChallengeStructureItem>? challengeStructure,
+    List<PuttingSet>? opponentSets,
+    List<PuttingSet>? currentUserSets,
+    bool? isSynced,
+    bool? isDeleted,
+    String? currentUserSetsUpdatedAt,
+    String? opponentSetsUpdatedAt,
+    String? challengerSetsUpdatedAt,
+    String? recipientSetsUpdatedAt,
+  }) {
+    return PuttingChallenge(
+      status: status ?? this.status,
+      creationTimeStamp: creationTimeStamp ?? this.creationTimeStamp,
+      id: id ?? this.id,
+      currentUser: currentUser ?? this.currentUser,
+      opponentUser: opponentUser ?? this.opponentUser,
+      opponentSets: opponentSets ?? this.opponentSets,
+      currentUserSets: currentUserSets ?? this.currentUserSets,
+      challengerUser: challengerUser ?? this.currentUser,
+      recipientUser: recipientUser ?? this.recipientUser,
+      isDeleted: isDeleted ?? this.isDeleted,
+      isSynced: isSynced ?? this.isSynced,
+      challengeStructure: challengeStructure ?? this.challengeStructure,
+      completionTimeStamp: completionTimeStamp ?? this.completionTimeStamp,
+      currentUserSetsUpdatedAt:
+          currentUserSetsUpdatedAt ?? this.currentUserSetsUpdatedAt,
+      opponentSetsUpdatedAt:
+          opponentSetsUpdatedAt ?? this.opponentSetsUpdatedAt,
+      challengerSetsUpdatedAt:
+          challengerSetsUpdatedAt ?? this.currentUserSetsUpdatedAt,
+      recipientSetsUpdatedAt:
+          recipientSetsUpdatedAt ?? this.recipientSetsUpdatedAt,
     );
   }
 
