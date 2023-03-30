@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
@@ -14,8 +15,19 @@ import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
-class SessionRepository extends ChangeNotifier {
-  final DatabaseService _databaseService = DatabaseService();
+class SessionsRepository extends ChangeNotifier implements Repository {
+  @override
+  void initializeServices() {
+    _databaseService = locator.get<DatabaseService>();
+    _firebaseAuthService = locator.get<FirebaseAuthService>();
+    _localDBService = locator.get<LocalDBService>();
+    _deviceService = locator.get<DeviceService>();
+  }
+
+  late final DatabaseService _databaseService;
+  late final FirebaseAuthService _firebaseAuthService;
+  late final LocalDBService _localDBService;
+  late final DeviceService _deviceService;
 
   PuttingSession? currentSession;
   List<PuttingSession> _completedSessions = [];
@@ -31,9 +43,8 @@ class SessionRepository extends ChangeNotifier {
   }
 
   Future<bool> startActiveSession() async {
-    final String? currentUid =
-        locator.get<FirebaseAuthService>().getCurrentUserId();
-    final String? deviceId = locator.get<DeviceService>().getDeviceId;
+    final String? currentUid = _firebaseAuthService.getCurrentUserId();
+    final String? deviceId = _deviceService.getDeviceId;
 
     if (currentUid == null || deviceId == null) {
       // toast error
@@ -134,7 +145,7 @@ class SessionRepository extends ChangeNotifier {
   }
 
   void fetchLocalCurrentSession() {
-    currentSession = locator.get<LocalDBService>().retrieveCurrentSession();
+    currentSession = _localDBService.retrieveCurrentSession();
   }
 
   Future<void> fetchCloudCurrentSession() async {
@@ -153,12 +164,12 @@ class SessionRepository extends ChangeNotifier {
   }
 
   Future<bool> _storeCurrentSessionInLocalDB() {
-    return locator.get<LocalDBService>().storeCurrentSession(currentSession);
+    return _localDBService.storeCurrentSession(currentSession);
   }
 
   void fetchLocalCompletedSessions() {
     final List<PuttingSession>? localDbSessions =
-        locator.get<LocalDBService>().retrieveCompletedSessions();
+        _localDBService.retrieveCompletedSessions();
 
     if (localDbSessions != null) {
       completedSessions = localDbSessions;
@@ -226,8 +237,8 @@ class SessionRepository extends ChangeNotifier {
           SessionHelpers.mergeCloudSessions(unsyncedSessions, cloudSessions);
 
       // store new sessions if necessary.
-      final List<PuttingSession> newSessions =
-          SessionHelpers.getNewSessions(_completedSessions, cloudSessions);
+      final List<PuttingSession> newCloudSessions =
+          SessionHelpers.getNewCloudSessions(_completedSessions, cloudSessions);
 
       // sessions deleted locally that still exist in the cloud
       final List<PuttingSession> sessionsDeletedLocally =
@@ -250,7 +261,7 @@ class SessionRepository extends ChangeNotifier {
       );
 
       // update local sessions if there are new sessions or sessions have been removed
-      if (newSessions.isNotEmpty || sessionsDeletedInCloud.isNotEmpty) {
+      if (newCloudSessions.isNotEmpty || sessionsDeletedInCloud.isNotEmpty) {
         final bool success = await locator
             .get<LocalDBService>()
             .storeCompletedSessions(combinedSessions);
@@ -266,7 +277,7 @@ class SessionRepository extends ChangeNotifier {
         final bool deleteSuccess = await FBSessionsDataWriter.instance
             .deleteSessionsBatch(sessionsDeletedLocally);
         _log(
-            '[SessionsRepository][fetchCloudCompletedSessions] delete sessions batch - success: $deleteSuccess');
+            '[SessionsRepository][fetchCloudCompletedSessions] delete sessions batch in cloud - success: $deleteSuccess');
 
         // remove sessions locally permanently if deleted in cloud
         if (deleteSuccess) {
@@ -277,7 +288,7 @@ class SessionRepository extends ChangeNotifier {
           final bool localSaveSuccess =
               await _storeCompletedSessionsInLocalDB();
           _log(
-              '[SessionsRepository][fetchCloudCompletedSessions] saved current sessions locally - success: $localSaveSuccess');
+              '[SessionsRepository][fetchCloudCompletedSessions] deleted completed sessions locally - success: $localSaveSuccess');
         }
       }
       if (sessionsDeletedInCloud.isNotEmpty) {
@@ -301,14 +312,13 @@ class SessionRepository extends ChangeNotifier {
 
   Future<bool> _storeCompletedSessionsInLocalDB() {
     final int sessionsLengthBefore =
-        locator.get<LocalDBService>().retrieveCompletedSessions()?.length ?? 0;
+        _localDBService.retrieveCompletedSessions()?.length ?? 0;
     return locator
         .get<LocalDBService>()
         .storeCompletedSessions(_completedSessions)
         .then((success) {
       final int sessionsLengthAfter =
-          locator.get<LocalDBService>().retrieveCompletedSessions()?.length ??
-              0;
+          _localDBService.retrieveCompletedSessions()?.length ?? 0;
       _log(
           '[SessionsRepository][_storeCompletedSessionsInLocalDB] local before: $sessionsLengthBefore, local sessions after: $sessionsLengthAfter');
       return success;
@@ -337,7 +347,7 @@ class SessionRepository extends ChangeNotifier {
   void clearData() {
     currentSession = null;
     completedSessions = [];
-    locator.get<LocalDBService>().deleteSessionsData();
+    _localDBService.deleteSessionsData();
   }
 
   void _log(String message) {

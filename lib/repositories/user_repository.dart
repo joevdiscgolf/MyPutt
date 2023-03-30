@@ -1,17 +1,25 @@
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/repositories/repository.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/constants.dart';
 
-class UserRepository {
+class UserRepository implements Repository {
+  @override
+  void initializeServices() {
+    _authService = locator.get<FirebaseAuthService>();
+    _databaseService = locator.get<DatabaseService>();
+    _userService = locator.get<UserService>();
+  }
+
   MyPuttUser? currentUser;
-  final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
-  final DatabaseService _databaseService = locator.get<DatabaseService>();
-  final UserService _userService = locator.get<UserService>();
+  late final FirebaseAuthService _authService;
+  late final DatabaseService _databaseService;
+  late final UserService _userService;
 
   void clearData() {
     currentUser = null;

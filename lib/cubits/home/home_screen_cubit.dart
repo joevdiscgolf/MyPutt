@@ -13,7 +13,8 @@ import 'package:myputt/utils/constants.dart';
 part 'home_screen_state.dart';
 
 class HomeScreenCubit extends Cubit<HomeScreenState> {
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
   final StatsService _statsService = locator.get<StatsService>();

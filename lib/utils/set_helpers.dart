@@ -5,71 +5,82 @@ import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/utils/calculators.dart';
 
-ChallengeStructureItem getCurrentChallengeStructureItem(
-    List<ChallengeStructureItem> challengeStructure,
-    List<PuttingSet> playerSets) {
-  final int index = playerSets.length >= challengeStructure.length
-      ? playerSets.length - 1
-      : playerSets.length;
-  return challengeStructure[index];
-}
-
-double percentageFromSet(PuttingSet set) {
-  if (set.puttsAttempted == 0) {
-    return 0;
-  } else {
-    return set.puttsMade / set.puttsAttempted;
+abstract class SetHelpers {
+  static ChallengeStructureItem getCurrentChallengeStructureItem(
+      List<ChallengeStructureItem> challengeStructure,
+      List<PuttingSet> playerSets) {
+    final int index = playerSets.length >= challengeStructure.length
+        ? playerSets.length - 1
+        : playerSets.length;
+    return challengeStructure[index];
   }
-}
 
-double percentageFromSets(List<PuttingSet> sets) {
-  final int totalAttempts = totalAttemptsFromSets(sets);
-  final int totalMade = totalMadeFromSets(sets);
-
-  if (totalAttempts == 0) {
-    return 0;
-  } else {
-    return totalMade / totalAttempts;
-  }
-}
-
-Map<int, List<PuttingSet>> sortSetsByDistance(List<PuttingSet> sets) {
-  final Map<int, List<PuttingSet>> setsByDistance = {};
-  for (PuttingSet set in sets) {
-    if (setsByDistance.containsKey(set.distance)) {
-      setsByDistance[set.distance]!.add(set);
+  static double percentageFromSet(PuttingSet set) {
+    if (set.puttsAttempted == 0) {
+      return 0;
     } else {
-      setsByDistance[set.distance] = [set];
+      return set.puttsMade / set.puttsAttempted;
     }
   }
 
-  return setsByDistance;
-}
+  static double percentageFromSets(List<PuttingSet> sets) {
+    final int totalAttempts = totalAttemptsFromSets(sets);
+    final int totalMade = totalMadeFromSets(sets);
 
-List<PuttingSet> getPuttingSetsFromIntervals(
-  Map<DistanceInterval, PuttingSetInterval> intervalToSetsDataMap,
-) {
-  final List<PuttingSet> setsInInterval = [];
-
-  for (PuttingSetInterval interval in intervalToSetsDataMap.values) {
-    setsInInterval.addAll(interval.sets);
-  }
-
-  return setsInInterval;
-}
-
-List<PuttingSet> puttingSetsFromPuttingActivities(
-  List<dynamic> puttingActivities,
-) {
-  final List<PuttingSet> sets = [];
-
-  for (var activity in puttingActivities) {
-    if (activity is PuttingSession) {
-      sets.addAll(activity.sets);
-    } else if (activity is PuttingChallenge) {
-      sets.addAll(activity.currentUserSets);
+    if (totalAttempts == 0) {
+      return 0;
+    } else {
+      return totalMade / totalAttempts;
     }
   }
 
-  return sets;
+  static Map<int, List<PuttingSet>> sortSetsByDistance(List<PuttingSet> sets) {
+    final Map<int, List<PuttingSet>> setsByDistance = {};
+    for (PuttingSet set in sets) {
+      if (setsByDistance.containsKey(set.distance)) {
+        setsByDistance[set.distance]!.add(set);
+      } else {
+        setsByDistance[set.distance] = [set];
+      }
+    }
+
+    return setsByDistance;
+  }
+
+  static List<PuttingSet> getPuttingSetsFromIntervals(
+    Map<DistanceInterval, PuttingSetInterval> intervalToSetsDataMap,
+  ) {
+    final List<PuttingSet> setsInInterval = [];
+
+    for (PuttingSetInterval interval in intervalToSetsDataMap.values) {
+      setsInInterval.addAll(interval.sets);
+    }
+
+    return setsInInterval;
+  }
+
+  static List<PuttingSet> puttingSetsFromPuttingActivities(
+    List<dynamic> puttingActivities,
+  ) {
+    final List<PuttingSet> sets = [];
+
+    for (var activity in puttingActivities) {
+      if (activity is PuttingSession) {
+        sets.addAll(activity.sets);
+      } else if (activity is PuttingChallenge) {
+        sets.addAll(activity.currentUserSets);
+      }
+    }
+
+    return sets;
+  }
+
+  static List<PuttingSet> removeSet(
+    PuttingSet setToRemove,
+    List<PuttingSet> allSets,
+  ) {
+    return allSets
+        .where((set) => set.timeStamp != setToRemove.timeStamp)
+        .toList();
+  }
 }

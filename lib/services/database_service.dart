@@ -109,17 +109,6 @@ class DatabaseService {
         currentUser, challengeId);
   }
 
-  Future<bool> setStorageChallenge(
-      StoragePuttingChallenge storageChallenge) async {
-    final MyPuttUser? recipientUser = storageChallenge.recipientUser;
-    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
-    if (recipientUser == null || challengerUser == null) {
-      return false;
-    }
-    return _challengesDataWriter.setPuttingChallenge(
-        recipientUser.uid, challengerUser.uid, storageChallenge);
-  }
-
   Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {
     return _challengesDataWriter.uploadUnclaimedChallenge(storageChallenge);
   }

@@ -39,7 +39,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   @override

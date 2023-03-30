@@ -15,7 +15,8 @@ class PresetsRepository {
     };
   }
 
-  Map<ChallengePreset, List<ChallengeStructureItem>> presetStructures = {};
+  late final Map<ChallengePreset, List<ChallengeStructureItem>>
+      presetStructures;
 
   Map<ChallengePreset, List<GeneratedChallengeInstruction>> presetInstructions =
       {

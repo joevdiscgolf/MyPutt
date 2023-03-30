@@ -9,7 +9,8 @@ import 'package:myputt/repositories/session_repository.dart';
 part 'session_summary_state.dart';
 
 class SessionSummaryCubit extends Cubit<SessionSummaryState> {
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final StatsService _statsService = locator.get<StatsService>();
   SessionSummaryCubit() : super(SessionSummaryInitial());
 

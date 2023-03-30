@@ -6,8 +6,10 @@ import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
+import 'package:myputt/repositories/repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/chart_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
@@ -39,8 +41,9 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
   locator.registerSingleton<DatabaseService>(DatabaseService());
   locator.registerSingleton<UserService>(UserService());
+  locator.registerLazySingleton<ChallengesService>(() => ChallengesService());
   locator.registerSingleton<UserRepository>(UserRepository());
-  locator.registerSingleton<SessionRepository>(SessionRepository());
+  locator.registerSingleton<SessionsRepository>(SessionsRepository());
   locator.registerSingleton<PresetsRepository>(PresetsRepository());
   locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
   locator.registerSingleton<EventsRepository>(EventsRepository());
@@ -54,4 +57,16 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<LocalDBService>(LocalDBService());
   locator.registerLazySingleton(() => NavigationService());
   locator.registerSingleton<DeviceService>(DeviceService());
+
+  // initialize all services in repositories after
+  final List<Repository> repositories = [
+    locator.get<ChallengesRepository>(),
+    locator.get<SessionsRepository>(),
+    locator.get<EventsRepository>(),
+    locator.get<UserRepository>(),
+  ];
+
+  for (Repository repository in repositories) {
+    repository.initializeServices();
+  }
 }

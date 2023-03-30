@@ -6,6 +6,7 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
+import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
@@ -21,7 +22,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
   final UserRepository _userRepository = locator.get<UserRepository>();
-  final DatabaseService _databaseService = locator.get<DatabaseService>();
+  final ChallengesService _challengesService = locator.get<ChallengesService>();
   final DynamicLinkService _dynamicLinkService =
       locator.get<DynamicLinkService>();
   final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
@@ -139,23 +140,18 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> addSet(PuttingSet set) async {
-    if (_challengesRepository.currentChallenge != null) {
-      var challengeStructureLength =
-          _challengesRepository.currentChallenge!.challengeStructure.length;
-      var currentUserSetsCount =
-          _challengesRepository.currentChallenge!.currentUserSets.length;
-      if (currentUserSetsCount < challengeStructureLength) {
-        _challengesRepository.addSet(set);
-        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-        await _challengesRepository.resyncCurrentChallenge();
-        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-      }
-    } else {
-      emit(ChallengesErrorState(
-          completedChallenges: [],
-          activeChallenges: [],
-          currentChallenge: null,
-          pendingChallenges: []));
+    if (_challengesRepository.currentChallenge == null) {
+      // error toast
+    }
+    var challengeStructureLength =
+        _challengesRepository.currentChallenge!.challengeStructure.length;
+    var currentUserSetsCount =
+        _challengesRepository.currentChallenge!.currentUserSets.length;
+    if (currentUserSetsCount < challengeStructureLength) {
+      _challengesRepository.addSet(set);
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      // await _challengesRepository.resyncCurrentChallenge();
+      // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
   }
 
@@ -165,11 +161,10 @@ class ChallengesCubit extends Cubit<ChallengesState> {
     if (currentUserSets == null || currentUserSets.isEmpty) {
       return;
     }
-    _challengesRepository.currentChallenge?.currentUserSets
-        .remove(currentUserSets.last);
+    _challengesRepository.deleteSet(currentUserSets.last);
     emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
-    await _challengesRepository.resyncCurrentChallenge();
-    emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+    // await _challengesRepository.resyncCurrentChallenge();
+    // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
   }
 
   void updateIncomingChallenge(Object? rawObject) {
@@ -223,7 +218,7 @@ class ChallengesCubit extends Cubit<ChallengesState> {
         currentUser,
         opponentUser: recipientUser,
       );
-      return _databaseService.setStorageChallenge(generatedChallenge);
+      return _challengesService.setStorageChallenge(generatedChallenge);
     }
   }
 

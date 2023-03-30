@@ -26,7 +26,7 @@ class PuttsMadeContainer extends StatelessWidget {
       return Container();
     }
     final ChallengeStructureItem currentStructureItem =
-        getCurrentChallengeStructureItem(
+        SetHelpers.getCurrentChallengeStructureItem(
       state.currentChallenge!.challengeStructure,
       state.currentChallenge!.currentUserSets,
     );

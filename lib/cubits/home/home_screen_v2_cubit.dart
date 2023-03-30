@@ -29,7 +29,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
   HomeScreenV2Cubit() : super(const HomeScreenV2Initial());
 
   listenForRepositoryChanges() {
-    locator.get<SessionRepository>().addListener(() {
+    locator.get<SessionsRepository>().addListener(() {
       onRepositoryUpdated();
     });
     locator.get<ChallengesRepository>().addListener(() {
@@ -47,14 +47,14 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
 
     final List<dynamic> puttingActivities =
         locator.get<StatsService>().getPuttingActivitiesByTimeRange(
-              locator.get<SessionRepository>().validCompletedSessions,
+              locator.get<SessionsRepository>().validCompletedSessions,
               locator.get<ChallengesRepository>().completedChallenges,
               [PuttingActivityType.session, PuttingActivityType.challenge],
               timeRange,
             );
 
     final List<PuttingSet> setsInActivities =
-        puttingSetsFromPuttingActivities(puttingActivities);
+        SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalsMap =
@@ -97,14 +97,14 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
   void updateTimeRange(int updatedTimeRange) {
     final List<dynamic> puttingActivities =
         locator.get<StatsService>().getPuttingActivitiesByTimeRange(
-              locator.get<SessionRepository>().validCompletedSessions,
+              locator.get<SessionsRepository>().validCompletedSessions,
               locator.get<ChallengesRepository>().completedChallenges,
               [PuttingActivityType.session, PuttingActivityType.challenge],
               updatedTimeRange,
             );
 
     final List<PuttingSet> setsInActivities =
-        puttingSetsFromPuttingActivities(puttingActivities);
+        SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalsMap =

@@ -505,7 +505,7 @@ class StatsService {
     List<PuttingSet> sets,
   ) {
     final Map<int, List<PuttingSet>> setsByDistanceMap =
-        sortSetsByDistance(sets);
+        SetHelpers.sortSetsByDistance(sets);
 
     final Map<DistanceInterval, PuttingSetInterval> circle1IntervalToDataMap =
         {};
@@ -534,7 +534,7 @@ class StatsService {
       circle1IntervalToDataMap[distanceInterval] = PuttingSetInterval(
         distanceInterval: distanceInterval,
         sets: puttingSetsInInterval,
-        setsPercentage: percentageFromSets(puttingSetsInInterval),
+        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
       );
     }
 
@@ -560,7 +560,7 @@ class StatsService {
       circle2IntervalToDataMap[distanceInterval] = PuttingSetInterval(
         distanceInterval: distanceInterval,
         sets: puttingSetsInInterval,
-        setsPercentage: percentageFromSets(puttingSetsInInterval),
+        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
       );
     }
 

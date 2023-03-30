@@ -10,7 +10,8 @@ import 'package:myputt/locator.dart';
 part 'sessions_state.dart';
 
 class SessionsCubit extends Cubit<SessionsState> {
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   SessionsCubit()
@@ -199,8 +200,8 @@ class SessionsCubit extends Cubit<SessionsState> {
   }
 
   Future<void> onConnectionEstablished() async {
-    await locator.get<SessionRepository>().fetchCloudCompletedSessions();
-    await locator.get<SessionRepository>().syncLocalCompletedSessionsToCloud();
+    await locator.get<SessionsRepository>().fetchCloudCompletedSessions();
+    await locator.get<SessionsRepository>().syncLocalCompletedSessionsToCloud();
     emitUpdatedState();
   }
 }

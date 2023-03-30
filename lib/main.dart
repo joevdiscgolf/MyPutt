@@ -152,7 +152,7 @@ class _MyAppState extends State<MyApp> {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       if (_connectivityResult != null &&
           hasConnectivity(_connectivityResult!)) {
-        await locator.get<SessionRepository>().syncAllLocalSessionsToCloud();
+        await locator.get<SessionsRepository>().syncAllLocalSessionsToCloud();
       }
     });
   }

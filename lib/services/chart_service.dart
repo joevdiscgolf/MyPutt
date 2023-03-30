@@ -21,7 +21,7 @@ class ChartService {
           .mapIndexed(
             (index, set) => ChartPoint(
               distance: set.distance,
-              decimal: percentageFromSet(set),
+              decimal: SetHelpers.percentageFromSet(set),
               timeStamp: set.timeStamp ?? 0,
               index: index,
             ),

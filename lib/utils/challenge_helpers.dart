@@ -1,8 +1,12 @@
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
@@ -125,6 +129,24 @@ class ChallengeHelpers {
     return mergedActiveChallenges;
   }
 
+  // SOT challenge = Source of Truth Challenge
+  static List<PuttingChallenge> mergeSOTChallenges({
+    required final List<PuttingChallenge> sotChallenges,
+    required final List<PuttingChallenge> allChallenges,
+  }) {
+    List<PuttingChallenge> mergedChallenges = [];
+
+    for (PuttingChallenge challenge in allChallenges) {
+      final PuttingChallenge? matchingSOTChallenge =
+          sotChallenges.firstWhereOrNull(
+        (sotChallenge) => sotChallenge.id == challenge.id,
+      );
+      mergedChallenges.add(matchingSOTChallenge ?? challenge);
+    }
+
+    return mergedChallenges;
+  }
+
   static List<PuttingChallenge> setSyncedToTrue(
     List<PuttingChallenge> unsyncedChallenges,
   ) {
@@ -138,30 +160,32 @@ class ChallengeHelpers {
   }
 
   static List<PuttingChallenge> mergeCloudChallenges(
-    List<PuttingChallenge> localChallenges,
+    List<PuttingChallenge> unsyncedLocalChallenges,
     List<PuttingChallenge> cloudChallenges,
   ) {
     final List<String> localChallengeIds =
-        localChallenges.map((challenge) => challenge.id).toList();
+        unsyncedLocalChallenges.map((challenge) => challenge.id).toList();
 
     // include the local unsynced challenges
     // include cloud challenges if the cloud challenge is not stored locally and the device Id does not match
     // if the device id does match, that means the challenge has been deleted locally but not in the cloud yet
     return [
-      ...localChallenges,
+      ...unsyncedLocalChallenges,
       ...cloudChallenges.where(
         (cloudChallenge) => !localChallengeIds.contains(cloudChallenge.id),
       )
     ];
   }
 
-  static List<PuttingChallenge> getNewChallenges(
+  // new cloud challenge if not deleted locally.
+  static List<PuttingChallenge> getNewCloudChallenges(
     List<PuttingChallenge> localChallenges,
     List<PuttingChallenge> cloudChallenges,
   ) {
-    final List<String> localChallengeIds = List.from(
-      localChallenges.map((challenge) => challenge.id),
-    );
+    final List<String> localChallengeIds = localChallenges
+        .where((challenge) => challenge.isDeleted != true)
+        .map((challenge) => challenge.id)
+        .toList();
 
     return cloudChallenges
         .where(
@@ -246,5 +270,28 @@ class ChallengeHelpers {
     } else {
       return cloudChallenge;
     }
+  }
+
+  static PuttingChallenge? getChallengeFromPreset(
+    ChallengePreset challengePreset,
+    MyPuttUser currentUser,
+    MyPuttUser recipientUser,
+  ) {
+    final int timestamp = DateTime.now().millisecondsSinceEpoch;
+    final List<ChallengeStructureItem> challengeStructure =
+        locator.get<PresetsRepository>().presetStructures[challengePreset]!;
+    return PuttingChallenge.fromStorageChallenge(
+      StoragePuttingChallenge(
+        status: ChallengeStatus.active,
+        creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
+        id: '${currentUser.uid}~$timestamp',
+        challengerUser: currentUser,
+        challengeStructure: challengeStructure,
+        challengerSets: [],
+        recipientSets: [],
+        recipientUser: recipientUser,
+      ),
+      currentUser,
+    );
   }
 }
