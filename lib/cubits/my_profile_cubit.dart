@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -14,7 +15,12 @@ import 'package:myputt/utils/constants.dart';
 
 part 'my_profile_state.dart';
 
-class MyProfileCubit extends Cubit<MyProfileState> {
+class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
+  @override
+  void initCubit() {
+    // TODO: implement init
+  }
+
   final WebScraperService _webScraperService = locator.get<WebScraperService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
   final UserService _userService = locator.get<UserService>();

@@ -88,9 +88,10 @@ class FBChallengesDataLoader {
     if (snapshot.exists &&
         isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
       return PuttingChallenge.fromStorageChallenge(
-          StoragePuttingChallenge.fromJson(
-              snapshot.data() as Map<String, dynamic>),
-          currentUser);
+        StoragePuttingChallenge.fromJson(
+            snapshot.data() as Map<String, dynamic>),
+        currentUser,
+      );
     } else {
       return null;
     }

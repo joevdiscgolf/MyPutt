@@ -3,10 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
-import 'package:myputt/repositories/repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/challenges_service.dart';
@@ -59,14 +59,14 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<DeviceService>(DeviceService());
 
   // initialize all services in repositories after
-  final List<Repository> repositories = [
+  final List<SingletonConsumer> repositories = [
     locator.get<ChallengesRepository>(),
     locator.get<SessionsRepository>(),
     locator.get<EventsRepository>(),
     locator.get<UserRepository>(),
   ];
 
-  for (Repository repository in repositories) {
-    repository.initializeServices();
+  for (SingletonConsumer repository in repositories) {
+    repository.initSingletons();
   }
 }

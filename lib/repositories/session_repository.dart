@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/repository.dart';
+import 'package:myputt/protocols/repository.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
@@ -15,13 +16,21 @@ import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
-class SessionsRepository extends ChangeNotifier implements Repository {
+class SessionsRepository extends ChangeNotifier
+    implements SingletonConsumer, MyPuttRepository {
   @override
-  void initializeServices() {
+  void initSingletons() {
     _databaseService = locator.get<DatabaseService>();
     _firebaseAuthService = locator.get<FirebaseAuthService>();
     _localDBService = locator.get<LocalDBService>();
     _deviceService = locator.get<DeviceService>();
+  }
+
+  @override
+  void clearData() {
+    currentSession = null;
+    completedSessions = [];
+    _localDBService.deleteSessionsData();
   }
 
   late final DatabaseService _databaseService;
@@ -342,12 +351,6 @@ class SessionsRepository extends ChangeNotifier implements Repository {
     } else {
       return false;
     }
-  }
-
-  void clearData() {
-    currentSession = null;
-    completedSessions = [];
-    _localDBService.deleteSessionsData();
   }
 
   void _log(String message) {

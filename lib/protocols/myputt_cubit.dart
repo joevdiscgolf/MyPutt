@@ -1,0 +1,3 @@
+class MyPuttCubit {
+  void initCubit() {}
+}

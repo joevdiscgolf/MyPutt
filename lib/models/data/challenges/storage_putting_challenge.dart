@@ -43,7 +43,7 @@ class StoragePuttingChallenge {
 
   factory StoragePuttingChallenge.fromPuttingChallenge(
     PuttingChallenge challenge,
-    MyPuttUser currentUser,
+    String currentUid,
   ) {
     MyPuttUser? recipientUser;
     late final List<PuttingSet> recipientSets;
@@ -51,7 +51,7 @@ class StoragePuttingChallenge {
     late final List<PuttingSet> challengerSets;
 
     final bool currentUserIsChallenger =
-        challenge.challengerUser.uid == currentUser.uid;
+        challenge.challengerUser.uid == currentUid;
 
     if (challenge.recipientUser == null) {
       recipientUser = null;

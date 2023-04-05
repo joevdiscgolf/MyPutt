@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -18,14 +22,25 @@ import 'package:myputt/utils/constants.dart';
 
 part 'challenges_state.dart';
 
-class ChallengesCubit extends Cubit<ChallengesState> {
-  final ChallengesRepository _challengesRepository =
-      locator.get<ChallengesRepository>();
-  final UserRepository _userRepository = locator.get<UserRepository>();
-  final ChallengesService _challengesService = locator.get<ChallengesService>();
-  final DynamicLinkService _dynamicLinkService =
-      locator.get<DynamicLinkService>();
-  final PresetsRepository _presetsRepository = locator.get<PresetsRepository>();
+class ChallengesCubit extends Cubit<ChallengesState>
+    implements MyPuttCubit, SingletonConsumer {
+  @override
+  void initSingletons() {
+    _challengesRepository = locator.get<ChallengesRepository>();
+    _userRepository = locator.get<UserRepository>();
+    _challengesService = locator.get<ChallengesService>();
+    _dynamicLinkService = locator.get<DynamicLinkService>();
+    _presetsRepository = locator.get<PresetsRepository>();
+  }
+
+  @override
+  void initCubit() {
+    _challengesRepository.addListener(() {
+      if (_challengesRepository.currentChallenge != null) {
+        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      }
+    });
+  }
 
   ChallengesCubit()
       : super(
@@ -36,6 +51,12 @@ class ChallengesCubit extends Cubit<ChallengesState> {
             pendingChallenges: [],
           ),
         );
+
+  late final ChallengesRepository _challengesRepository;
+  late final UserRepository _userRepository;
+  late final ChallengesService _challengesService;
+  late final DynamicLinkService _dynamicLinkService;
+  late final PresetsRepository _presetsRepository;
 
   CurrentUserComplete _currentUserComplete() {
     return CurrentUserComplete(
@@ -140,9 +161,14 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> addSet(PuttingSet set) async {
-    if (_challengesRepository.currentChallenge == null) {
-      // error toast
+    if (_challengesRepository.currentChallenge == null) return;
+
+    if (!ChallengeHelpers.currentUserSetsComplete(
+        _challengesRepository.currentChallenge!)) {
+      _challengesRepository.addSet(set);
+      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
+
     var challengeStructureLength =
         _challengesRepository.currentChallenge!.challengeStructure.length;
     var currentUserSetsCount =
@@ -188,10 +214,8 @@ class ChallengesCubit extends Cubit<ChallengesState> {
   }
 
   Future<void> finishChallenge() async {
-    if (_challengesRepository.currentChallenge != null) {
-      await _challengesRepository.finishChallengeAndSync();
-      emit(_challengeFinished());
-    }
+    await _challengesRepository.finishChallengeAndSync();
+    emit(_challengeFinished());
   }
 
   void deleteChallenge(PuttingChallenge challenge) {

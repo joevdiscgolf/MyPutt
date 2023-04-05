@@ -1,19 +1,25 @@
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/repository.dart';
+import 'package:myputt/protocols/repository.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/constants.dart';
 
-class UserRepository implements Repository {
+class UserRepository implements SingletonConsumer, MyPuttRepository {
   @override
-  void initializeServices() {
+  void initSingletons() {
     _authService = locator.get<FirebaseAuthService>();
     _databaseService = locator.get<DatabaseService>();
     _userService = locator.get<UserService>();
+  }
+
+  @override
+  void clearData() {
+    currentUser = null;
   }
 
   MyPuttUser? currentUser;
@@ -21,16 +27,9 @@ class UserRepository implements Repository {
   late final DatabaseService _databaseService;
   late final UserService _userService;
 
-  void clearData() {
-    currentUser = null;
-  }
-
-  void setCurrentUser(MyPuttUser newUser) {
-    currentUser = newUser;
-  }
-
-  Future<bool> fetchCurrentUser(
-      {Duration timeoutDuration = shortTimeout}) async {
+  Future<bool> fetchCurrentUser({
+    Duration timeoutDuration = shortTimeout,
+  }) async {
     if (_authService.getCurrentUserId() == null) {
       return false;
     } else {

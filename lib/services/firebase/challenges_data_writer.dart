@@ -19,27 +19,54 @@ class FBChallengesDataWriter {
 
   FBChallengesDataWriter._internal();
 
-  Future<bool> setPuttingChallenge(String recipientUid, String challengerUid,
-      StoragePuttingChallenge storageChallenge) {
+  Future<bool> setPuttingChallenge(
+    String currentUid,
+    String recipientUid,
+    String challengerUid,
+    StoragePuttingChallenge storageChallenge, {
+    final bool merge = false,
+  }) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    final bool currentUserIsChallenger = challengerUid == currentUid;
+
+    final Map<String, dynamic> storageChallengeJson = storageChallenge.toJson();
+
+    if (currentUserIsChallenger) {
+      storageChallengeJson.remove('recipientSets');
+    } else {
+      storageChallengeJson.remove('challengerSets');
+    }
+
     WriteBatch batch = FirebaseFirestore.instance.batch();
     final recipientRef = firestore.doc(
         '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
     final challengerRef = firestore.doc(
         '$challengesCollection/$challengerUid/$challengesCollection/${storageChallenge.id}');
 
-    batch.set(recipientRef, storageChallenge.toJson(), SetOptions(merge: true));
     batch.set(
-        challengerRef, storageChallenge.toJson(), SetOptions(merge: true));
+      recipientRef,
+      storageChallengeJson,
+      SetOptions(merge: true),
+    );
+    batch.set(
+      challengerRef,
+      storageChallengeJson,
+      SetOptions(merge: true),
+    );
 
-    return batch.commit().then((value) => true).catchError((e, trace) {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        trace,
-        reason:
-            '[FBChallengesDataWriter][setPuttingChallenge] firestore write exception',
-      );
-      return false;
-    });
+    return batch.commit().then((_) => true).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataWriter][setPuttingChallenge] firestore write exception',
+        );
+        return false;
+      },
+    );
   }
 
   Future<bool> sendChallengeToUser(String recipientUid, MyPuttUser currentUser,

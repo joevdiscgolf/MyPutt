@@ -66,7 +66,7 @@ class _ConnectionErrorScreenState extends State<ConnectionErrorScreen> {
                   onPressed: () async {
                     if (!mounted) return;
                     setState(() => _repeat = true);
-                    await BlocProvider.of<AppPhaseCubit>(context).init();
+                    await BlocProvider.of<AppPhaseCubit>(context).initCubit();
                     if (!mounted) return;
                     setState(() => _repeat = false);
                   },

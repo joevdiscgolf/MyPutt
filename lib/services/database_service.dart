@@ -106,7 +106,9 @@ class DatabaseService {
       return null;
     }
     return _challengesDataLoader.getPuttingChallengeById(
-        currentUser, challengeId);
+      currentUser,
+      challengeId,
+    );
   }
 
   Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {

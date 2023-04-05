@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/stats/stats.dart';
@@ -12,7 +13,12 @@ import 'package:myputt/utils/constants.dart';
 
 part 'home_screen_state.dart';
 
-class HomeScreenCubit extends Cubit<HomeScreenState> {
+class HomeScreenCubit extends Cubit<HomeScreenState> implements MyPuttCubit {
+  @override
+  void initCubit() {
+    // TODO: implement init
+  }
+
   final SessionsRepository _sessionRepository =
       locator.get<SessionsRepository>();
   final ChallengesRepository _challengesRepository =

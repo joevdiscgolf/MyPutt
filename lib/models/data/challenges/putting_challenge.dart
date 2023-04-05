@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
@@ -6,8 +7,8 @@ import 'package:myputt/models/data/sessions/putting_set.dart';
 part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class PuttingChallenge {
-  PuttingChallenge({
+class PuttingChallenge extends Equatable {
+  const PuttingChallenge({
     required this.status,
     required this.creationTimeStamp,
     required this.id,
@@ -27,16 +28,16 @@ class PuttingChallenge {
     this.recipientSetsUpdatedAt,
   });
 
-  String status;
+  final String status;
   final int creationTimeStamp;
-  int? completionTimeStamp;
+  final int? completionTimeStamp;
   final String id;
   final MyPuttUser? opponentUser;
   final MyPuttUser currentUser;
   final MyPuttUser challengerUser;
   final MyPuttUser? recipientUser;
   final List<ChallengeStructureItem> challengeStructure;
-  List<PuttingSet> opponentSets;
+  final List<PuttingSet> opponentSets;
   final List<PuttingSet> currentUserSets;
   final bool? isSynced;
   final bool? isDeleted;
@@ -147,4 +148,7 @@ class PuttingChallenge {
       _$PuttingChallengeFromJson(json);
 
   Map<String, dynamic> toJson() => _$PuttingChallengeToJson(this);
+
+  @override
+  List<Object?> get props => [id];
 }

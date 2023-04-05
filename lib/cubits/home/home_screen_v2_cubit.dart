@@ -6,6 +6,7 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/cubits/home/data/home_screen_cubit_data.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
@@ -25,10 +26,12 @@ import 'package:myputt/utils/set_helpers.dart';
 
 part 'home_screen_v2_state.dart';
 
-class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
+class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
+    implements MyPuttCubit {
   HomeScreenV2Cubit() : super(const HomeScreenV2Initial());
 
-  listenForRepositoryChanges() {
+  @override
+  void initCubit() {
     locator.get<SessionsRepository>().addListener(() {
       onRepositoryUpdated();
     });

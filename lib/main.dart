@@ -52,14 +52,15 @@ void main() async {
   await initLocalDatabase();
   await setUpLocator();
   await locator.get<DynamicLinkService>().handleDynamicLinks();
-
   await locator.get<BetaAccessService>().loadFeatureAccess();
+
+  // add cubit repository listeners
   if (locator
       .get<BetaAccessService>()
       .hasFeatureAccess(featureName: 'homeScreenV2')) {
-    locator.get<HomeScreenV2Cubit>().listenForRepositoryChanges();
+    // locator.get<HomeScreenV2Cubit>().initCubit();
   }
-  await locator.get<AppPhaseCubit>().init();
+  await locator.get<AppPhaseCubit>().initCubit();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {
@@ -69,7 +70,11 @@ void main() async {
             BlocProvider(create: (_) => HomeScreenCubit()),
             BlocProvider(create: (_) => locator.get<HomeScreenV2Cubit>()),
             BlocProvider(create: (_) => SessionSummaryCubit()),
-            BlocProvider(create: (_) => ChallengesCubit()),
+            BlocProvider(
+              create: (_) => ChallengesCubit()
+                ..initSingletons()
+                ..initCubit(),
+            ),
             BlocProvider(create: (_) => MyProfileCubit()),
             BlocProvider(create: (_) => SearchUserCubit()),
             BlocProvider(create: (_) => EventDetailCubit()),
@@ -99,6 +104,7 @@ class _MyAppState extends State<MyApp> {
       _connectivityListener(result);
     });
     _initTimer();
+
     super.initState();
   }
 

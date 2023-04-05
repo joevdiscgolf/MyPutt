@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:meta/meta.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
@@ -18,10 +19,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 part 'app_phase_state.dart';
 
-class AppPhaseCubit extends Cubit<AppPhaseState> {
+class AppPhaseCubit extends Cubit<AppPhaseState> implements MyPuttCubit {
   AppPhaseCubit() : super(const AppPhaseInitial());
 
-  Future<void> init() async {
+  @override
+  Future<void> initCubit() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String version = packageInfo.version;
 
