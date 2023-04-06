@@ -22,9 +22,9 @@ class BetaAccessService {
 
     final Map<String, dynamic>? userDoc = await firestoreFetch(
             '$usersCollection/$uid',
-            timeoutDuration: const Duration(seconds: 3))
+            timeoutDuration: const Duration(seconds: 6))
         .then((snapshot) {
-      if (snapshot == null || snapshot.exists || snapshot.data() == null) {
+      if (snapshot == null || snapshot.data() == null) {
         return null;
       }
       return snapshot.data();
