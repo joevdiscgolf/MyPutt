@@ -58,7 +58,7 @@ void main() async {
   if (locator
       .get<BetaAccessService>()
       .hasFeatureAccess(featureName: 'homeScreenV2')) {
-    // locator.get<HomeScreenV2Cubit>().initCubit();
+    locator.get<HomeScreenV2Cubit>().initCubit();
   }
   await locator.get<AppPhaseCubit>().initCubit();
 
