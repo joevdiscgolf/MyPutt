@@ -1,11 +1,13 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/cubits/my_profile_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/events_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
@@ -14,6 +16,7 @@ import 'package:myputt/utils/constants.dart';
 
 void fetchLocalRepositoryData() {
   locator.get<SessionsRepository>().fetchLocalCompletedSessions();
+
   locator.get<SessionsRepository>().fetchLocalCurrentSession();
   locator.get<ChallengesRepository>().fetchLocalChallenges();
 }
@@ -55,4 +58,16 @@ bool hasConnectivity(ConnectivityResult? connectivityResult) {
     ConnectivityResult.mobile,
     ConnectivityResult.vpn
   ].contains(connectivityResult);
+}
+
+void initAllSingletons(List<SingletonConsumer> singletonConsumers) {
+  for (var consumer in singletonConsumers) {
+    consumer.initSingletons();
+  }
+}
+
+void initMyPuttCubits(List<MyPuttCubit> cubits) {
+  for (var cubit in cubits) {
+    cubit.initCubit();
+  }
 }

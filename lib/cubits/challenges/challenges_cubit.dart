@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
@@ -23,7 +24,8 @@ import 'package:myputt/utils/constants.dart';
 part 'challenges_state.dart';
 
 class ChallengesCubit extends Cubit<ChallengesState>
-    implements MyPuttCubit, SingletonConsumer {
+    with MyPuttCubit
+    implements SingletonConsumer {
   @override
   void initSingletons() {
     _challengesRepository = locator.get<ChallengesRepository>();
@@ -31,20 +33,22 @@ class ChallengesCubit extends Cubit<ChallengesState>
     _challengesService = locator.get<ChallengesService>();
     _dynamicLinkService = locator.get<DynamicLinkService>();
     _presetsRepository = locator.get<PresetsRepository>();
+    _challengesCubitHelper = locator.get<ChallengesCubitHelper>();
   }
 
   @override
   void initCubit() {
     _challengesRepository.addListener(() {
       if (_challengesRepository.currentChallenge != null) {
-        emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+        emit(_challengesCubitHelper
+            .getStateFromChallenge(_challengesRepository.currentChallenge!));
       }
     });
   }
 
   ChallengesCubit()
       : super(
-          ChallengesInitial(
+          ChallengesLoading(
             completedChallenges: [],
             activeChallenges: [],
             currentChallenge: null,
@@ -57,106 +61,31 @@ class ChallengesCubit extends Cubit<ChallengesState>
   late final ChallengesService _challengesService;
   late final DynamicLinkService _dynamicLinkService;
   late final PresetsRepository _presetsRepository;
-
-  CurrentUserComplete _currentUserComplete() {
-    return CurrentUserComplete(
-      currentChallenge: _challengesRepository.currentChallenge!,
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-    );
-  }
-
-  OpponentUserComplete _opponentUserComplete() {
-    return OpponentUserComplete(
-      currentChallenge: _challengesRepository.currentChallenge!,
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-    );
-  }
-
-  BothUsersComplete _bothUsersComplete() {
-    return BothUsersComplete(
-      currentChallenge: _challengesRepository.currentChallenge!,
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-    );
-  }
-
-  ChallengeInProgress _challengeInProgress() {
-    return ChallengeInProgress(
-      currentChallenge: _challengesRepository.currentChallenge!,
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-    );
-  }
-
-  NoCurrentChallenge _noCurrentChallenge() {
-    return NoCurrentChallenge(
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-      currentChallenge: null,
-    );
-  }
-
-  ChallengeFinished _challengeFinished() {
-    return ChallengeFinished(
-      activeChallenges: _challengesRepository.activeChallenges,
-      pendingChallenges: _challengesRepository.incomingPendingChallenges,
-      completedChallenges: _challengesRepository.completedChallenges,
-      finishedChallenge: _challengesRepository.finishedChallenge!,
-      currentChallenge: null,
-    );
-  }
-
-  ChallengesState getStateFromChallenge(PuttingChallenge challenge) {
-    ChallengesState state;
-    final structureLength =
-        _challengesRepository.currentChallenge!.challengeStructure.length;
-    final currentUserSetsCount =
-        _challengesRepository.currentChallenge!.currentUserSets.length;
-    final opponentUserSetsCount =
-        _challengesRepository.currentChallenge!.opponentSets.length;
-    if (challenge.status == ChallengeStatus.complete &&
-        _challengesRepository.finishedChallenge != null) {
-      state = _challengeFinished();
-    }
-    if ((currentUserSetsCount == opponentUserSetsCount &&
-        currentUserSetsCount == structureLength)) {
-      state = _bothUsersComplete();
-    } else if (currentUserSetsCount == structureLength &&
-        opponentUserSetsCount < structureLength) {
-      state = _currentUserComplete();
-    } else if (opponentUserSetsCount == structureLength &&
-        currentUserSetsCount < structureLength) {
-      state = _opponentUserComplete();
-    } else {
-      state = _challengeInProgress();
-    }
-    return state;
-  }
+  late final ChallengesCubitHelper _challengesCubitHelper;
 
   Future<void> reload() async {
     await _challengesRepository.fetchCloudChallenges();
     if (_challengesRepository.currentChallenge == null) {
       if (_challengesRepository.finishedChallenge != null) {
-        emit(_challengeFinished());
+        emit(
+          _challengesCubitHelper.currentChallengeWithStage(
+            ChallengeStage.finished,
+          ),
+        );
       } else {
-        emit(_noCurrentChallenge());
+        emit(_challengesCubitHelper.noCurrentChallenge());
       }
     } else {
-      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper
+          .getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
   }
 
   void openChallenge(PuttingChallenge challenge) {
     _challengesRepository.openChallenge(challenge);
     if (_challengesRepository.currentChallenge != null) {
-      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper
+          .getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
   }
 
@@ -166,7 +95,8 @@ class ChallengesCubit extends Cubit<ChallengesState>
     if (!ChallengeHelpers.currentUserSetsComplete(
         _challengesRepository.currentChallenge!)) {
       _challengesRepository.addSet(set);
-      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper
+          .getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
 
     var challengeStructureLength =
@@ -175,7 +105,8 @@ class ChallengesCubit extends Cubit<ChallengesState>
         _challengesRepository.currentChallenge!.currentUserSets.length;
     if (currentUserSetsCount < challengeStructureLength) {
       _challengesRepository.addSet(set);
-      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper
+          .getStateFromChallenge(_challengesRepository.currentChallenge!));
       // await _challengesRepository.resyncCurrentChallenge();
       // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
@@ -188,7 +119,8 @@ class ChallengesCubit extends Cubit<ChallengesState>
       return;
     }
     _challengesRepository.deleteSet(currentUserSets.last);
-    emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+    emit(_challengesCubitHelper
+        .getStateFromChallenge(_challengesRepository.currentChallenge!));
     // await _challengesRepository.resyncCurrentChallenge();
     // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
   }
@@ -204,10 +136,14 @@ class ChallengesCubit extends Cubit<ChallengesState>
       if (_challengesRepository.currentChallenge != null) {
         if (challenge.status == ChallengeStatus.complete) {
           _challengesRepository.addFinishedChallenge(challenge);
-          emit(_challengeFinished());
+          emit(
+            _challengesCubitHelper.currentChallengeWithStage(
+              ChallengeStage.finished,
+            ),
+          );
         } else {
           _challengesRepository.currentChallenge = challenge;
-          emit(getStateFromChallenge(challenge));
+          emit(_challengesCubitHelper.getStateFromChallenge(challenge));
         }
       }
     }
@@ -215,7 +151,11 @@ class ChallengesCubit extends Cubit<ChallengesState>
 
   Future<void> finishChallenge() async {
     await _challengesRepository.finishChallengeAndSync();
-    emit(_challengeFinished());
+    emit(
+      _challengesCubitHelper.currentChallengeWithStage(
+        ChallengeStage.finished,
+      ),
+    );
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
@@ -224,10 +164,13 @@ class ChallengesCubit extends Cubit<ChallengesState>
 
   void declineChallenge(PuttingChallenge challenge) {
     _challengesRepository.declineChallenge(challenge);
-    if (_challengesRepository.currentChallenge != null) {
-      emit(_challengeInProgress());
+    if (state is CurrentChallengeState) {
+      emit(
+        _challengesCubitHelper.currentChallengeWithStage(
+            (state as CurrentChallengeState).challengeStage),
+      );
     } else {
-      emit(_noCurrentChallenge());
+      emit(_challengesCubitHelper.noCurrentChallenge());
     }
   }
 
@@ -251,7 +194,8 @@ class ChallengesCubit extends Cubit<ChallengesState>
     final bool success = await _challengesRepository.sendChallengeWithPreset(
         challengePreset, recipientUser);
     if (_challengesRepository.currentChallenge != null) {
-      emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper
+          .getStateFromChallenge(_challengesRepository.currentChallenge!));
     }
     return success;
   }
@@ -295,15 +239,21 @@ class ChallengesCubit extends Cubit<ChallengesState>
   }
 
   int getPuttsPickerIndex() {
-    if (state.currentChallenge == null) {
+    if (state is! CurrentChallengeState) {
       return 0;
     }
-    return state
-        .currentChallenge!
-        .challengeStructure[state.currentChallenge!.currentUserSets.length -
-            (ChallengeHelpers.currentUserSetsComplete(state.currentChallenge!)
-                ? 1
-                : 0)]
+    final CurrentChallengeState currentChallengeState =
+        state as CurrentChallengeState;
+
+    return currentChallengeState
+        .currentChallenge
+        .challengeStructure[
+            currentChallengeState.currentChallenge.currentUserSets.length -
+                (ChallengeHelpers.currentUserSetsComplete(
+                  currentChallengeState.currentChallenge,
+                )
+                    ? 1
+                    : 0)]
         .setLength;
   }
 }

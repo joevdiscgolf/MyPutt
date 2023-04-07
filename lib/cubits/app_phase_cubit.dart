@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/services/firebase/app_info_data_loader.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
@@ -19,8 +20,18 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 part 'app_phase_state.dart';
 
-class AppPhaseCubit extends Cubit<AppPhaseState> implements MyPuttCubit {
+class AppPhaseCubit extends Cubit<AppPhaseState>
+    implements MyPuttCubit, SingletonConsumer {
   AppPhaseCubit() : super(const AppPhaseInitial());
+
+  @override
+  void initSingletons() {
+    _firebaseAuthService = locator.get<FirebaseAuthService>();
+    _sharedPreferencesService = locator.get<SharedPreferencesService>();
+  }
+
+  late final FirebaseAuthService _firebaseAuthService;
+  late final SharedPreferencesService _sharedPreferencesService;
 
   @override
   Future<void> initCubit() async {
@@ -70,7 +81,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState> implements MyPuttCubit {
       return;
     }
 
-    if (locator.get<FirebaseAuthService>().getCurrentUserId() == null) {
+    if (_firebaseAuthService.getCurrentUserId() == null) {
       emit(const LoggedOutPhase());
       return;
     }
@@ -78,10 +89,9 @@ class AppPhaseCubit extends Cubit<AppPhaseState> implements MyPuttCubit {
     final bool? userSetUpInCloud = userIsValid(currentUser);
 
     if (userSetUpInCloud == true) {
-      await locator.get<SharedPreferencesService>().markUserIsSetUp(true);
+      await _sharedPreferencesService.markUserIsSetUp(true);
     } else {
-      final bool? isSetUpLocal =
-          await locator.get<SharedPreferencesService>().userIsSetUp();
+      final bool? isSetUpLocal = await _sharedPreferencesService.userIsSetUp();
       if (isSetUpLocal == null) {
         emit(const ConnectionErrorPhase());
         return;

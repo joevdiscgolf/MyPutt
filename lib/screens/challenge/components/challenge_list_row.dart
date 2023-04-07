@@ -14,7 +14,7 @@ import 'package:myputt/screens/challenge/challenge_record/challenge_record_scree
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/utils/string_helpers.dart';

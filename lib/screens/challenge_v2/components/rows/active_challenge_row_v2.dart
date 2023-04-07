@@ -5,7 +5,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/utils/calculators.dart';

@@ -5,7 +5,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/misc/shadow_icon.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';

@@ -48,8 +48,7 @@ class BetaAccessService {
   bool hasFeatureAccess({String? featureName}) {
     if (kDebugMode) {
       return true;
-    }
-    if (_isAdmin == true) {
+    } else if (_isAdmin == true) {
       return true;
     } else if (featureName != null) {
       return _trebuchets.contains(featureName);

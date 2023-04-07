@@ -7,6 +7,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/cubits/app_phase_cubit.dart';
+import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
 import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/cubits/events/event_standings_cubit.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
@@ -23,7 +24,7 @@ import 'package:myputt/screens/introduction/intro_screen.dart';
 import 'package:myputt/screens/auth/enter_details_screen.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/cubits/home/home_screen_cubit.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/beta_access_service.dart';
@@ -54,12 +55,16 @@ void main() async {
   await locator.get<DynamicLinkService>().handleDynamicLinks();
   await locator.get<BetaAccessService>().loadFeatureAccess();
 
-  // add cubit repository listeners
-  if (locator
-      .get<BetaAccessService>()
-      .hasFeatureAccess(featureName: 'homeScreenV2')) {
-    locator.get<HomeScreenV2Cubit>().initCubit();
-  }
+  initAllSingletons([
+    locator.get<AppPhaseCubit>(),
+    locator.get<HomeScreenV2Cubit>(),
+    locator.get<ChallengesCubit>(),
+    locator.get<ChallengesCubitHelper>(),
+  ]);
+  initMyPuttCubits([
+    locator.get<HomeScreenV2Cubit>(),
+    locator.get<ChallengesCubit>(),
+  ]);
   await locator.get<AppPhaseCubit>().initCubit();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
@@ -70,11 +75,7 @@ void main() async {
             BlocProvider(create: (_) => HomeScreenCubit()),
             BlocProvider(create: (_) => locator.get<HomeScreenV2Cubit>()),
             BlocProvider(create: (_) => SessionSummaryCubit()),
-            BlocProvider(
-              create: (_) => ChallengesCubit()
-                ..initSingletons()
-                ..initCubit(),
-            ),
+            BlocProvider(create: (_) => locator.get<ChallengesCubit>()),
             BlocProvider(create: (_) => MyProfileCubit()),
             BlocProvider(create: (_) => SearchUserCubit()),
             BlocProvider(create: (_) => EventDetailCubit()),
