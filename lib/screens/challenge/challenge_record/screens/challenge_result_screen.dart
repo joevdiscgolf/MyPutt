@@ -122,12 +122,8 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
                               Navigator.pop(context);
                             }),
                       )
-                    : const SizedBox(
-                        height: 50,
-                      ),
-                const SizedBox(
-                  height: 32,
-                )
+                    : const SizedBox(height: 50),
+                const SizedBox(height: 32)
               ]),
         ));
   }

@@ -26,6 +26,16 @@ part 'challenges_state.dart';
 class ChallengesCubit extends Cubit<ChallengesState>
     with MyPuttCubit
     implements SingletonConsumer {
+  ChallengesCubit()
+      : super(
+          ChallengesLoading(
+            completedChallenges: [],
+            activeChallenges: [],
+            currentChallenge: null,
+            pendingChallenges: [],
+          ),
+        );
+
   @override
   void initSingletons() {
     _challengesRepository = locator.get<ChallengesRepository>();
@@ -40,21 +50,13 @@ class ChallengesCubit extends Cubit<ChallengesState>
   void initCubit() {
     _challengesRepository.addListener(() {
       if (_challengesRepository.currentChallenge != null) {
-        emit(_challengesCubitHelper
-            .getStateFromChallenge(_challengesRepository.currentChallenge!));
+        emit(
+          _challengesCubitHelper
+              .getStateFromChallenge(_challengesRepository.currentChallenge!),
+        );
       }
     });
   }
-
-  ChallengesCubit()
-      : super(
-          ChallengesLoading(
-            completedChallenges: [],
-            activeChallenges: [],
-            currentChallenge: null,
-            pendingChallenges: [],
-          ),
-        );
 
   late final ChallengesRepository _challengesRepository;
   late final UserRepository _userRepository;
@@ -83,46 +85,32 @@ class ChallengesCubit extends Cubit<ChallengesState>
 
   void openChallenge(PuttingChallenge challenge) {
     _challengesRepository.openChallenge(challenge);
-    if (_challengesRepository.currentChallenge != null) {
-      emit(_challengesCubitHelper
-          .getStateFromChallenge(_challengesRepository.currentChallenge!));
-    }
+  }
+
+  void closeChallenge() {
+    _challengesRepository.exitCurrentChallenge();
   }
 
   Future<void> addSet(PuttingSet set) async {
     if (_challengesRepository.currentChallenge == null) return;
 
     if (!ChallengeHelpers.currentUserSetsComplete(
-        _challengesRepository.currentChallenge!)) {
+      _challengesRepository.currentChallenge!,
+    )) {
       _challengesRepository.addSet(set);
-      emit(_challengesCubitHelper
-          .getStateFromChallenge(_challengesRepository.currentChallenge!));
-    }
-
-    var challengeStructureLength =
-        _challengesRepository.currentChallenge!.challengeStructure.length;
-    var currentUserSetsCount =
-        _challengesRepository.currentChallenge!.currentUserSets.length;
-    if (currentUserSetsCount < challengeStructureLength) {
-      _challengesRepository.addSet(set);
-      emit(_challengesCubitHelper
-          .getStateFromChallenge(_challengesRepository.currentChallenge!));
-      // await _challengesRepository.resyncCurrentChallenge();
-      // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(
+        _challengesCubitHelper
+            .getStateFromChallenge(_challengesRepository.currentChallenge!),
+      );
     }
   }
 
   Future<void> undo() async {
     final List<PuttingSet>? currentUserSets =
         _challengesRepository.currentChallenge?.currentUserSets;
-    if (currentUserSets == null || currentUserSets.isEmpty) {
-      return;
+    if (currentUserSets != null && currentUserSets.isNotEmpty) {
+      _challengesRepository.deleteSet(currentUserSets.last);
     }
-    _challengesRepository.deleteSet(currentUserSets.last);
-    emit(_challengesCubitHelper
-        .getStateFromChallenge(_challengesRepository.currentChallenge!));
-    // await _challengesRepository.resyncCurrentChallenge();
-    // emit(getStateFromChallenge(_challengesRepository.currentChallenge!));
   }
 
   void updateIncomingChallenge(Object? rawObject) {

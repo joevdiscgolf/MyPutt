@@ -59,9 +59,12 @@ class ChallengeListRow extends StatelessWidget {
               .track('Challenges Screen Active Challenge Pressed');
           BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context)
-              .push(MaterialPageRoute(
+              .push(
+                MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      ChallengeRecordScreen(challenge: challenge)))
+                      ChallengeRecordScreen(challenge: challenge),
+                ),
+              )
               .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
         } else if (challenge.status == ChallengeStatus.complete) {
           locator

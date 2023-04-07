@@ -79,9 +79,7 @@ class ChallengeProgressPanel extends StatelessWidget {
             children: [
               _versusRow(
                   context, challenge.currentUser, challenge.opponentUser),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               ChallengeSetRow(
                 currentUserMade: currentUserPuttsMade,
                 opponentMade: opponentPuttsMade,

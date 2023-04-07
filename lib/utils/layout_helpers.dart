@@ -47,7 +47,7 @@ List<Widget> addDividers(
 }
 
 double bottomNavBarPadding(BuildContext context) {
-  return MediaQuery.of(context).viewPadding.bottom > 0 ? 32 : 16;
+  return MediaQuery.of(context).viewPadding.bottom > 0 ? 36 : 16;
 }
 
 List<Widget> addRunSpacing(

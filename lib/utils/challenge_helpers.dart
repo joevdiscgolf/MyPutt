@@ -272,7 +272,7 @@ class ChallengeHelpers {
     }
   }
 
-  static PuttingChallenge? getChallengeFromPreset(
+  static PuttingChallenge getChallengeFromPreset(
     ChallengePreset challengePreset,
     MyPuttUser currentUser,
     MyPuttUser recipientUser,
@@ -292,6 +292,18 @@ class ChallengeHelpers {
         recipientUser: recipientUser,
       ),
       currentUser,
+    );
+  }
+
+  static PuttingChallenge mergeCurrentChallengeWithCloudCopy(
+    PuttingChallenge localCurrentChallenge,
+    PuttingChallenge cloudCurrentChallenge,
+  ) {
+    return cloudCurrentChallenge.copyWith(
+      currentUserSetsUpdatedAt: localCurrentChallenge.currentUserSetsUpdatedAt,
+      status: localCurrentChallenge.status,
+      currentUserSets: localCurrentChallenge.currentUserSets,
+      currentUser: localCurrentChallenge.currentUser,
     );
   }
 }

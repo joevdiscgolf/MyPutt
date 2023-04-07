@@ -13,35 +13,35 @@ class ChallengesCubitHelper implements SingletonConsumer {
 
   late final ChallengesRepository _challengesRepository;
 
-  ChallengesState getStateFromChallenge(PuttingChallenge challenge) {
-    late final ChallengeStage challengeStage;
-    final structureLength =
-        _challengesRepository.currentChallenge!.challengeStructure.length;
-    final currentUserSetsCount =
-        _challengesRepository.currentChallenge!.currentUserSets.length;
-    final opponentUserSetsCount =
-        _challengesRepository.currentChallenge!.opponentSets.length;
+  ChallengeStage getChallengeStage(PuttingChallenge challenge) {
+    final structureLength = challenge.challengeStructure.length;
+    final currentUserSetsCount = challenge.currentUserSets.length;
+
+    final opponentUserSetsCount = challenge.opponentSets.length;
     if (challenge.status == ChallengeStatus.complete &&
         _challengesRepository.finishedChallenge != null) {
-      challengeStage = ChallengeStage.finished;
-    }
-    if ((currentUserSetsCount == opponentUserSetsCount &&
+      return ChallengeStage.finished;
+    } else if ((currentUserSetsCount == opponentUserSetsCount &&
         currentUserSetsCount == structureLength)) {
-      challengeStage = ChallengeStage.bothUsersComplete;
+      return ChallengeStage.bothUsersComplete;
     } else if (currentUserSetsCount == structureLength &&
         opponentUserSetsCount < structureLength) {
-      challengeStage = ChallengeStage.currentUserComplete;
+      return ChallengeStage.currentUserComplete;
     } else if (opponentUserSetsCount == structureLength &&
         currentUserSetsCount < structureLength) {
-      challengeStage = ChallengeStage.opponentUserComplete;
+      return ChallengeStage.opponentUserComplete;
     } else {
-      challengeStage = ChallengeStage.ongoing;
+      return ChallengeStage.ongoing;
     }
-    return currentChallengeWithStage(challengeStage);
+  }
+
+  ChallengesState getStateFromChallenge(PuttingChallenge challenge) {
+    return currentChallengeWithStage(getChallengeStage(challenge));
   }
 
   CurrentChallengeState currentChallengeWithStage(
-      ChallengeStage challengeStage) {
+    ChallengeStage challengeStage,
+  ) {
     return CurrentChallengeState(
       challengeStage: challengeStage,
       currentChallenge: _challengesRepository.currentChallenge!,

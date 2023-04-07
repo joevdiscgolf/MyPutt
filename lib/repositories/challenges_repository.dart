@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:myputt/locator.dart';
@@ -8,12 +10,12 @@ import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
-import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/protocols/repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/firebase/challenges_data_writer.dart';
+import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
@@ -23,11 +25,11 @@ import 'package:myputt/utils/enums.dart';
 
 class ChallengesRepository extends ChangeNotifier
     implements SingletonConsumer, MyPuttRepository {
-  late final ChallengesService _challengesService;
-  late final FirebaseAuthService _authService;
-
   @override
   void initSingletons() {
+    _databaseService = locator.get<DatabaseService>();
+    _userRepository = locator.get<UserRepository>();
+    _localDBService = locator.get<LocalDBService>();
     _challengesService = locator.get<ChallengesService>();
     _authService = locator.get<FirebaseAuthService>();
   }
@@ -36,15 +38,20 @@ class ChallengesRepository extends ChangeNotifier
   void clearData() {
     currentChallenge = null;
     allChallenges = [];
-    locator.get<LocalDBService>().deleteChallengesData();
+    _localDBService.deleteChallengesData();
   }
 
-  final DatabaseService databaseService = locator.get<DatabaseService>();
-  final UserRepository userRepository = locator.get<UserRepository>();
-  final PresetsRepository presetsRepository = locator.get<PresetsRepository>();
+  late final DatabaseService _databaseService;
+  late final UserRepository _userRepository;
+  late final LocalDBService _localDBService;
+  late final ChallengesService _challengesService;
+  late final FirebaseAuthService _authService;
 
-  PuttingChallenge? currentChallenge;
-  PuttingChallenge? finishedChallenge;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+      _currentChallengeSubscription;
+
+  PuttingChallenge? _currentChallenge;
+  PuttingChallenge? _finishedChallenge;
   List<PuttingChallenge> _completedChallenges = [];
   List<PuttingChallenge> _activeChallenges = [];
   List<PuttingChallenge> _incomingPendingChallenges = [];
@@ -52,6 +59,8 @@ class ChallengesRepository extends ChangeNotifier
 
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
+  PuttingChallenge? get currentChallenge => _currentChallenge;
+  PuttingChallenge? get finishedChallenge => _finishedChallenge;
   List<PuttingChallenge> get completedChallenges => _completedChallenges;
   List<PuttingChallenge> get activeChallenges => _activeChallenges;
   List<PuttingChallenge> get incomingPendingChallenges =>
@@ -64,6 +73,16 @@ class ChallengesRepository extends ChangeNotifier
         ..._incomingPendingChallenges,
         ..._outgoingPendingChallenges,
       ];
+
+  set currentChallenge(PuttingChallenge? currentChallenge) {
+    _currentChallenge = currentChallenge;
+    notifyListeners();
+  }
+
+  set finishedChallenge(PuttingChallenge? finishedChallenge) {
+    _finishedChallenge = finishedChallenge;
+    notifyListeners();
+  }
 
   set completedChallenges(List<PuttingChallenge> completedChallenges) {
     _completedChallenges = completedChallenges;
@@ -90,8 +109,7 @@ class ChallengesRepository extends ChangeNotifier
   }
 
   set allChallenges(List<PuttingChallenge> allChallenges) {
-    final String? currentUid =
-        locator.get<FirebaseAuthService>().getCurrentUserId();
+    final String? currentUid = _authService.getCurrentUserId();
 
     activeChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)
@@ -112,14 +130,53 @@ class ChallengesRepository extends ChangeNotifier
     notifyListeners();
   }
 
+  void _listenToCurrentChallenge(PuttingChallenge challenge) {
+    _currentChallengeSubscription = FirebaseFirestore.instance
+        .doc(
+            '$challengesCollection/${challenge.currentUser.uid}/$challengesCollection/${challenge.id}')
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.data() == null || currentChallenge == null) {
+        return;
+      }
+
+      try {
+        final PuttingChallenge cloudUpdatedChallenge =
+            PuttingChallenge.fromStorageChallenge(
+          StoragePuttingChallenge.fromJson(
+            snapshot.data() as Map<String, dynamic>,
+          ),
+          challenge.currentUser,
+        );
+
+        currentChallenge = ChallengeHelpers.mergeCurrentChallengeWithCloudCopy(
+          currentChallenge!,
+          cloudUpdatedChallenge,
+        );
+
+        // save to cloud if current user sets have changed.
+        if (cloudUpdatedChallenge.currentUserSets !=
+            currentChallenge!.currentUserSets) {
+          _challengesService.setStorageChallenge(
+            StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+          );
+        }
+      } catch (e, trace) {
+        _log(
+            '[listenToCurrentChallenge] exception when parsing putting challenge: $e');
+        _log(trace.toString());
+      }
+    });
+  }
+
   void fetchLocalChallenges() {
     final List<PuttingChallenge>? localDbChallenges =
-        locator.get<LocalDBService>().retrievePuttingChallenges();
+        _localDBService.retrievePuttingChallenges();
     if (localDbChallenges != null) {
       allChallenges = localDbChallenges;
     }
     _log(
-      '[ChallengesRepository][fetchLocalChallenges] Local challenges: ${localDbChallenges?.length}',
+      '[fetchLocalChallenges] Local challenges: ${localDbChallenges?.length}',
     );
   }
 
@@ -128,15 +185,15 @@ class ChallengesRepository extends ChangeNotifier
         allChallenges.where((challenge) => challenge.isSynced != true).toList();
 
     List<PuttingChallenge>? cloudChallenges =
-        await databaseService.getAllChallenges();
+        await _databaseService.getAllChallenges();
 
     _log(
-      '[ChallengesRepository][fetchCloudChallenges] cloud challenges count: ${cloudChallenges?.length}',
+      '[fetchCloudChallenges] cloud challenges count: ${cloudChallenges?.length}',
     );
 
     if (cloudChallenges == null) {
       _log(
-        '[ChallengesRepository][fetchCloudChallenges] failed to fetch cloud challenges',
+        '[fetchCloudChallenges] failed to fetch cloud challenges',
       );
       return false;
     }
@@ -193,11 +250,11 @@ class ChallengesRepository extends ChangeNotifier
     if (newCloudChallenges.isNotEmpty || challengesDeletedInCloud.isNotEmpty) {
       final bool localSaveSuccess = await _storeChallengesInLocalDB();
       _log(
-        '[ChallengesRepository][fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess',
+        '[fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess',
       );
       if (!localSaveSuccess) {
         _log(
-          '[ChallengesRepository][fetchCloudChallenges] Failed to save new cloud challenges in local DB',
+          '[fetchCloudChallenges] Failed to save new cloud challenges in local DB',
         );
       }
     }
@@ -207,7 +264,7 @@ class ChallengesRepository extends ChangeNotifier
       final bool cloudDeleteSuccess = await FBChallengesDataWriter.instance
           .deleteChallengesBatch(challengesDeletedLocally);
       _log(
-        '[ChallengesRepository][fetchCloudChallenges] delete challenges batch in cloud - success: $cloudDeleteSuccess',
+        '[fetchCloudChallenges] delete challenges batch in cloud - success: $cloudDeleteSuccess',
       );
 
       // remove local deleted challenges permanently if successfully deleted in cloud
@@ -218,7 +275,7 @@ class ChallengesRepository extends ChangeNotifier
         );
         final bool localSaveSuccess = await _storeChallengesInLocalDB();
         _log(
-          '[ChallengesRepository][fetchCloudChallenges] removed challenges locally - success: $localSaveSuccess',
+          '[fetchCloudChallenges] removed challenges locally - success: $localSaveSuccess',
         );
       }
     }
@@ -226,41 +283,8 @@ class ChallengesRepository extends ChangeNotifier
     return true;
   }
 
-  Future<bool> sendChallengeWithPreset(
-    ChallengePreset challengePreset,
-    MyPuttUser recipientUser,
-  ) async {
-    final MyPuttUser? currentUser = locator.get<UserRepository>().currentUser;
-    if (currentUser == null) return false;
-
-    final PuttingChallenge? challengeFromPreset =
-        ChallengeHelpers.getChallengeFromPreset(
-      challengePreset,
-      currentUser,
-      recipientUser,
-    );
-
-    if (challengeFromPreset == null) {
-      _log(
-        '[ChallengesRepository][sendChallengeWithPreset] Failed to generate challenge from preset',
-      );
-      return false;
-    }
-
-    currentChallenge = challengeFromPreset;
-    activeChallenges.add(challengeFromPreset);
-
-    return _challengesService.setStorageChallenge(
-      StoragePuttingChallenge.fromPuttingChallenge(
-        challengeFromPreset,
-        currentUser.uid,
-      ),
-    );
-  }
-
   Future<void> addSet(PuttingSet set) async {
     currentChallenge?.currentUserSets.add(set);
-
     onSetsChanged();
   }
 
@@ -274,28 +298,16 @@ class ChallengesRepository extends ChangeNotifier
       currentUserSetsUpdatedAt: DateTime.now().toIso8601String(),
     );
 
-    final String? currentUid = _authService.getCurrentUserId();
-    if (currentUid == null) {
-      // toast error
-      return;
-    }
-
     // active challenge
     if (currentChallenge?.recipientUser != null) {
       _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
     }
     // outgoing pending challenge
     else {
       _challengesService.setUnclaimedChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
     }
     _storeChallengesInLocalDB();
@@ -305,11 +317,8 @@ class ChallengesRepository extends ChangeNotifier
   Future<void> resyncCurrentChallenge() async {
     if (currentChallenge == null) return;
 
-    final String? currentUid = _authService.getCurrentUserId();
-    if (currentUid == null) return;
-
     final PuttingChallenge? updatedChallenge =
-        await databaseService.getPuttingChallengeById(currentChallenge!.id);
+        await _databaseService.getPuttingChallengeById(currentChallenge!.id);
     if (updatedChallenge == null) return;
 
     currentChallenge =
@@ -317,27 +326,17 @@ class ChallengesRepository extends ChangeNotifier
 
     if (currentChallenge?.recipientUser != null) {
       await _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
     } else {
-      await databaseService.setUnclaimedChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+      await _databaseService.setUnclaimedChallenge(
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
     }
   }
 
   void openChallenge(PuttingChallenge challenge) {
-    final String? currentUid = _authService.getCurrentUserId();
-    if (currentUid == null) {
-      // toast error
-      return;
-    }
+    _listenToCurrentChallenge(challenge);
 
     if (challenge.status == ChallengeStatus.pending) {
       currentChallenge = challenge.copyWith(status: ChallengeStatus.active);
@@ -350,25 +349,20 @@ class ChallengesRepository extends ChangeNotifier
       incomingPendingChallenges.remove(challenge);
       activeChallenges.add(challenge);
       _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
       _storeChallengesInLocalDB();
     }
   }
 
-  void exitChallenge() {
+  void exitCurrentChallenge() {
+    _currentChallengeSubscription?.cancel();
+    _currentChallengeSubscription = null;
     currentChallenge = null;
   }
 
   Future<bool> finishChallengeAndSync() async {
-    final String? currentUid = _authService.getCurrentUserId();
-    if (currentUid == null) {
-      // toast error
-      return false;
-    } else if (currentChallenge == null) {
+    if (currentChallenge == null) {
       return false;
     } else {
       currentChallenge = currentChallenge?.copyWith(
@@ -382,10 +376,7 @@ class ChallengesRepository extends ChangeNotifier
         activeChallenges,
       );
       await _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
+        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
       );
       currentChallenge = null;
       return true;
@@ -417,20 +408,49 @@ class ChallengesRepository extends ChangeNotifier
 
   void declineChallenge(PuttingChallenge challenge) {
     incomingPendingChallenges.remove(challenge);
-    databaseService.deleteChallenge(challenge);
+    _databaseService.deleteChallenge(challenge);
   }
 
   void deleteFinishedChallenge() {
     finishedChallenge = null;
   }
 
+  Future<bool> sendChallengeWithPreset(
+    ChallengePreset challengePreset,
+    MyPuttUser recipientUser,
+  ) async {
+    final MyPuttUser? currentUser = _userRepository.currentUser;
+    if (currentUser == null) return false;
+
+    final PuttingChallenge? challengeFromPreset =
+        ChallengeHelpers.getChallengeFromPreset(
+      challengePreset,
+      currentUser,
+      recipientUser,
+    );
+
+    if (challengeFromPreset == null) {
+      _log(
+        '[sendChallengeWithPreset] Failed to generate challenge from preset',
+      );
+      return false;
+    }
+
+    currentChallenge = challengeFromPreset;
+    activeChallenges.add(challengeFromPreset);
+
+    return _challengesService.setStorageChallenge(
+      StoragePuttingChallenge.fromPuttingChallenge(challengeFromPreset),
+    );
+  }
+
   Future<void> addDeepLinkChallenges() async {
-    final MyPuttUser? currentUser = userRepository.currentUser;
+    final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser != null) {
       for (var storageChallenge in deepLinkChallenges) {
         if (storageChallenge.challengerUser.uid != currentUser.uid) {
           final StoragePuttingChallenge? existingChallenge =
-              await databaseService.getChallengeByUid(
+              await _databaseService.getChallengeByUid(
             currentUser.uid,
             storageChallenge.id,
           );
@@ -443,12 +463,9 @@ class ChallengesRepository extends ChangeNotifier
 
             activeChallenges.add(challenge);
             await _challengesService.setStorageChallenge(
-              StoragePuttingChallenge.fromPuttingChallenge(
-                challenge,
-                currentUser.uid,
-              ),
+              StoragePuttingChallenge.fromPuttingChallenge(challenge),
             );
-            await databaseService.removeUnclaimedChallenge(challenge.id);
+            await _databaseService.removeUnclaimedChallenge(challenge.id);
           }
         }
       }
@@ -458,20 +475,19 @@ class ChallengesRepository extends ChangeNotifier
 
   Future<bool> _storeChallengesInLocalDB() {
     _log(
-        '[ChallengesRepository][_storeChallengesInLocalDB] storing ${allChallenges.length} challenges in local db');
+        '[_storeChallengesInLocalDB] storing ${allChallenges.length} challenges in local db');
     return locator
         .get<LocalDBService>()
         .storeChallenges(allChallenges)
         .then((success) {
-      _log(
-          '[ChallengesRepository][_storeChallengesInLocalDB] success: $success');
+      _log('[_storeChallengesInLocalDB] success: $success');
       return success;
     });
   }
 
   void _log(String message) {
     if (Flags.kChallengesRepositoryLogs) {
-      log(message);
+      log('[ChallengesRepository] $message');
     }
   }
 }
