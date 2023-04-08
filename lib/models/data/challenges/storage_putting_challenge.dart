@@ -43,6 +43,7 @@ class StoragePuttingChallenge {
 
   factory StoragePuttingChallenge.fromPuttingChallenge(
     PuttingChallenge challenge,
+    String currentUid,
   ) {
     MyPuttUser? recipientUser;
     late final List<PuttingSet> recipientSets;
@@ -50,9 +51,11 @@ class StoragePuttingChallenge {
     late final List<PuttingSet> challengerSets;
 
     final bool currentUserIsChallenger =
-        challenge.challengerUser.uid == challenge.currentUser.uid;
+        challenge.challengerUser.uid == currentUid;
 
     if (challenge.recipientUser == null) {
+      challengerUser = challenge.currentUser;
+      challengerSets = challenge.currentUserSets;
       recipientUser = null;
       recipientSets = [];
     } else {
@@ -81,12 +84,12 @@ class StoragePuttingChallenge {
       challengerUser: challengerUser,
       recipientUser: recipientUser,
       challengerSets: challengerSets,
+      challengerSetsUpdatedAt: challenge.challengerSetsUpdatedAt,
+      recipientSetsUpdatedAt: challenge.recipientSetsUpdatedAt,
       recipientSets: recipientSets,
       completionTimeStamp: challenge.completionTimeStamp,
       isSynced: challenge.isSynced,
       isDeleted: challenge.isDeleted,
-      challengerSetsUpdatedAt: challenge.challengerSetsUpdatedAt,
-      recipientSetsUpdatedAt: challenge.recipientSetsUpdatedAt,
     );
   }
 

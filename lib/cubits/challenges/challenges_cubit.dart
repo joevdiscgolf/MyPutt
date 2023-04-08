@@ -178,13 +178,13 @@ class ChallengesCubit extends Cubit<ChallengesState>
   }
 
   Future<bool> sendChallengeWithPreset(
-      ChallengePreset challengePreset, MyPuttUser recipientUser) async {
+    ChallengePreset challengePreset,
+    MyPuttUser recipientUser,
+  ) async {
     final bool success = await _challengesRepository.sendChallengeWithPreset(
-        challengePreset, recipientUser);
-    if (_challengesRepository.currentChallenge != null) {
-      emit(_challengesCubitHelper
-          .getStateFromChallenge(_challengesRepository.currentChallenge!));
-    }
+      challengePreset,
+      recipientUser,
+    );
     return success;
   }
 

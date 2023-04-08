@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
-import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:collection/collection.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -11,7 +12,7 @@ import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
 
-class ChallengeHelpers {
+abstract class ChallengeHelpers {
   static bool currentUserSetsComplete(PuttingChallenge challenge) {
     return challenge.currentUserSets.length ==
         challenge.challengeStructure.length;
@@ -25,6 +26,22 @@ class ChallengeHelpers {
       (session) => session.id == challenge.id,
     );
     return match != null;
+  }
+
+  static int getChallengeStructureIndex(
+    int challengeStructureLength,
+    int currentUserSetsLength,
+  ) {
+    return min(challengeStructureLength - 1, currentUserSetsLength);
+  }
+
+  static int getCurrentDistanceRequired(PuttingChallenge challenge) {
+    final int challengeStructureIndex = min(
+      challenge.challengeStructure.length - 1,
+      challenge.currentUserSets.length,
+    );
+
+    return challenge.challengeStructure[challengeStructureIndex].distance;
   }
 
   static bool challengeSetsUpdated(
@@ -55,14 +72,19 @@ class ChallengeHelpers {
   }
 
   static List<ChallengeStructureItem> challengeStructureFromInstructions(
-      List<GeneratedChallengeInstruction> instructions) {
+    List<GeneratedChallengeInstruction> instructions,
+  ) {
     List<ChallengeStructureItem> items = [];
+
     for (var instruction in instructions) {
-      items = [
-        for (var i = 0; i < instruction.setCount; i++)
+      for (var i = 0; i < instruction.setCount; i++) {
+        items.add(
           ChallengeStructureItem(
-              distance: instruction.distance, setLength: instruction.setLength)
-      ];
+            distance: instruction.distance,
+            setLength: instruction.setLength,
+          ),
+        );
+      }
     }
     return items;
   }
@@ -200,9 +222,11 @@ class ChallengeHelpers {
     final List<String> cloudChallengeIds =
         cloudChallenges.map((cloudChallenge) => cloudChallenge.id).toList();
 
-    final List<PuttingChallenge> syncedLocalChallenges = localChallenges
-        .where((localChallenge) => localChallenge.isSynced == true)
-        .toList();
+    final List<PuttingChallenge> syncedLocalChallenges =
+        localChallenges.where((localChallenge) {
+      return true;
+      // return localChallenge.isSynced == true;
+    }).toList();
 
     // challenge has been deleted in the cloud if the synced local challenge exists, but not the cloud challenge.
     return syncedLocalChallenges
@@ -278,20 +302,20 @@ class ChallengeHelpers {
     MyPuttUser recipientUser,
   ) {
     final int timestamp = DateTime.now().millisecondsSinceEpoch;
-    final List<ChallengeStructureItem> challengeStructure =
-        locator.get<PresetsRepository>().presetStructures[challengePreset]!;
-    return PuttingChallenge.fromStorageChallenge(
-      StoragePuttingChallenge(
-        status: ChallengeStatus.active,
-        creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
-        id: '${currentUser.uid}~$timestamp',
-        challengerUser: currentUser,
-        challengeStructure: challengeStructure,
-        challengerSets: [],
-        recipientSets: [],
-        recipientUser: recipientUser,
-      ),
-      currentUser,
+    final List<ChallengeStructureItem> challengeStructure = locator
+        .get<PresetsRepository>()
+        .getChallengeStructureByPreset(challengePreset);
+    return PuttingChallenge(
+      status: ChallengeStatus.active,
+      creationTimeStamp: DateTime.now().millisecondsSinceEpoch,
+      id: '${currentUser.uid}~$timestamp',
+      currentUser: currentUser,
+      opponentUser: recipientUser,
+      challengerUser: currentUser,
+      recipientUser: recipientUser,
+      challengeStructure: challengeStructure,
+      currentUserSets: const [],
+      opponentSets: const [],
     );
   }
 

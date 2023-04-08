@@ -5,6 +5,7 @@ import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/challenge/components/dialogs/new_challenge_button.dart';
 import 'package:myputt/screens/challenge_v2/components/challenges_v2_app_bar.dart';
 import 'package:myputt/screens/challenge_v2/components/challenges_list_v2.dart';
 import 'package:myputt/screens/challenge_v2/components/loading/challenges_v2_loading_screen.dart';
@@ -65,22 +66,31 @@ class _ChallengesState extends State<ChallengesScreenV2>
     super.build(context);
     return Scaffold(
       backgroundColor: MyPuttColors.white,
-      body: NestedScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        body: _mainBody(context),
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: SliverAppBarDelegate(
-                ChallengesV2AppBar(
-                  topViewPadding: MediaQuery.of(context).viewPadding.top,
-                  tabController: _tabController,
-                ),
-              ),
-            )
-          ];
-        },
+      body: Stack(
+        children: [
+          NestedScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            body: _mainBody(context),
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: SliverAppBarDelegate(
+                    ChallengesV2AppBar(
+                      topViewPadding: MediaQuery.of(context).viewPadding.top,
+                      tabController: _tabController,
+                    ),
+                  ),
+                )
+              ];
+            },
+          ),
+          const Align(
+            alignment: Alignment.bottomRight,
+            child: NewChallengeButton(),
+          ),
+        ],
       ),
     );
   }
@@ -113,7 +123,7 @@ class _ChallengesState extends State<ChallengesScreenV2>
             challengeCategory: ChallengeCategory.active,
           ),
           ChallengesListV2(
-            challenges: state.activeChallenges.reversed.toList(),
+            challenges: state.incomingPendingChallenges.reversed.toList(),
             challengeCategory: ChallengeCategory.pending,
           ),
           ChallengesListV2(

@@ -38,7 +38,8 @@ class PresetsRepository {
   };
 
   List<ChallengeStructureItem> getChallengeStructureByPreset(
-      ChallengePreset preset) {
+    ChallengePreset preset,
+  ) {
     switch (preset) {
       case ChallengePreset.c1Basics:
         return generateStructureFromPreset(ChallengePreset.c1Basics);
@@ -52,7 +53,8 @@ class PresetsRepository {
   }
 
   List<ChallengeStructureItem> generateStructureFromPreset(
-      ChallengePreset preset) {
+    ChallengePreset preset,
+  ) {
     List<GeneratedChallengeInstruction> instructions =
         presetInstructions[preset] ?? [];
     return ChallengeHelpers.challengeStructureFromInstructions(instructions);

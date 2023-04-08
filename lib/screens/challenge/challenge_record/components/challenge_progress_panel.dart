@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
+import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
@@ -9,6 +10,7 @@ import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/animated_arrows.dart';
 import 'package:myputt/screens/challenge/components/challenge_set_row.dart';
 import 'package:myputt/utils/calculators.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -29,70 +31,74 @@ class ChallengeProgressPanel extends StatelessWidget {
 
     final PuttingChallenge challenge = currentChallengeState.currentChallenge;
     final bool challengeComplete =
-        challenge.currentUserSets.length == challenge.challengeStructure.length;
+        ChallengeHelpers.currentUserSetsComplete(challenge);
 
-    final int distance = challengeComplete
-        ? challenge
-            .challengeStructure[challenge.currentUserSets.length - 1].distance
-        : challenge
-            .challengeStructure[challenge.currentUserSets.length].distance;
-    final int setLength = challengeComplete
-        ? challenge
-            .challengeStructure[challenge.currentUserSets.length - 1].setLength
-        : challenge
-            .challengeStructure[challenge.currentUserSets.length].setLength;
-    final int setNumber = (currentChallengeState.challengeStage ==
-                ChallengeStage.currentUserComplete ||
-            currentChallengeState.challengeStage ==
-                ChallengeStage.bothUsersComplete)
-        ? challenge.currentUserSets.length
-        : challenge.currentUserSets.length + 1;
+    final int challengeStructureIndex =
+        ChallengeHelpers.getChallengeStructureIndex(
+      challenge.challengeStructure.length,
+      challenge.currentUserSets.length,
+    );
+
+    final ChallengeStructureItem challengeStructureItem =
+        challenge.challengeStructure[challengeStructureIndex];
+
+    final int currentDistanceInstruction = challengeStructureItem.distance;
+
     final int difference = getDifferenceFromChallenge(challenge);
 
     final int currentUserPuttsMade = challenge.currentUserSets.isNotEmpty
         ? challenge.currentUserSets.last.puttsMade.toInt()
         : 0;
-    final int? opponentPuttsMade = challenge.opponentSets.isNotEmpty &&
-            challenge.opponentSets.length >= challenge.currentUserSets.length
+    final int? opponentPuttsMade = challenge.opponentSets.length >
+            challenge.currentUserSets.length
         ? challenge
             .opponentSets[
                 challenge.currentUserSets.length - (challengeComplete ? 1 : 0)]
             .puttsMade
-            .toInt()
         : null;
 
     return Column(
       children: [
         _setNumberContainer(
-            context, setNumber, challenge.challengeStructure.length),
+          context,
+          challengeStructureIndex + 1,
+          challenge.challengeStructure.length,
+        ),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
                 MyPuttColors.blue.withOpacity(0.2),
                 MyPuttColors.red.withOpacity(0.2)
-              ])),
+              ],
+            ),
+          ),
           child: Column(
             children: [
               _versusRow(
-                  context, challenge.currentUser, challenge.opponentUser),
+                context,
+                challenge.currentUser,
+                challenge.opponentUser,
+              ),
               const SizedBox(height: 12),
               ChallengeSetRow(
                 currentUserMade: currentUserPuttsMade,
                 opponentMade: opponentPuttsMade,
-                setLength: setLength,
-                distance: distance,
+                setLength: challengeStructureItem.setLength,
+                distance: currentDistanceInstruction,
               ),
             ],
           ),
         ),
-        _instructionsPanel(context, distance, setLength),
-        const SizedBox(
-          height: 8,
+        _instructionsPanel(
+          context,
+          currentDistanceInstruction,
+          challengeStructureItem.setLength,
         ),
+        const SizedBox(height: 8),
         _percentCompleteIndicator(
           context,
           totalAttemptsFromSets(challenge.currentUserSets).toDouble() /
@@ -104,9 +110,7 @@ class ChallengeProgressPanel extends StatelessWidget {
               totalAttemptsFromStructure(challenge.challengeStructure)
                   .toDouble(),
         ),
-        const SizedBox(
-          height: 8,
-        ),
+        const SizedBox(height: 8),
         _puttsDifferenceText(context, difference),
       ],
     );
@@ -116,12 +120,15 @@ class ChallengeProgressPanel extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(color: MyPuttColors.gray[50], boxShadow: [
-        BoxShadow(
-            offset: const Offset(0, 2),
-            color: MyPuttColors.gray[400]!,
-            blurRadius: 2)
-      ]),
+      decoration: BoxDecoration(
+        color: MyPuttColors.gray[50],
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 2),
+              color: MyPuttColors.gray[400]!,
+              blurRadius: 2)
+        ],
+      ),
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +147,10 @@ class ChallengeProgressPanel extends StatelessWidget {
   }
 
   Widget _versusRow(
-      BuildContext context, MyPuttUser currentUser, MyPuttUser? opponentUser) {
+    BuildContext context,
+    MyPuttUser currentUser,
+    MyPuttUser? opponentUser,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -184,9 +194,7 @@ class ChallengeProgressPanel extends StatelessWidget {
                 frisbeeAvatar: opponentUser?.frisbeeAvatar,
                 size: 60,
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               AutoSizeText(
                 opponentUser?.displayName ?? 'Unknown',
                 style: Theme.of(context)
@@ -204,7 +212,10 @@ class ChallengeProgressPanel extends StatelessWidget {
   }
 
   Widget _percentCompleteIndicator(
-      BuildContext context, double begin, double end) {
+    BuildContext context,
+    double begin,
+    double end,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TweenAnimationBuilder<double>(

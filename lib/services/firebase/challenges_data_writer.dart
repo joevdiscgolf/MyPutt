@@ -26,18 +26,7 @@ class FBChallengesDataWriter {
     StoragePuttingChallenge storageChallenge, {
     final bool merge = false,
   }) async {
-    final String? currentUid =
-        locator.get<FirebaseAuthService>().getCurrentUserId();
-
-    final bool currentUserIsChallenger = challengerUid == currentUid;
-
     final Map<String, dynamic> storageChallengeJson = storageChallenge.toJson();
-
-    if (currentUserIsChallenger) {
-      storageChallengeJson.remove('recipientSets');
-    } else {
-      storageChallengeJson.remove('challengerSets');
-    }
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     final recipientRef = firestore.doc(

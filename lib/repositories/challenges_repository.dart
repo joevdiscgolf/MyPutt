@@ -76,6 +76,18 @@ class ChallengesRepository extends ChangeNotifier
 
   set currentChallenge(PuttingChallenge? currentChallenge) {
     _currentChallenge = currentChallenge;
+    if (currentChallenge != null) {
+      int? matchingIndex;
+      for (int index = 0; index < activeChallenges.length; index++) {
+        final PuttingChallenge activeChallenge = activeChallenges[index];
+        if (activeChallenge.id == currentChallenge.id) {
+          matchingIndex = index;
+        }
+      }
+      if (matchingIndex != null) {
+        _activeChallenges[matchingIndex] = currentChallenge;
+      }
+    }
     notifyListeners();
   }
 
@@ -155,12 +167,13 @@ class ChallengesRepository extends ChangeNotifier
         );
 
         // save to cloud if current user sets have changed.
-        if (cloudUpdatedChallenge.currentUserSets !=
-            currentChallenge!.currentUserSets) {
-          _challengesService.setStorageChallenge(
-            StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
-          );
-        }
+        // if (cloudUpdatedChallenge.currentUserSets !=
+        //     currentChallenge!.currentUserSets) {
+        //   print('updating in listener');
+        //   _challengesService.setStorageChallenge(
+        //     StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        //   );
+        // }
       } catch (e, trace) {
         _log(
             '[listenToCurrentChallenge] exception when parsing putting challenge: $e');
@@ -294,20 +307,29 @@ class ChallengesRepository extends ChangeNotifier
   }
 
   Future<void> onSetsChanged() async {
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentUid == null) return;
     currentChallenge = currentChallenge?.copyWith(
       currentUserSetsUpdatedAt: DateTime.now().toIso8601String(),
     );
 
     // active challenge
     if (currentChallenge?.recipientUser != null) {
-      _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+      final StoragePuttingChallenge storageChallenge =
+          StoragePuttingChallenge.fromPuttingChallenge(
+        currentChallenge!,
+        currentUid,
       );
+
+      _challengesService.setStorageChallenge(storageChallenge);
     }
     // outgoing pending challenge
     else {
       _challengesService.setUnclaimedChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUid,
+        ),
       );
     }
     _storeChallengesInLocalDB();
@@ -315,7 +337,8 @@ class ChallengesRepository extends ChangeNotifier
   }
 
   Future<void> resyncCurrentChallenge() async {
-    if (currentChallenge == null) return;
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentChallenge == null || currentUid == null) return;
 
     final PuttingChallenge? updatedChallenge =
         await _databaseService.getPuttingChallengeById(currentChallenge!.id);
@@ -326,16 +349,24 @@ class ChallengesRepository extends ChangeNotifier
 
     if (currentChallenge?.recipientUser != null) {
       await _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUid,
+        ),
       );
     } else {
       await _databaseService.setUnclaimedChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUid,
+        ),
       );
     }
   }
 
   void openChallenge(PuttingChallenge challenge) {
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentUid == null) return;
     _listenToCurrentChallenge(challenge);
 
     if (challenge.status == ChallengeStatus.pending) {
@@ -349,7 +380,10 @@ class ChallengesRepository extends ChangeNotifier
       incomingPendingChallenges.remove(challenge);
       activeChallenges.add(challenge);
       _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUid,
+        ),
       );
       _storeChallengesInLocalDB();
     }
@@ -362,7 +396,8 @@ class ChallengesRepository extends ChangeNotifier
   }
 
   Future<bool> finishChallengeAndSync() async {
-    if (currentChallenge == null) {
+    final String? currentUid = _authService.getCurrentUserId();
+    if (currentChallenge == null || currentUid == null) {
       return false;
     } else {
       currentChallenge = currentChallenge?.copyWith(
@@ -376,7 +411,10 @@ class ChallengesRepository extends ChangeNotifier
         activeChallenges,
       );
       await _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
+        StoragePuttingChallenge.fromPuttingChallenge(
+          currentChallenge!,
+          currentUid,
+        ),
       );
       currentChallenge = null;
       return true;
@@ -439,9 +477,18 @@ class ChallengesRepository extends ChangeNotifier
     currentChallenge = challengeFromPreset;
     activeChallenges.add(challengeFromPreset);
 
-    return _challengesService.setStorageChallenge(
-      StoragePuttingChallenge.fromPuttingChallenge(challengeFromPreset),
-    );
+    try {
+      return _challengesService.setStorageChallenge(
+        StoragePuttingChallenge.fromPuttingChallenge(
+          challengeFromPreset,
+          currentUser.uid,
+        ),
+      );
+    } catch (e, trace) {
+      log('[sendChallengeWithPreset] Failed to generate storage challenge: $e');
+      log(trace.toString());
+      return false;
+    }
   }
 
   Future<void> addDeepLinkChallenges() async {
@@ -463,7 +510,10 @@ class ChallengesRepository extends ChangeNotifier
 
             activeChallenges.add(challenge);
             await _challengesService.setStorageChallenge(
-              StoragePuttingChallenge.fromPuttingChallenge(challenge),
+              StoragePuttingChallenge.fromPuttingChallenge(
+                challenge,
+                currentUser.uid,
+              ),
             );
             await _databaseService.removeUnclaimedChallenge(challenge.id);
           }

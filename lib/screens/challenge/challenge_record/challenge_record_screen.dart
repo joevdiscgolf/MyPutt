@@ -35,6 +35,7 @@ class ChallengeRecordScreen extends StatefulWidget {
 }
 
 class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
+  late ChallengesCubit _challengesCubit;
   late Stream documentStream;
   late StreamSubscription _streamSubscription;
   final UserRepository _userRepository = locator.get<UserRepository>();
@@ -44,6 +45,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
   @override
   void initState() {
+    _challengesCubit = BlocProvider.of<ChallengesCubit>(context);
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser != null) {
       documentStream = firestore
@@ -63,6 +65,7 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   @override
   void dispose() {
     _streamSubscription.cancel();
+    _challengesCubit.closeChallenge();
     super.dispose();
   }
 

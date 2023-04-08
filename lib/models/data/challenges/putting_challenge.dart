@@ -53,7 +53,6 @@ class PuttingChallenge extends Equatable {
     final bool currentUserIsChallenger =
         storageChallenge.challengerUser.uid == currentUser.uid;
 
-    MyPuttUser? recipientUser = storageChallenge.recipientUser;
     late final MyPuttUser? opponentUser;
     late final List<PuttingSet> opponentSets;
     late final List<PuttingSet> currentUserSets;
@@ -72,7 +71,6 @@ class PuttingChallenge extends Equatable {
       // current user is recipient, opponent is challenger.
       currentUserSets = storageChallenge.recipientSets;
       currentUserSetsUpdatedAt = storageChallenge.recipientSetsUpdatedAt;
-      recipientUser ??= currentUser;
 
       opponentUser = storageChallenge.challengerUser;
       opponentSets = storageChallenge.challengerSets;
@@ -85,10 +83,10 @@ class PuttingChallenge extends Equatable {
       id: storageChallenge.id,
       currentUser: currentUser,
       opponentUser: opponentUser,
-      opponentSets: opponentSets,
       currentUserSets: currentUserSets,
+      opponentSets: opponentSets,
       challengerUser: storageChallenge.challengerUser,
-      recipientUser: recipientUser,
+      recipientUser: storageChallenge.recipientUser,
       isDeleted: storageChallenge.isDeleted,
       isSynced: storageChallenge.isSynced,
       challengeStructure: storageChallenge.challengeStructure,
