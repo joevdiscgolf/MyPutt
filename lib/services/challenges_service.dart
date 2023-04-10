@@ -25,6 +25,26 @@ class ChallengesService {
     );
   }
 
+  Future<bool> setStorageChallengesBatch(
+    StoragePuttingChallenge storageChallenge,
+  ) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (currentUid == null) return false;
+    final MyPuttUser? recipientUser = storageChallenge.recipientUser;
+    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
+    if (recipientUser == null || challengerUser == null) {
+      return false;
+    }
+
+    return FBChallengesDataWriter.instance.setPuttingChallenge(
+      currentUid,
+      recipientUser.uid,
+      challengerUser.uid,
+      storageChallenge,
+    );
+  }
+
   Future<bool> setUnclaimedChallenge(StoragePuttingChallenge storageChallenge) {
     return FBChallengesDataWriter.instance
         .uploadUnclaimedChallenge(storageChallenge);

@@ -193,6 +193,38 @@ class ChallengesRepository extends ChangeNotifier
     );
   }
 
+  Future<void> syncLocalChallengesToCloud() async {
+    // do not sync deleted challenges to cloud
+    List<PuttingChallenge> newlySyncedChallenges = allChallenges
+        .where((challenge) =>
+            challenge.isSynced != true && challenge.isDeleted != true)
+        .toList();
+
+    if (newlySyncedChallenges.isEmpty) {
+      return;
+    }
+
+    newlySyncedChallenges =
+        ChallengeHelpers.setSyncedToTrue(newlySyncedChallenges);
+
+    // save unsynced sessions in firestore.
+    final bool saveSuccess = await FBSessionsDataWriter.instance
+        .setSessionsBatch(newlySyncedChallenges);
+
+    if (!saveSuccess) {
+      // trigger error toast
+      return;
+    }
+
+    allChallenges = ChallengeHelpers.mergeSOTChallenges(
+      sotChallenges: newlySyncedChallenges,
+      allChallenges: allChallenges,
+    );
+
+    // store newly synced challenges
+    await _storeChallengesInLocalDB();
+  }
+
   Future<bool> fetchCloudChallenges() async {
     final List<PuttingChallenge> unsyncedChallenges =
         allChallenges.where((challenge) => challenge.isSynced != true).toList();
