@@ -125,7 +125,7 @@ class PuttingChallenge extends Equatable {
       opponentUser: opponentUser ?? this.opponentUser,
       opponentSets: opponentSets ?? this.opponentSets,
       currentUserSets: currentUserSets ?? this.currentUserSets,
-      challengerUser: challengerUser ?? this.currentUser,
+      challengerUser: challengerUser ?? this.challengerUser,
       recipientUser: recipientUser ?? this.recipientUser,
       isDeleted: isDeleted ?? this.isDeleted,
       isSynced: isSynced ?? this.isSynced,
@@ -136,7 +136,7 @@ class PuttingChallenge extends Equatable {
       opponentSetsUpdatedAt:
           opponentSetsUpdatedAt ?? this.opponentSetsUpdatedAt,
       challengerSetsUpdatedAt:
-          challengerSetsUpdatedAt ?? this.currentUserSetsUpdatedAt,
+          challengerSetsUpdatedAt ?? this.challengerSetsUpdatedAt,
       recipientSetsUpdatedAt:
           recipientSetsUpdatedAt ?? this.recipientSetsUpdatedAt,
     );

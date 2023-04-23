@@ -11,6 +11,15 @@ import 'package:myputt/utils/constants.dart';
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
+  static final FBChallengesDataLoader instance =
+      FBChallengesDataLoader._internal();
+
+  factory FBChallengesDataLoader() {
+    return instance;
+  }
+
+  FBChallengesDataLoader._internal();
+
   Future<List<PuttingChallenge>> getPuttingChallengesByStatus(
       MyPuttUser currentUser, String status) async {
     return firestore
@@ -79,7 +88,9 @@ class FBChallengesDataLoader {
   }
 
   Future<PuttingChallenge?> getPuttingChallengeById(
-      MyPuttUser currentUser, String challengeId) async {
+    MyPuttUser currentUser,
+    String challengeId,
+  ) async {
     final DocumentSnapshot<dynamic> snapshot = await firestore
         .doc(
             '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId')

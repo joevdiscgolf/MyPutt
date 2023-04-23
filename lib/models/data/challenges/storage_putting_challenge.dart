@@ -45,35 +45,20 @@ class StoragePuttingChallenge {
     PuttingChallenge challenge,
     String currentUid,
   ) {
-    MyPuttUser? recipientUser;
     late final List<PuttingSet> recipientSets;
-    late final MyPuttUser challengerUser;
     late final List<PuttingSet> challengerSets;
 
     final bool currentUserIsChallenger =
         challenge.challengerUser.uid == currentUid;
 
-    if (challenge.recipientUser == null) {
-      challengerUser = challenge.currentUser;
+    // current user is challenger, opponent is recipient
+    if (currentUserIsChallenger) {
       challengerSets = challenge.currentUserSets;
-      recipientUser = null;
-      recipientSets = [];
+      recipientSets = challenge.opponentSets;
     } else {
-      // current user is challenger, opponent is recipient
-      if (currentUserIsChallenger) {
-        challengerUser = challenge.currentUser;
-        challengerSets = challenge.currentUserSets;
-
-        recipientUser = challenge.opponentUser;
-        recipientSets = challenge.opponentSets;
-      } else {
-        // current user is recipient, opponent is challenger.
-        challengerSets = challenge.opponentSets;
-        challengerUser = challenge.opponentUser!;
-
-        recipientUser = challenge.currentUser;
-        recipientSets = challenge.currentUserSets;
-      }
+      // current user is recipient, opponent is challenger.
+      challengerSets = challenge.opponentSets;
+      recipientSets = challenge.currentUserSets;
     }
 
     return StoragePuttingChallenge(
@@ -81,12 +66,12 @@ class StoragePuttingChallenge {
       creationTimeStamp: challenge.creationTimeStamp,
       id: challenge.id,
       challengeStructure: challenge.challengeStructure,
-      challengerUser: challengerUser,
-      recipientUser: recipientUser,
+      challengerUser: challenge.challengerUser,
+      recipientUser: challenge.recipientUser,
       challengerSets: challengerSets,
+      recipientSets: recipientSets,
       challengerSetsUpdatedAt: challenge.challengerSetsUpdatedAt,
       recipientSetsUpdatedAt: challenge.recipientSetsUpdatedAt,
-      recipientSets: recipientSets,
       completionTimeStamp: challenge.completionTimeStamp,
       isSynced: challenge.isSynced,
       isDeleted: challenge.isDeleted,

@@ -19,20 +19,19 @@ class FBChallengesDataWriter {
 
   FBChallengesDataWriter._internal();
 
-  Future<bool> setPuttingChallenge(
+  Future<bool> setStorageChallenge(
     String currentUid,
     String recipientUid,
     String challengerUid,
-    StoragePuttingChallenge storageChallenge, {
+    Map<String, dynamic> storageChallengeJson,
+    String challengeId, {
     final bool merge = false,
   }) async {
-    final Map<String, dynamic> storageChallengeJson = storageChallenge.toJson();
-
     WriteBatch batch = FirebaseFirestore.instance.batch();
     final recipientRef = firestore.doc(
-        '$challengesCollection/$recipientUid/$challengesCollection/${storageChallenge.id}');
+        '$challengesCollection/$recipientUid/$challengesCollection/$challengeId');
     final challengerRef = firestore.doc(
-        '$challengesCollection/$challengerUid/$challengesCollection/${storageChallenge.id}');
+        '$challengesCollection/$challengerUid/$challengesCollection/$challengeId');
 
     batch.set(
       recipientRef,
@@ -128,6 +127,49 @@ class FBChallengesDataWriter {
           trace,
           reason:
               '[FBChallengesDataWriter][deleteChallenge] firestore delete exception',
+        );
+        return false;
+      },
+    );
+  }
+
+  Future<bool> setChallengesBatch(
+    List<PuttingChallenge> challenges,
+  ) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    if (currentUid == null) {
+      return false;
+    }
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (PuttingChallenge challenge in challenges) {
+      batch.set(
+        firestore.doc(
+            '$challengesCollection/${challenge.currentUser.uid}/$challengesCollection/${challenge.id}'),
+        StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUid)
+            .toJson(),
+      );
+
+      if (challenge.recipientUser != null) {
+        batch.set(
+          firestore.doc(
+              '$challengesCollection/${challenge.recipientUser!.uid}/$challengesCollection/${challenge.id}'),
+          StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUid)
+              .toJson(),
+        );
+      }
+    }
+
+    return batch.commit().then((_) => true).catchError(
+      (e, trace) {
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          trace,
+          reason:
+              '[FBChallengesDataWriter][setChallengesBatch] firestore write exception',
         );
         return false;
       },

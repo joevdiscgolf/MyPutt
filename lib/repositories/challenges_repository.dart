@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
@@ -32,6 +34,7 @@ class ChallengesRepository extends ChangeNotifier
     _localDBService = locator.get<LocalDBService>();
     _challengesService = locator.get<ChallengesService>();
     _authService = locator.get<FirebaseAuthService>();
+    _challengesCubitHelper = locator.get<ChallengesCubitHelper>();
   }
 
   @override
@@ -46,6 +49,7 @@ class ChallengesRepository extends ChangeNotifier
   late final LocalDBService _localDBService;
   late final ChallengesService _challengesService;
   late final FirebaseAuthService _authService;
+  late final ChallengesCubitHelper _challengesCubitHelper;
 
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
       _currentChallengeSubscription;
@@ -201,15 +205,16 @@ class ChallengesRepository extends ChangeNotifier
         .toList();
 
     if (newlySyncedChallenges.isEmpty) {
+      _log('[syncLocalChallengesToCloud] No newly synced challenges');
       return;
     }
 
     newlySyncedChallenges =
         ChallengeHelpers.setSyncedToTrue(newlySyncedChallenges);
 
-    // save unsynced sessions in firestore.
-    final bool saveSuccess = await FBSessionsDataWriter.instance
-        .setSessionsBatch(newlySyncedChallenges);
+    // save unsynced challenges in firestore.
+    final bool saveSuccess = await FBChallengesDataWriter.instance
+        .setChallengesBatch(newlySyncedChallenges);
 
     if (!saveSuccess) {
       // trigger error toast
@@ -432,23 +437,57 @@ class ChallengesRepository extends ChangeNotifier
     if (currentChallenge == null || currentUid == null) {
       return false;
     } else {
-      currentChallenge = currentChallenge?.copyWith(
+      final PuttingChallenge? cloudCurrentChallenge = await _challengesService
+          .getChallengeById(currentChallenge!.id, currentUid);
+
+      if (currentChallenge == null) {
+        return false;
+      }
+
+      // must check current challenge in cloud before finishing a session.
+      if (cloudCurrentChallenge == null) {
+        // logger error
+        return false;
+      }
+
+      if (cloudCurrentChallenge.status != ChallengeStatus.pending) {
+        return false;
+      }
+
+      final ChallengeStage challengeStage =
+          _challengesCubitHelper.getChallengeStage(currentChallenge!);
+
+      // both users must be complete to finish the challenge.
+      if (challengeStage != ChallengeStage.bothUsersComplete) {
+        return false;
+      }
+
+      final PuttingChallenge completedCurrentChallenge =
+          currentChallenge!.copyWith(
         status: ChallengeStatus.complete,
         completionTimeStamp: DateTime.now().millisecondsSinceEpoch,
       );
 
-      completedChallenges.add(currentChallenge!);
-      activeChallenges = ChallengeHelpers.removeChallenges(
-        [currentChallenge!],
-        activeChallenges,
-      );
-      await _challengesService.setStorageChallenge(
+      final bool saveChallengeSuccess =
+          await _challengesService.setStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
+          completedCurrentChallenge,
           currentUid,
         ),
       );
+
+      if (!saveChallengeSuccess) {
+        return false;
+      }
+
+      completedChallenges.add(completedCurrentChallenge);
+      activeChallenges = ChallengeHelpers.removeChallenges(
+        [completedCurrentChallenge],
+        activeChallenges,
+      );
+
       currentChallenge = null;
+
       return true;
     }
   }

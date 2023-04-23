@@ -244,4 +244,9 @@ class ChallengesCubit extends Cubit<ChallengesState>
                     : 0)]
         .setLength;
   }
+
+  Future<void> onConnectionEstablished() async {
+    await locator.get<ChallengesRepository>().fetchCloudChallenges();
+    await locator.get<ChallengesRepository>().syncLocalChallengesToCloud();
+  }
 }

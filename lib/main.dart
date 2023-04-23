@@ -17,6 +17,7 @@ import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/error/connection_error_screen.dart';
 import 'package:myputt/screens/force_upgrade/force_upgrade_screen.dart';
@@ -28,6 +29,7 @@ import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
 import 'package:myputt/services/beta_access_service.dart';
+import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/global_settings.dart';
@@ -60,6 +62,7 @@ void main() async {
     locator.get<HomeScreenV2Cubit>(),
     locator.get<ChallengesCubit>(),
     locator.get<ChallengesCubitHelper>(),
+    locator.get<ChallengesService>()
   ]);
   initMyPuttCubits([
     locator.get<HomeScreenV2Cubit>(),
@@ -160,6 +163,7 @@ class _MyAppState extends State<MyApp> {
       if (_connectivityResult != null &&
           hasConnectivity(_connectivityResult!)) {
         await locator.get<SessionsRepository>().syncAllLocalSessionsToCloud();
+        await locator.get<ChallengesRepository>().syncLocalChallengesToCloud();
       }
     });
   }
@@ -167,5 +171,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> _onConnected() async {
     await Future.delayed(const Duration(seconds: 3));
     BlocProvider.of<SessionsCubit>(context).onConnectionEstablished();
+    BlocProvider.of<ChallengesCubit>(context).onConnectionEstablished();
   }
 }
