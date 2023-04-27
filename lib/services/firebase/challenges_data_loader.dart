@@ -6,6 +6,7 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -91,21 +92,23 @@ class FBChallengesDataLoader {
     MyPuttUser currentUser,
     String challengeId,
   ) async {
-    final DocumentSnapshot<dynamic> snapshot = await firestore
-        .doc(
-            '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId')
-        .get();
-
-    if (snapshot.exists &&
-        isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
-      return PuttingChallenge.fromStorageChallenge(
-        StoragePuttingChallenge.fromJson(
-            snapshot.data() as Map<String, dynamic>),
-        currentUser,
-      );
-    } else {
-      return null;
-    }
+    return firestoreFetch(
+      '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId',
+      timeoutDuration: shortTimeout,
+    ).then((snapshot) {
+      if (snapshot == null) {
+        return null;
+      } else if (snapshot.exists &&
+          isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
+        return PuttingChallenge.fromStorageChallenge(
+          StoragePuttingChallenge.fromJson(
+              snapshot.data() as Map<String, dynamic>),
+          currentUser,
+        );
+      } else {
+        return null;
+      }
+    });
   }
 
   bool isValidStorageChallenge(Map<String, dynamic> data) {

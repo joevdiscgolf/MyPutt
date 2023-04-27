@@ -17,6 +17,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/services/toast/toast_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/constants.dart';
@@ -44,16 +45,23 @@ class ChallengesCubit extends Cubit<ChallengesState>
     _dynamicLinkService = locator.get<DynamicLinkService>();
     _presetsRepository = locator.get<PresetsRepository>();
     _challengesCubitHelper = locator.get<ChallengesCubitHelper>();
+    _toastService = locator.get<ToastService>();
   }
 
   @override
   void initCubit() {
     _challengesRepository.addListener(() {
       if (_challengesRepository.currentChallenge != null) {
-        emit(
-          _challengesCubitHelper
-              .getStateFromChallenge(_challengesRepository.currentChallenge!),
-        );
+        final ChallengesState newState = _challengesCubitHelper
+            .getStateFromChallenge(_challengesRepository.currentChallenge!);
+
+        emit(newState);
+
+        if (newState is CurrentChallengeState) {
+          if (newState.challengeStage == ChallengeStage.finished) {
+            _challengesRepository.moveCurrentChallengeToFinished();
+          }
+        }
       }
     });
   }
@@ -64,22 +72,17 @@ class ChallengesCubit extends Cubit<ChallengesState>
   late final DynamicLinkService _dynamicLinkService;
   late final PresetsRepository _presetsRepository;
   late final ChallengesCubitHelper _challengesCubitHelper;
+  late final ToastService _toastService;
 
   Future<void> reload() async {
     await _challengesRepository.fetchCloudChallenges();
-    if (_challengesRepository.currentChallenge == null) {
-      if (_challengesRepository.finishedChallenge != null) {
-        emit(
-          _challengesCubitHelper.currentChallengeWithStage(
-            ChallengeStage.finished,
-          ),
-        );
-      } else {
-        emit(_challengesCubitHelper.noCurrentChallenge());
-      }
+    if (_challengesRepository.currentChallenge != null) {
+      emit(
+        _challengesCubitHelper
+            .getStateFromChallenge(_challengesRepository.currentChallenge!),
+      );
     } else {
-      emit(_challengesCubitHelper
-          .getStateFromChallenge(_challengesRepository.currentChallenge!));
+      emit(_challengesCubitHelper.noCurrentChallenge());
     }
   }
 
@@ -113,37 +116,46 @@ class ChallengesCubit extends Cubit<ChallengesState>
     }
   }
 
-  void updateIncomingChallenge(Object? rawObject) {
-    final Map<String, dynamic>? data = rawObject as Map<String, dynamic>?;
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (data != null && currentUser != null) {
-      final StoragePuttingChallenge storageChallenge =
-          StoragePuttingChallenge.fromJson(data);
-      final PuttingChallenge challenge =
-          PuttingChallenge.fromStorageChallenge(storageChallenge, currentUser);
-      if (_challengesRepository.currentChallenge != null) {
-        if (challenge.status == ChallengeStatus.complete) {
-          _challengesRepository.addFinishedChallenge(challenge);
-          emit(
-            _challengesCubitHelper.currentChallengeWithStage(
-              ChallengeStage.finished,
-            ),
-          );
-        } else {
-          _challengesRepository.currentChallenge = challenge;
-          emit(_challengesCubitHelper.getStateFromChallenge(challenge));
-        }
-      }
-    }
-  }
+  // void updateIncomingChallenge(Object? rawObject) {
+  //   final Map<String, dynamic>? data = rawObject as Map<String, dynamic>?;
+  //   final MyPuttUser? currentUser = _userRepository.currentUser;
+  //   if (data != null && currentUser != null) {
+  //     final StoragePuttingChallenge storageChallenge =
+  //         StoragePuttingChallenge.fromJson(data);
+  //     final PuttingChallenge challenge =
+  //         PuttingChallenge.fromStorageChallenge(storageChallenge, currentUser);
+  //     if (_challengesRepository.currentChallenge != null) {
+  //       if (challenge.status == ChallengeStatus.complete &&
+  //           _challengesRepository.currentChallenge!.status !=
+  //               ChallengeStatus.complete) {
+  //         _challengesRepository.addFinishedChallenge(challenge);
+  //         emit(
+  //           _challengesCubitHelper.currentChallengeWithStage(
+  //             ChallengeStage.finished,
+  //           ),
+  //         );
+  //       } else {
+  //         _challengesRepository.currentChallenge = challenge;
+  //         emit(_challengesCubitHelper.getStateFromChallenge(challenge));
+  //       }
+  //     }
+  //   }
+  // }
 
   Future<void> finishChallenge() async {
-    await _challengesRepository.finishChallengeAndSync();
-    emit(
-      _challengesCubitHelper.currentChallengeWithStage(
-        ChallengeStage.finished,
-      ),
-    );
+    if (_challengesRepository.currentChallenge == null) return;
+
+    final bool finishSuccess = await _challengesRepository.finishChallenge();
+
+    if (!finishSuccess) {
+      _toastService.triggerErrorToast("Couldn't finish challenge, try again.");
+    } else {
+      emit(
+        _challengesCubitHelper.currentChallengeWithStage(
+          ChallengeStage.finished,
+        ),
+      );
+    }
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
@@ -163,7 +175,9 @@ class ChallengesCubit extends Cubit<ChallengesState>
   }
 
   Future<bool> generateAndSendChallengeToUser(
-      PuttingSession session, MyPuttUser recipientUser) async {
+    PuttingSession session,
+    MyPuttUser recipientUser,
+  ) async {
     final MyPuttUser? currentUser = _userRepository.currentUser;
     if (currentUser == null) {
       return false;
@@ -173,7 +187,7 @@ class ChallengesCubit extends Cubit<ChallengesState>
         currentUser,
         opponentUser: recipientUser,
       );
-      return _challengesService.setStorageChallenge(generatedChallenge);
+      return _challengesService.setInitialStorageChallenge(generatedChallenge);
     }
   }
 

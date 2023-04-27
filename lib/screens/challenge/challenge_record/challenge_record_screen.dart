@@ -1,26 +1,19 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
-import 'package:myputt/models/data/users/myputt_user.dart';
-import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/add_set_button.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/challenge_record_app_bar.dart';
 import 'package:myputt/screens/challenge/challenge_record/components/putts_made_container.dart';
 import 'package:myputt/screens/challenge/challenge_record/screens/challenge_result_screen.dart';
-import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/utils/colors.dart';
 import 'components/challenge_progress_panel.dart';
 import 'components/challenge_record_set_row.dart';
-
-final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class ChallengeRecordScreen extends StatefulWidget {
   const ChallengeRecordScreen({Key? key, required this.challenge})
@@ -37,8 +30,6 @@ class ChallengeRecordScreen extends StatefulWidget {
 class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   late ChallengesCubit _challengesCubit;
   late Stream documentStream;
-  late StreamSubscription _streamSubscription;
-  final UserRepository _userRepository = locator.get<UserRepository>();
   final GlobalKey<ScrollSnapListState> _puttsMadePickerKey = GlobalKey();
 
   int _puttsPickerFocusedIndex = 0;
@@ -46,17 +37,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
   @override
   void initState() {
     _challengesCubit = BlocProvider.of<ChallengesCubit>(context);
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser != null) {
-      documentStream = firestore
-          .doc(
-              '$challengesCollection/${currentUser.uid}/$challengesCollection/${widget.challenge.id}')
-          .snapshots();
-      _streamSubscription = documentStream.listen((snapshot) {
-        BlocProvider.of<ChallengesCubit>(context)
-            .updateIncomingChallenge(snapshot.data());
-      });
-    }
     _puttsPickerFocusedIndex =
         BlocProvider.of<ChallengesCubit>(context).getPuttsPickerIndex();
     super.initState();
@@ -64,7 +44,6 @@ class _ChallengeRecordScreenState extends State<ChallengeRecordScreen> {
 
   @override
   void dispose() {
-    _streamSubscription.cancel();
     _challengesCubit.closeChallenge();
     super.dispose();
   }

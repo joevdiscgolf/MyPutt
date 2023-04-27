@@ -144,7 +144,9 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
     } else if (widget.session != null) {
       await BlocProvider.of<ChallengesCubit>(context)
           .generateAndSendChallengeToUser(
-              widget.session!, widget.recipientUser);
+        widget.session!,
+        widget.recipientUser,
+      );
     }
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {

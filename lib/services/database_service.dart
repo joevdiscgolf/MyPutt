@@ -88,14 +88,20 @@ class DatabaseService {
       return null;
     } else {
       _log('returning cloud snapshot docs');
-      return snapshot.docs.map(
-        (doc) {
-          return PuttingChallenge.fromStorageChallenge(
-            StoragePuttingChallenge.fromJson(doc.data()),
-            currentUser,
-          );
-        },
-      ).toList();
+      try {
+        return snapshot.docs.map(
+          (doc) {
+            return PuttingChallenge.fromStorageChallenge(
+              StoragePuttingChallenge.fromJson(doc.data()),
+              currentUser,
+            );
+          },
+        ).toList();
+      } catch (e, trace) {
+        _log(e.toString());
+        _log(trace.toString());
+        return null;
+      }
     }
   }
 

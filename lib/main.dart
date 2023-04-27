@@ -28,6 +28,7 @@ import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:myputt/screens/wrappers/main_wrapper.dart';
+import 'package:myputt/screens/wrappers/toast_layer.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/device_service.dart';
@@ -126,26 +127,27 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme(context),
       title: 'MyPutt',
       debugShowCheckedModeBanner: false,
-      home: BlocBuilder<AppPhaseCubit, AppPhaseState>(
-        builder: (context, state) {
-          return _getScreenFromState(state);
-        },
+      home: Stack(
+        children: [
+          BlocBuilder<AppPhaseCubit, AppPhaseState>(
+            builder: (context, state) {
+              if (state is LoggedInPhase) {
+                return const MainWrapper();
+              } else if (state is LoggedOutPhase || state is FirstRunPhase) {
+                return const IntroScreen();
+              } else if (state is ForceUpgradePhase) {
+                return const ForceUpgradeScreen();
+              } else if (state is ConnectionErrorPhase) {
+                return const ConnectionErrorScreen();
+              } else {
+                return const EnterDetailsScreen();
+              }
+            },
+          ),
+          const ToastLayer(),
+        ],
       ),
     );
-  }
-
-  Widget _getScreenFromState(AppPhaseState state) {
-    if (state is LoggedInPhase) {
-      return const MainWrapper();
-    } else if (state is LoggedOutPhase || state is FirstRunPhase) {
-      return const IntroScreen();
-    } else if (state is ForceUpgradePhase) {
-      return const ForceUpgradeScreen();
-    } else if (state is ConnectionErrorPhase) {
-      return const ConnectionErrorScreen();
-    } else {
-      return const EnterDetailsScreen();
-    }
   }
 
   ConnectivityResult? _connectivityResult;

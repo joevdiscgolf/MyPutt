@@ -323,9 +323,21 @@ abstract class ChallengeHelpers {
     PuttingChallenge localCurrentChallenge,
     PuttingChallenge cloudCurrentChallenge,
   ) {
+    late final String challengeStatus;
+
+    if (localCurrentChallenge.status == ChallengeStatus.active &&
+        cloudCurrentChallenge.status == ChallengeStatus.pending) {
+      challengeStatus = ChallengeStatus.active;
+    } else if (localCurrentChallenge.status == ChallengeStatus.complete &&
+        cloudCurrentChallenge.status == ChallengeStatus.active) {
+      challengeStatus = ChallengeStatus.complete;
+    } else {
+      challengeStatus = cloudCurrentChallenge.status;
+    }
+
     return cloudCurrentChallenge.copyWith(
       currentUserSetsUpdatedAt: localCurrentChallenge.currentUserSetsUpdatedAt,
-      status: localCurrentChallenge.status,
+      status: challengeStatus,
       currentUserSets: localCurrentChallenge.currentUserSets,
       currentUser: localCurrentChallenge.currentUser,
     );

@@ -17,7 +17,29 @@ class ChallengesService implements SingletonConsumer {
 
   late final UserRepository _userRepository;
 
-  Future<bool> setStorageChallenge(
+  Future<bool> setInitialStorageChallenge(
+    StoragePuttingChallenge storageChallenge,
+  ) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (currentUid == null) return false;
+
+    final MyPuttUser? recipientUser = storageChallenge.recipientUser;
+    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
+    if (recipientUser == null || challengerUser == null) {
+      return false;
+    }
+
+    return FBChallengesDataWriter.instance.setStorageChallenge(
+      currentUid,
+      recipientUser.uid,
+      challengerUser.uid,
+      storageChallenge.toJson(),
+      storageChallenge.id,
+    );
+  }
+
+  Future<bool> updateStorageChallenge(
     StoragePuttingChallenge storageChallenge,
   ) async {
     final String? currentUid =

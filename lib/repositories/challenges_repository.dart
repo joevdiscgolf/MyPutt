@@ -55,7 +55,6 @@ class ChallengesRepository extends ChangeNotifier
       _currentChallengeSubscription;
 
   PuttingChallenge? _currentChallenge;
-  PuttingChallenge? _finishedChallenge;
   List<PuttingChallenge> _completedChallenges = [];
   List<PuttingChallenge> _activeChallenges = [];
   List<PuttingChallenge> _incomingPendingChallenges = [];
@@ -64,7 +63,6 @@ class ChallengesRepository extends ChangeNotifier
   List<StoragePuttingChallenge> deepLinkChallenges = [];
 
   PuttingChallenge? get currentChallenge => _currentChallenge;
-  PuttingChallenge? get finishedChallenge => _finishedChallenge;
   List<PuttingChallenge> get completedChallenges => _completedChallenges;
   List<PuttingChallenge> get activeChallenges => _activeChallenges;
   List<PuttingChallenge> get incomingPendingChallenges =>
@@ -92,11 +90,6 @@ class ChallengesRepository extends ChangeNotifier
         _activeChallenges[matchingIndex] = currentChallenge;
       }
     }
-    notifyListeners();
-  }
-
-  set finishedChallenge(PuttingChallenge? finishedChallenge) {
-    _finishedChallenge = finishedChallenge;
     notifyListeners();
   }
 
@@ -358,7 +351,7 @@ class ChallengesRepository extends ChangeNotifier
         currentUid,
       );
 
-      _challengesService.setStorageChallenge(storageChallenge);
+      _challengesService.updateStorageChallenge(storageChallenge);
     }
     // outgoing pending challenge
     else {
@@ -385,7 +378,7 @@ class ChallengesRepository extends ChangeNotifier
         currentChallenge?.copyWith(opponentSets: updatedChallenge.opponentSets);
 
     if (currentChallenge?.recipientUser != null) {
-      await _challengesService.setStorageChallenge(
+      await _challengesService.updateStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
           currentChallenge!,
           currentUid,
@@ -416,7 +409,7 @@ class ChallengesRepository extends ChangeNotifier
     if (incomingPendingChallenges.contains(challenge)) {
       incomingPendingChallenges.remove(challenge);
       activeChallenges.add(challenge);
-      _challengesService.setStorageChallenge(
+      _challengesService.updateStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
           currentChallenge!,
           currentUid,
@@ -432,74 +425,74 @@ class ChallengesRepository extends ChangeNotifier
     currentChallenge = null;
   }
 
-  Future<bool> finishChallengeAndSync() async {
+  Future<bool> finishChallenge() async {
     final String? currentUid = _authService.getCurrentUserId();
     if (currentChallenge == null || currentUid == null) {
       return false;
-    } else {
-      final PuttingChallenge? cloudCurrentChallenge = await _challengesService
-          .getChallengeById(currentChallenge!.id, currentUid);
-
-      if (currentChallenge == null) {
-        return false;
-      }
-
-      // must check current challenge in cloud before finishing a session.
-      if (cloudCurrentChallenge == null) {
-        // logger error
-        return false;
-      }
-
-      if (cloudCurrentChallenge.status != ChallengeStatus.pending) {
-        return false;
-      }
-
-      final ChallengeStage challengeStage =
-          _challengesCubitHelper.getChallengeStage(currentChallenge!);
-
-      // both users must be complete to finish the challenge.
-      if (challengeStage != ChallengeStage.bothUsersComplete) {
-        return false;
-      }
-
-      final PuttingChallenge completedCurrentChallenge =
-          currentChallenge!.copyWith(
-        status: ChallengeStatus.complete,
-        completionTimeStamp: DateTime.now().millisecondsSinceEpoch,
-      );
-
-      final bool saveChallengeSuccess =
-          await _challengesService.setStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          completedCurrentChallenge,
-          currentUid,
-        ),
-      );
-
-      if (!saveChallengeSuccess) {
-        return false;
-      }
-
-      completedChallenges.add(completedCurrentChallenge);
-      activeChallenges = ChallengeHelpers.removeChallenges(
-        [completedCurrentChallenge],
-        activeChallenges,
-      );
-
-      currentChallenge = null;
-
-      return true;
     }
+
+    final PuttingChallenge? cloudCurrentChallenge = await _challengesService
+        .getChallengeById(currentChallenge!.id, currentUid);
+
+    // must check current challenge in cloud before finishing a session.
+    if (cloudCurrentChallenge == null) {
+      // logger error
+      return false;
+    }
+
+    if (cloudCurrentChallenge.status != ChallengeStatus.active) {
+      return false;
+    }
+
+    final ChallengeStage challengeStage =
+        _challengesCubitHelper.getChallengeStage(currentChallenge!);
+
+    // both users must be complete to finish the challenge.
+    if (challengeStage != ChallengeStage.bothUsersComplete) {
+      return false;
+    }
+
+    final PuttingChallenge completedCurrentChallenge =
+        currentChallenge!.copyWith(
+      status: ChallengeStatus.complete,
+      completionTimeStamp: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    final bool saveChallengeSuccess =
+        await _challengesService.updateStorageChallenge(
+      StoragePuttingChallenge.fromPuttingChallenge(
+        completedCurrentChallenge,
+        currentUid,
+      ),
+    );
+
+    if (!saveChallengeSuccess) {
+      return false;
+    }
+
+    if (activeChallenges.contains(currentChallenge!)) {
+      activeChallenges = ChallengeHelpers.removeChallenges(
+          [currentChallenge!], activeChallenges);
+    }
+
+    if (!completedChallenges.contains(currentChallenge!)) {
+      completedChallenges.add(currentChallenge!);
+    }
+
+    currentChallenge = completedCurrentChallenge;
+
+    return _storeChallengesInLocalDB();
   }
 
-  Future<void> addFinishedChallenge(PuttingChallenge challenge) async {
-    activeChallenges = ChallengeHelpers.removeChallenges(
-      [currentChallenge!],
-      activeChallenges,
-    );
-    completedChallenges.add(challenge);
-    finishedChallenge = challenge;
-    currentChallenge = null;
+  Future<void> moveCurrentChallengeToFinished() async {
+    if (currentChallenge == null) return;
+    if (activeChallenges.contains(currentChallenge!)) {
+      activeChallenges = ChallengeHelpers.removeChallenges(
+          [currentChallenge!], activeChallenges);
+    }
+    if (!completedChallenges.contains(currentChallenge!)) {
+      completedChallenges.add(currentChallenge!);
+    }
   }
 
   void deleteChallenge(PuttingChallenge challenge) {
@@ -518,10 +511,6 @@ class ChallengesRepository extends ChangeNotifier
   void declineChallenge(PuttingChallenge challenge) {
     incomingPendingChallenges.remove(challenge);
     _databaseService.deleteChallenge(challenge);
-  }
-
-  void deleteFinishedChallenge() {
-    finishedChallenge = null;
   }
 
   Future<bool> sendChallengeWithPreset(
@@ -549,7 +538,7 @@ class ChallengesRepository extends ChangeNotifier
     activeChallenges.add(challengeFromPreset);
 
     try {
-      return _challengesService.setStorageChallenge(
+      return _challengesService.updateStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
           challengeFromPreset,
           currentUser.uid,
@@ -580,7 +569,7 @@ class ChallengesRepository extends ChangeNotifier
             ).copyWith(status: ChallengeStatus.active);
 
             activeChallenges.add(challenge);
-            await _challengesService.setStorageChallenge(
+            await _challengesService.updateStorageChallenge(
               StoragePuttingChallenge.fromPuttingChallenge(
                 challenge,
                 currentUser.uid,

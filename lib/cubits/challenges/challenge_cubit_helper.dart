@@ -16,10 +16,9 @@ class ChallengesCubitHelper implements SingletonConsumer {
   ChallengeStage getChallengeStage(PuttingChallenge challenge) {
     final structureLength = challenge.challengeStructure.length;
     final currentUserSetsCount = challenge.currentUserSets.length;
-
     final opponentUserSetsCount = challenge.opponentSets.length;
-    if (challenge.status == ChallengeStatus.complete &&
-        _challengesRepository.finishedChallenge != null) {
+
+    if (challenge.status == ChallengeStatus.complete) {
       return ChallengeStage.finished;
     } else if ((currentUserSetsCount == opponentUserSetsCount &&
         currentUserSetsCount == structureLength)) {
