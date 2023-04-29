@@ -6,6 +6,7 @@ import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
+import 'package:myputt/utils/constants.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -25,6 +26,7 @@ class FBChallengesDataWriter {
     String challengerUid,
     Map<String, dynamic> storageChallengeJson,
     String challengeId, {
+    final Duration timeout = shortTimeout,
     final bool merge = false,
   }) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -44,7 +46,9 @@ class FBChallengesDataWriter {
       SetOptions(merge: true),
     );
 
-    return batch.commit().then((_) => true).catchError(
+    return batch.commit().then((_) => true).timeout(timeout, onTimeout: () {
+      return false;
+    }).catchError(
       (e, trace) {
         FirebaseCrashlytics.instance.recordError(
           e,

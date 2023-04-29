@@ -36,6 +36,7 @@ class ChallengesService implements SingletonConsumer {
       challengerUser.uid,
       storageChallenge.toJson(),
       storageChallenge.id,
+      timeout: tinyTimeout,
     );
   }
 
@@ -81,7 +82,7 @@ class ChallengesService implements SingletonConsumer {
     MyPuttUser? currentUser = _userRepository.currentUser;
 
     if (currentUser == null) {
-      await _userRepository.fetchCurrentUser(timeoutDuration: tinyTimeout);
+      await _userRepository.fetchCloudCurrentUser(timeoutDuration: tinyTimeout);
       currentUser = _userRepository.currentUser;
     }
 

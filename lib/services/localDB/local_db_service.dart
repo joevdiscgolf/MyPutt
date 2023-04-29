@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/localDB/constants.dart';
 
 class LocalDBService {
   final Box<dynamic> _sessionsBox = Hive.box(kSessionsBoxKey);
   final Box<dynamic> _challengesBox = Hive.box(kChallengesBoxKey);
+  final Box<dynamic> _userBox = Hive.box(kUserBoxKey);
 
   Future<bool> storeCompletedSessions(
     List<PuttingSession> completedSessions,
@@ -144,6 +146,34 @@ class LocalDBService {
       });
     } catch (e, trace) {
       log('[LocalDBService][deleteChallengesData] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  MyPuttUser? fetchCurrentUser() {
+    try {
+      final dynamic userHashmap = _userBox.get(kCurrentUserKey);
+
+      if (userHashmap == null) {
+        return null;
+      }
+
+      return MyPuttUser.fromJson(Map<String, dynamic>.from(userHashmap));
+    } catch (e, trace) {
+      log('[LocalDBService][fetchCurrentUser] ${e.toString()}');
+      log(trace.toString());
+      return null;
+    }
+  }
+
+  Future<bool> saveCurrentUser(MyPuttUser currentUser) async {
+    try {
+      return _userBox
+          .put(kCurrentUserKey, currentUser.toJson())
+          .then((_) => true);
+    } catch (e, trace) {
+      log('[LocalDBService][saveCurrentUser] ${e.toString()}');
       log(trace.toString());
       return false;
     }

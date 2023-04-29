@@ -45,6 +45,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   void initState() {
+    BlocProvider.of<MyProfileCubit>(context).reload();
     super.initState();
     _mixpanel.track('My Profile Screen Impression');
   }
@@ -89,8 +90,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               return const LoadingScreen();
             } else {
               return EmptyState(
-                  onRetry: () =>
-                      BlocProvider.of<MyProfileCubit>(context).reload());
+                onRetry: () =>
+                    BlocProvider.of<MyProfileCubit>(context).reload(),
+              );
             }
           },
         ));

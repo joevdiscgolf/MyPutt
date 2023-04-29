@@ -120,18 +120,18 @@ class ChallengesRepository extends ChangeNotifier
   set allChallenges(List<PuttingChallenge> allChallenges) {
     final String? currentUid = _authService.getCurrentUserId();
 
-    activeChallenges = allChallenges
+    _activeChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.active)
         .toList();
-    completedChallenges = allChallenges
+    _completedChallenges = allChallenges
         .where((challenge) => challenge.status == ChallengeStatus.complete)
         .toList();
-    incomingPendingChallenges = allChallenges
+    _incomingPendingChallenges = allChallenges
         .where((challenge) =>
             challenge.status == ChallengeStatus.pending &&
             currentUid != challenge.challengerUser.uid)
         .toList();
-    outgoingPendingChallenges = allChallenges
+    _outgoingPendingChallenges = allChallenges
         .where((challenge) =>
             challenge.status == ChallengeStatus.pending &&
             currentUid == challenge.challengerUser.uid)
@@ -214,10 +214,10 @@ class ChallengesRepository extends ChangeNotifier
       return;
     }
 
-    allChallenges = ChallengeHelpers.mergeSOTChallenges(
-      sotChallenges: newlySyncedChallenges,
-      allChallenges: allChallenges,
-    );
+    // allChallenges = ChallengeHelpers.mergeSOTChallenges(
+    //   sotChallenges: newlySyncedChallenges,
+    //   allChallenges: allChallenges,
+    // );
 
     // store newly synced challenges
     await _storeChallengesInLocalDB();

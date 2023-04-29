@@ -136,14 +136,14 @@ class DatabaseService {
   }
 
   Future<List<MyPuttUser>> getUsersByUsername(String username) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+    if (currentUid == null) {
       return [];
     }
     final List<MyPuttUser> users =
         await _userDataLoader.getUsersByUsername(username);
-    return users.where((user) => user.uid != currentUser.uid).toList();
+    return users.where((user) => user.uid != currentUid).toList();
   }
 
   Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {

@@ -24,9 +24,7 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
   final WebScraperService _webScraperService = locator.get<WebScraperService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
   final UserService _userService = locator.get<UserService>();
-  MyProfileCubit() : super(MyProfileInitial()) {
-    reload();
-  }
+  MyProfileCubit() : super(MyProfileInitial());
 
   void signOut() {
     emit(MyProfileInitial());
@@ -34,7 +32,7 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
 
   Future<void> reload() async {
     if (_userRepository.currentUser == null) {
-      await _userRepository.fetchCurrentUser();
+      await _userRepository.fetchCloudCurrentUser();
       if (_userRepository.currentUser == null) {
         emit(NoProfileLoaded());
         return;
@@ -84,7 +82,9 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
     if (int.tryParse(pdgaNum) != null) {
       final MyPuttUser? currentUser = _userRepository.currentUser;
       if (currentUser != null) {
-        _userRepository.currentUser?.pdgaNum = int.parse(pdgaNum);
+        _userRepository.currentUser = _userRepository.currentUser?.copyWith(
+          pdgaNum: int.parse(pdgaNum),
+        );
         final bool setUserSuccess =
             await _userService.setUserWithPayload(currentUser);
         if (setUserSuccess) {

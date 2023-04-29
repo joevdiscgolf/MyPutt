@@ -155,7 +155,7 @@ class MyPuttAuthService {
       );
     });
 
-    if (isSetUp == null || isSetUp == false) {
+    if (isSetUp != true) {
       return false;
     }
 

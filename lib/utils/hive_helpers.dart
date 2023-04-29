@@ -6,5 +6,6 @@ Future<void> initLocalDatabase() async {
   await Future.wait([
     Hive.openBox(kSessionsBoxKey),
     Hive.openBox(kChallengesBoxKey),
+    Hive.openBox(kUserBoxKey),
   ]);
 }

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -127,34 +128,65 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
   }
 
   void _sharePressed() async {
-    _mixpanel.track(
-      'Send Challenge Dialog Send Button Pressed',
-      properties: {
-        'Recipient Uid': widget.recipientUser.uid,
-        'Recipient Username': widget.recipientUser.username,
-      },
-    );
+    if (widget.preset != null) {
+      _shareChallenge(sendChallenge: () {
+        return BlocProvider.of<ChallengesCubit>(context)
+            .sendChallengeWithPreset(
+          widget.preset!,
+          widget.recipientUser,
+        );
+      }, logEvent: () {
+        _mixpanel.track(
+          'Send Challenge Dialog Share From Preset Pressed',
+          properties: {
+            'Recipient Uid': widget.recipientUser.uid,
+            'Recipient Username': widget.recipientUser.username,
+            'Preset': describeEnum(widget.preset!),
+          },
+        );
+      });
+    } else if (widget.session != null) {
+      _shareChallenge(sendChallenge: () {
+        return BlocProvider.of<ChallengesCubit>(context)
+            .sendChallengeFromSession(
+          widget.session!,
+          widget.recipientUser,
+        );
+      }, logEvent: () {
+        _mixpanel.track(
+          'Send Challenge Dialog Share From Session Pressed',
+          properties: {
+            'Recipient Uid': widget.recipientUser.uid,
+            'Recipient Username': widget.recipientUser.username,
+          },
+        );
+      });
+    }
+  }
+
+  Future<void> _shareChallenge({
+    required Future<bool> Function() sendChallenge,
+    required void Function() logEvent,
+  }) async {
     setState(() {
       _loadingState = LoadingState.loading;
     });
 
-    if (widget.preset != null) {
-      await BlocProvider.of<ChallengesCubit>(context)
-          .sendChallengeWithPreset(widget.preset!, widget.recipientUser);
-    } else if (widget.session != null) {
-      await BlocProvider.of<ChallengesCubit>(context)
-          .generateAndSendChallengeToUser(
-        widget.session!,
-        widget.recipientUser,
-      );
+    final bool sendSuccess = await sendChallenge();
+    if (!sendSuccess) {
+      setState(() {
+        _loadingState = LoadingState.static;
+      });
+      return;
     }
-    await Future.delayed(const Duration(milliseconds: 500));
+
     setState(() {
       _loadingState = LoadingState.loaded;
     });
-    Future.delayed(const Duration(milliseconds: 300), () {
-      widget.onComplete();
-      Navigator.pop(context);
-    });
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (!mounted) return;
+    widget.onComplete();
+    Navigator.pop(context);
   }
 }

@@ -35,7 +35,7 @@ class _ChallengesState extends State<ChallengesScreenV2>
     _mixpanel.track('Challenges V2 Screen Impression');
     _tabController = TabController(length: 3, vsync: this);
     _addListener();
-    BlocProvider.of<ChallengesCubit>(context).reload();
+    // BlocProvider.of<ChallengesCubit>(context).reload();
   }
 
   void _addListener() {
