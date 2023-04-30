@@ -183,12 +183,9 @@ class FBChallengesDataWriter {
   Future<bool> deleteChallengesBatch(
     List<PuttingChallenge> challengesToDelete,
   ) async {
-    return true;
     final String? uid = locator.get<FirebaseAuthService>().getCurrentUserId();
 
-    if (uid == null) {
-      return false;
-    }
+    if (uid == null) return false;
 
     final WriteBatch batch = firestore.batch();
 

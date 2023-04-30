@@ -7,7 +7,7 @@ import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/user_service.dart';
+import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
@@ -23,7 +23,6 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
 
   final WebScraperService _webScraperService = locator.get<WebScraperService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
-  final UserService _userService = locator.get<UserService>();
   MyProfileCubit() : super(MyProfileInitial());
 
   void signOut() {
@@ -31,7 +30,14 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
   }
 
   Future<void> reload() async {
-    if (_userRepository.currentUser == null) {
+    if (_userRepository.currentUser != null) {
+      emit(
+        MyProfileLoaded(
+          myUser: _userRepository.currentUser!,
+          pdgaPlayerInfo: null,
+        ),
+      );
+    } else {
       await _userRepository.fetchCloudCurrentUser();
       if (_userRepository.currentUser == null) {
         emit(NoProfileLoaded());
@@ -54,16 +60,21 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
             '[MyProfileCubit][reload] webScraperService.getPDGAData() timeout',
       );
     }
-    if (playerInfo?.rating != null &&
-        playerInfo?.rating != _userRepository.currentUser!.pdgaRating) {
-      updateUserPDGARating(playerInfo!.rating!);
+
+    if (_userRepository.currentUser == null) {
+      emit(NoProfileLoaded());
+    } else {
+      if (playerInfo?.rating != null &&
+          playerInfo?.rating != _userRepository.currentUser?.pdgaRating) {
+        updateUserPDGARating(playerInfo!.rating!);
+      }
+      emit(
+        MyProfileLoaded(
+          myUser: _userRepository.currentUser!,
+          pdgaPlayerInfo: playerInfo,
+        ),
+      );
     }
-    emit(
-      MyProfileLoaded(
-        myUser: _userRepository.currentUser!,
-        pdgaPlayerInfo: playerInfo,
-      ),
-    );
   }
 
   Future<void> updateFrisbeeAvatar(FrisbeeAvatar frisbeeAvatar) async {
@@ -85,9 +96,12 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
         _userRepository.currentUser = _userRepository.currentUser?.copyWith(
           pdgaNum: int.parse(pdgaNum),
         );
-        final bool setUserSuccess =
-            await _userService.setUserWithPayload(currentUser);
-        if (setUserSuccess) {
+        final bool updateUserSuccess =
+            await FBUserDataWriter.instance.updateUserWithPayload(
+          currentUser.uid,
+          {'pdgaNum': int.parse(pdgaNum)},
+        );
+        if (updateUserSuccess) {
           final PDGAPlayerInfo? playerInfo = await _webScraperService
               .getPDGAData(_userRepository.currentUser?.pdgaNum);
           emit(
@@ -97,7 +111,7 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
             ),
           );
         }
-        return setUserSuccess;
+        return updateUserSuccess;
       }
     }
     return false;
@@ -108,13 +122,12 @@ class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
     if (currentUser == null) {
       return;
     }
-    _userRepository.currentUser = MyPuttUser(
-        username: currentUser.username,
-        keywords: currentUser.keywords,
-        displayName: currentUser.displayName,
-        uid: currentUser.uid,
-        pdgaNum: currentUser.pdgaNum,
-        pdgaRating: rating);
-    _userService.setUserWithPayload(currentUser);
+    _userRepository.currentUser =
+        _userRepository.currentUser?.copyWith(pdgaRating: rating);
+
+    FBUserDataWriter.instance.updateUserWithPayload(
+      currentUser.uid,
+      {'pdgaRating': rating},
+    );
   }
 }

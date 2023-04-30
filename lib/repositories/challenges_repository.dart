@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
-
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
@@ -162,15 +160,6 @@ class ChallengesRepository extends ChangeNotifier
           currentChallenge!,
           cloudUpdatedChallenge,
         );
-
-        // save to cloud if current user sets have changed.
-        // if (cloudUpdatedChallenge.currentUserSets !=
-        //     currentChallenge!.currentUserSets) {
-        //   print('updating in listener');
-        //   _challengesService.setStorageChallenge(
-        //     StoragePuttingChallenge.fromPuttingChallenge(currentChallenge!),
-        //   );
-        // }
       } catch (e, trace) {
         _log(
             '[listenToCurrentChallenge] exception when parsing putting challenge: $e');
@@ -210,14 +199,14 @@ class ChallengesRepository extends ChangeNotifier
         .setChallengesBatch(newlySyncedChallenges);
 
     if (!saveSuccess) {
-      // trigger error toast
+      // error
       return;
     }
 
-    // allChallenges = ChallengeHelpers.mergeSOTChallenges(
-    //   sotChallenges: newlySyncedChallenges,
-    //   allChallenges: allChallenges,
-    // );
+    allChallenges = ChallengeHelpers.mergeSOTChallenges(
+      sotChallenges: newlySyncedChallenges,
+      allChallenges: allChallenges,
+    );
 
     // store newly synced challenges
     await _storeChallengesInLocalDB();
@@ -343,24 +332,32 @@ class ChallengesRepository extends ChangeNotifier
       currentUserSetsUpdatedAt: DateTime.now().toIso8601String(),
     );
 
+    final StoragePuttingChallenge storageChallenge =
+        StoragePuttingChallenge.fromPuttingChallenge(
+      currentChallenge!,
+      currentUid,
+    );
+
     // active challenge
     if (currentChallenge?.recipientUser != null) {
-      final StoragePuttingChallenge storageChallenge =
-          StoragePuttingChallenge.fromPuttingChallenge(
-        currentChallenge!,
-        currentUid,
-      );
+      final bool updateChallengeSuccess =
+          await _challengesService.updateStorageChallenge(storageChallenge);
 
-      _challengesService.updateStorageChallenge(storageChallenge);
+      if (updateChallengeSuccess &&
+          currentChallenge != null &&
+          currentChallenge!.id == storageChallenge.id) {
+        currentChallenge = currentChallenge?.copyWith(isSynced: true);
+      }
     }
     // outgoing pending challenge
     else {
-      _challengesService.setUnclaimedChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          currentChallenge!,
-          currentUid,
-        ),
-      );
+      final bool setChallengeSuccess =
+          await _challengesService.setUnclaimedChallenge(storageChallenge);
+      if (setChallengeSuccess &&
+          currentChallenge != null &&
+          currentChallenge!.id == storageChallenge.id) {
+        currentChallenge = currentChallenge?.copyWith(isSynced: true);
+      }
     }
     _storeChallengesInLocalDB();
     notifyListeners();

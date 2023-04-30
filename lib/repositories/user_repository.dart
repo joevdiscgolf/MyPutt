@@ -7,9 +7,9 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/protocols/repository.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
+import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/services/localDB/local_db_service.dart';
-import 'package:myputt/services/user_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 
@@ -18,7 +18,6 @@ class UserRepository extends ChangeNotifier
   @override
   void initSingletons() {
     _authService = locator.get<FirebaseAuthService>();
-    _userService = locator.get<UserService>();
     _localDBService = locator.get<LocalDBService>();
   }
 
@@ -37,7 +36,6 @@ class UserRepository extends ChangeNotifier
   }
 
   late final FirebaseAuthService _authService;
-  late final UserService _userService;
   late final LocalDBService _localDBService;
 
   bool fetchLocalCurrentUser() {
@@ -79,7 +77,10 @@ class UserRepository extends ChangeNotifier
   Future<bool> updateUserAvatar(FrisbeeAvatar frisbeeAvatar) async {
     if (currentUser == null) return false;
     currentUser = currentUser!.copyWith(frisbeeAvatar: frisbeeAvatar);
-    return _userService.setUserWithPayload(currentUser!);
+    return FBUserDataWriter.instance.updateUserWithPayload(
+      currentUser!.uid,
+      {'frisbeeAvatar': frisbeeAvatar.toJson()},
+    );
   }
 
   Future<bool> _saveCurrentUserInLocalDb() async {

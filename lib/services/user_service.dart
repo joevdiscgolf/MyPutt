@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
-import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/services/myputt_auth_service.dart';
 import 'package:myputt/utils/constants.dart';
@@ -10,8 +9,6 @@ import 'package:myputt/utils/constants.dart';
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class UserService {
-  final FBUserDataWriter _userDataWriter = FBUserDataWriter();
-
   Future<bool> deleteUser(MyPuttUser user) async {
     final MyPuttAuthService _myPuttAuthService =
         locator.get<MyPuttAuthService>();
@@ -55,9 +52,5 @@ class UserService {
     } else {
       return false;
     }
-  }
-
-  Future<bool> setUserWithPayload(MyPuttUser user) {
-    return _userDataWriter.setUserWithPayload(user);
   }
 }
