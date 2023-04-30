@@ -140,7 +140,8 @@ class ChallengesRepository extends ChangeNotifier
   void _listenToCurrentChallenge(PuttingChallenge challenge) {
     _currentChallengeSubscription = FirebaseFirestore.instance
         .doc(
-            '$challengesCollection/${challenge.currentUser.uid}/$challengesCollection/${challenge.id}')
+          '$challengesCollection/${challenge.currentUser.uid}/$challengesCollection/${challenge.id}',
+        )
         .snapshots()
         .listen((snapshot) {
       if (snapshot.data() == null || currentChallenge == null) {
@@ -284,11 +285,6 @@ class ChallengesRepository extends ChangeNotifier
       _log(
         '[fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess',
       );
-      if (!localSaveSuccess) {
-        _log(
-          '[fetchCloudChallenges] Failed to save new cloud challenges in local DB',
-        );
-      }
     }
 
     // challenges deleted locally must be deleted in the cloud then removed from local storage.
@@ -305,12 +301,13 @@ class ChallengesRepository extends ChangeNotifier
           challengesDeletedLocally,
           allChallenges,
         );
-        final bool localSaveSuccess = await _storeChallengesInLocalDB();
-        _log(
-          '[fetchCloudChallenges] removed challenges locally - success: $localSaveSuccess',
-        );
       }
     }
+
+    final bool localSaveSuccess = await _storeChallengesInLocalDB();
+    _log(
+      '[fetchCloudChallenges] saved current challenges locally - success: $localSaveSuccess',
+    );
 
     return true;
   }

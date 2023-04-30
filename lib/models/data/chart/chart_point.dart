@@ -10,8 +10,3 @@ class ChartPoint {
   final int distance;
   final double decimal;
 }
-
-class PerformanceChartData {
-  PerformanceChartData({required this.points});
-  final List<ChartPoint> points;
-}

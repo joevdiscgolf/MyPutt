@@ -224,8 +224,7 @@ abstract class ChallengeHelpers {
 
     final List<PuttingChallenge> syncedLocalChallenges =
         localChallenges.where((localChallenge) {
-      return true;
-      // return localChallenge.isSynced == true;
+      return localChallenge.isSynced == true;
     }).toList();
 
     // challenge has been deleted in the cloud if the synced local challenge exists, but not the cloud challenge.

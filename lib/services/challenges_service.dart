@@ -37,6 +37,7 @@ class ChallengesService implements SingletonConsumer {
       storageChallenge.toJson(),
       storageChallenge.id,
       timeout: tinyTimeout,
+      merge: false,
     );
   }
 
@@ -72,6 +73,7 @@ class ChallengesService implements SingletonConsumer {
       challengerUser.uid,
       storageChallengeJson,
       storageChallenge.id,
+      merge: true,
     );
   }
 

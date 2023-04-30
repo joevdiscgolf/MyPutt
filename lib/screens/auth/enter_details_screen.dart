@@ -12,8 +12,6 @@ import 'package:myputt/locator.dart';
 
 enum UsernameStatus { none, available, unavailable, checking }
 
-enum HeaderType { username, displayName, pdgaNumber }
-
 class EnterDetailsScreen extends StatefulWidget {
   const EnterDetailsScreen({Key? key}) : super(key: key);
 

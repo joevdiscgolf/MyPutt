@@ -17,8 +17,6 @@ enum ChallengePreset {
   none,
 }
 
-enum ConditionsType { wind, weather, distance }
-
 enum WeatherCondition {
   @JsonValue('Sunny')
   sunny,
@@ -31,17 +29,6 @@ enum WeatherCondition {
 enum Circles {
   circle1,
   circle2,
-}
-
-enum LoginState { loggedIn, setup, none, forceUpgrade, error }
-
-enum AppScreenState {
-  loggedIn,
-  notLoggedIn,
-  setup,
-  firstRun,
-  forceUpgrade,
-  connectionError,
 }
 
 enum FrisbeeIconColor {
