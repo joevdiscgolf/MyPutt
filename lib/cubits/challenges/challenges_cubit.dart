@@ -11,7 +11,6 @@ import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
@@ -41,7 +40,6 @@ class ChallengesCubit extends Cubit<ChallengesState>
   void initSingletons() {
     _challengesRepository = locator.get<ChallengesRepository>();
     _userRepository = locator.get<UserRepository>();
-    _challengesService = locator.get<ChallengesService>();
     _dynamicLinkService = locator.get<DynamicLinkService>();
     _presetsRepository = locator.get<PresetsRepository>();
     _challengesCubitHelper = locator.get<ChallengesCubitHelper>();
@@ -75,7 +73,6 @@ class ChallengesCubit extends Cubit<ChallengesState>
 
   late final ChallengesRepository _challengesRepository;
   late final UserRepository _userRepository;
-  late final ChallengesService _challengesService;
   late final DynamicLinkService _dynamicLinkService;
   late final PresetsRepository _presetsRepository;
   late final ChallengesCubitHelper _challengesCubitHelper;
@@ -108,10 +105,6 @@ class ChallengesCubit extends Cubit<ChallengesState>
       _challengesRepository.currentChallenge!,
     )) {
       _challengesRepository.addSet(set);
-      emit(
-        _challengesCubitHelper
-            .getStateFromChallenge(_challengesRepository.currentChallenge!),
-      );
     }
   }
 
@@ -122,32 +115,6 @@ class ChallengesCubit extends Cubit<ChallengesState>
       _challengesRepository.deleteSet(currentUserSets.last);
     }
   }
-
-  // void updateIncomingChallenge(Object? rawObject) {
-  //   final Map<String, dynamic>? data = rawObject as Map<String, dynamic>?;
-  //   final MyPuttUser? currentUser = _userRepository.currentUserf;
-  //   if (data != null && currentUser != null) {
-  //     final StoragePuttingChallenge storageChallenge =
-  //         StoragePuttingChallenge.fromJson(data);
-  //     final PuttingChallenge challenge =
-  //         PuttingChallenge.fromStorageChallenge(storageChallenge, currentUser);
-  //     if (_challengesRepository.currentChallenge != null) {
-  //       if (challenge.status == ChallengeStatus.complete &&
-  //           _challengesRepository.currentChallenge!.status !=
-  //               ChallengeStatus.complete) {
-  //         _challengesRepository.addFinishedChallenge(challenge);
-  //         emit(
-  //           _challengesCubitHelper.currentChallengeWithStage(
-  //             ChallengeStage.finished,
-  //           ),
-  //         );
-  //       } else {
-  //         _challengesRepository.currentChallenge = challenge;
-  //         emit(_challengesCubitHelper.getStateFromChallenge(challenge));
-  //       }
-  //     }
-  //   }
-  // }
 
   Future<void> finishChallenge() async {
     if (_challengesRepository.currentChallenge == null) return;
@@ -191,34 +158,59 @@ class ChallengesCubit extends Cubit<ChallengesState>
       currentUser = _userRepository.currentUser;
     }
 
-    if (currentUser == null) return false;
+    if (currentUser == null) {
+      _toastService.triggerErrorToast("Couldn't send challenge, try again.");
+      return false;
+    }
 
-    final generatedChallenge = StoragePuttingChallenge.fromSession(
+    final PuttingChallenge challengeFromSession = PuttingChallenge.fromSession(
       session,
       currentUser,
       opponentUser: recipientUser,
     );
-    final bool success =
-        await _challengesService.setInitialStorageChallenge(generatedChallenge);
 
-    if (!success) {
+    final bool sendSuccess = await _challengesRepository.sendChallenge(
+      challengeFromSession,
+      currentUser.uid,
+    );
+
+    if (!sendSuccess) {
       _toastService.triggerErrorToast("Couldn't send challenge, try again.");
     }
-    return success;
+    return sendSuccess;
   }
 
   Future<bool> sendChallengeWithPreset(
     ChallengePreset challengePreset,
     MyPuttUser recipientUser,
   ) async {
-    final bool success = await _challengesRepository.sendChallengeWithPreset(
+    MyPuttUser? currentUser = _userRepository.currentUser;
+
+    if (currentUser == null) {
+      await _userRepository.fetchCloudCurrentUser();
+      currentUser = _userRepository.currentUser;
+    }
+
+    if (currentUser == null) {
+      _toastService.triggerErrorToast("Couldn't send challenge, try again.");
+      return false;
+    }
+
+    final PuttingChallenge challenge = ChallengeHelpers.getChallengeFromPreset(
       challengePreset,
+      currentUser,
       recipientUser,
     );
-    if (!success) {
+
+    final bool sendSuccess = await _challengesRepository.sendChallenge(
+      challenge,
+      currentUser.uid,
+    );
+
+    if (!sendSuccess) {
       _toastService.triggerErrorToast("Couldn't send challenge, try again.");
     }
-    return success;
+    return sendSuccess;
   }
 
   Future<String?> getShareMessageFromSession(PuttingSession session) async {

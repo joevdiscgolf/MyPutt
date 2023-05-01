@@ -9,8 +9,7 @@ import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
-import 'package:myputt/protocols/singleton_consumer.dart';
-import 'package:myputt/protocols/repository.dart';
+import 'package:myputt/protocols/myputt_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/services/challenges_service.dart';
 import 'package:myputt/services/database_service.dart';
@@ -21,10 +20,8 @@ import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
-import 'package:myputt/utils/enums.dart';
 
-class ChallengesRepository extends ChangeNotifier
-    implements SingletonConsumer, MyPuttRepository {
+class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
   @override
   void initSingletons() {
     _databaseService = locator.get<DatabaseService>();
@@ -502,47 +499,50 @@ class ChallengesRepository extends ChangeNotifier
     }
   }
 
-  void declineChallenge(PuttingChallenge challenge) {
-    incomingPendingChallenges.remove(challenge);
-    _databaseService.deleteChallenge(challenge);
-  }
-
-  Future<bool> sendChallengeWithPreset(
-    ChallengePreset challengePreset,
-    MyPuttUser recipientUser,
+  Future<bool> sendChallenge(
+    PuttingChallenge challenge,
+    String currentUid,
   ) async {
-    final MyPuttUser? currentUser = _userRepository.currentUser;
-    if (currentUser == null) return false;
-
-    final PuttingChallenge? challengeFromPreset =
-        ChallengeHelpers.getChallengeFromPreset(
-      challengePreset,
-      currentUser,
-      recipientUser,
+    final bool saveToCloudSuccess =
+        await _challengesService.setInitialStorageChallenge(
+      StoragePuttingChallenge.fromPuttingChallenge(challenge, currentUid),
     );
 
-    if (challengeFromPreset == null) {
-      _log(
-        '[sendChallengeWithPreset] Failed to generate challenge from preset',
-      );
+    if (!saveToCloudSuccess) {
+      _log('[sendChallenge] Failed to save challenge to cloud');
       return false;
     }
 
-    currentChallenge = challengeFromPreset;
-    activeChallenges.add(challengeFromPreset);
+    activeChallenges.add(challenge);
 
-    try {
-      return _challengesService.updateStorageChallenge(
-        StoragePuttingChallenge.fromPuttingChallenge(
-          challengeFromPreset,
-          currentUser.uid,
-        ),
-      );
-    } catch (e, trace) {
-      log('[sendChallengeWithPreset] Failed to generate storage challenge: $e');
-      log(trace.toString());
-      return false;
+    final bool localSaveSuccess = await _storeChallengesInLocalDB();
+
+    if (!localSaveSuccess) {
+      _log('[sendChallenge] Failed to save challenge to local DB');
     }
+
+    return localSaveSuccess;
+  }
+
+  Future<bool> declineChallenge(PuttingChallenge challenge) async {
+    incomingPendingChallenges = ChallengeHelpers.removeChallenges(
+      [challenge],
+      incomingPendingChallenges,
+    );
+    final bool deleteSuccess =
+        await _challengesService.deleteChallenge(challenge);
+
+    if (!deleteSuccess) {
+      _log('[declineChallenge] Failed to delete challenge in cloud');
+    }
+
+    final bool localSaveSuccess = await _storeChallengesInLocalDB();
+
+    if (!localSaveSuccess) {
+      _log('[declineChallenge] Failed to save challenges to local DB');
+    }
+
+    return localSaveSuccess;
   }
 
   Future<void> addDeepLinkChallenges() async {

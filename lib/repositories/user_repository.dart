@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/protocols/repository.dart';
-import 'package:myputt/protocols/singleton_consumer.dart';
+import 'package:myputt/protocols/myputt_repository.dart';
 import 'package:myputt/services/firebase/user_data_loader.dart';
 import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
@@ -13,8 +12,7 @@ import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 
-class UserRepository extends ChangeNotifier
-    implements SingletonConsumer, MyPuttRepository {
+class UserRepository extends ChangeNotifier implements MyPuttRepository {
   @override
   void initSingletons() {
     _authService = locator.get<FirebaseAuthService>();

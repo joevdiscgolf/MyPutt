@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/protocols/repository.dart';
-import 'package:myputt/protocols/singleton_consumer.dart';
+import 'package:myputt/protocols/myputt_repository.dart';
 import 'package:myputt/services/database_service.dart';
 import 'package:myputt/services/device_service.dart';
 import 'package:myputt/services/firebase/sessions_data_writers.dart';
@@ -16,8 +15,7 @@ import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
 import 'package:myputt/utils/session_helpers.dart';
 
-class SessionsRepository extends ChangeNotifier
-    implements SingletonConsumer, MyPuttRepository {
+class SessionsRepository extends ChangeNotifier implements MyPuttRepository {
   @override
   void initSingletons() {
     _databaseService = locator.get<DatabaseService>();

@@ -1,9 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
+import 'package:myputt/utils/challenge_helpers.dart';
+import 'package:myputt/utils/constants.dart';
 part 'putting_challenge.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
@@ -95,6 +98,27 @@ class PuttingChallenge extends Equatable {
       opponentSetsUpdatedAt: opponentSetsUpdatedAt,
       challengerSetsUpdatedAt: storageChallenge.challengerSetsUpdatedAt,
       recipientSetsUpdatedAt: storageChallenge.recipientSetsUpdatedAt,
+    );
+  }
+  factory PuttingChallenge.fromSession(
+    PuttingSession session,
+    MyPuttUser currentUser, {
+    MyPuttUser? opponentUser,
+  }) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    return PuttingChallenge(
+      status: ChallengeStatus.pending,
+      creationTimeStamp: now,
+      id: session.id,
+      currentUser: currentUser,
+      opponentUser: opponentUser,
+      challengerUser: currentUser,
+      recipientUser: opponentUser,
+      challengeStructure:
+          ChallengeHelpers.challengeStructureFromSession(session),
+      opponentSets: const [],
+      currentUserSets: const [],
+      isSynced: true,
     );
   }
 

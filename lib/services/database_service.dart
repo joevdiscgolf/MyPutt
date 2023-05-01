@@ -153,7 +153,9 @@ class DatabaseService {
       return false;
     }
     return _challengesDataWriter.deleteChallenge(
-        currentUser.uid, challengeToDelete);
+      currentUser.uid,
+      challengeToDelete,
+    );
   }
 
   Future<bool> updatePlayerSets(String eventId, List<PuttingSet> sets) async {

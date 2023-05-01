@@ -103,4 +103,15 @@ class ChallengesService implements SingletonConsumer {
     return FBChallengesDataWriter.instance
         .uploadUnclaimedChallenge(storageChallenge);
   }
+
+  Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {
+    final String? currentUid =
+        locator.get<FirebaseAuthService>().getCurrentUserId();
+
+    if (currentUid == null) return false;
+    return FBChallengesDataWriter.instance.deleteChallenge(
+      currentUid,
+      challengeToDelete,
+    );
+  }
 }
