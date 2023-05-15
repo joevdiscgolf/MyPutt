@@ -61,6 +61,7 @@ class SessionsRepository extends ChangeNotifier implements MyPuttRepository {
     final int now = DateTime.now().millisecondsSinceEpoch;
 
     final PuttingSession newSession = PuttingSession(
+      sets: [],
       timeStamp: now,
       id: '$currentUid~$now',
       deviceId: deviceId,
@@ -92,8 +93,24 @@ class SessionsRepository extends ChangeNotifier implements MyPuttRepository {
       currentSession?.sets.remove(set);
 
       _storeCurrentSessionInLocalDB();
-      FBSessionsDataWriter.instance
-          .setCurrentSession(currentSession!, merge: true);
+    }
+  }
+
+  Future<void> onSetsChanged() async {
+    final bool cloudSaveSuccess = await FBSessionsDataWriter.instance
+        .setCurrentSession(currentSession!, merge: true);
+
+    if (!cloudSaveSuccess) {
+      _log('[onSetsChanged] Failed to save session to cloud');
+      return;
+    }
+
+    currentSession = currentSession?.copyWith(isSynced: true);
+
+    final bool localSaveSuccess = await _storeCurrentSessionInLocalDB();
+    if (!cloudSaveSuccess) {
+      _log('[onSetsChanged] Failed to save current session to local DB');
+      return;
     }
   }
 

@@ -9,12 +9,13 @@ part of 'putting_session.dart';
 PuttingSession _$PuttingSessionFromJson(Map json) => PuttingSession(
       id: json['id'] as String,
       timeStamp: json['timeStamp'] as int,
+      sets: (json['sets'] as List<dynamic>)
+          .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
       isSynced: json['isSynced'] as bool? ?? false,
       deviceId: json['deviceId'] as String?,
       isDeleted: json['isDeleted'] as bool?,
-    )..sets = (json['sets'] as List<dynamic>)
-        .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
-        .toList();
+    );
 
 Map<String, dynamic> _$PuttingSessionToJson(PuttingSession instance) =>
     <String, dynamic>{

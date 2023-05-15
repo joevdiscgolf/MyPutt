@@ -5,9 +5,10 @@ part 'putting_session.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class PuttingSession {
-  PuttingSession({
+  const PuttingSession({
     required this.id,
     required this.timeStamp,
+    required this.sets,
     this.isSynced = false,
     this.deviceId,
     this.isDeleted,
@@ -15,7 +16,7 @@ class PuttingSession {
 
   final String id;
   final int timeStamp;
-  List<PuttingSet> sets = [];
+  final List<PuttingSet> sets;
   final bool? isSynced;
   final String? deviceId;
   final bool? isDeleted;
@@ -38,6 +39,24 @@ class PuttingSession {
 
   void addSet(PuttingSet set) {
     sets.add(set);
+  }
+
+  PuttingSession copyWith({
+    String? id,
+    int? timeStamp,
+    List<PuttingSet>? sets,
+    bool? isSynced,
+    String? deviceId,
+    bool? isDeleted,
+  }) {
+    return PuttingSession(
+      id: id ?? this.id,
+      timeStamp: timeStamp ?? this.timeStamp,
+      sets: sets ?? this.sets,
+      isSynced: isSynced ?? this.isSynced,
+      isDeleted: isDeleted ?? this.isDeleted,
+      deviceId: deviceId ?? this.deviceId,
+    );
   }
 
   factory PuttingSession.fromJson(Map<String, dynamic> json) =>
