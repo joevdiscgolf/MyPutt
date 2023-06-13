@@ -33,7 +33,7 @@ class PerformanceChart extends StatelessWidget {
           fitInsideHorizontally: true,
           fitInsideVertically: true,
           showOnTopOfTheChartBoxArea: true,
-          tooltipBgColor: Colors.grey[100],
+          tooltipBgColor: Colors.grey[100]!,
           getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
             return touchedBarSpots.map((barSpot) {
               final flSpot = barSpot;
@@ -48,16 +48,17 @@ class PerformanceChart extends StatelessWidget {
           },
         ),
       ),
-      clipData: FlClipData(bottom: true, left: true, top: true, right: true),
-      axisTitleData: FlAxisTitleData(
-        leftTitle: AxisTitle(
-          margin: 0,
-          textAlign: TextAlign.center,
-          showTitle: false,
-          titleText: '%',
-        ),
-      ),
-      gridData: FlGridData(
+      clipData:
+          const FlClipData(bottom: true, left: true, top: true, right: true),
+      // axisTitleData: FlAxisTitleData(
+      //   leftTitle: AxisTitle(
+      //     margin: 0,
+      //     textAlign: TextAlign.center,
+      //     showTitle: false,
+      //     titleText: '%',
+      //   ),
+      // ),
+      gridData: const FlGridData(
         show: true,
         drawHorizontalLine: true,
         horizontalInterval: 20,
@@ -79,10 +80,10 @@ class PerformanceChart extends StatelessWidget {
               .toList(),
           isCurved: true,
           curveSmoothness: 0.1,
-          colors: [MyPuttColors.darkBlue],
+          color: MyPuttColors.darkBlue,
           barWidth: 3,
           isStrokeCapRound: true,
-          dotData: FlDotData(show: false),
+          dotData: const FlDotData(show: false),
         ),
       ],
     );
@@ -91,26 +92,33 @@ class PerformanceChart extends StatelessWidget {
 
 class LineTitles {
   static getTitleData() => FlTitlesData(
-      topTitles: SideTitles(showTitles: false),
-      bottomTitles: SideTitles(
-        showTitles: false,
+      topTitles: const AxisTitles(
+        sideTitles: SideTitles(showTitles: false),
       ),
-      leftTitles: SideTitles(
+      bottomTitles: const AxisTitles(
+        sideTitles: SideTitles(
           showTitles: false,
-          getTextStyles: (value, context) => const TextStyle(
-                fontSize: 10,
-              ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 0:
-                return '0';
-              case 50:
-                return '50';
-              case 100:
-                return '100';
-              default:
-                return '';
-            }
-          }),
-      rightTitles: SideTitles(showTitles: false));
+        ),
+      ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+          // getTextStyles: (value, context) => const TextStyle(
+          //   fontSize: 10,
+          // ),
+          // getTitles: (value) {
+          //   switch (value.toInt()) {
+          //     case 0:
+          //       return '0';
+          //     case 50:
+          //       return '50';
+          //     case 100:
+          //       return '100';
+          //     default:
+          //       return '';
+          //   }
+          // },
+        ),
+      ),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)));
 }

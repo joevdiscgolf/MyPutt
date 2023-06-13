@@ -4,6 +4,7 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state_chart/empty_chart_points.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -69,16 +70,17 @@ class EmptyStateChart extends StatelessWidget {
 
   LineChartData mainData(BuildContext context) {
     return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      clipData: FlClipData(bottom: true, left: true, top: true, right: true),
-      axisTitleData: FlAxisTitleData(
-          leftTitle: AxisTitle(
-        margin: 0,
-        textAlign: TextAlign.center,
-        showTitle: false,
-        titleText: '%',
-      )),
-      gridData: FlGridData(show: false),
+      lineTouchData: const LineTouchData(enabled: false),
+      clipData:
+          const FlClipData(bottom: true, left: true, top: true, right: true),
+      // axisTitleData: FlAxisTitleData(
+      //     leftTitle: AxisTitle(
+      //   margin: 0,
+      //   textAlign: TextAlign.center,
+      //   showTitle: false,
+      //   titleText: '%',
+      // )),
+      gridData: const FlGridData(show: false),
       titlesData: LineTitles.getTitleData(),
       borderData: FlBorderData(show: false),
       minX: 0,
@@ -98,38 +100,38 @@ class EmptyStateChart extends StatelessWidget {
               )
               .toList(),
           isCurved: true,
-          colors: [MyPuttColors.darkBlue.withOpacity(0.2)],
+          color: MyPuttColors.darkBlue.withOpacity(0.2),
           barWidth: 3,
           isStrokeCapRound: true,
-          dotData: FlDotData(show: false),
+          dotData: const FlDotData(show: false),
         ),
       ],
     );
   }
 }
 
-class LineTitles {
-  static getTitleData() => FlTitlesData(
-      topTitles: SideTitles(showTitles: false),
-      bottomTitles: SideTitles(
-        showTitles: false,
-      ),
-      leftTitles: SideTitles(
-          showTitles: false,
-          getTextStyles: (value, context) => const TextStyle(
-                fontSize: 10,
-              ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 0:
-                return '0';
-              case 50:
-                return '50';
-              case 100:
-                return '100';
-              default:
-                return '';
-            }
-          }),
-      rightTitles: SideTitles(showTitles: false));
-}
+// class LineTitles {
+//   static getTitleData() => FlTitlesData(
+//       topTitles: SideTitles(showTitles: false),
+//       bottomTitles: SideTitles(
+//         showTitles: false,
+//       ),
+//       leftTitles: SideTitles(
+//           showTitles: false,
+//           getTextStyles: (value, context) => const TextStyle(
+//                 fontSize: 10,
+//               ),
+//           getTitles: (value) {
+//             switch (value.toInt()) {
+//               case 0:
+//                 return '0';
+//               case 50:
+//                 return '50';
+//               case 100:
+//                 return '100';
+//               default:
+//                 return '';
+//             }
+//           }),
+//       rightTitles: SideTitles(showTitles: false));
+// }

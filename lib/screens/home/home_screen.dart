@@ -63,7 +63,7 @@ class HomeScreenState extends State<HomeScreen>
               controller: _calendarChartTabController,
               children: const [
                 StatsView(),
-                CalendarView(),
+                // CalendarView(),
               ],
             ),
           )
