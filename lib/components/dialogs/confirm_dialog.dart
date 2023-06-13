@@ -24,7 +24,7 @@ class ConfirmDialog extends StatefulWidget {
   final Color buttonColor;
 
   @override
-  _ConfirmDialogState createState() => _ConfirmDialogState();
+  State<ConfirmDialog> createState() => _ConfirmDialogState();
 }
 
 class _ConfirmDialogState extends State<ConfirmDialog> {

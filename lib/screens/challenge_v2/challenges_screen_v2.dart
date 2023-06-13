@@ -18,7 +18,7 @@ class ChallengesScreenV2 extends StatefulWidget {
   static String routeName = '/challenges_v2_screen';
 
   @override
-  _ChallengesState createState() => _ChallengesState();
+  State<ChallengesScreenV2> createState() => _ChallengesState();
 }
 
 class _ChallengesState extends State<ChallengesScreenV2>

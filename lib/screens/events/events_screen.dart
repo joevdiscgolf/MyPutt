@@ -29,7 +29,7 @@ class EventsScreen extends StatefulWidget {
   static String routeName = '/events_screen';
 
   @override
-  _EventsState createState() => _EventsState();
+  State<EventsScreen> createState() => _EventsState();
 }
 
 class _EventsState extends State<EventsScreen>

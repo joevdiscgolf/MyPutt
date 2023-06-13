@@ -14,7 +14,7 @@ class ChallengeSummaryScreen extends StatefulWidget {
   final PuttingChallenge challenge;
 
   @override
-  _ChallengeSummaryScreenState createState() => _ChallengeSummaryScreenState();
+  State<ChallengeSummaryScreen> createState() => _ChallengeSummaryScreenState();
 }
 
 class _ChallengeSummaryScreenState extends State<ChallengeSummaryScreen> {

@@ -23,7 +23,7 @@ class PuttsMadePicker extends StatefulWidget {
   final double height;
 
   @override
-  _PuttsMadePickerState createState() => _PuttsMadePickerState();
+  State<PuttsMadePicker> createState() => _PuttsMadePickerState();
 }
 
 class _PuttsMadePickerState extends State<PuttsMadePicker> {

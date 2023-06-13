@@ -32,7 +32,7 @@ class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
 
   @override
-  _MyProfileScreenState createState() => _MyProfileScreenState();
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {

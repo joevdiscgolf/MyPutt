@@ -17,7 +17,7 @@ class ExitEventDialog extends StatefulWidget {
   final Function onEventExit;
 
   @override
-  _ExitEventDialogState createState() => _ExitEventDialogState();
+  State<ExitEventDialog> createState() => _ExitEventDialogState();
 }
 
 class _ExitEventDialogState extends State<ExitEventDialog> {
@@ -113,6 +113,7 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
     if (success) {
       widget.onEventExit();
     }
+    if (!mounted) return;
     Navigator.of(context).pop();
     setState(() => _loading = false);
   }

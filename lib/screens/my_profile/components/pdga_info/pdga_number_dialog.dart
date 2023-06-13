@@ -11,7 +11,7 @@ class PdgaNumberDialog extends StatefulWidget {
   final Function onSubmit;
 
   @override
-  _PdgaNumberDialogState createState() => _PdgaNumberDialogState();
+  State<PdgaNumberDialog> createState() => _PdgaNumberDialogState();
 }
 
 class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
@@ -77,7 +77,8 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
               setState(() {
                 _loading = true;
               });
-              if (await widget.onSubmit(_pdgaNum)) {
+              final bool submitSuccess = await widget.onSubmit(_pdgaNum);
+              if (submitSuccess && mounted) {
                 Navigator.pop(context);
               }
               setState(() {

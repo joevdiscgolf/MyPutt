@@ -204,7 +204,7 @@ class AnimatedIcon extends StatefulWidget {
   final IconData iconData;
 
   @override
-  _AnimatedIconState createState() => _AnimatedIconState();
+  State<AnimatedIcon> createState() => _AnimatedIconState();
 }
 
 class _AnimatedIconState extends State<AnimatedIcon>

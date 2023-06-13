@@ -108,7 +108,8 @@ class SessionsRepository extends ChangeNotifier implements MyPuttRepository {
     currentSession = currentSession?.copyWith(isSynced: true);
 
     final bool localSaveSuccess = await _storeCurrentSessionInLocalDB();
-    if (!cloudSaveSuccess) {
+
+    if (!localSaveSuccess) {
       _log('[onSetsChanged] Failed to save current session to local DB');
       return;
     }

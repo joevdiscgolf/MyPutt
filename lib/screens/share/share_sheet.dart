@@ -21,7 +21,7 @@ class ShareSheet extends StatefulWidget {
   final ChallengePreset? preset;
 
   @override
-  _ShareSheetState createState() => _ShareSheetState();
+  State<ShareSheet> createState() => _ShareSheetState();
 }
 
 class _ShareSheetState extends State<ShareSheet> {

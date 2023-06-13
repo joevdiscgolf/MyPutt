@@ -29,7 +29,7 @@ class SendChallengeDialog extends StatefulWidget {
   final ChallengePreset? preset;
 
   @override
-  _SendChallengeDialogState createState() => _SendChallengeDialogState();
+  State<SendChallengeDialog> createState() => _SendChallengeDialogState();
 }
 
 class _SendChallengeDialogState extends State<SendChallengeDialog> {

@@ -22,7 +22,7 @@ class SessionsScreen extends StatefulWidget {
   static String routeName = '/sessions_screen';
 
   @override
-  _SessionsState createState() => _SessionsState();
+  State<SessionsScreen> createState() => _SessionsState();
 }
 
 class _SessionsState extends State<SessionsScreen> {
