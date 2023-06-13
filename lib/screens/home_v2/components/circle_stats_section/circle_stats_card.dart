@@ -24,7 +24,7 @@ class CircleStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     DistanceHelpers.getPrimaryDistanceInterval({});
     final List<PuttingSet> allSetsInCircle =
-        getPuttingSetsFromIntervals(intervalToPuttingSetsData);
+        SetHelpers.getPuttingSetsFromIntervals(intervalToPuttingSetsData);
 
     return Bounceable(
       onTap: () {
@@ -64,7 +64,7 @@ class CircleStatsCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${allSetsInCircle.isEmpty ? '--' : (percentageFromSets(allSetsInCircle) * 100).toInt()}%',
+                        '${allSetsInCircle.isEmpty ? '--' : (SetHelpers.percentageFromSets(allSetsInCircle) * 100).toInt()}%',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: MyPuttColors.blue,
                               fontWeight: FontWeight.w600,

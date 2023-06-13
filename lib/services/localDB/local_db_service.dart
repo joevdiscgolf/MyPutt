@@ -1,11 +1,15 @@
 import 'dart:developer';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/localDB/constants.dart';
 
 class LocalDBService {
   final Box<dynamic> _sessionsBox = Hive.box(kSessionsBoxKey);
+  final Box<dynamic> _challengesBox = Hive.box(kChallengesBoxKey);
+  final Box<dynamic> _userBox = Hive.box(kUserBoxKey);
 
   Future<bool> storeCompletedSessions(
     List<PuttingSession> completedSessions,
@@ -17,7 +21,9 @@ class LocalDBService {
             completedSessions.map((session) => session.toJson()).toList(),
           )
           .then((_) => true);
-    } catch (e) {
+    } catch (e, trace) {
+      log('[LocalDBService][storeCompletedSessions] ${e.toString()}');
+      log(trace.toString());
       return false;
     }
   }
@@ -42,8 +48,9 @@ class LocalDBService {
       }
 
       return puttingSessions;
-    } catch (e) {
-      log(e.toString());
+    } catch (e, trace) {
+      log('[LocalDBService][retrieveCompletedSessions] ${e.toString()}');
+      log(trace.toString());
       return null;
     }
   }
@@ -58,7 +65,7 @@ class LocalDBService {
         return _sessionsBox.delete(kCurrentSessionKey).then((_) => true);
       }
     } catch (e, trace) {
-      log(e.toString());
+      log('[LocalDBService][storeCurrentSession] ${e.toString()}');
       log(trace.toString());
       return false;
     }
@@ -71,18 +78,103 @@ class LocalDBService {
         return null;
       }
       return PuttingSession.fromJson(Map<String, dynamic>.from(hashMap));
-    } catch (e) {
+    } catch (e, trace) {
+      log('[LocalDBService][retrieveCurrentSession] ${e.toString()}');
+      log(trace.toString());
       return null;
     }
   }
 
-  Future<bool> deleteAllSessions() async {
+  Future<bool> deleteSessionsData() async {
     try {
       return _sessionsBox.deleteAll(_sessionsBox.keys).then((_) async {
         return true;
       });
-    } catch (e) {
-      log(e.toString());
+    } catch (e, trace) {
+      log('[LocalDBService][deleteSessionsData] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  List<PuttingChallenge>? retrievePuttingChallenges() {
+    try {
+      final Iterable<dynamic>? results = _challengesBox
+          .get(kChallengesKey)
+          ?.map((hashMap) =>
+              PuttingChallenge.fromJson(Map<String, dynamic>.from(hashMap)));
+
+      if (results == null) {
+        return null;
+      }
+
+      final List<PuttingChallenge> challenges = [];
+
+      for (var result in results) {
+        if (result is PuttingChallenge) {
+          challenges.add(result);
+        }
+      }
+
+      return challenges;
+    } catch (e, trace) {
+      log('[LocalDBService][retrievePuttingChallenges] ${e.toString()}');
+      log(trace.toString());
+      return null;
+    }
+  }
+
+  Future<bool> storeChallenges(List<PuttingChallenge> challenges) async {
+    try {
+      return _challengesBox
+          .put(
+            kChallengesKey,
+            challenges.map((challenge) => challenge.toJson()).toList(),
+          )
+          .then((_) => true);
+    } catch (e, trace) {
+      log('[LocalDBService][storePuttingChallenges] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  Future<bool> deleteChallengesData() async {
+    try {
+      return _challengesBox.deleteAll(_challengesBox.keys).then((_) async {
+        return true;
+      });
+    } catch (e, trace) {
+      log('[LocalDBService][deleteChallengesData] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  MyPuttUser? fetchCurrentUser() {
+    try {
+      final dynamic userHashmap = _userBox.get(kCurrentUserKey);
+
+      if (userHashmap == null) {
+        return null;
+      }
+
+      return MyPuttUser.fromJson(Map<String, dynamic>.from(userHashmap));
+    } catch (e, trace) {
+      log('[LocalDBService][fetchCurrentUser] ${e.toString()}');
+      log(trace.toString());
+      return null;
+    }
+  }
+
+  Future<bool> saveCurrentUser(MyPuttUser currentUser) async {
+    try {
+      return _userBox
+          .put(kCurrentUserKey, currentUser.toJson())
+          .then((_) => true);
+    } catch (e, trace) {
+      log('[LocalDBService][saveCurrentUser] ${e.toString()}');
+      log(trace.toString());
       return false;
     }
   }

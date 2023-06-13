@@ -18,32 +18,36 @@ class ChallengeCategoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Center(
-        child: Tab(
-            icon: icon,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(label),
-              ],
-            )),
-      ),
-      Positioned(
+    return Stack(
+      children: [
+        Center(
+          child: Tab(
+              icon: icon,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(label),
+                ],
+              )),
+        ),
+        Positioned(
           top: 5,
           right: 0,
           child: Visibility(
-              visible: challenges.isNotEmpty && showCounter,
-              child: Container(
-                width: 15,
-                height: 15,
-                child: Center(
-                  child: Text(challenges.length.toString(),
-                      style: const TextStyle(color: Colors.black)),
-                ),
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white),
-              )))
-    ]);
+            visible: challenges.isNotEmpty && showCounter,
+            child: Container(
+              width: 15,
+              height: 15,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.white),
+              child: Center(
+                child: Text(challenges.length.toString(),
+                    style: const TextStyle(color: Colors.black)),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

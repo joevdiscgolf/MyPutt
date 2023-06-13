@@ -4,13 +4,13 @@ import 'package:myputt/utils/colors.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class ChallengeSetRow extends StatelessWidget {
-  const ChallengeSetRow(
-      {Key? key,
-      required this.currentUserMade,
-      this.opponentMade,
-      required this.setLength,
-      this.distance})
-      : super(key: key);
+  const ChallengeSetRow({
+    Key? key,
+    required this.currentUserMade,
+    this.opponentMade,
+    required this.setLength,
+    this.distance,
+  }) : super(key: key);
 
   final int currentUserMade;
   final int? opponentMade;

@@ -151,8 +151,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 _currentPage = page;
               }
             },
-            children: carouselChildren,
             physics: const NeverScrollableScrollPhysics(),
+            children: carouselChildren,
           ),
         ),
         SizedBox(
@@ -208,8 +208,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   startTime: _startTime,
                   endDate: _endDate!,
                   endTime: _endTime,
-                  challengeStructure: challengeStructureFromInstructions(
-                      _challengeInstructions),
+                  challengeStructure:
+                      ChallengeHelpers.challengeStructureFromInstructions(
+                          _challengeInstructions),
                 );
                 setState(() => _buttonState =
                     createSuccess ? ButtonState.success : ButtonState.retry);

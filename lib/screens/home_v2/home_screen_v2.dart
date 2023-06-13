@@ -33,8 +33,9 @@ class HomeScreenV2 extends StatelessWidget {
       slivers: [
         SliverList(
           delegate: SliverChildBuilderDelegate(
-              (context, index) => children[index],
-              childCount: children.length),
+            (context, index) => children[index],
+            childCount: children.length,
+          ),
         ),
       ],
     );

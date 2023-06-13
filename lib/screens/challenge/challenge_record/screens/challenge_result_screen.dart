@@ -7,7 +7,6 @@ import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
@@ -28,8 +27,6 @@ class ChallengeResultScreen extends StatefulWidget {
 }
 
 class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
-  final ChallengesRepository _challengesRepository =
-      locator.get<ChallengesRepository>();
   final UserRepository _userRepository = locator.get<UserRepository>();
 
   bool _showButton = false;
@@ -118,16 +115,11 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
                             title: 'Continue',
                             iconData: FlutterRemix.check_line,
                             onPressed: () {
-                              _challengesRepository.deleteFinishedChallenge();
                               Navigator.pop(context);
                             }),
                       )
-                    : const SizedBox(
-                        height: 50,
-                      ),
-                const SizedBox(
-                  height: 32,
-                )
+                    : const SizedBox(height: 50),
+                const SizedBox(height: 32)
               ]),
         ));
   }
@@ -195,12 +187,11 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
   }
 
   String getSubtitleFromDifference(int difference) {
+    final Random random = Random();
     if (difference > 0) {
-      final _random = Random();
-      return victorySubtitles[_random.nextInt(victorySubtitles.length)];
+      return victorySubtitles[random.nextInt(victorySubtitles.length)];
     } else if (difference < 0) {
-      final _random = Random();
-      return defeatSubtitles[_random.nextInt(defeatSubtitles.length)];
+      return defeatSubtitles[random.nextInt(defeatSubtitles.length)];
     } else {
       return 'This calls for a rematch';
     }

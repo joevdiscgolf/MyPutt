@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
 import 'package:myputt/utils/colors.dart';
@@ -109,6 +110,7 @@ class PendingChallengeRowV2 extends StatelessWidget {
   Widget _acceptButton(BuildContext context) {
     return Bounceable(
       onTap: () {
+        Vibrate.feedback(FeedbackType.light);
         BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
         Navigator.of(context).push(
           MaterialPageRoute(

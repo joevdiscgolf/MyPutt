@@ -7,35 +7,42 @@ import 'package:myputt/services/firebase/utils/types.dart';
 import 'package:myputt/services/global_settings.dart';
 import 'package:myputt/utils/constants.dart';
 
-Future<DocumentSnapshot<Map<String, dynamic>>?> fetchFirestoreDocument(
+Future<DocumentSnapshot<Map<String, dynamic>>?> firestoreFetch(
   String path, {
-  Duration timeout = standardTimeout,
+  Duration timeoutDuration = shortTimeout,
 }) async {
   try {
     return FirebaseFirestore.instance.doc(path).get().then(
       (snapshot) {
         if (!GlobalSettings.useFirebaseCache && snapshot.metadata.isFromCache) {
-          log('returning null snapshot from cache');
+          log('[firestore][utils][firestoreFetch] returning null snapshot from cache, path: $path ');
           return null;
         } else {
           return snapshot;
         }
+      },
+    ).timeout(
+      timeoutDuration,
+      onTimeout: () {
+        log('[firestore][utils][firestoreFetch] on timeout, path: $path, timeout: ${timeoutDuration.inSeconds} s');
+        return null;
       },
     ).catchError(
       (e, trace) {
         FirebaseCrashlytics.instance.recordError(
           e,
           trace,
-          reason: '[firestore][utils][firestoreFetch] exception',
+          reason:
+              '[firestore][utils][firestoreFetch] .catchError block, path: $path',
         );
         return null;
       },
-    ).timeout(timeout);
+    );
   } catch (e, trace) {
     FirebaseCrashlytics.instance.recordError(
       e,
       trace,
-      reason: '[firestore][utils][firestoreFetch] exception',
+      reason: '[firestore][utils][firestoreFetch] catch block, path: $path',
     );
     return null;
   }
@@ -45,7 +52,7 @@ Future<QuerySnapshot<Map<String, dynamic>>?> firestoreQuery({
   required String path,
   List<FirestoreQueryInstruction>? firestoreQueries,
   String? orderBy,
-  Duration timeout = standardTimeout,
+  Duration timeoutDuration = shortTimeout,
 }) async {
   try {
     final CollectionReference<Map<String, dynamic>> collectionReference =
@@ -106,6 +113,7 @@ Future<QuerySnapshot<Map<String, dynamic>>?> firestoreQuery({
       (querySnapshot) {
         if (!GlobalSettings.useFirebaseCache &&
             querySnapshot.metadata.isFromCache) {
+          '[firestore][utils][firestoreQuery] is from cache: ${querySnapshot.metadata.isFromCache}, path: $path';
           return null;
         }
         return querySnapshot;
@@ -115,16 +123,27 @@ Future<QuerySnapshot<Map<String, dynamic>>?> firestoreQuery({
         FirebaseCrashlytics.instance.recordError(
           e,
           trace,
-          reason: '[firestore][utils][firestoreQuery] exception',
+          reason: '[firestore][utils][firestoreQuery] exception, path: $path',
         );
         return null;
       },
-    ).timeout(timeout);
+    ).timeout(timeoutDuration, onTimeout: () {
+      log('[firestore][utils][firestoreQuery] on timeout, path: $path, duration: $timeoutDuration s,');
+      return null;
+    }).catchError((e, trace) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        trace,
+        reason:
+            '[firestore][utils][firestoreQuery] .catchError block exception, path: $path',
+      );
+      return null;
+    });
   } catch (e, trace) {
     FirebaseCrashlytics.instance.recordError(
       e,
       trace,
-      reason: '[firestore][utils][firestoreQuery] exception',
+      reason: '[firestore][utils][firestoreQuery] catch block, path: $path',
     );
     return null;
   }

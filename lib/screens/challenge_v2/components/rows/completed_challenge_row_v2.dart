@@ -21,7 +21,8 @@ class CompletedChallengeRowV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChallengeResult challengeResult = resultFromChallenge(challenge);
+    final ChallengeResult challengeResult =
+        ChallengeHelpers.resultFromChallenge(challenge);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       color: MyPuttColors.white,

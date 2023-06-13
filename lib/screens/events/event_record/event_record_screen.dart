@@ -61,7 +61,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
             state.event.eventCustomizationData.challengeStructure.length ==
                 state.currentPlayerData.sets.length;
         final ChallengeStructureItem currentStructureItem =
-            getCurrentChallengeStructureItem(
+            SetHelpers.getCurrentChallengeStructureItem(
                 state.event.eventCustomizationData.challengeStructure,
                 state.currentPlayerData.sets);
         final int setLength = currentStructureItem.setLength;

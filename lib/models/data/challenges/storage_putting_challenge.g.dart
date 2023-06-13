@@ -28,6 +28,10 @@ StoragePuttingChallenge _$StoragePuttingChallengeFromJson(Map json) =>
       recipientSets: (json['recipientSets'] as List<dynamic>)
           .map((e) => PuttingSet.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
+      challengerSetsUpdatedAt: json['challengerSetsUpdatedAt'] as String?,
+      recipientSetsUpdatedAt: json['recipientSetsUpdatedAt'] as String?,
+      isDeleted: json['isDeleted'] as bool?,
+      isSynced: json['isSynced'] as bool?,
     );
 
 Map<String, dynamic> _$StoragePuttingChallengeToJson(
@@ -43,4 +47,8 @@ Map<String, dynamic> _$StoragePuttingChallengeToJson(
           instance.challengeStructure.map((e) => e.toJson()).toList(),
       'challengerSets': instance.challengerSets.map((e) => e.toJson()).toList(),
       'recipientSets': instance.recipientSets.map((e) => e.toJson()).toList(),
+      'challengerSetsUpdatedAt': instance.challengerSetsUpdatedAt,
+      'recipientSetsUpdatedAt': instance.recipientSetsUpdatedAt,
+      'isDeleted': instance.isDeleted,
+      'isSynced': instance.isSynced,
     };

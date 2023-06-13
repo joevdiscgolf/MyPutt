@@ -43,11 +43,6 @@ const Map<Circles, String> circleToNameMap = {
   Circles.circle2: 'Circle 2'
 };
 
-const Map<Circles, String> circleToShortNameMap = {
-  Circles.circle1: 'C1',
-  Circles.circle2: 'C2'
-};
-
 const List<WeatherCondition> weatherConditions = [
   WeatherCondition.sunny,
   WeatherCondition.rainy,

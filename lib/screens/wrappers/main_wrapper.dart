@@ -76,6 +76,7 @@ class _MainWrapperState extends State<MainWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           Expanded(child: _screens[_currentIndex]),
@@ -176,33 +177,4 @@ class _MainWrapperState extends State<MainWrapper> {
       ),
     );
   }
-
-  // Widget _challengesIcon(
-  //     BuildContext context, List<PuttingChallenge> pendingChallenges) {
-  //   return Stack(
-  //     children: [
-  //       const Center(child: Icon(FlutterRemix.sword_fill)),
-  //       Visibility(
-  //         visible: pendingChallenges.isNotEmpty,
-  //         child: Positioned(
-  //           top: 0,
-  //           right: 0,
-  //           child: Container(
-  //             padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-  //             decoration: const BoxDecoration(
-  //               color: Colors.red,
-  //               shape: BoxShape.circle,
-  //             ),
-  //             child: Center(
-  //               child: Text(
-  //                 pendingChallenges.length.toString(),
-  //                 style: const TextStyle(fontSize: 15, color: Colors.white),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
 }

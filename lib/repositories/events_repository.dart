@@ -5,11 +5,25 @@ import 'package:myputt/models/data/events/event_player_data.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
+import 'package:myputt/protocols/myputt_repository.dart';
 import 'package:myputt/services/events_service.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-class EventsRepository {
+class EventsRepository implements MyPuttRepository {
+  @override
+  void initSingletons() {
+    _eventsService = locator.get<EventsService>();
+  }
+
+  @override
+  void clearData() {
+    currentEvent = null;
+    currentPlayerData = null;
+  }
+
+  late final EventsService _eventsService;
+
   MyPuttEvent? currentEvent;
   EventPlayerData? currentPlayerData;
 
@@ -17,15 +31,9 @@ class EventsRepository {
     if (currentPlayerData == null || currentEvent == null) {
       return const SavePlayerSetsResponse(success: false);
     }
-    return locator.get<EventsService>().savePlayerSets(
-          currentEvent!.eventId,
-          currentPlayerData!.sets,
-        );
-  }
-
-  void clearData() {
-    currentEvent = null;
-    currentPlayerData = null;
+    return _eventsService.savePlayerSets(
+      currentEvent!.eventId,
+      currentPlayerData!.sets,
+    );
   }
 }
-//

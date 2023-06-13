@@ -1,0 +1,3 @@
+class SingletonConsumer {
+  void initSingletons() {}
+}

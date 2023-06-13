@@ -21,6 +21,10 @@ class StoragePuttingChallenge {
     required this.challengeStructure,
     required this.challengerSets,
     required this.recipientSets,
+    this.challengerSetsUpdatedAt,
+    this.recipientSetsUpdatedAt,
+    this.isDeleted,
+    this.isSynced,
   });
 
   String status;
@@ -32,57 +36,60 @@ class StoragePuttingChallenge {
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> challengerSets;
   final List<PuttingSet> recipientSets;
+  final String? challengerSetsUpdatedAt;
+  final String? recipientSetsUpdatedAt;
+  final bool? isDeleted;
+  final bool? isSynced;
 
   factory StoragePuttingChallenge.fromPuttingChallenge(
-      PuttingChallenge challenge, MyPuttUser currentUser) {
-    MyPuttUser? recipientUser;
-    MyPuttUser challengerUser;
-    List<PuttingSet> recipientSets;
+    PuttingChallenge challenge,
+    String currentUid,
+  ) {
+    late final List<PuttingSet> recipientSets;
+    late final List<PuttingSet> challengerSets;
 
-    if (challenge.recipientUser == null) {
-      recipientUser = null;
-      recipientSets = [];
-    } else {
-      recipientUser = challenge.recipientUser?.uid == currentUser.uid
-          ? currentUser
-          : challenge.opponentUser;
-      recipientSets = challenge.recipientUser?.uid == currentUser.uid
-          ? challenge.currentUserSets
-          : challenge.opponentSets;
-    }
+    final bool currentUserIsChallenger =
+        challenge.challengerUser.uid == currentUid;
 
-    if (challenge.opponentUser == null) {
-      challengerUser = currentUser;
+    // current user is challenger, opponent is recipient
+    if (currentUserIsChallenger) {
+      challengerSets = challenge.currentUserSets;
+      recipientSets = challenge.opponentSets;
     } else {
-      challengerUser = challenge.challengerUser.uid == currentUser.uid
-          ? currentUser
-          : challenge.opponentUser!;
+      // current user is recipient, opponent is challenger.
+      challengerSets = challenge.opponentSets;
+      recipientSets = challenge.currentUserSets;
     }
 
     return StoragePuttingChallenge(
       status: challenge.status,
       creationTimeStamp: challenge.creationTimeStamp,
       id: challenge.id,
-      challengerUser: challengerUser,
-      recipientUser: recipientUser,
       challengeStructure: challenge.challengeStructure,
-      challengerSets: challenge.challengerUser.uid == currentUser.uid
-          ? challenge.currentUserSets
-          : challenge.opponentSets,
+      challengerUser: challenge.challengerUser,
+      recipientUser: challenge.recipientUser,
+      challengerSets: challengerSets,
       recipientSets: recipientSets,
+      challengerSetsUpdatedAt: challenge.challengerSetsUpdatedAt,
+      recipientSetsUpdatedAt: challenge.recipientSetsUpdatedAt,
       completionTimeStamp: challenge.completionTimeStamp,
+      isSynced: challenge.isSynced,
+      isDeleted: challenge.isDeleted,
     );
   }
 
   factory StoragePuttingChallenge.fromSession(
-      PuttingSession session, MyPuttUser currentUser,
-      {MyPuttUser? opponentUser}) {
+    PuttingSession session,
+    MyPuttUser currentUser, {
+    MyPuttUser? opponentUser,
+  }) {
     final now = DateTime.now().millisecondsSinceEpoch;
     return StoragePuttingChallenge(
       status: ChallengeStatus.pending,
       creationTimeStamp: now,
       id: session.id,
-      challengeStructure: challengeStructureFromSession(session),
+      challengeStructure:
+          ChallengeHelpers.challengeStructureFromSession(session),
       recipientSets: [],
       challengerSets: session.sets,
       challengerUser: currentUser,

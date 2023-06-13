@@ -4,7 +4,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -15,23 +15,19 @@ class ChallengeUndoButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
       builder: (context, state) {
-        Function onPressed;
-        if (state.currentChallenge != null && state is! ChallengesErrorState) {
-          onPressed = () {
-            Vibrate.feedback(FeedbackType.light);
-            if (state.currentChallenge!.currentUserSets.isNotEmpty) {
-              BlocProvider.of<ChallengesCubit>(context).undo();
-            }
-          };
-        } else {
-          onPressed = () {};
+        if (state is! CurrentChallengeState) {
+          return const SizedBox();
         }
+
         return Bounceable(
           onTap: () {
             locator.get<Mixpanel>().track(
                   'Challenge Record Screen Undo Button Pressed',
                 );
-            onPressed();
+            Vibrate.feedback(FeedbackType.light);
+            if (state.currentChallenge.currentUserSets.isNotEmpty) {
+              BlocProvider.of<ChallengesCubit>(context).undo();
+            }
           },
           child: Container(
             decoration: BoxDecoration(

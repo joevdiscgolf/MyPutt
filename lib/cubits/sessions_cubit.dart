@@ -1,5 +1,6 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/stats/stats.dart';
@@ -9,8 +10,14 @@ import 'package:myputt/locator.dart';
 
 part 'sessions_state.dart';
 
-class SessionsCubit extends Cubit<SessionsState> {
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
+  @override
+  void initCubit() {
+    // TODO: implement init
+  }
+
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   SessionsCubit()
@@ -199,8 +206,8 @@ class SessionsCubit extends Cubit<SessionsState> {
   }
 
   Future<void> onConnectionEstablished() async {
-    await locator.get<SessionRepository>().fetchCloudCompletedSessions();
-    await locator.get<SessionRepository>().syncLocalSessionsToCloud();
+    await locator.get<SessionsRepository>().fetchCloudCompletedSessions();
+    await locator.get<SessionsRepository>().syncLocalCompletedSessionsToCloud();
     emitUpdatedState();
   }
 }

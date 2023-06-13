@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/misc/putts_made_picker.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/set_helpers.dart';
@@ -22,13 +22,17 @@ class PuttsMadeContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state is ChallengesErrorState) {
-      return Container();
+    if (state is! CurrentChallengeState) {
+      return const SizedBox();
     }
+
+    final CurrentChallengeState currentChallengeState =
+        state as CurrentChallengeState;
+
     final ChallengeStructureItem currentStructureItem =
-        getCurrentChallengeStructureItem(
-      state.currentChallenge!.challengeStructure,
-      state.currentChallenge!.currentUserSets,
+        SetHelpers.getCurrentChallengeStructureItem(
+      currentChallengeState.currentChallenge.challengeStructure,
+      currentChallengeState.currentChallenge.currentUserSets,
     );
 
     return Container(

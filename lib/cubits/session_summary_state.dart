@@ -10,5 +10,3 @@ class SessionSummaryLoaded extends SessionSummaryState {
   final PuttingSession session;
   final Stats stats;
 }
-
-class NoSessionSummary extends SessionSummaryState {}

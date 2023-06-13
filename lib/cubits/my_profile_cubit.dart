@@ -1,12 +1,13 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';
 import 'package:myputt/repositories/user_repository.dart';
-import 'package:myputt/services/user_service.dart';
+import 'package:myputt/services/firebase/user_data_writer.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/locator.dart';
@@ -14,21 +15,30 @@ import 'package:myputt/utils/constants.dart';
 
 part 'my_profile_state.dart';
 
-class MyProfileCubit extends Cubit<MyProfileState> {
+class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
+  @override
+  void initCubit() {
+    // TODO: implement init
+  }
+
   final WebScraperService _webScraperService = locator.get<WebScraperService>();
   final UserRepository _userRepository = locator.get<UserRepository>();
-  final UserService _userService = locator.get<UserService>();
-  MyProfileCubit() : super(MyProfileInitial()) {
-    reload();
-  }
+  MyProfileCubit() : super(MyProfileInitial());
 
   void signOut() {
     emit(MyProfileInitial());
   }
 
   Future<void> reload() async {
-    if (_userRepository.currentUser == null) {
-      await _userRepository.fetchCurrentUser();
+    if (_userRepository.currentUser != null) {
+      emit(
+        MyProfileLoaded(
+          myUser: _userRepository.currentUser!,
+          pdgaPlayerInfo: null,
+        ),
+      );
+    } else {
+      await _userRepository.fetchCloudCurrentUser();
       if (_userRepository.currentUser == null) {
         emit(NoProfileLoaded());
         return;
@@ -50,16 +60,21 @@ class MyProfileCubit extends Cubit<MyProfileState> {
             '[MyProfileCubit][reload] webScraperService.getPDGAData() timeout',
       );
     }
-    if (playerInfo?.rating != null &&
-        playerInfo?.rating != _userRepository.currentUser!.pdgaRating) {
-      updateUserPDGARating(playerInfo!.rating!);
+
+    if (_userRepository.currentUser == null) {
+      emit(NoProfileLoaded());
+    } else {
+      if (playerInfo?.rating != null &&
+          playerInfo?.rating != _userRepository.currentUser?.pdgaRating) {
+        updateUserPDGARating(playerInfo!.rating!);
+      }
+      emit(
+        MyProfileLoaded(
+          myUser: _userRepository.currentUser!,
+          pdgaPlayerInfo: playerInfo,
+        ),
+      );
     }
-    emit(
-      MyProfileLoaded(
-        myUser: _userRepository.currentUser!,
-        pdgaPlayerInfo: playerInfo,
-      ),
-    );
   }
 
   Future<void> updateFrisbeeAvatar(FrisbeeAvatar frisbeeAvatar) async {
@@ -78,10 +93,15 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     if (int.tryParse(pdgaNum) != null) {
       final MyPuttUser? currentUser = _userRepository.currentUser;
       if (currentUser != null) {
-        _userRepository.currentUser?.pdgaNum = int.parse(pdgaNum);
-        final bool setUserSuccess =
-            await _userService.setUserWithPayload(currentUser);
-        if (setUserSuccess) {
+        _userRepository.currentUser = _userRepository.currentUser?.copyWith(
+          pdgaNum: int.parse(pdgaNum),
+        );
+        final bool updateUserSuccess =
+            await FBUserDataWriter.instance.updateUserWithPayload(
+          currentUser.uid,
+          {'pdgaNum': int.parse(pdgaNum)},
+        );
+        if (updateUserSuccess) {
           final PDGAPlayerInfo? playerInfo = await _webScraperService
               .getPDGAData(_userRepository.currentUser?.pdgaNum);
           emit(
@@ -91,7 +111,7 @@ class MyProfileCubit extends Cubit<MyProfileState> {
             ),
           );
         }
-        return setUserSuccess;
+        return updateUserSuccess;
       }
     }
     return false;
@@ -102,13 +122,12 @@ class MyProfileCubit extends Cubit<MyProfileState> {
     if (currentUser == null) {
       return;
     }
-    _userRepository.currentUser = MyPuttUser(
-        username: currentUser.username,
-        keywords: currentUser.keywords,
-        displayName: currentUser.displayName,
-        uid: currentUser.uid,
-        pdgaNum: currentUser.pdgaNum,
-        pdgaRating: rating);
-    _userService.setUserWithPayload(currentUser);
+    _userRepository.currentUser =
+        _userRepository.currentUser?.copyWith(pdgaRating: rating);
+
+    FBUserDataWriter.instance.updateUserWithPayload(
+      currentUser.uid,
+      {'pdgaRating': rating},
+    );
   }
 }

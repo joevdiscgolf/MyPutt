@@ -119,6 +119,7 @@ class _EventsState extends State<EventsScreen>
 
   PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
+      preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60),
       child: Column(
         children: [
           _tabBar(context),
@@ -128,7 +129,6 @@ class _EventsState extends State<EventsScreen>
           ]
         ],
       ),
-      preferredSize: Size.fromHeight(_showSearchBar ? 80 : 60),
     );
   }
 

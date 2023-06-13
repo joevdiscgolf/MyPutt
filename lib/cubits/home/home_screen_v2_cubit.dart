@@ -1,16 +1,18 @@
 import 'dart:math';
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/cubits/home/data/home_screen_cubit_data.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/home_screen_chart_screen.dart';
@@ -25,17 +27,30 @@ import 'package:myputt/utils/set_helpers.dart';
 
 part 'home_screen_v2_state.dart';
 
-class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
+class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
+    implements MyPuttCubit, SingletonConsumer {
   HomeScreenV2Cubit() : super(const HomeScreenV2Initial());
 
-  listenForRepositoryChanges() {
-    locator.get<SessionRepository>().addListener(() {
+  @override
+  void initSingletons() {
+    _sessionsRepository = locator.get<SessionsRepository>();
+    _challengesRepository = locator.get<ChallengesRepository>();
+    _statsService = locator.get<StatsService>();
+  }
+
+  @override
+  void initCubit() {
+    _sessionsRepository.addListener(() {
       onRepositoryUpdated();
     });
-    locator.get<ChallengesRepository>().addListener(() {
+    _challengesRepository.addListener(() {
       onRepositoryUpdated();
     });
   }
+
+  late final SessionsRepository _sessionsRepository;
+  late final ChallengesRepository _challengesRepository;
+  late final StatsService _statsService;
 
   void onRepositoryUpdated() {
     late final int timeRange;
@@ -46,19 +61,18 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
     }
 
     final List<dynamic> puttingActivities =
-        locator.get<StatsService>().getPuttingActivitiesByTimeRange(
-              locator.get<SessionRepository>().validCompletedSessions,
-              locator.get<ChallengesRepository>().completedChallenges,
-              [PuttingActivityType.session, PuttingActivityType.challenge],
-              timeRange,
-            );
+        _statsService.getPuttingActivitiesByTimeRange(
+      _sessionsRepository.validCompletedSessions,
+      _challengesRepository.completedChallenges,
+      [PuttingActivityType.session, PuttingActivityType.challenge],
+      timeRange,
+    );
 
     final List<PuttingSet> setsInActivities =
-        puttingSetsFromPuttingActivities(puttingActivities);
+        SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap =
-        locator.get<StatsService>().getSetIntervals(setsInActivities);
+        circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
       emit(
@@ -96,19 +110,18 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State> {
 
   void updateTimeRange(int updatedTimeRange) {
     final List<dynamic> puttingActivities =
-        locator.get<StatsService>().getPuttingActivitiesByTimeRange(
-              locator.get<SessionRepository>().validCompletedSessions,
-              locator.get<ChallengesRepository>().completedChallenges,
-              [PuttingActivityType.session, PuttingActivityType.challenge],
-              updatedTimeRange,
-            );
+        _statsService.getPuttingActivitiesByTimeRange(
+      _sessionsRepository.validCompletedSessions,
+      _challengesRepository.completedChallenges,
+      [PuttingActivityType.session, PuttingActivityType.challenge],
+      updatedTimeRange,
+    );
 
     final List<PuttingSet> setsInActivities =
-        puttingSetsFromPuttingActivities(puttingActivities);
+        SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap =
-        locator.get<StatsService>().getSetIntervals(setsInActivities);
+        circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
       emit(

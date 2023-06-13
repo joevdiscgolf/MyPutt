@@ -1,10 +1,14 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'session_settings.g.dart';
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class SessionSettings {
-  SessionSettings({this.preferredDistance, this.preferredPuttsPickerLength});
+class SessionSettings extends Equatable {
+  const SessionSettings({
+    this.preferredDistance,
+    this.preferredPuttsPickerLength,
+  });
   final int? preferredDistance;
   final int? preferredPuttsPickerLength;
 
@@ -12,4 +16,7 @@ class SessionSettings {
       _$SessionSettingsFromJson(json);
 
   Map<String, dynamic> toJson() => _$SessionSettingsToJson(this);
+
+  @override
+  List<Object?> get props => [preferredDistance, preferredPuttsPickerLength];
 }

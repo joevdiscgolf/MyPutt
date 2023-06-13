@@ -1,5 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/cubits/record/record_cubit_helpers.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
@@ -7,7 +8,12 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 part 'record_state.dart';
 
-class RecordCubit extends Cubit<RecordState> {
+class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
+  @override
+  void initCubit() {
+    // TODO: implement init
+  }
+
   RecordCubit()
       : super(
           RecordActive(

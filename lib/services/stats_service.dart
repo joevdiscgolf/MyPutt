@@ -28,7 +28,8 @@ class StatsService {
     List<PuttingChallenge> challenges,
   ) {
     // filtering out challenges that were generated from a session of the user.
-    challenges = filterDuplicateChallenges(sessions, challenges);
+    challenges =
+        ChallengeHelpers.filterDuplicateChallenges(sessions, challenges);
 
     Map<int, dynamic> timestampToSessionOrChallenge = {};
     for (PuttingSession session in sessions) {
@@ -397,15 +398,16 @@ class StatsService {
 
   List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
       List<PuttingChallenge> challenges, int distance, int? limit) {
-    final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
-    final String? currentUid = _authService.getCurrentUserId();
+    final FirebaseAuthService authService = locator.get<FirebaseAuthService>();
+    final String? currentUid = authService.getCurrentUserId();
 
     if (currentUid == null) {
       return [];
     }
     List<ChartPoint> points = [];
 
-    challenges = filterDuplicateChallenges(sessions, challenges);
+    challenges =
+        ChallengeHelpers.filterDuplicateChallenges(sessions, challenges);
 
     Map<int, dynamic> timestampToSessionOrChallenge = {};
     for (PuttingSession session in sessions) {
@@ -503,7 +505,7 @@ class StatsService {
     List<PuttingSet> sets,
   ) {
     final Map<int, List<PuttingSet>> setsByDistanceMap =
-        sortSetsByDistance(sets);
+        SetHelpers.sortSetsByDistance(sets);
 
     final Map<DistanceInterval, PuttingSetInterval> circle1IntervalToDataMap =
         {};
@@ -532,7 +534,7 @@ class StatsService {
       circle1IntervalToDataMap[distanceInterval] = PuttingSetInterval(
         distanceInterval: distanceInterval,
         sets: puttingSetsInInterval,
-        setsPercentage: percentageFromSets(puttingSetsInInterval),
+        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
       );
     }
 
@@ -558,7 +560,7 @@ class StatsService {
       circle2IntervalToDataMap[distanceInterval] = PuttingSetInterval(
         distanceInterval: distanceInterval,
         sets: puttingSetsInInterval,
-        setsPercentage: percentageFromSets(puttingSetsInInterval),
+        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
       );
     }
 

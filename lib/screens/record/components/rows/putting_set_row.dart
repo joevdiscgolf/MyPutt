@@ -94,10 +94,6 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  child: const Icon(
-                    FlutterRemix.close_line,
-                    color: Colors.red,
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -120,6 +116,10 @@ class _PuttingSetRowState extends State<PuttingSetRow> {
                               ),
                             )));
                   },
+                  child: const Icon(
+                    FlutterRemix.close_line,
+                    color: Colors.red,
+                  ),
                 ),
               ),
             )

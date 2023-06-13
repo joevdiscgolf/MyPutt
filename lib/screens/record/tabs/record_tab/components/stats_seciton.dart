@@ -119,7 +119,7 @@ class StatsSection extends StatelessWidget {
         late final double percentage;
 
         if (state is SessionInProgressState) {
-          percentage = percentageFromSets(state.currentSession.sets);
+          percentage = SetHelpers.percentageFromSets(state.currentSession.sets);
         } else {
           percentage = 0;
         }

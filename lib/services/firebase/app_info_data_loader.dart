@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
@@ -26,6 +28,9 @@ class FBAppInfoDataLoader {
       } else {
         return null;
       }
+    }).timeout(const Duration(seconds: 3), onTimeout: () {
+      log('[AppInfoDataLoader][getMinimumAppVersion] on timeout');
+      return null;
     }).catchError((e, trace) {
       FirebaseCrashlytics.instance.recordError(
         e,

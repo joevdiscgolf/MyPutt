@@ -1,18 +1,16 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
 import 'package:myputt/models/data/sessions/sessions_document.dart';
 import 'package:myputt/services/firebase/utils/firebase_utils.dart';
-
-FirebaseFirestore firestore = FirebaseFirestore.instance;
+import 'package:myputt/utils/constants.dart';
 
 class FBSessionsDataLoader {
   Future<SessionsDocument?> getUserSessionsDocument(String uid) async {
     try {
-      return fetchFirestoreDocument('$sessionsCollection/$uid').then(
+      return firestoreFetch('$sessionsCollection/$uid').then(
         (snapshot) {
           if (snapshot != null && snapshot.data() != null) {
             return SessionsDocument.fromJson(snapshot.data()!);
@@ -32,7 +30,10 @@ class FBSessionsDataLoader {
     }
   }
 
-  Future<List<PuttingSession>?> getCompletedSessions(String uid) async {
+  Future<List<PuttingSession>?> getCompletedSessions(
+    String uid, {
+    Duration timeoutDuration = shortTimeout,
+  }) async {
     try {
       return firestoreQuery(
         path: '$sessionsCollection/$uid/$completedSessionsCollection',

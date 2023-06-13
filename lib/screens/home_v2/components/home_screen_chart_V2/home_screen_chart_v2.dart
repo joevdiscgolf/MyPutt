@@ -46,7 +46,7 @@ class HomeScreenChartV2 extends StatelessWidget {
               } else {
                 return LineChart(
                   _mainData(context, points),
-                  swapAnimationDuration: const Duration(milliseconds: 0),
+                  duration: const Duration(milliseconds: 0),
                 );
               }
             }),
@@ -129,16 +129,16 @@ class HomeScreenChartV2 extends StatelessWidget {
     // multiply by 100 because of percentage conversion
 
     return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      axisTitleData: FlAxisTitleData(
-        leftTitle: AxisTitle(
-          margin: 0,
-          textAlign: TextAlign.center,
-          showTitle: false,
-          titleText: '%',
-        ),
-      ),
-      gridData: FlGridData(show: false),
+      lineTouchData: const LineTouchData(enabled: false),
+      // axisTitleData: FlAxisTitleData(
+      //   leftTitle: AxisTitle(
+      //     margin: 0,
+      //     textAlign: TextAlign.center,
+      //     showTitle: false,
+      //     titleText: '%',
+      //   ),
+      // ),
+      gridData: const FlGridData(show: false),
       titlesData: LineTitles.getTitleData(),
       borderData: FlBorderData(show: false),
       minX: 0,
@@ -155,10 +155,10 @@ class HomeScreenChartV2 extends StatelessWidget {
               .toList(),
           isCurved: true,
           curveSmoothness: 0.2,
-          colors: [MyPuttColors.darkBlue],
+          color: MyPuttColors.darkBlue,
           barWidth: 4,
           isStrokeCapRound: true,
-          dotData: FlDotData(show: false),
+          dotData: const FlDotData(show: false),
         ),
       ],
     );

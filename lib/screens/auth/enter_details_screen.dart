@@ -12,8 +12,6 @@ import 'package:myputt/locator.dart';
 
 enum UsernameStatus { none, available, unavailable, checking }
 
-enum HeaderType { username, displayName, pdgaNumber }
-
 class EnterDetailsScreen extends StatefulWidget {
   const EnterDetailsScreen({Key? key}) : super(key: key);
 
@@ -25,7 +23,7 @@ class EnterDetailsScreen extends StatefulWidget {
 
 class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
-  final MyPuttAuthService _signinService = locator.get<MyPuttAuthService>();
+  final MyPuttAuthService _myputtAuthService = locator.get<MyPuttAuthService>();
 
   String? _errorText;
   bool _usernameValid = false;
@@ -53,7 +51,8 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           shadowColor: Colors.transparent,
-          leading: AppBarBackButton(onPressed: () => _signinService.signOut()),
+          leading:
+              AppBarBackButton(onPressed: () => _myputtAuthService.signOut()),
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 32, right: 32, bottom: 16),
@@ -180,7 +179,7 @@ class _EnterDetailsScreenState extends State<EnterDetailsScreen> {
     }
     final int? pdgaNumber = _pdgaNumber.isEmpty ? null : int.parse(_pdgaNumber);
     setState(() => _buttonState = ButtonState.loading);
-    final bool success = await _signinService.setupNewUser(
+    final bool success = await _myputtAuthService.setupNewUser(
       _username,
       _displayName,
       pdgaNumber: pdgaNumber,

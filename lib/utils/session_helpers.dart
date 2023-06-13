@@ -78,7 +78,7 @@ abstract class SessionHelpers {
     ];
   }
 
-  static List<PuttingSession> getNewSessions(
+  static List<PuttingSession> getNewCloudSessions(
     List<PuttingSession> localSessions,
     List<PuttingSession> cloudSessions,
   ) {

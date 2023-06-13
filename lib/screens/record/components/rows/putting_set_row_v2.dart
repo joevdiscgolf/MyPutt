@@ -42,7 +42,7 @@ class PuttingSetRowV2 extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           CustomCircularProgressIndicator(
-            percentage: percentageFromSet(set),
+            percentage: SetHelpers.percentageFromSet(set),
             color: MyPuttColors.skyBlue,
           ),
           const SizedBox(width: 16),

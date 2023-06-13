@@ -6,11 +6,21 @@ import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/models/data/challenges/storage_putting_challenge.dart';
 import 'package:myputt/services/firebase/utils/fb_constants.dart';
+import 'package:myputt/services/firebase/utils/firebase_utils.dart';
 import 'package:myputt/utils/constants.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class FBChallengesDataLoader {
+  static final FBChallengesDataLoader instance =
+      FBChallengesDataLoader._internal();
+
+  factory FBChallengesDataLoader() {
+    return instance;
+  }
+
+  FBChallengesDataLoader._internal();
+
   Future<List<PuttingChallenge>> getPuttingChallengesByStatus(
       MyPuttUser currentUser, String status) async {
     return firestore
@@ -79,21 +89,26 @@ class FBChallengesDataLoader {
   }
 
   Future<PuttingChallenge?> getPuttingChallengeById(
-      MyPuttUser currentUser, String challengeId) async {
-    final DocumentSnapshot<dynamic> snapshot = await firestore
-        .doc(
-            '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId')
-        .get();
-
-    if (snapshot.exists &&
-        isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
-      return PuttingChallenge.fromStorageChallenge(
+    MyPuttUser currentUser,
+    String challengeId,
+  ) async {
+    return firestoreFetch(
+      '$challengesCollection/${currentUser.uid}/$challengesCollection/$challengeId',
+      timeoutDuration: shortTimeout,
+    ).then((snapshot) {
+      if (snapshot == null) {
+        return null;
+      } else if (snapshot.exists &&
+          isValidStorageChallenge(snapshot.data() as Map<String, dynamic>)) {
+        return PuttingChallenge.fromStorageChallenge(
           StoragePuttingChallenge.fromJson(
               snapshot.data() as Map<String, dynamic>),
-          currentUser);
-    } else {
-      return null;
-    }
+          currentUser,
+        );
+      } else {
+        return null;
+      }
+    });
   }
 
   bool isValidStorageChallenge(Map<String, dynamic> data) {

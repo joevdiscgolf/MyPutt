@@ -92,6 +92,7 @@ class _CreateChallengeStructurePanelState
 
   PreferredSizeWidget _appBarBottom(BuildContext context) {
     return PreferredSize(
+        preferredSize: const Size.fromHeight(160),
         child: Column(
           children: [
             const SizedBox(height: 12),
@@ -125,8 +126,7 @@ class _CreateChallengeStructurePanelState
                     ),
             ),
           ],
-        ),
-        preferredSize: const Size.fromHeight(160));
+        ));
   }
 
   Widget _mainBody(BuildContext context) {

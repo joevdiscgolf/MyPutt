@@ -15,7 +15,8 @@ class PresetsRepository {
     };
   }
 
-  Map<ChallengePreset, List<ChallengeStructureItem>> presetStructures = {};
+  late final Map<ChallengePreset, List<ChallengeStructureItem>>
+      presetStructures;
 
   Map<ChallengePreset, List<GeneratedChallengeInstruction>> presetInstructions =
       {
@@ -37,7 +38,8 @@ class PresetsRepository {
   };
 
   List<ChallengeStructureItem> getChallengeStructureByPreset(
-      ChallengePreset preset) {
+    ChallengePreset preset,
+  ) {
     switch (preset) {
       case ChallengePreset.c1Basics:
         return generateStructureFromPreset(ChallengePreset.c1Basics);
@@ -51,9 +53,10 @@ class PresetsRepository {
   }
 
   List<ChallengeStructureItem> generateStructureFromPreset(
-      ChallengePreset preset) {
+    ChallengePreset preset,
+  ) {
     List<GeneratedChallengeInstruction> instructions =
         presetInstructions[preset] ?? [];
-    return challengeStructureFromInstructions(instructions);
+    return ChallengeHelpers.challengeStructureFromInstructions(instructions);
   }
 }

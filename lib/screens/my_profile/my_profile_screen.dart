@@ -39,11 +39,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   final Mixpanel _mixpanel = locator.get<Mixpanel>();
   final ChallengesRepository _challengesRepository =
       locator.get<ChallengesRepository>();
-  final SessionRepository _sessionRepository = locator.get<SessionRepository>();
+  final SessionsRepository _sessionRepository =
+      locator.get<SessionsRepository>();
   final StatsService _statsService = locator.get<StatsService>();
 
   @override
   void initState() {
+    BlocProvider.of<MyProfileCubit>(context).reload();
     super.initState();
     _mixpanel.track('My Profile Screen Impression');
   }
@@ -88,8 +90,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               return const LoadingScreen();
             } else {
               return EmptyState(
-                  onRetry: () =>
-                      BlocProvider.of<MyProfileCubit>(context).reload());
+                onRetry: () =>
+                    BlocProvider.of<MyProfileCubit>(context).reload(),
+              );
             }
           },
         ));
@@ -373,7 +376,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                   title: 'Total putts',
                   subtitle:
-                      '${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, true) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, false) + _statsService.getPuttCountFromChallenges(filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), false)}'),
+                      '${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, true) + _statsService.getPuttCountFromChallenges(ChallengeHelpers.filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), true)}/${_statsService.getPuttCountFromSessions(_sessionRepository.validCompletedSessions, false) + _statsService.getPuttCountFromChallenges(ChallengeHelpers.filterDuplicateChallenges(_sessionRepository.validCompletedSessions, _challengesRepository.completedChallenges), false)}'),
               const SizedBox(
                 height: 4,
               ),

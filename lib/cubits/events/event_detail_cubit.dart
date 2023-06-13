@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/models/endpoints/events/event_endpoints.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/events/event_enums.dart';

@@ -14,7 +14,7 @@ import 'package:myputt/screens/challenge/challenge_record/challenge_record_scree
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/screens/challenge/summary/challenge_summary_screen.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/utils/string_helpers.dart';
@@ -59,9 +59,12 @@ class ChallengeListRow extends StatelessWidget {
               .track('Challenges Screen Active Challenge Pressed');
           BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context)
-              .push(MaterialPageRoute(
+              .push(
+                MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      ChallengeRecordScreen(challenge: challenge)))
+                      ChallengeRecordScreen(challenge: challenge),
+                ),
+              )
               .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
         } else if (challenge.status == ChallengeStatus.complete) {
           locator

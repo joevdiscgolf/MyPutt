@@ -6,7 +6,7 @@ import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
-import 'package:myputt/cubits/challenges_cubit.dart';
+import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/challenge/components/challenge_category_tab.dart';
 import 'package:myputt/screens/challenge/components/challenges_screen_app_bar.dart';
@@ -95,12 +95,12 @@ class _ChallengesState extends State<ChallengesScreen>
       if (state is ChallengesErrorState) {
         return EmptyState(
             onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
-      } else if (state is ChallengesLoading || state is ChallengesInitial) {
+      } else if (state is ChallengesLoading) {
         return const EventSearchLoadingScreen();
       }
       state.activeChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
-      state.pendingChallenges.sort(
+      state.incomingPendingChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
       state.completedChallenges.sort((c1, c2) {
         final int dateCompletedComparison = (c1.completionTimeStamp ?? 0)
@@ -117,7 +117,7 @@ class _ChallengesState extends State<ChallengesScreen>
               challenges: List.from(state.activeChallenges.reversed)),
           ChallengesList(
               category: ChallengeCategory.pending,
-              challenges: List.from(state.pendingChallenges.reversed)),
+              challenges: List.from(state.incomingPendingChallenges.reversed)),
           ChallengesList(
               category: ChallengeCategory.complete,
               challenges: List.from(state.completedChallenges.reversed)),
