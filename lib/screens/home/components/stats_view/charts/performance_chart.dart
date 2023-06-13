@@ -64,7 +64,7 @@ class PerformanceChart extends StatelessWidget {
         horizontalInterval: 20,
         drawVerticalLine: false,
       ),
-      titlesData: LineTitles.getTitleData(),
+      titlesData: const FlTitlesData(show: false),
       borderData: FlBorderData(show: false),
       minX: 0,
       maxX: points.length.toDouble() - 1,
@@ -88,45 +88,4 @@ class PerformanceChart extends StatelessWidget {
       ],
     );
   }
-}
-
-class LineTitles {
-  static getTitleData() => FlTitlesData(
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-              showTitles: false,
-              getTitlesWidget: (double value, TitleMeta titleMeta) {
-                late final String title;
-                switch (value.toInt()) {
-                  case 0:
-                    title = '0';
-                    break;
-                  case 50:
-                    title = '50';
-                    break;
-                  case 100:
-                    title = '100';
-                    break;
-                  default:
-                    title = '';
-                    break;
-                }
-                return Text(
-                  title,
-                  style: const TextStyle(fontSize: 10),
-                );
-              }),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
 }

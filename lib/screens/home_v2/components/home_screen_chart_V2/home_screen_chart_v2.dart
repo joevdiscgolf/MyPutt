@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
-import 'package:myputt/screens/home/components/stats_view/charts/performance_chart.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/components/chart_scrubber.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/helpers.dart';
@@ -130,16 +130,8 @@ class HomeScreenChartV2 extends StatelessWidget {
 
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
-      // axisTitleData: FlAxisTitleData(
-      //   leftTitle: AxisTitle(
-      //     margin: 0,
-      //     textAlign: TextAlign.center,
-      //     showTitle: false,
-      //     titleText: '%',
-      //   ),
-      // ),
       gridData: const FlGridData(show: false),
-      titlesData: LineTitles.getTitleData(),
+      titlesData: const FlTitlesData(show: false),
       borderData: FlBorderData(show: false),
       minX: 0,
       maxX: points.length.toDouble() - 1,
@@ -147,6 +139,18 @@ class HomeScreenChartV2 extends StatelessWidget {
       maxY: 105,
       lineBarsData: [
         LineChartBarData(
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              transform: const GradientRotation(3 * math.pi / 2),
+              colors: [
+                MyPuttColors.blue.withOpacity(0.0),
+                MyPuttColors.blue.withOpacity(0.0),
+                MyPuttColors.blue.withOpacity(0.2),
+                MyPuttColors.blue.withOpacity(0.8),
+              ],
+            ),
+          ),
           spots: points
               .asMap()
               .entries
