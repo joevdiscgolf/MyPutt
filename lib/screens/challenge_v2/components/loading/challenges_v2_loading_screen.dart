@@ -22,8 +22,8 @@ class ChallengesV2LoadingScreen extends StatelessWidget {
     ];
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      children: children,
       physics: const AlwaysScrollableScrollPhysics(),
+      children: children,
     );
   }
 }

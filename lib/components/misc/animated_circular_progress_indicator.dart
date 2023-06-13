@@ -54,29 +54,31 @@ class _AnimatedCircularProgressIndicatorState
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      child: Stack(children: <Widget>[
-        SizedBox(
-            width: widget.size,
-            height: widget.size,
-            child: AnimatedBuilder(
-              animation: animation,
-              builder: (BuildContext context, Widget? child) =>
-                  CircularProgressIndicator(
-                color: widget.strokeColor,
-                backgroundColor: Colors.grey[200],
-                value: animation.value,
-                strokeWidth: 5,
-              ),
-            )),
-        if (widget.showText)
-          Center(
-              child: AnimatedBuilder(
-                  animation: animation,
-                  builder: (BuildContext context, Widget? child) => (Text(
-                      (animation.value * 100).round().toString() + ' %'))))
-      ]),
       width: widget.size,
       height: widget.size,
+      child: Stack(
+        children: <Widget>[
+          SizedBox(
+              width: widget.size,
+              height: widget.size,
+              child: AnimatedBuilder(
+                animation: animation,
+                builder: (BuildContext context, Widget? child) =>
+                    CircularProgressIndicator(
+                  color: widget.strokeColor,
+                  backgroundColor: Colors.grey[200],
+                  value: animation.value,
+                  strokeWidth: 5,
+                ),
+              )),
+          if (widget.showText)
+            Center(
+                child: AnimatedBuilder(
+                    animation: animation,
+                    builder: (BuildContext context, Widget? child) =>
+                        (Text('${(animation.value * 100).round()} %'))))
+        ],
+      ),
     );
   }
 }

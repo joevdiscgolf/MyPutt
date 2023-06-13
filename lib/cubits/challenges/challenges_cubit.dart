@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';

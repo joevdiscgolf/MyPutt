@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/users/frisbee_avatar.dart';
 import 'package:myputt/models/data/users/pdga_player_info.dart';

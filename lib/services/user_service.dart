@@ -10,25 +10,25 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class UserService {
   Future<bool> deleteUser(MyPuttUser user) async {
-    final MyPuttAuthService _myPuttAuthService =
+    final MyPuttAuthService myPuttAuthService =
         locator.get<MyPuttAuthService>();
     final String uid = user.uid;
     final String username = user.username;
     WriteBatch batch = FirebaseFirestore.instance.batch();
 
-    final DocumentReference _sessionsRef =
+    final DocumentReference sessionsRef =
         firestore.collection(sessionsCollection).doc(uid);
-    final DocumentReference _challengesRef =
+    final DocumentReference challengesRef =
         firestore.collection(challengesCollection).doc(uid);
-    final DocumentReference _usernameRef =
+    final DocumentReference usernameRef =
         firestore.collection(usernamesCollection).doc(username);
-    final DocumentReference _userDocRef =
+    final DocumentReference userDocRef =
         firestore.collection(usersCollection).doc(uid);
 
-    batch.delete(_sessionsRef);
-    batch.delete(_challengesRef);
-    batch.delete(_usernameRef);
-    batch.delete(_userDocRef);
+    batch.delete(sessionsRef);
+    batch.delete(challengesRef);
+    batch.delete(usernameRef);
+    batch.delete(userDocRef);
 
     bool commitSuccess;
     try {
@@ -48,7 +48,7 @@ class UserService {
     }
 
     if (commitSuccess) {
-      return _myPuttAuthService.deleteCurrentUser();
+      return myPuttAuthService.deleteCurrentUser();
     } else {
       return false;
     }

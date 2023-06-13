@@ -187,12 +187,11 @@ class _ChallengeResultScreenState extends State<ChallengeResultScreen> {
   }
 
   String getSubtitleFromDifference(int difference) {
+    final Random random = Random();
     if (difference > 0) {
-      final _random = Random();
-      return victorySubtitles[_random.nextInt(victorySubtitles.length)];
+      return victorySubtitles[random.nextInt(victorySubtitles.length)];
     } else if (difference < 0) {
-      final _random = Random();
-      return defeatSubtitles[_random.nextInt(defeatSubtitles.length)];
+      return defeatSubtitles[random.nextInt(defeatSubtitles.length)];
     } else {
       return 'This calls for a rematch';
     }

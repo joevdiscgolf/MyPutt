@@ -112,6 +112,9 @@ class CompeteButton extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     height: buttonHeight,
+                    // title: _getTitle(percentComplete),
+                    color: Colors.transparent,
+                    width: screenWidth,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -123,9 +126,6 @@ class CompeteButton extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // title: _getTitle(percentComplete),
-                    color: Colors.transparent,
-                    width: screenWidth,
                   ),
                 ),
               ),

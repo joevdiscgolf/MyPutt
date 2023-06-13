@@ -151,8 +151,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 _currentPage = page;
               }
             },
-            children: carouselChildren,
             physics: const NeverScrollableScrollPhysics(),
+            children: carouselChildren,
           ),
         ),
         SizedBox(

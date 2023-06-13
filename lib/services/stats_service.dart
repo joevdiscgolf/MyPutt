@@ -398,8 +398,8 @@ class StatsService {
 
   List<ChartPoint> getPointsWithDistanceAndLimit(List<PuttingSession> sessions,
       List<PuttingChallenge> challenges, int distance, int? limit) {
-    final FirebaseAuthService _authService = locator.get<FirebaseAuthService>();
-    final String? currentUid = _authService.getCurrentUserId();
+    final FirebaseAuthService authService = locator.get<FirebaseAuthService>();
+    final String? currentUid = authService.getCurrentUserId();
 
     if (currentUid == null) {
       return [];

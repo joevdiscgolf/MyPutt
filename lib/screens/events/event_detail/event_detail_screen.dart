@@ -141,8 +141,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 if (loadedState.divisionStandings.isEmpty) {
                                   return Container(
                                     padding: const EdgeInsets.only(top: 24),
-                                    child: Column(
-                                      children: const [
+                                    child: const Column(
+                                      children: [
                                         Icon(FlutterRemix.stack_line, size: 40),
                                         SizedBox(height: 8),
                                         Text('No players yet'),

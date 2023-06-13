@@ -120,8 +120,8 @@ class _MyAppState extends State<MyApp> {
         final mediaQueryData = MediaQuery.of(context);
         final scale = mediaQueryData.textScaleFactor.clamp(1.0, 1.0);
         return MediaQuery(
-          child: child!,
           data: MediaQuery.of(context).copyWith(textScaleFactor: scale),
+          child: child ?? const SizedBox(),
         );
       },
       theme: lightTheme(context),

@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
@@ -86,7 +86,7 @@ class AppPhaseCubit extends Cubit<AppPhaseState>
       return;
     }
 
-    final bool? userSetUpInCloud = userIsValid(currentUser);
+    final bool userSetUpInCloud = userIsValid(currentUser);
 
     if (userSetUpInCloud == true) {
       await _sharedPreferencesService.markUserIsSetUp(true);

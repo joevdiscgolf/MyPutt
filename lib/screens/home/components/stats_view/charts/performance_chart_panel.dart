@@ -70,21 +70,20 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   Widget build(BuildContext context) {
     int? limit =
         _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
-    final List<ChartPoint> _points =
-        _statsService.getPointsWithDistanceAndLimit(
+    final List<ChartPoint> points = _statsService.getPointsWithDistanceAndLimit(
       _sessionRepository.validCompletedSessions,
       _challengesRepository.completedChallenges,
       _selectedDistance,
       limit,
     );
-    List<ChartPoint> smoothPoints = smoothChart(_points, _smoothRange);
+    List<ChartPoint> smoothPoints = smoothChart(points, _smoothRange);
     return Column(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sessionRangeTabBar(context),
-            _points.isEmpty
+            points.isEmpty
                 ? EmptyStateChart(
                     hasSessions:
                         _sessionRepository.validCompletedSessions.isNotEmpty,

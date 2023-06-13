@@ -59,8 +59,8 @@ class DatabaseService {
   }
 
   Future<List<PuttingChallenge>> getChallengesWithStatus(String status) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
+    final UserRepository userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = userRepository.currentUser;
     if (currentUser == null) {
       return [];
     }
@@ -106,8 +106,8 @@ class DatabaseService {
   }
 
   Future<PuttingChallenge?> getPuttingChallengeById(String challengeId) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
+    final UserRepository userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = userRepository.currentUser;
     if (currentUser == null) {
       return null;
     }
@@ -147,8 +147,8 @@ class DatabaseService {
   }
 
   Future<bool> deleteChallenge(PuttingChallenge challengeToDelete) async {
-    final UserRepository _userRepository = locator.get<UserRepository>();
-    final MyPuttUser? currentUser = _userRepository.currentUser;
+    final UserRepository userRepository = locator.get<UserRepository>();
+    final MyPuttUser? currentUser = userRepository.currentUser;
     if (currentUser == null) {
       return false;
     }

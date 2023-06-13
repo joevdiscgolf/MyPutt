@@ -25,8 +25,8 @@ class ChallengesService implements SingletonConsumer {
     if (currentUid == null) return false;
 
     final MyPuttUser? recipientUser = storageChallenge.recipientUser;
-    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
-    if (recipientUser == null || challengerUser == null) {
+    final MyPuttUser challengerUser = storageChallenge.challengerUser;
+    if (recipientUser == null) {
       return false;
     }
 
@@ -49,8 +49,8 @@ class ChallengesService implements SingletonConsumer {
     if (currentUid == null) return false;
 
     final MyPuttUser? recipientUser = storageChallenge.recipientUser;
-    final MyPuttUser? challengerUser = storageChallenge.challengerUser;
-    if (recipientUser == null || challengerUser == null) {
+    final MyPuttUser challengerUser = storageChallenge.challengerUser;
+    if (recipientUser == null) {
       return false;
     }
 

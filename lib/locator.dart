@@ -35,6 +35,7 @@ Future<void> setUpLocator() async {
   final Mixpanel mixpanel = await Mixpanel.init(
     kDebugMode ? kMixpanelDevelopmentToken : kMixpanelProductionToken,
     optOutTrackingDefault: false,
+    trackAutomaticEvents: true,
   );
   locator.registerSingleton<Mixpanel>(mixpanel);
   locator.registerSingleton<AppPhaseCubit>(AppPhaseCubit());

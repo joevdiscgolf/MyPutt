@@ -79,6 +79,7 @@ class PrimaryButton extends StatelessWidget {
                 Vibrate.feedback(FeedbackType.light);
                 onPressed();
               },
+        style: buttonStyle,
         child: loading
             ? SizedBox(
                 width: 20,
@@ -86,7 +87,6 @@ class PrimaryButton extends StatelessWidget {
                 child: CircularProgressIndicator(color: labelColor),
               )
             : text,
-        style: buttonStyle,
       );
     }
 

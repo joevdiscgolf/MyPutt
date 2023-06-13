@@ -21,8 +21,9 @@ class DeviceService {
     if (Platform.isIOS) {
       return deviceInfo.iosInfo.then((info) => info.isPhysicalDevice);
     } else if (Platform.isAndroid) {
-      return deviceInfo.androidInfo
-          .then((info) => info.isPhysicalDevice ?? false);
+      return deviceInfo.androidInfo.then(
+        (info) => info.isPhysicalDevice,
+      );
     } else {
       return false;
     }
