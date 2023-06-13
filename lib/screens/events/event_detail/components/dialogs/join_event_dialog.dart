@@ -20,7 +20,7 @@ class JoinEventDialog extends StatefulWidget {
   final Function onEventJoin;
 
   @override
-  _JoinEventDialogState createState() => _JoinEventDialogState();
+  State<JoinEventDialog> createState() => _JoinEventDialogState();
 }
 
 class _JoinEventDialogState extends State<JoinEventDialog> {
@@ -188,6 +188,7 @@ class _JoinEventDialogState extends State<JoinEventDialog> {
             response.error ?? 'Failed to join event, please try again.';
       });
     }
+    if (!mounted) return;
     Navigator.of(context).pop();
     setState(() => _loading = false);
   }

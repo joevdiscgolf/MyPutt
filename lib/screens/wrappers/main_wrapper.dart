@@ -23,7 +23,7 @@ class MainWrapper extends StatefulWidget {
   static String routeName = '/';
 
   @override
-  _MainWrapperState createState() => _MainWrapperState();
+  State<MainWrapper> createState() => _MainWrapperState();
 }
 
 class _MainWrapperState extends State<MainWrapper> {

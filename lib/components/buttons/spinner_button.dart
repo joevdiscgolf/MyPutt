@@ -41,7 +41,7 @@ class SpinnerButton extends StatefulWidget {
   final bool repeat;
 
   @override
-  _SpinnerButtonState createState() => _SpinnerButtonState();
+  State<SpinnerButton> createState() => _SpinnerButtonState();
 }
 
 class _SpinnerButtonState extends State<SpinnerButton>

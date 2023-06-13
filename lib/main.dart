@@ -172,6 +172,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onConnected() async {
     await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
     BlocProvider.of<SessionsCubit>(context).onConnectionEstablished();
     BlocProvider.of<ChallengesCubit>(context).onConnectionEstablished();
   }

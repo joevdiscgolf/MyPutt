@@ -18,7 +18,7 @@ class PuttingStatsPage extends StatefulWidget {
   final String screenType;
 
   @override
-  _PuttingStatsPageState createState() => _PuttingStatsPageState();
+  State<PuttingStatsPage> createState() => _PuttingStatsPageState();
 }
 
 class _PuttingStatsPageState extends State<PuttingStatsPage> {

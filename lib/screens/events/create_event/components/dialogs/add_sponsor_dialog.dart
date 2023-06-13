@@ -7,12 +7,10 @@ import 'package:myputt/components/custom_fields/custom_text_fields.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AddSponsorDialog extends StatefulWidget {
-  const AddSponsorDialog({
-    Key? key,
-  }) : super(key: key);
+  const AddSponsorDialog({Key? key}) : super(key: key);
 
   @override
-  _AddSponsorDialogState createState() => _AddSponsorDialogState();
+  State<AddSponsorDialog> createState() => _AddSponsorDialogState();
 }
 
 class _AddSponsorDialogState extends State<AddSponsorDialog> {

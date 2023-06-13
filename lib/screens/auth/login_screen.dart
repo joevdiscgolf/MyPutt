@@ -320,6 +320,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       return;
     }
+    if (!mounted) return;
     reloadCubits(context);
     Navigator.of(context).pop();
   }

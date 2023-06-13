@@ -13,12 +13,10 @@ import 'package:myputt/utils/panel_helpers.dart';
 import 'components/preset_list_item.dart';
 
 class SelectPresetDialog extends StatefulWidget {
-  const SelectPresetDialog({
-    Key? key,
-  }) : super(key: key);
+  const SelectPresetDialog({Key? key}) : super(key: key);
 
   @override
-  _SelectPresetDialogState createState() => _SelectPresetDialogState();
+  State<SelectPresetDialog> createState() => _SelectPresetDialogState();
 }
 
 class _SelectPresetDialogState extends State<SelectPresetDialog> {

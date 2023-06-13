@@ -22,7 +22,7 @@ class PerformanceChartPanel extends StatefulWidget {
   final TabController rangeTabController;
 
   @override
-  _PerformanceChartPanelState createState() => _PerformanceChartPanelState();
+  State<PerformanceChartPanel> createState() => _PerformanceChartPanelState();
 }
 
 class _PerformanceChartPanelState extends State<PerformanceChartPanel>

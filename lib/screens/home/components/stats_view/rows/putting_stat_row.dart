@@ -44,7 +44,7 @@ class PuttingStatRow extends StatelessWidget {
             SizedBox(
               width: 80,
               child: Text(
-                distance.toString() + ' ft',
+                '$distance ft',
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
@@ -66,11 +66,7 @@ class PuttingStatRow extends StatelessWidget {
                                 color: MyPuttColors.lightBlue),
                         const SizedBox(width: 4),
                         Text(
-                            (100 * (percentage! - allTimePercentage!))
-                                    .abs()
-                                    .toStringAsFixed(1)
-                                    .toString() +
-                                ' %',
+                            '${(100 * (percentage! - allTimePercentage!)).abs().toStringAsFixed(1)} %',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge

@@ -11,7 +11,7 @@ class RecordScreen extends StatefulWidget {
   static String routeName = '/record_screen';
 
   @override
-  _RecordScreenState createState() => _RecordScreenState();
+  State<RecordScreen> createState() => _RecordScreenState();
 }
 
 class _RecordScreenState extends State<RecordScreen>

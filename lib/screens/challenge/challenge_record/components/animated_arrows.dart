@@ -8,7 +8,7 @@ class AnimatedArrows extends StatefulWidget {
   const AnimatedArrows({Key? key}) : super(key: key);
 
   @override
-  _AnimatedArrowsState createState() => _AnimatedArrowsState();
+  State<AnimatedArrows> createState() => _AnimatedArrowsState();
 }
 
 class _AnimatedArrowsState extends State<AnimatedArrows>

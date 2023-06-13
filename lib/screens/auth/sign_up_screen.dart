@@ -15,7 +15,7 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
@@ -199,6 +199,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       setState(() => _buttonState = ButtonState.success);
       int count = 0;
+      if (!mounted) return;
       Navigator.popUntil(context, (route) {
         return count++ == 2;
       });

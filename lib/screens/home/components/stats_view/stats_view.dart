@@ -15,7 +15,7 @@ class StatsView extends StatefulWidget {
   const StatsView({Key? key}) : super(key: key);
 
   @override
-  _StatsViewState createState() => _StatsViewState();
+  State<StatsView> createState() => _StatsViewState();
 }
 
 class _StatsViewState extends State<StatsView> with TickerProviderStateMixin {

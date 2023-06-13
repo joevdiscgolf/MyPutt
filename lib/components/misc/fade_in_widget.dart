@@ -8,7 +8,7 @@ class FadeInWidget extends StatefulWidget {
   final Widget child;
 
   @override
-  _FadeInWidgetState createState() => _FadeInWidgetState();
+  State<FadeInWidget> createState() => _FadeInWidgetState();
 }
 
 class _FadeInWidgetState extends State<FadeInWidget>

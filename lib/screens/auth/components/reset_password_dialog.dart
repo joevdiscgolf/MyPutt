@@ -12,7 +12,7 @@ class ResetPasswordDialog extends StatefulWidget {
   const ResetPasswordDialog({Key? key}) : super(key: key);
 
   @override
-  _ResetPasswordDialogState createState() => _ResetPasswordDialogState();
+  State<ResetPasswordDialog> createState() => _ResetPasswordDialogState();
 }
 
 class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
@@ -155,6 +155,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
     }
     setState(() => _buttonState = ButtonState.success);
     await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 }

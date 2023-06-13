@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 class CollapsingAppBarTitle extends StatefulWidget {
   final Widget child;
 
-  const CollapsingAppBarTitle({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
+  const CollapsingAppBarTitle({Key? key, required this.child})
+      : super(key: key);
 
   @override
-  _CollapsingAppBarTitleState createState() {
+  State<CollapsingAppBarTitle> createState() {
     return _CollapsingAppBarTitleState();
   }
 }
