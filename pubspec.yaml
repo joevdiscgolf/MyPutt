@@ -125,6 +125,7 @@ flutter:
     - assets/images/
     - assets/app_icon/
     - assets/icons/
+    - assets/icons/stance_icons/
     - assets/introduction_screen/
 
   # To add assets to your application, add an assets section, like this:

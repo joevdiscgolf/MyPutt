@@ -38,6 +38,4 @@ enum PuttingStance {
   staggered,
   @JsonValue('straddle')
   straddle,
-  @JsonValue('knee')
-  knee,
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/components/icons/png_icon.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
@@ -30,8 +30,12 @@ class _StanceSelectionPanelState extends State<StanceSelectionPanel> {
                 .updatePuttingStance(puttingStance);
             Navigator.of(context).pop();
           },
-          icon: const CircleIconContainer(
-            icon: Icon(FlutterRemix.close_circle_line),
+          icon: CircleIconContainer(
+            icon: PngIcon(
+              path: puttingStanceToAssetPathMap[puttingStance] ?? '',
+              size: 32,
+              flipHorizontal: puttingStance == PuttingStance.straddle,
+            ),
           ),
           title: puttingStanceToNameMap[puttingStance] ?? '',
           subtitle: puttingStanceToSubtitleMap[puttingStance],
