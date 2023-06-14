@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/cubits/record/record_cubit_helpers.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
@@ -24,6 +25,18 @@ class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
             puttingConditions: const PuttingConditions(),
           ),
         );
+
+  void openSession(PuttingSession session) {
+    emit(
+      RecordActive(
+        distance: 20,
+        setLength: 10,
+        puttsSelected: 10,
+        sslKey: GlobalKey<ScrollSnapListState>(),
+        puttingConditions: const PuttingConditions(),
+      ),
+    );
+  }
 
   void setExactDistance(int distance) {
     emit((state as RecordActive).copyWith(distance: distance));

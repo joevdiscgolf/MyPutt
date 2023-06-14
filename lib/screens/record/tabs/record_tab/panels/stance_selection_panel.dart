@@ -7,7 +7,7 @@ import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
 import 'package:myputt/screens/record/tabs/record_tab/components/circle_icon_container.dart';
 import 'package:myputt/screens/record/tabs/record_tab/components/select_no_condition_row.dart';
-import 'package:myputt/screens/record/tabs/record_tab/panels/wind_direction_selection_panel.dart';
+import 'package:myputt/screens/record/tabs/record_tab/panels/components/condition_selection_row.dart';
 import 'package:myputt/utils/constants/record_constants.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
