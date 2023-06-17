@@ -7,6 +7,9 @@ import 'package:myputt/utils/colors.dart';
 
 import 'enums.dart';
 
+const int kDefaultDistanceFt = 20;
+const int kDefaultSetLength = 10;
+
 const int kTapThresholdMilliseconds = 200;
 const double kTopNavBarHeight = 56;
 

@@ -8,6 +8,7 @@ import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
+import 'package:myputt/repositories/putting_preferences_repository.dart';
 import 'package:myputt/repositories/presets_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -53,6 +54,9 @@ Future<void> setUpLocator() async {
   locator.registerSingleton<PresetsRepository>(PresetsRepository());
   locator.registerSingleton<ChallengesRepository>(ChallengesRepository());
   locator.registerSingleton<EventsRepository>(EventsRepository());
+  locator.registerSingleton<PuttingPreferencesRepository>(
+      PuttingPreferencesRepository());
+
   locator.registerLazySingleton(() => StatsService());
   locator.registerLazySingleton(() => ChartService());
   locator.registerLazySingleton(() => MyPuttAuthService());
@@ -71,6 +75,7 @@ Future<void> setUpLocator() async {
     locator.get<SessionsRepository>(),
     locator.get<EventsRepository>(),
     locator.get<UserRepository>(),
+    locator.get<PuttingPreferencesRepository>(),
   ];
 
   for (SingletonConsumer repository in repositories) {

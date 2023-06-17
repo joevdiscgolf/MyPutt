@@ -9,6 +9,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/events_repository.dart';
+import 'package:myputt/repositories/putting_preferences_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/user_repository.dart';
@@ -23,6 +24,9 @@ void fetchLocalRepositoryData() {
 
   // current user
   locator.get<UserRepository>().fetchLocalCurrentUser();
+
+  // saved putting conditions
+  locator.get<PuttingPreferencesRepository>().fetchLocalPuttingPreferences();
 }
 
 Future<void> fetchRepositoryData() async {
