@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
@@ -168,12 +167,10 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         message: 'Are you sure you want to delete this session?',
         buttonlabel: 'Delete',
         buttonColor: MyPuttColors.red,
-        icon: const ShadowIcon(
-          icon: Icon(
-            FlutterRemix.alert_line,
-            color: MyPuttColors.red,
-            size: 60,
-          ),
+        icon: const Icon(
+          FlutterRemix.alert_line,
+          color: MyPuttColors.red,
+          size: 60,
         ),
       ),
     ).then((_) {

@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myputt/locator.dart';
+import 'package:myputt/models/data/putting_preferences/putting_preferences.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/cubits/record/record_cubit_helpers.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
+import 'package:myputt/repositories/putting_preferences_repository.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 part 'record_state.dart';
@@ -13,7 +17,6 @@ class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
   void initCubit() {
     // TODO: implement init
   }
-
   RecordCubit()
       : super(
           RecordActive(
@@ -25,57 +28,100 @@ class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
           ),
         );
 
-  void setExactDistance(int distance) {
-    emit((state as RecordActive).copyWith(distance: distance));
+  final PuttingPreferencesRepository _preferencesRepository =
+      locator.get<PuttingPreferencesRepository>();
+
+  void openSession(PuttingSession session) {
+    final PuttingPreferences puttingPreferences =
+        _preferencesRepository.puttingPreferences;
+
+    emit(
+      RecordActive(
+        distance: puttingPreferences.preferredDistance,
+        setLength: puttingPreferences.preferredSetLength,
+        puttsSelected: puttingPreferences.preferredSetLength,
+        sslKey: GlobalKey<ScrollSnapListState>(),
+        puttingConditions: puttingPreferences.puttingConditions,
+      ),
+    );
+  }
+
+  void setExactDistance(int exactDistance) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
+    emit(activeState.copyWith(distance: exactDistance));
+
+    _preferencesRepository.preferredDistance = exactDistance;
   }
 
   void incrementDistance(bool increase) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
     final int newDistance = getNextDistancePreset(
-      (state as RecordActive).distance,
+      activeState.distance,
       increase: increase,
     );
 
-    emit((state as RecordActive).copyWith(distance: newDistance));
+    emit(activeState.copyWith(distance: newDistance));
+
+    _preferencesRepository.preferredDistance = newDistance;
   }
 
   void incrementSetLength(bool increase) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
+    final int updatedSetLength =
+        getUpdatedSetLength(activeState.setLength, increase);
+
     emit(
-      (state as RecordActive).copyWith(
-        setLength:
-            getUpdatedSetLength((state as RecordActive).setLength, increase),
-      ),
+      activeState.copyWith(setLength: updatedSetLength),
     );
     _updatePuttsPickerIndex(increase);
+
+    _preferencesRepository.preferredSetLength = updatedSetLength;
   }
 
   void updatePuttsSelected(int puttsSelected) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
     if (puttsSelected != state.puttsSelected) {
-      emit((state as RecordActive).copyWith(puttsSelected: puttsSelected));
+      activeState.copyWith(puttsSelected: puttsSelected);
     }
   }
 
   void updatePuttingStance(PuttingStance? updatedStance) {
-    if (updatedStance !=
-        (state as RecordActive).puttingConditions.puttingStance) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
+    if (updatedStance != activeState.puttingConditions.puttingStance) {
+      final PuttingConditions updatedConditions = activeState.puttingConditions
+          .copyWith({'puttingStance': updatedStance});
+
       emit(
-        (state as RecordActive).copyWith(
-          puttingConditions: (state as RecordActive)
-              .puttingConditions
-              .copyWith({'puttingStance': updatedStance}),
-        ),
+        activeState.copyWith(puttingConditions: updatedConditions),
       );
+
+      _preferencesRepository.puttingConditions = updatedConditions;
     }
   }
 
   void updateWindDirection(WindDirection? updatedWindDirection) {
+    if (state is! RecordActive) return;
+    final RecordActive activeState = state as RecordActive;
+
     if (updatedWindDirection != state.puttingConditions.windDirection) {
-      emit(
-        (state as RecordActive).copyWith(
-          puttingConditions: state.puttingConditions.copyWith({
-            'windDirection': updatedWindDirection,
-          }),
-        ),
-      );
+      final PuttingConditions updatedConditions =
+          activeState.puttingConditions.copyWith({
+        'windDirection': updatedWindDirection,
+      });
+
+      emit(activeState.copyWith(puttingConditions: updatedConditions));
+
+      _preferencesRepository.puttingConditions = updatedConditions;
     }
   }
 

@@ -4,7 +4,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/components/misc/custom_circular_progress_indicator.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/set_helpers.dart';
@@ -74,12 +73,10 @@ class PuttingSetRowV2 extends StatelessWidget {
                     message: 'Are you sure you want to delete this set?',
                     buttonlabel: 'Delete',
                     buttonColor: MyPuttColors.red,
-                    icon: const ShadowIcon(
-                      icon: Icon(
-                        FlutterRemix.alert_line,
-                        color: MyPuttColors.red,
-                        size: 60,
-                      ),
+                    icon: const Icon(
+                      FlutterRemix.alert_line,
+                      color: MyPuttColors.red,
+                      size: 60,
                     ),
                   ),
                 );

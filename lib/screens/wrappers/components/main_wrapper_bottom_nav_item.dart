@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
-class MyPuttBottomNavItem extends StatelessWidget {
-  const MyPuttBottomNavItem({
+class MainWrapperBottomNavItem extends StatelessWidget {
+  const MainWrapperBottomNavItem({
     Key? key,
     required this.iconData,
     this.iconSize = 24,

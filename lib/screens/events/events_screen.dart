@@ -26,7 +26,8 @@ import 'create_event/create_event_screen.dart';
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/events_screen';
+  static const String routeName = '/events';
+  static const String screenName = 'Events';
 
   @override
   State<EventsScreen> createState() => _EventsState();

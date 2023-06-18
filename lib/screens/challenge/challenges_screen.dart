@@ -19,7 +19,8 @@ import 'package:myputt/screens/challenge/components/challenges_list.dart';
 class ChallengesScreen extends StatefulWidget {
   const ChallengesScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/challenges_screen';
+  static const String routeName = '/challenges';
+  static const String screenName = 'Challenges';
 
   @override
   State<ChallengesScreen> createState() => _ChallengesState();

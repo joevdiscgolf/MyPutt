@@ -50,5 +50,4 @@ const _$WindDirectionEnumMap = {
 const _$PuttingStanceEnumMap = {
   PuttingStance.staggered: 'staggered',
   PuttingStance.straddle: 'straddle',
-  PuttingStance.knee: 'knee',
 };

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/search_user_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/utils/colors.dart';
@@ -47,12 +46,10 @@ class _ShareSheetState extends State<ShareSheet> {
                     .copyWith(fontWeight: FontWeight.w500, fontSize: 32),
               ),
               const SizedBox(height: 8),
-              const ShadowIcon(
-                icon: Icon(
-                  FlutterRemix.sword_fill,
-                  color: MyPuttColors.black,
-                  size: 80,
-                ),
+              const Icon(
+                FlutterRemix.sword_fill,
+                color: MyPuttColors.black,
+                size: 80,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),

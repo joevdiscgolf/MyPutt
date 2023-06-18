@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
@@ -82,12 +81,11 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
             maxLines: 1,
           ),
           const SizedBox(height: 16),
-          const ShadowIcon(
-              icon: Icon(
+          const Icon(
             FlutterRemix.sword_fill,
             color: MyPuttColors.black,
             size: 80,
-          )),
+          ),
           const SizedBox(height: 8),
           if (_dialogErrorText != null)
             Text(

@@ -133,8 +133,9 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
         ),
       ));
     } else {
-      emit(SessionErrorState(
-          sessions: _sessionRepository.validCompletedSessions));
+      emit(
+        SessionErrorState(sessions: _sessionRepository.validCompletedSessions),
+      );
     }
   }
 

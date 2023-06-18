@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/firebase_auth_service.dart';
 import 'package:myputt/utils/colors.dart';
@@ -57,7 +56,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
             maxLines: 1,
           ),
           const SizedBox(height: 24),
-          const ShadowIcon(icon: Icon(FlutterRemix.mail_lock_fill, size: 64)),
+          const Icon(FlutterRemix.mail_lock_fill, size: 64),
           const SizedBox(height: 24),
           _emailField(context),
           const SizedBox(height: 24),

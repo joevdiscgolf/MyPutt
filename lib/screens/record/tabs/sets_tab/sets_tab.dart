@@ -6,6 +6,7 @@ import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:collection/collection.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row_v2.dart';
+import 'package:myputt/screens/record/tabs/sets_tab/components/record_empty_sets_state.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
 class SetsTab extends StatelessWidget {
@@ -16,6 +17,10 @@ class SetsTab extends StatelessWidget {
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
         if (state is SessionInProgressState) {
+          if (state.currentSession.sets.isEmpty) {
+            return const RecordEmptySetsState();
+          }
+
           return ListView(
             padding: const EdgeInsets.only(left: 24, top: 4),
             physics: const AlwaysScrollableScrollPhysics(),

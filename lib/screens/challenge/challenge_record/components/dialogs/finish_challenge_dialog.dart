@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -22,12 +21,10 @@ class FinishChallengeDialog extends StatelessWidget {
       buttonlabel: 'Finish',
       title: 'Finish challenge',
       buttonColor: MyPuttColors.forestGreen,
-      icon: const ShadowIcon(
-        icon: Icon(
-          FlutterRemix.sword_fill,
-          color: MyPuttColors.black,
-          size: 80,
-        ),
+      icon: const Icon(
+        FlutterRemix.sword_fill,
+        color: MyPuttColors.black,
+        size: 80,
       ),
     );
   }

@@ -1,9 +1,19 @@
-const String kSessionsBoxKey = 'Sessions';
-const String kChallengesBoxKey = 'ChallengesBox';
-const String kUserBoxKey = 'UserBox';
+class HiveBoxes {
+  static const String kSessionsBoxKey = 'Sessions';
+  static const String kChallengesBoxKey = 'ChallengesBox';
+  static const String kUserBoxKey = 'UserBox';
+  static const String kPuttingConditionsBoxKey = 'PuttingConditionsBox';
+}
 
-const String kCompletedSessionsKey = 'CompletedSessions';
-const String kCurrentSessionKey = 'CurrentSession';
+class HiveKeys {
+  // sessions
+  static const String kCompletedSessionsKey = 'CompletedSessions';
+  static const String kCurrentSessionKey = 'CurrentSession';
 
-const String kChallengesKey = 'Challenges';
-const String kCurrentUserKey = 'CurrentUser';
+  // challenges
+  static const String kChallengesKey = 'Challenges';
+  static const String kCurrentUserKey = 'CurrentUser';
+
+  // puttting conditions
+  static const String kSavedPuttingConditionsKey = 'PuttingConditions';
+}

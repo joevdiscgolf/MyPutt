@@ -2,14 +2,17 @@ import 'dart:developer';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
+import 'package:myputt/models/data/putting_preferences/putting_preferences.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/users/myputt_user.dart';
 import 'package:myputt/services/localDB/constants.dart';
 
 class LocalDBService {
-  final Box<dynamic> _sessionsBox = Hive.box(kSessionsBoxKey);
-  final Box<dynamic> _challengesBox = Hive.box(kChallengesBoxKey);
-  final Box<dynamic> _userBox = Hive.box(kUserBoxKey);
+  final Box<dynamic> _sessionsBox = Hive.box(HiveBoxes.kSessionsBoxKey);
+  final Box<dynamic> _challengesBox = Hive.box(HiveBoxes.kChallengesBoxKey);
+  final Box<dynamic> _userBox = Hive.box(HiveBoxes.kUserBoxKey);
+  final Box<dynamic> _puttingConditionsBox =
+      Hive.box(HiveBoxes.kPuttingConditionsBoxKey);
 
   Future<bool> storeCompletedSessions(
     List<PuttingSession> completedSessions,
@@ -17,7 +20,7 @@ class LocalDBService {
     try {
       return _sessionsBox
           .put(
-            kCompletedSessionsKey,
+            HiveKeys.kCompletedSessionsKey,
             completedSessions.map((session) => session.toJson()).toList(),
           )
           .then((_) => true);
@@ -31,7 +34,7 @@ class LocalDBService {
   List<PuttingSession>? retrieveCompletedSessions() {
     try {
       final Iterable<dynamic>? results = _sessionsBox
-          .get(kCompletedSessionsKey)
+          .get(HiveKeys.kCompletedSessionsKey)
           ?.map((hashMap) =>
               PuttingSession.fromJson(Map<String, dynamic>.from(hashMap)));
 
@@ -59,10 +62,12 @@ class LocalDBService {
     try {
       if (currentSession != null) {
         return _sessionsBox
-            .put(kCurrentSessionKey, currentSession.toJson())
+            .put(HiveKeys.kCurrentSessionKey, currentSession.toJson())
             .then((_) => true);
       } else {
-        return _sessionsBox.delete(kCurrentSessionKey).then((_) => true);
+        return _sessionsBox
+            .delete(HiveKeys.kCurrentSessionKey)
+            .then((_) => true);
       }
     } catch (e, trace) {
       log('[LocalDBService][storeCurrentSession] ${e.toString()}');
@@ -73,7 +78,7 @@ class LocalDBService {
 
   PuttingSession? retrieveCurrentSession() {
     try {
-      final dynamic hashMap = _sessionsBox.get(kCurrentSessionKey);
+      final dynamic hashMap = _sessionsBox.get(HiveKeys.kCurrentSessionKey);
       if (hashMap == null) {
         return null;
       }
@@ -100,7 +105,7 @@ class LocalDBService {
   List<PuttingChallenge>? retrievePuttingChallenges() {
     try {
       final Iterable<dynamic>? results = _challengesBox
-          .get(kChallengesKey)
+          .get(HiveKeys.kChallengesKey)
           ?.map((hashMap) =>
               PuttingChallenge.fromJson(Map<String, dynamic>.from(hashMap)));
 
@@ -128,7 +133,7 @@ class LocalDBService {
     try {
       return _challengesBox
           .put(
-            kChallengesKey,
+            HiveKeys.kChallengesKey,
             challenges.map((challenge) => challenge.toJson()).toList(),
           )
           .then((_) => true);
@@ -153,7 +158,7 @@ class LocalDBService {
 
   MyPuttUser? fetchCurrentUser() {
     try {
-      final dynamic userHashmap = _userBox.get(kCurrentUserKey);
+      final dynamic userHashmap = _userBox.get(HiveKeys.kCurrentUserKey);
 
       if (userHashmap == null) {
         return null;
@@ -170,10 +175,54 @@ class LocalDBService {
   Future<bool> saveCurrentUser(MyPuttUser currentUser) async {
     try {
       return _userBox
-          .put(kCurrentUserKey, currentUser.toJson())
+          .put(HiveKeys.kCurrentUserKey, currentUser.toJson())
           .then((_) => true);
     } catch (e, trace) {
       log('[LocalDBService][saveCurrentUser] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  Future<bool> savePuttingPreferences(PuttingPreferences preferences) async {
+    try {
+      return _puttingConditionsBox
+          .put(HiveKeys.kSavedPuttingConditionsKey, preferences.toJson())
+          .then((_) => true);
+    } catch (e, trace) {
+      log('[LocalDBService][savePuttingPreferences] ${e.toString()}');
+      log(trace.toString());
+      return false;
+    }
+  }
+
+  PuttingPreferences? fetchPuttingPreferences() {
+    try {
+      final dynamic puttingConditionsHashMap =
+          _puttingConditionsBox.get(HiveKeys.kSavedPuttingConditionsKey);
+
+      if (puttingConditionsHashMap == null) {
+        return null;
+      }
+
+      return PuttingPreferences.fromJson(
+          Map<String, dynamic>.from(puttingConditionsHashMap));
+    } catch (e, trace) {
+      log('[LocalDBService][fetchPuttingPreferences] ${e.toString()}');
+      log(trace.toString());
+      return null;
+    }
+  }
+
+  Future<bool> deletePuttingConditions() async {
+    try {
+      return _puttingConditionsBox
+          .deleteAll(_puttingConditionsBox.keys)
+          .then((_) async {
+        return true;
+      });
+    } catch (e, trace) {
+      log('[LocalDBService][fetchPuttingPreferences] ${e.toString()}');
       log(trace.toString());
       return false;
     }

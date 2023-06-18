@@ -15,7 +15,8 @@ import 'package:myputt/utils/enums.dart';
 class ChallengesScreenV2 extends StatefulWidget {
   const ChallengesScreenV2({Key? key}) : super(key: key);
 
-  static String routeName = '/challenges_v2_screen';
+  static const String routeName = '/challenges_v2';
+  static const String screenName = 'Challenges V2';
 
   @override
   State<ChallengesScreenV2> createState() => _ChallengesState();
