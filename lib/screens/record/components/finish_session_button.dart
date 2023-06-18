@@ -7,6 +7,7 @@ import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
+import 'package:myputt/services/toast/toast_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class FinishSessionButton extends StatelessWidget {
@@ -44,6 +45,19 @@ class FinishSessionButton extends StatelessWidget {
 
   void _onPressed(BuildContext context) {
     Vibrate.feedback(FeedbackType.light);
+
+    final SessionsState sessionsState =
+        BlocProvider.of<SessionsCubit>(context).state;
+
+    if (sessionsState is! SessionInProgressState) {
+      return;
+    }
+
+    if (sessionsState.currentSession.sets.isEmpty) {
+      locator.get<ToastService>().triggerErrorToast('No sets yet!');
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (dialogContext) => ConfirmDialog(
