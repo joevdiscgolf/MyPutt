@@ -31,6 +31,8 @@ import 'components/pdga_info/pdga_info_section.dart';
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
 
+  static const String screenName = 'My Profile';
+
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
 }

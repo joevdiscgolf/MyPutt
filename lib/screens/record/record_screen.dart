@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/screens/record/components/record_screen_app_bar.dart';
 import 'package:myputt/screens/record/tabs/record_tab/record_tab.dart';
-import 'package:myputt/screens/record/tabs/sets_tab.dart';
+import 'package:myputt/screens/record/tabs/sets_tab/sets_tab.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 

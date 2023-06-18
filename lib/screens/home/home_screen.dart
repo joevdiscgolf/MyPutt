@@ -12,7 +12,8 @@ import 'components/calendar_view/calendar_view.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/';
+  static const String routeName = '/';
+  static const String screenName = 'Home';
 
   @override
   HomeScreenState createState() => HomeScreenState();

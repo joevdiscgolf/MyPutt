@@ -217,7 +217,7 @@ class LocalDBService {
   Future<bool> deletePuttingConditions() async {
     try {
       return _puttingConditionsBox
-          .deleteAll(_challengesBox.keys)
+          .deleteAll(_puttingConditionsBox.keys)
           .then((_) async {
         return true;
       });

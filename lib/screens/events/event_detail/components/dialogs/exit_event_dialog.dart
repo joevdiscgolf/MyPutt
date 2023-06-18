@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/services/events_service.dart';
@@ -62,12 +61,10 @@ class _ExitEventDialogState extends State<ExitEventDialog> {
             maxLines: 1,
           ),
           const SizedBox(height: 16),
-          const ShadowIcon(
-            icon: Icon(
-              FlutterRemix.alert_line,
-              color: MyPuttColors.red,
-              size: 60,
-            ),
+          const Icon(
+            FlutterRemix.alert_line,
+            color: MyPuttColors.red,
+            size: 60,
           ),
           const SizedBox(height: 16),
           Text(

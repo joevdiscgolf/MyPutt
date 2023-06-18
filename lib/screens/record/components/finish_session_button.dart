@@ -5,7 +5,6 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/dialogs/confirm_dialog.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/utils/colors.dart';
@@ -49,12 +48,10 @@ class FinishSessionButton extends StatelessWidget {
       context: context,
       builder: (dialogContext) => ConfirmDialog(
         title: 'Finish session',
-        icon: const ShadowIcon(
-          icon: Icon(
-            FlutterRemix.medal_2_fill,
-            size: 80,
-            color: MyPuttColors.black,
-          ),
+        icon: const Icon(
+          FlutterRemix.medal_2_fill,
+          size: 80,
+          color: MyPuttColors.black,
         ),
         buttonlabel: 'Finish',
         buttonColor: MyPuttColors.blue,

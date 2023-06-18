@@ -8,6 +8,9 @@ import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar.dart';
 class HomeScreenV2 extends StatelessWidget {
   const HomeScreenV2({Key? key}) : super(key: key);
 
+  static const String routeName = 'home_v2';
+  static const String screenName = 'Home V2';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -48,28 +48,6 @@ class PuttingPreferencesRepository extends ChangeNotifier
         puttingPreferences.copyWith(preferredSetLength: setLength);
     _saveLocalPuttingPreferences();
   }
-  // int get preferredDistance {
-  //   return _preferredDistance ?? kDefaultDistanceFt;
-  // }
-  //
-  // int get preferredSetLength {
-  //   return _preferredSetLength ?? kDefaultSetLength;
-  // }
-  //
-  // set currentPuttingConditions(PuttingConditions? conditions) {
-  //   _currentPuttingConditions = conditions;
-  //   notifyListeners();
-  // }
-  //
-  // set preferredDistance(int distance) {
-  //   _preferredDistance = distance;
-  //   notifyListeners();
-  // }
-  //
-  // set preferredSetLength(int setLength) {
-  //   _preferredSetLength = setLength;
-  //   notifyListeners();
-  // }
 
   @override
   void clearData() {

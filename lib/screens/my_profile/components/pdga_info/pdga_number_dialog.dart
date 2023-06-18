@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
-import 'package:myputt/components/misc/shadow_icon.dart';
 import 'package:myputt/utils/colors.dart';
 
 class PdgaNumberDialog extends StatefulWidget {
@@ -54,12 +53,10 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
             maxLines: 1,
           ),
           const SizedBox(height: 16),
-          const ShadowIcon(
-            icon: Icon(
-              FlutterRemix.user_3_fill,
-              size: 80,
-              color: MyPuttColors.blue,
-            ),
+          const Icon(
+            FlutterRemix.user_3_fill,
+            size: 80,
+            color: MyPuttColors.blue,
           ),
           const SizedBox(height: 16),
           _pdgaNumField(context),

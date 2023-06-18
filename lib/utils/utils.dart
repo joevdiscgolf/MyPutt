@@ -51,6 +51,7 @@ void clearRepositoryData() {
   locator.get<ChallengesRepository>().clearData();
   locator.get<UserRepository>().clearData();
   locator.get<EventsRepository>().clearData();
+  locator.get<PuttingPreferencesRepository>().clearData();
 }
 
 void reloadCubits(BuildContext context) {

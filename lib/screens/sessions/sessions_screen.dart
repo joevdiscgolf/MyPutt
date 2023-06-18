@@ -19,7 +19,8 @@ import 'package:myputt/utils/colors.dart';
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({Key? key}) : super(key: key);
 
-  static String routeName = '/sessions_screen';
+  static const String routeName = '/sessions';
+  static const String screenName = 'Sessions';
 
   @override
   State<SessionsScreen> createState() => _SessionsState();
