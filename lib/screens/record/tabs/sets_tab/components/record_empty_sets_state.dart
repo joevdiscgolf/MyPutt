@@ -25,7 +25,7 @@ class RecordEmptySetsState extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          "Your sets will appear here once you've recorded them.",
+          "Your sets will appear here.",
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: MyPuttColors.gray[400],
               ),
