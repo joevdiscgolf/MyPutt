@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -8,6 +9,7 @@ import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/screens/challenge/challenge_record/challenge_record_screen.dart';
+import 'package:myputt/screens/challenge_v2/components/rows/delete_challenge_button.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -36,79 +38,84 @@ class ActiveChallengeRowV2 extends StatelessWidget {
         },
         child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.only(left: 24),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: standardBoxShadow(),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: const AssetImage(
-                    'assets/images/winthrop_hole_6_putt.JPG',
-                  ),
-                  colorFilter: ColorFilter.mode(
-                    MyPuttColors.gray[700]!.withOpacity(0.9),
-                    BlendMode.srcOver,
-                  ),
-                ),
-              ),
-              child: Container(
-                padding: const EdgeInsets.only(top: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(right: 24),
-                      alignment: Alignment.topRight,
-                      child: _challengeScoreRichText(context),
+            Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 24),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: standardBoxShadow(),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: const AssetImage(
+                        'assets/images/winthrop_hole_6_putt.JPG',
+                      ),
+                      colorFilter: ColorFilter.mode(
+                        MyPuttColors.gray[700]!.withOpacity(0.9),
+                        BlendMode.srcOver,
+                      ),
                     ),
-                    const SizedBox(height: 40),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${challenge.opponentUser?.displayName}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: MyPuttColors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  DateFormat.yMMMd('en_us').format(
-                                      (DateTime.fromMillisecondsSinceEpoch(
-                                          challenge.creationTimeStamp))),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(color: MyPuttColors.white),
-                                )
-                              ],
-                            ),
-                          ),
+                        Container(
+                          padding: const EdgeInsets.only(right: 24),
+                          alignment: Alignment.topRight,
+                          child: _challengeScoreRichText(context),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 16, right: 16),
-                          child: Icon(
-                            FlutterRemix.arrow_right_s_line,
-                            color: MyPuttColors.white,
-                          ),
-                        )
+                        const SizedBox(height: 40),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${challenge.opponentUser?.displayName}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            color: MyPuttColors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      DateFormat.yMMMd('en_us').format(
+                                          (DateTime.fromMillisecondsSinceEpoch(
+                                              challenge.creationTimeStamp))),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(color: MyPuttColors.white),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 16, right: 16),
+                              child: Icon(
+                                FlutterRemix.arrow_right_s_line,
+                                color: MyPuttColors.white,
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                if (kDebugMode) DeleteChallengeButton(challenge: challenge),
+              ],
             ),
             Transform.translate(
               offset: const Offset(24, -12),

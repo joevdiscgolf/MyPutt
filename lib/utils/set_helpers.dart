@@ -75,6 +75,10 @@ abstract class SetHelpers {
     return sets;
   }
 
+  static List<PuttingSet> addSet(PuttingSet newSet, List<PuttingSet> allSets) {
+    return [...allSets, newSet];
+  }
+
   static List<PuttingSet> removeSet(
     PuttingSet setToRemove,
     List<PuttingSet> allSets,

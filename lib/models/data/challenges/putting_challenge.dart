@@ -68,11 +68,11 @@ class PuttingChallenge extends Equatable {
       currentUserSetsUpdatedAt = storageChallenge.challengerSetsUpdatedAt;
 
       opponentUser = storageChallenge.recipientUser;
-      opponentSets = storageChallenge.recipientSets;
+      opponentSets = storageChallenge.recipientSets ?? [];
       opponentSetsUpdatedAt = storageChallenge.recipientSetsUpdatedAt;
     } else {
       // current user is recipient, opponent is challenger.
-      currentUserSets = storageChallenge.recipientSets;
+      currentUserSets = storageChallenge.recipientSets ?? [];
       currentUserSetsUpdatedAt = storageChallenge.recipientSetsUpdatedAt;
 
       opponentUser = storageChallenge.challengerUser;

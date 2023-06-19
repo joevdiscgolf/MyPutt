@@ -20,6 +20,7 @@ import 'package:myputt/services/localDB/local_db_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/flags.dart';
+import 'package:myputt/utils/set_helpers.dart';
 
 class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
   @override
@@ -132,6 +133,10 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
             currentUid == challenge.challengerUser.uid)
         .toList();
     notifyListeners();
+  }
+
+  void _addToAllChallenges(PuttingChallenge challenge) {
+    allChallenges = ChallengeHelpers.addChallenges([challenge], allChallenges);
   }
 
   void _listenToCurrentChallenge(PuttingChallenge challenge) {
@@ -310,7 +315,12 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
   }
 
   Future<void> addSet(PuttingSet set) async {
-    currentChallenge?.currentUserSets.add(set);
+    if (currentChallenge == null) return;
+
+    final List<PuttingSet> updatedSets =
+        SetHelpers.addSet(set, currentChallenge!.currentUserSets);
+
+    currentChallenge = currentChallenge?.copyWith(currentUserSets: updatedSets);
     onSetsChanged();
   }
 
@@ -399,7 +409,8 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
     // move to from pending to active if necessary
     if (incomingPendingChallenges.contains(challenge)) {
       incomingPendingChallenges.remove(challenge);
-      activeChallenges.add(challenge);
+      _addToAllChallenges(challenge);
+      // activeChallenges.add(challenge);
       _challengesService.updateStorageChallenge(
         StoragePuttingChallenge.fromPuttingChallenge(
           currentChallenge!,
@@ -467,7 +478,8 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
     }
 
     if (!completedChallenges.contains(currentChallenge!)) {
-      completedChallenges.add(currentChallenge!);
+      _addToAllChallenges(currentChallenge!);
+      // completedChallenges.add(currentChallenge!);
     }
 
     currentChallenge = completedCurrentChallenge;
@@ -482,7 +494,8 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
           [currentChallenge!], activeChallenges);
     }
     if (!completedChallenges.contains(currentChallenge!)) {
-      completedChallenges.add(currentChallenge!);
+      _addToAllChallenges(currentChallenge!);
+      // completedChallenges.add(currentChallenge!);
     }
   }
 
@@ -499,6 +512,28 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
     }
   }
 
+  Future<bool> debugDeleteChallenge(PuttingChallenge challenge) async {
+    final bool cloudDeleteSuccess =
+        await _challengesService.deleteChallenge(challenge);
+
+    if (!cloudDeleteSuccess) {
+      _log('[debugDeleteChallenge] Failed to delete challenge in cloud');
+      return false;
+    }
+    allChallenges = ChallengeHelpers.removeChallenges(
+      [challenge],
+      allChallenges,
+    );
+
+    final bool localSaveSuccess = await _storeChallengesInLocalDB();
+
+    if (!localSaveSuccess) {
+      _log('[sendChallenge] Failed to delete challenge in local DB');
+    }
+
+    return localSaveSuccess;
+  }
+
   Future<bool> sendChallenge(
     PuttingChallenge challenge,
     String currentUid,
@@ -513,7 +548,12 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
       return false;
     }
 
-    activeChallenges.add(challenge);
+    _log('num active challenges before: ${activeChallenges.length}');
+
+    _addToAllChallenges(challenge);
+    // activeChallenges.add(challenge);
+
+    _log('num active challenges after: ${activeChallenges.length}');
 
     final bool localSaveSuccess = await _storeChallengesInLocalDB();
 
@@ -562,7 +602,9 @@ class ChallengesRepository extends ChangeNotifier implements MyPuttRepository {
               currentUser,
             ).copyWith(status: ChallengeStatus.active);
 
-            activeChallenges.add(challenge);
+            _addToAllChallenges(challenge);
+            // activeChallenges.add(challenge);
+
             await _challengesService.updateStorageChallenge(
               StoragePuttingChallenge.fromPuttingChallenge(
                 challenge,

@@ -38,12 +38,12 @@ class FBChallengesDataWriter {
     batch.set(
       recipientRef,
       storageChallengeJson,
-      SetOptions(merge: true),
+      SetOptions(merge: merge),
     );
     batch.set(
       challengerRef,
       storageChallengeJson,
-      SetOptions(merge: true),
+      SetOptions(merge: merge),
     );
 
     return batch.commit().then((_) => true).timeout(timeout, onTimeout: () {
@@ -119,12 +119,21 @@ class FBChallengesDataWriter {
     String currentUid,
     PuttingChallenge challengeToDelete,
   ) {
-    return firestore
-        .doc(
-            '$challengesCollection/$currentUid/$challengesCollection/${challengeToDelete.id}')
-        .delete()
-        .then((value) => true)
-        .catchError(
+    final WriteBatch batch = firestore.batch();
+
+    if (challengeToDelete.recipientUser != null) {
+      batch.delete(
+        firestore.doc(
+            '$challengesCollection/${challengeToDelete.recipientUser!.uid}/$challengesCollection/${challengeToDelete.id}'),
+      );
+    }
+
+    batch.delete(
+      firestore.doc(
+          '$challengesCollection/${challengeToDelete.challengerUser.uid}/$challengesCollection/${challengeToDelete.id}'),
+    );
+
+    return batch.commit().then((value) => true).catchError(
       (e, trace) {
         FirebaseCrashlytics.instance.recordError(
           e,

@@ -244,6 +244,20 @@ abstract class ChallengeHelpers {
         .toList();
   }
 
+  static List<PuttingChallenge> addChallenges(
+    List<PuttingChallenge> challengesToAdd,
+    List<PuttingChallenge> allChallenges,
+  ) {
+    final Iterable<String> existingChallengeIds =
+        allChallenges.map((existingChallenge) => existingChallenge.id);
+
+    return [
+      ...allChallenges,
+      ...challengesToAdd
+          .where((challenge) => !existingChallengeIds.contains(challenge.id))
+    ];
+  }
+
   static List<PuttingChallenge> removeChallenges(
     List<PuttingChallenge> challengesToRemove,
     List<PuttingChallenge> allChallenges,
