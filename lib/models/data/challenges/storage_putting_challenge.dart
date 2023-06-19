@@ -20,7 +20,7 @@ class StoragePuttingChallenge {
     this.recipientUser,
     required this.challengeStructure,
     required this.challengerSets,
-    required this.recipientSets,
+    this.recipientSets,
     this.challengerSetsUpdatedAt,
     this.recipientSetsUpdatedAt,
     this.isDeleted,
@@ -35,7 +35,7 @@ class StoragePuttingChallenge {
   final MyPuttUser? recipientUser;
   final List<ChallengeStructureItem> challengeStructure;
   final List<PuttingSet> challengerSets;
-  final List<PuttingSet> recipientSets;
+  final List<PuttingSet>? recipientSets;
   final String? challengerSetsUpdatedAt;
   final String? recipientSetsUpdatedAt;
   final bool? isDeleted;
