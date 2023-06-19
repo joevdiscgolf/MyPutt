@@ -97,18 +97,18 @@ class _ChallengesState extends State<ChallengesScreenV2>
 
   Widget _mainBody(BuildContext context) {
     return BlocBuilder<ChallengesCubit, ChallengesState>(
-        builder: (context, state) {
-      if (state is ChallengesErrorState) {
+        builder: (context, challengesState) {
+      if (challengesState is ChallengesErrorState) {
         return EmptyState(
             onRetry: () => BlocProvider.of<ChallengesCubit>(context).reload());
-      } else if (state is ChallengesLoading) {
+      } else if (challengesState is ChallengesLoading) {
         return const ChallengesV2LoadingScreen();
       }
-      state.activeChallenges.sort(
+      challengesState.activeChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
-      state.incomingPendingChallenges.sort(
+      challengesState.incomingPendingChallenges.sort(
           (c1, c2) => c1.creationTimeStamp.compareTo(c2.creationTimeStamp));
-      state.completedChallenges.sort((c1, c2) {
+      challengesState.completedChallenges.sort((c1, c2) {
         final int dateCompletedComparison = (c1.completionTimeStamp ?? 0)
             .compareTo(c2.completionTimeStamp ?? 0);
         return dateCompletedComparison != 0
@@ -119,15 +119,16 @@ class _ChallengesState extends State<ChallengesScreenV2>
         controller: _tabController,
         children: [
           ChallengesListV2(
-            challenges: state.activeChallenges.reversed.toList(),
+            challenges: challengesState.activeChallenges.reversed.toList(),
             challengeCategory: ChallengeCategory.active,
           ),
           ChallengesListV2(
-            challenges: state.incomingPendingChallenges.reversed.toList(),
+            challenges:
+                challengesState.incomingPendingChallenges.reversed.toList(),
             challengeCategory: ChallengeCategory.pending,
           ),
           ChallengesListV2(
-            challenges: state.completedChallenges.reversed.toList(),
+            challenges: challengesState.completedChallenges.reversed.toList(),
             challengeCategory: ChallengeCategory.complete,
           ),
         ],
