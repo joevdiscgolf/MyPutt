@@ -49,7 +49,7 @@ class FinishSessionButton extends StatelessWidget {
     final SessionsState sessionsState =
         BlocProvider.of<SessionsCubit>(context).state;
 
-    if (sessionsState is! SessionInProgressState) {
+    if (sessionsState is! SessionActive) {
       return;
     }
 

@@ -36,7 +36,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
   void emitUpdatedState() {
     if (_sessionRepository.currentSession != null) {
       emit(
-        SessionInProgressState(
+        SessionActive(
           sessions: _sessionRepository.validCompletedSessions,
           currentSession: _sessionRepository.currentSession!,
           individualStats: _statsService.generateSessionsStatsMap(
@@ -49,7 +49,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
       );
     } else {
       emit(
-        NoActiveSessionState(
+        NoActiveSession(
           sessions: _sessionRepository.validCompletedSessions,
           individualStats: _statsService.generateSessionsStatsMap(
             _sessionRepository.validCompletedSessions,
@@ -66,7 +66,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
       return;
     }
     emit(
-      SessionInProgressState(
+      SessionActive(
         sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
         individualStats: _statsService.generateSessionsStatsMap(
@@ -79,7 +79,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
     );
 
     emit(
-      SessionInProgressState(
+      SessionActive(
         sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
         individualStats: _statsService.generateSessionsStatsMap(
@@ -94,7 +94,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
 
   void continueSession() {
     if (_sessionRepository.currentSession != null) {
-      emit(SessionInProgressState(
+      emit(SessionActive(
         sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
         individualStats: _statsService.generateSessionsStatsMap(
@@ -113,7 +113,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
     await _sessionRepository
         .finishCurrentSession(_sessionRepository.currentSession!);
     _sessionRepository.deleteCurrentSession();
-    emit(NoActiveSessionState(
+    emit(NoActiveSession(
         sessions: _sessionRepository.validCompletedSessions,
         individualStats: _statsService.generateSessionsStatsMap(
             _sessionRepository.validCompletedSessions)));
@@ -122,7 +122,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
   void addSet(PuttingSet set) {
     _sessionRepository.addSet(set);
     if (_sessionRepository.currentSession != null) {
-      emit(SessionInProgressState(
+      emit(SessionActive(
         sessions: _sessionRepository.validCompletedSessions,
         currentSession: _sessionRepository.currentSession!,
         individualStats: _statsService.generateSessionsStatsMap(
@@ -141,9 +141,9 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
 
   void deleteSet(PuttingSet set) {
     _sessionRepository.deleteSet(set);
-    if (state is SessionInProgressState) {
+    if (state is SessionActive) {
       if (_sessionRepository.currentSession != null) {
-        emit(SessionInProgressState(
+        emit(SessionActive(
           sessions: _sessionRepository.validCompletedSessions,
           currentSession: _sessionRepository.currentSession!,
           individualStats: _statsService.generateSessionsStatsMap(
@@ -162,9 +162,9 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
   Future<void> deleteCompletedSession(PuttingSession session) async {
     await _sessionRepository.deleteCompletedSession(session);
 
-    if (state is SessionInProgressState) {
+    if (state is SessionActive) {
       if (_sessionRepository.currentSession != null) {
-        emit(SessionInProgressState(
+        emit(SessionActive(
             sessions: _sessionRepository.validCompletedSessions,
             individualStats: _statsService.generateSessionsStatsMap(
               _sessionRepository.validCompletedSessions,
@@ -180,7 +180,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
     } else {
       if (_sessionRepository.currentSession == null) {
         emit(
-          NoActiveSessionState(
+          NoActiveSession(
             sessions: _sessionRepository.validCompletedSessions,
             individualStats: _statsService.generateSessionsStatsMap(
               _sessionRepository.validCompletedSessions,
@@ -197,7 +197,7 @@ class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
   void deleteCurrentSession() {
     _sessionRepository.deleteCurrentSession();
     emit(
-      NoActiveSessionState(
+      NoActiveSession(
         sessions: _sessionRepository.validCompletedSessions,
         individualStats: _statsService.generateSessionsStatsMap(
           _sessionRepository.validCompletedSessions,

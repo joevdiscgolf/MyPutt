@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:myputt/components/empty_state/empty_state_v2.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:collection/collection.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/screens/record/components/rows/putting_set_row_v2.dart';
-import 'package:myputt/screens/record/tabs/sets_tab/components/record_empty_sets_state.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
 class SetsTab extends StatelessWidget {
@@ -16,9 +17,13 @@ class SetsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SessionsCubit, SessionsState>(
       builder: (context, state) {
-        if (state is SessionInProgressState) {
+        if (state is SessionActive) {
           if (state.currentSession.sets.isEmpty) {
-            return const RecordEmptySetsState();
+            return const EmptyStateV2(
+              title: 'No sets yet...',
+              subtitle: 'Your sets will appear here',
+              iconData: FlutterRemix.stack_line,
+            );
           }
 
           return ListView(

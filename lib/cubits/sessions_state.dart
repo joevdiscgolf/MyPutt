@@ -10,8 +10,8 @@ abstract class SessionsState {
   }
 }
 
-class SessionInProgressState extends SessionsState {
-  const SessionInProgressState(
+class SessionActive extends SessionsState {
+  const SessionActive(
       {required sessions,
       required this.currentSession,
       required this.individualStats,
@@ -23,8 +23,8 @@ class SessionInProgressState extends SessionsState {
   final Stats currentSessionStats;
 }
 
-class NoActiveSessionState extends SessionsState {
-  const NoActiveSessionState({required sessions, required this.individualStats})
+class NoActiveSession extends SessionsState {
+  const NoActiveSession({required sessions, required this.individualStats})
       : super(sessions: sessions);
   final Map<String, Stats> individualStats;
 }

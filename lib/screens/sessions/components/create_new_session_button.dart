@@ -20,7 +20,7 @@ class CreateNewSessionButton extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: BlocBuilder<SessionsCubit, SessionsState>(
         builder: (context, state) {
-          if (state is! SessionInProgressState) {
+          if (state is! SessionActive) {
             return Bounceable(
               onTap: () {
                 Vibrate.feedback(FeedbackType.light);
