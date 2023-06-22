@@ -69,7 +69,7 @@ class _RecordScreenTabBarState extends State<RecordScreenTabBar> {
                 BlocBuilder<SessionsCubit, SessionsState>(
                   builder: (context, state) {
                     late final int numSets;
-                    if (state is SessionInProgressState) {
+                    if (state is SessionActive) {
                       numSets = state.currentSession.sets.length;
                     } else {
                       numSets = 0;

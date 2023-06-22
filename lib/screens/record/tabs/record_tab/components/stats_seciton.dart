@@ -23,7 +23,7 @@ class StatsSection extends StatelessWidget {
               child: BlocBuilder<SessionsCubit, SessionsState>(
                 builder: (context, state) {
                   late final int numSets;
-                  if (state is SessionInProgressState) {
+                  if (state is SessionActive) {
                     numSets = state.currentSession.sets.length;
                   } else {
                     numSets = 0;
@@ -118,7 +118,7 @@ class StatsSection extends StatelessWidget {
       builder: (context, state) {
         late final double percentage;
 
-        if (state is SessionInProgressState) {
+        if (state is SessionActive) {
           percentage = SetHelpers.percentageFromSets(state.currentSession.sets);
         } else {
           percentage = 0;
@@ -141,7 +141,7 @@ class StatsSection extends StatelessWidget {
         late final int totalMade;
         late final int totalAttempted;
 
-        if (state is SessionInProgressState) {
+        if (state is SessionActive) {
           totalMade = totalMadeFromSets(state.currentSession.sets);
           totalAttempted = totalAttemptsFromSets(state.currentSession.sets);
         } else {
