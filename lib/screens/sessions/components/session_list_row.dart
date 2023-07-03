@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/misc/custom_circular_progress_indicator.dart';
+import 'package:myputt/cubits/session_summary_cubit.dart';
+import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
+import 'package:myputt/screens/session_summary/session_summary_screen.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 import 'package:myputt/utils/string_helpers.dart';
 
 class SessionListRow extends StatelessWidget {
-  const SessionListRow({
-    Key? key,
-    required this.session,
-    this.index,
-    required this.delete,
-    required this.onTap,
-  }) : super(key: key);
-  final Function delete;
+  const SessionListRow({Key? key, required this.session}) : super(key: key);
+
   final PuttingSession session;
-  final int? index;
-  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,20 @@ class SessionListRow extends StatelessWidget {
 
     return Bounceable(
       onTap: () {
-        onTap();
+        Vibrate.feedback(FeedbackType.light);
+        locator
+            .get<Mixpanel>()
+            .track('Sessions Screen Session Row Pressed', properties: {
+          'Set Count': session.sets.length,
+        });
+        BlocProvider.of<SessionSummaryCubit>(context)
+            .openSessionSummary(session);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                SessionSummaryScreen(session: session),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(16),

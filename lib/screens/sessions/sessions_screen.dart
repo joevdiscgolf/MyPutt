@@ -8,10 +8,8 @@ import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/empty_state/empty_state_v2.dart';
-import 'package:myputt/cubits/home/home_screen_cubit.dart';
-import 'package:myputt/cubits/session_summary_cubit.dart';
 import 'package:myputt/locator.dart';
-import 'package:myputt/screens/session_summary/session_summary_screen.dart';
+import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/screens/sessions/components/create_new_session_button.dart';
 import 'package:myputt/screens/sessions/components/resume_session_card.dart';
 import 'package:myputt/screens/sessions/components/session_list_row.dart';
@@ -81,7 +79,8 @@ class _SessionsState extends State<SessionsScreen> {
             onRetry: () =>
                 BlocProvider.of<SessionsCubit>(context).reloadCloudSessions(),
           );
-        } else if (sessionState.sessions.isEmpty) {
+        } else if (sessionState is! SessionActive &&
+            sessionState.sessions.isEmpty) {
           return const EmptyStateV2(
             title: 'No sessions yet...',
             subtitle: 'Start a session using the "+" button.',
@@ -89,39 +88,10 @@ class _SessionsState extends State<SessionsScreen> {
           );
         }
 
-        final List<Widget> children = List.from(
-          sessionState.sessions
-              .asMap()
-              .entries
-              .map(
-                (entry) => SessionListRow(
-                  session: entry.value,
-                  index: entry.key + 1,
-                  delete: () {
-                    BlocProvider.of<SessionsCubit>(context)
-                        .deleteCompletedSession(entry.value);
-                    BlocProvider.of<HomeScreenCubit>(context).reload();
-                  },
-                  onTap: () {
-                    Vibrate.feedback(FeedbackType.light);
-                    _mixpanel.track('Sessions Screen Session Row Pressed',
-                        properties: {
-                          'Set Count': entry.value.sets.length,
-                        });
-                    BlocProvider.of<SessionSummaryCubit>(context)
-                        .openSessionSummary(entry.value);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            SessionSummaryScreen(session: entry.value),
-                      ),
-                    );
-                  },
-                ),
-              )
-              .toList()
-              .reversed,
-        );
+        final List<Widget> children =
+            sessionState.sessions.reversed.map((PuttingSession session) {
+          return SessionListRow(session: session);
+        }).toList();
 
         return CustomScrollView(
           controller: _scrollController,

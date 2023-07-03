@@ -11,12 +11,12 @@ abstract class SessionsState {
 }
 
 class SessionActive extends SessionsState {
-  const SessionActive(
-      {required sessions,
-      required this.currentSession,
-      required this.individualStats,
-      required this.currentSessionStats})
-      : super(sessions: sessions);
+  const SessionActive({
+    required sessions,
+    required this.currentSession,
+    required this.individualStats,
+    required this.currentSessionStats,
+  }) : super(sessions: sessions);
 
   final PuttingSession currentSession;
   final Map<String, Stats> individualStats;
