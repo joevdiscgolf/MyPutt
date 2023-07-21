@@ -89,7 +89,7 @@ class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
     final RecordActive activeState = state as RecordActive;
 
     if (puttsSelected != state.puttsSelected) {
-      activeState.copyWith(puttsSelected: puttsSelected);
+      emit(activeState.copyWith(puttsSelected: puttsSelected));
     }
   }
 
