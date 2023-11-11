@@ -12,6 +12,7 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/screens/home/components/calendar_view/utils.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/helpers.dart';
@@ -347,27 +348,36 @@ class StatsService {
     return total;
   }
 
-  double? getPercentageWithCutoff(List<PuttingSession> sessions,
-      List<PuttingChallenge> challenges, int cutoff) {
+  double? getPuttingPercentageForCircle(
+    List<PuttingSession> sessions,
+    List<PuttingChallenge> challenges, {
+    Circles? circle,
+  }) {
+    final int lowerBound = circle == null ? 0 : kCircleToLowerBoundFt[circle]!;
+    final int upperBound = circle == null ? 0 : kCircleToUpperBoundFt[circle]!;
+
     double totalMade = 0;
-    double totalAttmpted = 0;
+    double totalAttempted = 0;
+
     for (var session in sessions) {
       for (var set in session.sets) {
-        if (set.distance > cutoff) {
+        if (circle == null ||
+            set.distance >= lowerBound && set.distance <= upperBound) {
           totalMade += set.puttsMade;
-          totalAttmpted += set.puttsAttempted;
+          totalAttempted += set.puttsAttempted;
         }
       }
     }
     for (var challenge in challenges) {
       for (var set in challenge.currentUserSets) {
-        if (set.distance > cutoff) {
+        if (circle == null ||
+            set.distance >= lowerBound && set.distance <= upperBound) {
           totalMade += set.puttsMade;
-          totalAttmpted += set.puttsAttempted;
+          totalAttempted += set.puttsAttempted;
         }
       }
     }
-    return totalAttmpted == 0 ? null : (totalMade / totalAttmpted);
+    return totalAttempted == 0 ? null : (totalMade / totalAttempted);
   }
 
   int getNumChallengesWithResult(

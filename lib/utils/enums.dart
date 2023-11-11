@@ -28,6 +28,7 @@ enum WeatherCondition {
 
 enum Circles {
   circle1,
+  circle1x,
   circle2,
 }
 
