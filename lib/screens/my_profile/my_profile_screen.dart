@@ -25,6 +25,7 @@ import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/challenge_helpers.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/panel_helpers.dart';
 import 'components/pdga_info/pdga_info_section.dart';
 
@@ -288,16 +289,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         Builder(builder: (context) {
                           final double? c1XPercentage =
-                              _statsService.getPercentageWithCutoff(
-                                  _sessionRepository.validCompletedSessions,
-                                  _challengesRepository.completedChallenges,
-                                  CircleCutoffs.c1x);
+                              _statsService.getPuttingPercentageForCircle(
+                            _sessionRepository.validCompletedSessions,
+                            _challengesRepository.completedChallenges,
+                            circle: Circles.circle1x,
+                          );
                           return ShadowCircularIndicator(
-                              decimal: c1XPercentage, size: 80);
+                            decimal: c1XPercentage,
+                            size: 80,
+                          );
                         }),
                         const SizedBox(height: 12),
-                        Text('Circle 1X',
-                            style: Theme.of(context).textTheme.titleLarge),
+                        Text(
+                          'Circle 1X',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
                       ],
                     ),
                   ),
@@ -307,12 +313,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentageWithCutoff(
-                                    _sessionRepository.validCompletedSessions,
-                                    _challengesRepository.completedChallenges,
-                                    CircleCutoffs.c2);
+                                _statsService.getPuttingPercentageForCircle(
+                              _sessionRepository.validCompletedSessions,
+                              _challengesRepository.completedChallenges,
+                              circle: Circles.circle2,
+                            );
                             return ShadowCircularIndicator(
-                                decimal: c2Percentage, size: 80);
+                              decimal: c2Percentage,
+                              size: 80,
+                            );
                           }),
                           const SizedBox(height: 12),
                           Text(
@@ -329,16 +338,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         children: [
                           Builder(builder: (context) {
                             final double? c2Percentage =
-                                _statsService.getPercentageWithCutoff(
-                                    _sessionRepository.validCompletedSessions,
-                                    _challengesRepository.completedChallenges,
-                                    CircleCutoffs.none);
+                                _statsService.getPuttingPercentageForCircle(
+                              _sessionRepository.validCompletedSessions,
+                              _challengesRepository.completedChallenges,
+                              circle: null,
+                            );
                             return ShadowCircularIndicator(
-                                decimal: c2Percentage, size: 80);
+                              decimal: c2Percentage,
+                              size: 80,
+                            );
                           }),
                           const SizedBox(height: 12),
-                          Text('All',
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text(
+                            'All',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
                         ],
                       );
                     }),

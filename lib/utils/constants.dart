@@ -35,15 +35,21 @@ class ChallengeStatus {
   static String complete = 'complete';
 }
 
-abstract class CircleCutoffs {
-  static const int c1x = 11;
-  static const int c2 = 33;
-  static const int none = 0;
-}
-
 const Map<Circles, String> circleToNameMap = {
   Circles.circle1: 'Circle 1',
+  Circles.circle1x: 'Circle 1x',
   Circles.circle2: 'Circle 2'
+};
+
+const Map<Circles, int> kCircleToLowerBoundFt = {
+  Circles.circle1: 0,
+  Circles.circle1x: 12,
+  Circles.circle2: 34,
+};
+const Map<Circles, int> kCircleToUpperBoundFt = {
+  Circles.circle1: 33,
+  Circles.circle1x: 33,
+  Circles.circle2: 66,
 };
 
 const List<WeatherCondition> weatherConditions = [
