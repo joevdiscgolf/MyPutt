@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -27,12 +28,9 @@ class ResumeSessionCard extends StatelessWidget implements PreferredSizeWidget {
         onTap: () {
           Vibrate.feedback(FeedbackType.light);
           BlocProvider.of<RecordCubit>(context).openSession(currentSession);
+
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) {
-                return const RecordScreen();
-              },
-            ),
+            CupertinoPageRoute(builder: (context) => const RecordScreen()),
           );
         },
         child: Padding(

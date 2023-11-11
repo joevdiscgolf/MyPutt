@@ -64,18 +64,20 @@ const Map<WeatherCondition, String> weatherConditionsEnumMap = {
   WeatherCondition.snowy: 'Snowy',
 };
 
-const List<int> kDistanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
-
-const Map<int, int> distanceToIndex = {
-  10: 0,
-  15: 1,
-  20: 2,
-  25: 3,
-  30: 4,
-  40: 5,
-  50: 6,
-  60: 7
-};
+const List<int> kDefaultDistanceOptions = [
+  10,
+  15,
+  20,
+  25,
+  30,
+  35,
+  40,
+  45,
+  50,
+  55,
+  60,
+  65
+];
 
 const Map<int, int> indexToTimeRange = {
   0: TimeRange.lastFive,
