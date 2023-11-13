@@ -24,7 +24,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
   }) : super(tappedDownAt: tappedDownAt);
 
   final List<PuttingSet> sets;
-  final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+  final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
       circleToIntervalsMap;
   final int timeRange;
   final DistanceInterval? chartDistanceInterval;
@@ -34,7 +34,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
 
   HomeScreenV2Loaded copyWith(Map<String, dynamic> valuesToUpdate) {
     List<PuttingSet> sets = this.sets;
-    Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+    Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalsMap = this.circleToIntervalsMap;
     int timeRange = this.timeRange;
     DistanceInterval? chartDistanceInterval = this.chartDistanceInterval;

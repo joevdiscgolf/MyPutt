@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_builder.dart';
+import 'package:myputt/screens/home_v2/screens/home_chart_screen/home_chart_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
 
@@ -11,16 +14,26 @@ class HomeScreenChartV2Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _puttsMadeRow(context),
-          const SizedBox(height: 48),
-          const HomeScreenChartV2Builder(),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (context) => const HomeChartScreen(),
+          ),
+        );
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.only(top: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _puttsMadeRow(context),
+            const SizedBox(height: 48),
+            const HomeScreenChartV2Builder(),
+          ],
+        ),
       ),
     );
   }

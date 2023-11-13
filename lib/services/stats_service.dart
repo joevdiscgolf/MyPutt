@@ -351,7 +351,7 @@ class StatsService {
   double? getPuttingPercentageForCircle(
     List<PuttingSession> sessions,
     List<PuttingChallenge> challenges, {
-    Circles? circle,
+    PuttingCircle? circle,
   }) {
     final int lowerBound = circle == null ? 0 : kCircleToLowerBoundFt[circle]!;
     final int upperBound = circle == null ? 0 : kCircleToUpperBoundFt[circle]!;
@@ -511,73 +511,51 @@ class StatsService {
     return events;
   }
 
-  Map<Circles, Map<DistanceInterval, PuttingSetInterval>> getSetIntervals(
+  Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>> getSetIntervals(
     List<PuttingSet> sets,
   ) {
     final Map<int, List<PuttingSet>> setsByDistanceMap =
         SetHelpers.sortSetsByDistance(sets);
 
-    final Map<DistanceInterval, PuttingSetInterval> circle1IntervalToDataMap =
-        {};
-    final Map<DistanceInterval, PuttingSetInterval> circle2IntervalToDataMap =
-        {};
+    final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
+        circleToIntervalsMap = {};
 
-    // circle 1 intervals
-    for (int i = 0; i < kC1DistanceIntervals.length - 1; i++) {
-      final List<PuttingSet> puttingSetsInInterval = [];
+    for (PuttingCircle circle in kHomeScreenStatPuttingCircles) {
+      final Map<DistanceInterval, PuttingSetInterval> currentCircleMap =
+          circleToIntervalsMap[circle] ?? {};
+      final List<int> distanceIntervals =
+          kCircleToDistanceIntervals[circle] ?? [];
 
-      int lowerBound = kC1DistanceIntervals[i];
-      if (i > 0) {
-        lowerBound++;
-      }
-      final int upperBound = kC1DistanceIntervals[i + 1];
+      for (int i = 0; i < distanceIntervals.length - 1; i++) {
+        final List<PuttingSet> puttingSetsInInterval = [];
 
-      final DistanceInterval distanceInterval =
-          DistanceInterval(lowerBound: lowerBound, upperBound: upperBound);
-
-      for (int distance in setsByDistanceMap.keys) {
-        // if distance in interval
-        if (distance >= lowerBound && distance <= upperBound) {
-          puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
+        int lowerBound = distanceIntervals[i];
+        if (i > 0) {
+          lowerBound++;
         }
+        final int upperBound = distanceIntervals[i + 1];
+
+        final DistanceInterval distanceInterval =
+            DistanceInterval(lowerBound: lowerBound, upperBound: upperBound);
+
+        for (int distance in setsByDistanceMap.keys) {
+          // if distance in interval
+          if (distance >= lowerBound && distance <= upperBound) {
+            puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
+          }
+        }
+
+        currentCircleMap[distanceInterval] = PuttingSetInterval(
+          distanceInterval: distanceInterval,
+          sets: puttingSetsInInterval,
+          setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
+        );
       }
-      circle1IntervalToDataMap[distanceInterval] = PuttingSetInterval(
-        distanceInterval: distanceInterval,
-        sets: puttingSetsInInterval,
-        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
-      );
+
+      circleToIntervalsMap[circle] = currentCircleMap;
     }
 
-    // circle 2 intervals
-    for (int i = 0; i < kC2DistanceIntervals.length - 1; i++) {
-      final List<PuttingSet> puttingSetsInInterval = [];
-
-      int lowerBound = kC2DistanceIntervals[i];
-      if (i > 0) {
-        lowerBound++;
-      }
-      final int upperBound = kC2DistanceIntervals[i + 1];
-
-      final DistanceInterval distanceInterval =
-          DistanceInterval(lowerBound: lowerBound, upperBound: upperBound);
-
-      for (int distance in setsByDistanceMap.keys) {
-        // if distance in interval
-        if (distance >= lowerBound && distance <= upperBound) {
-          puttingSetsInInterval.addAll(setsByDistanceMap[distance]!);
-        }
-      }
-      circle2IntervalToDataMap[distanceInterval] = PuttingSetInterval(
-        distanceInterval: distanceInterval,
-        sets: puttingSetsInInterval,
-        setsPercentage: SetHelpers.percentageFromSets(puttingSetsInInterval),
-      );
-    }
-
-    return {
-      Circles.circle1: circle1IntervalToDataMap,
-      Circles.circle2: circle2IntervalToDataMap
-    };
+    return circleToIntervalsMap;
   }
 
   List<dynamic> getPuttingActivitiesByTimeRange(

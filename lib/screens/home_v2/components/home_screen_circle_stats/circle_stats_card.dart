@@ -7,6 +7,7 @@ import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/screens/circle_stats_screen/circle_stats_screen.dart';
 import 'package:myputt/utils/colors.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/distance_helpers.dart';
 import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -17,7 +18,7 @@ class CircleStatsCard extends StatelessWidget {
       {Key? key, required this.circle, required this.intervalToPuttingSetsData})
       : super(key: key);
 
-  final Circles circle;
+  final PuttingCircle circle;
   final Map<DistanceInterval, PuttingSetInterval> intervalToPuttingSetsData;
 
   @override
@@ -56,7 +57,7 @@ class CircleStatsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        circle == Circles.circle1 ? 'Circle 1' : 'Circle 2',
+                        kCircleToNameMap[circle] ?? '',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: MyPuttColors.gray[400],
                               fontWeight: FontWeight.w600,

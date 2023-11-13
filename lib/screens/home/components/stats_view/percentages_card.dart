@@ -17,7 +17,7 @@ class PercentagesCard extends StatelessWidget {
 
   final List<PuttingSession> allSessions;
   final int timeRange;
-  final Circles? circle;
+  final PuttingCircle? circle;
   final Map<int, num?> percentages;
   final Map<int, num?> allTimePercentages;
 

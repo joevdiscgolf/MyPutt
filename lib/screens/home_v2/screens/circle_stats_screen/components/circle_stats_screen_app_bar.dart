@@ -9,7 +9,7 @@ class CircleStatsScreenAppBar extends StatelessWidget
   const CircleStatsScreenAppBar({Key? key, required this.circle})
       : super(key: key);
 
-  final Circles circle;
+  final PuttingCircle circle;
 
   @override
   Size get preferredSize => const Size.fromHeight(kTopNavBarHeight);
@@ -30,7 +30,7 @@ class CircleStatsScreenAppBar extends StatelessWidget
             ),
           ),
           Text(
-            '${circleToNameMap[circle]}',
+            '${kCircleToNameMap[circle]}',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   color: MyPuttColors.blue,

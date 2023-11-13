@@ -116,12 +116,12 @@ class _StatsViewState extends State<StatsView> with TickerProviderStateMixin {
       },
       body: TabBarView(controller: _circlesController, children: [
         PuttingStatsPage(
-          circle: Circles.circle1,
+          circle: PuttingCircle.c1,
           timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
           screenType: 'home',
         ),
         PuttingStatsPage(
-          circle: Circles.circle2,
+          circle: PuttingCircle.c2,
           timeRange: indexToTimeRange[_rangeTabController.index] ?? 5,
           screenType: 'home',
         ),
