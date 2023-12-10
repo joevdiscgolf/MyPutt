@@ -9,7 +9,7 @@ class CircleStatsScreen extends StatelessWidget {
       {Key? key, required this.circle, required this.intervalToPuttingSetsData})
       : super(key: key);
 
-  final Circles circle;
+  final PuttingCircle circle;
   final Map<DistanceInterval, PuttingSetInterval> intervalToPuttingSetsData;
 
   @override

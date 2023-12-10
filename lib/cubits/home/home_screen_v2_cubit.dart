@@ -15,7 +15,6 @@ import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
-import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/home_screen_chart_screen.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/utils/chart_helpers.dart';
 import 'package:myputt/utils/constants.dart';
@@ -71,7 +70,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     final List<PuttingSet> setsInActivities =
         SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
-    final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+    final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
@@ -87,7 +86,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
       // update later
       final DistanceInterval? initialDistanceInterval =
           DistanceHelpers.getPrimaryDistanceInterval(
-        circleToIntervalsMap[Circles.circle1] ?? {},
+        circleToIntervalsMap[PuttingCircle.c1] ?? {},
       );
 
       emit(
@@ -120,7 +119,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     final List<PuttingSet> setsInActivities =
         SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
-    final Map<Circles, Map<DistanceInterval, PuttingSetInterval>>
+    final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
@@ -136,7 +135,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     } else {
       final DistanceInterval? initialDistanceInterval =
           DistanceHelpers.getPrimaryDistanceInterval(
-        circleToIntervalsMap[Circles.circle1] ?? {},
+        circleToIntervalsMap[PuttingCircle.c1] ?? {},
       );
 
       emit(
@@ -268,21 +267,8 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
   }
 
   void handleDragEnd(BuildContext context) {
-    final DateTime? tappedDownAt = state.tappedDownAt;
-
     if (state is HomeScreenV2Loaded) {
       emit((state as HomeScreenV2Loaded).copyWith({'chartDragData': null}));
-    }
-
-    if (tappedDownAt != null &&
-        DateTime.now().millisecondsSinceEpoch -
-                tappedDownAt.millisecondsSinceEpoch <
-            kTapThresholdMilliseconds) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreenChartScreen(),
-        ),
-      );
     }
   }
 }

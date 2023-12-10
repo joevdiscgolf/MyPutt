@@ -9,7 +9,7 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
       {Key? key, required this.circle, required this.setIntervalsMap})
       : super(key: key);
 
-  final Circles circle;
+  final PuttingCircle circle;
   final Map<DistanceInterval, PuttingSetInterval> setIntervalsMap;
 
   @override
@@ -54,7 +54,7 @@ class CirclePercentagesScreenBarChart extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(right: 8),
           alignment: Alignment.centerLeft,
-          width: 64,
+          width: 72,
           height: 48,
           child: Text(
             label,

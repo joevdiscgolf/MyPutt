@@ -292,7 +292,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               _statsService.getPuttingPercentageForCircle(
                             _sessionRepository.validCompletedSessions,
                             _challengesRepository.completedChallenges,
-                            circle: Circles.circle1x,
+                            circle: PuttingCircle.c1x,
                           );
                           return ShadowCircularIndicator(
                             decimal: c1XPercentage,
@@ -316,7 +316,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 _statsService.getPuttingPercentageForCircle(
                               _sessionRepository.validCompletedSessions,
                               _challengesRepository.completedChallenges,
-                              circle: Circles.circle2,
+                              circle: PuttingCircle.c2,
                             );
                             return ShadowCircularIndicator(
                               decimal: c2Percentage,

@@ -4,15 +4,24 @@ import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_builder.dart';
-import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/components/distance_interval_selection_row.dart';
-import 'package:myputt/screens/home_v2/screens/home_screen_chart_screen/components/time_range_chips_row.dart';
+import 'package:myputt/screens/home_v2/screens/home_chart_screen/components/distance_interval_selection_row.dart';
+import 'package:myputt/screens/home_v2/screens/home_chart_screen/components/time_range_chips_row.dart';
+import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
+import 'package:myputt/utils/layout_helpers.dart';
 
-class HomeScreenChartScreen extends StatelessWidget {
-  const HomeScreenChartScreen({Key? key}) : super(key: key);
+class HomeChartScreen extends StatelessWidget {
+  const HomeChartScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> children = [
+      const TimeRangeChipsRow(),
+      const SizedBox(height: 48),
+      const HomeScreenChartV2Builder(height: 240),
+      const SizedBox(height: 16),
+      _intervalSelectionSection(),
+    ];
     return Scaffold(
       appBar: MyPuttAppBar(
         title: 'Performance',
@@ -20,14 +29,12 @@ class HomeScreenChartScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 24),
-        child: Column(
-          children: [
-            const TimeRangeChipsRow(),
-            const SizedBox(height: 48),
-            const HomeScreenChartV2Builder(height: 240),
-            const SizedBox(height: 16),
-            _intervalSelectionSection(),
-          ],
+        child: ListView.builder(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+          ),
+          itemBuilder: (context, index) => children[index],
+          itemCount: children.length,
         ),
       ),
     );
@@ -51,24 +58,20 @@ class HomeScreenChartScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              DistanceIntervalSelectionRow(
-                circle: Circles.circle1,
-                distanceIntervals: state
-                        .circleToIntervalsMap[Circles.circle1]?.values
-                        .map((PuttingSetInterval puttingSetInterval) =>
-                            puttingSetInterval.distanceInterval)
-                        .toList() ??
-                    [],
-              ),
-              const SizedBox(height: 16),
-              DistanceIntervalSelectionRow(
-                circle: Circles.circle2,
-                distanceIntervals: state
-                        .circleToIntervalsMap[Circles.circle2]?.values
-                        .map((PuttingSetInterval puttingSetInterval) =>
-                            puttingSetInterval.distanceInterval)
-                        .toList() ??
-                    [],
+              ...addRunSpacing(
+                kHomeScreenStatPuttingCircles.map((circle) {
+                  return DistanceIntervalSelectionRow(
+                    circle: circle,
+                    distanceIntervals: state
+                            .circleToIntervalsMap[circle]?.values
+                            .map((PuttingSetInterval puttingSetInterval) =>
+                                puttingSetInterval.distanceInterval)
+                            .toList() ??
+                        [],
+                  );
+                }).toList(),
+                axis: Axis.vertical,
+                runSpacing: 16,
               ),
             ],
           );

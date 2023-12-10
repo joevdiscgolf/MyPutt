@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
-import 'package:myputt/screens/home_v2/components/circle_stats_section/circle_stats_section.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_wrapper.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/home_screen_circle_stats.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar.dart';
 
 class HomeScreenV2 extends StatelessWidget {
@@ -29,15 +29,20 @@ class HomeScreenV2 extends StatelessWidget {
     final List<Widget> children = [
       const HomeScreenChartV2Wrapper(),
       const SizedBox(height: 16),
-      const CircleStats()
+      const HomeScreenCircleStats()
     ];
     return CustomScrollView(
-      physics: const ClampingScrollPhysics(),
+      // physics: const ClampingScrollPhysics(),
       slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => children[index],
-            childCount: children.length,
+        SliverPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+          ),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => children[index],
+              childCount: children.length,
+            ),
           ),
         ),
       ],

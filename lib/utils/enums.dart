@@ -26,10 +26,11 @@ enum WeatherCondition {
   snowy
 }
 
-enum Circles {
-  circle1,
-  circle1x,
-  circle2,
+enum PuttingCircle {
+  c1,
+  c1x,
+  c2,
+  c3,
 }
 
 enum FrisbeeIconColor {

@@ -3,42 +3,49 @@ import 'package:myputt/utils/constants.dart';
 
 int getNextDistancePreset(int currentDistance, {required bool increase}) {
   // if larger than largest preset
-  if (currentDistance >= kDistanceOptions.reduce(max)) {
+  if (currentDistance > kDefaultDistanceOptions.reduce(max)) {
     if (increase) {
       return currentDistance;
     } else {
-      // decrement by one
-      return kDistanceOptions[kDistanceOptions.length - 2];
+      // set to largest distance option
+      return kDefaultDistanceOptions[kDefaultDistanceOptions.length - 1];
     }
   }
+
   // smaller than smallest preset
-  else if (currentDistance <= kDistanceOptions.reduce(min)) {
+  else if (currentDistance < kDefaultDistanceOptions.reduce(min)) {
+    // set to smallest distance option
     if (increase) {
-      return kDistanceOptions[1];
+      return kDefaultDistanceOptions[0];
     } else {
       return currentDistance;
     }
-  } else {
-    late final int closestIndex;
-    for (int i = 0; i < kDistanceOptions.length; i++) {
-      if (kDistanceOptions[i] >= currentDistance) {
-        closestIndex = i;
-        break;
-      }
-    }
+  }
+  // within the presets
+  else {
+    int? index;
     if (increase) {
-      if (closestIndex == kDistanceOptions.length - 1) {
-        return kDistanceOptions.first;
-      } else {
-        return kDistanceOptions[closestIndex + 1];
+      for (int i = 0; i < kDefaultDistanceOptions.length; i++) {
+        final int distance = kDefaultDistanceOptions[i];
+        if (distance > currentDistance) {
+          index = i;
+          break;
+        }
       }
     } else {
-      if (closestIndex == 0) {
-        // cycle back around to largest
-        return kDistanceOptions.last;
-      } else {
-        return kDistanceOptions[closestIndex - 1];
+      for (int i = kDefaultDistanceOptions.length - 1; i >= 0; i--) {
+        final int distance = kDefaultDistanceOptions[i];
+        if (distance < currentDistance) {
+          index = i;
+          break;
+        }
       }
+    }
+
+    if (index != null) {
+      return kDefaultDistanceOptions[index];
+    } else {
+      return currentDistance;
     }
   }
 }

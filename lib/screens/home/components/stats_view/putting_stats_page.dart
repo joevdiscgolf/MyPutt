@@ -14,7 +14,7 @@ class PuttingStatsPage extends StatefulWidget {
   }) : super(key: key);
 
   final int timeRange;
-  final Circles circle;
+  final PuttingCircle circle;
   final String screenType;
 
   @override
@@ -35,11 +35,11 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
               builder: (context, state) {
                 if (state is HomeScreenLoaded) {
                   return PercentagesCard(
-                    percentages: widget.circle == Circles.circle1
+                    percentages: widget.circle == PuttingCircle.c1
                         ? state.stats.circleOnePercentages ?? {}
                         : state.stats.circleTwoPercentages ?? {},
                     timeRange: widget.timeRange,
-                    allTimePercentages: widget.circle == Circles.circle1
+                    allTimePercentages: widget.circle == PuttingCircle.c1
                         ? state.stats.circleOneOverall ?? {}
                         : state.stats.circleTwoOverall ?? {},
                     allSessions: state.allSessions,
@@ -72,10 +72,10 @@ class _PuttingStatsPageState extends State<PuttingStatsPage> {
                 }
 
                 return PercentagesCard(
-                  percentages: widget.circle == Circles.circle1
+                  percentages: widget.circle == PuttingCircle.c1
                       ? state.stats.circleOnePercentages ?? {}
                       : state.stats.circleTwoPercentages ?? {},
-                  allTimePercentages: widget.circle == Circles.circle1
+                  allTimePercentages: widget.circle == PuttingCircle.c1
                       ? state.stats.circleOneOverall ?? {}
                       : state.stats.circleTwoOverall ?? {},
                 );

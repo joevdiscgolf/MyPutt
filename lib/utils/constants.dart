@@ -35,21 +35,31 @@ class ChallengeStatus {
   static String complete = 'complete';
 }
 
-const Map<Circles, String> circleToNameMap = {
-  Circles.circle1: 'Circle 1',
-  Circles.circle1x: 'Circle 1x',
-  Circles.circle2: 'Circle 2'
+const List<PuttingCircle> kHomeScreenStatPuttingCircles = [
+  PuttingCircle.c1,
+  PuttingCircle.c2,
+  PuttingCircle.c3
+];
+
+const Map<PuttingCircle, String> kCircleToNameMap = {
+  PuttingCircle.c1: 'Circle 1',
+  PuttingCircle.c1x: 'Circle 1x',
+  PuttingCircle.c2: 'Circle 2',
+  PuttingCircle.c3: 'Circle 3',
 };
 
-const Map<Circles, int> kCircleToLowerBoundFt = {
-  Circles.circle1: 0,
-  Circles.circle1x: 12,
-  Circles.circle2: 34,
+const Map<PuttingCircle, int> kCircleToLowerBoundFt = {
+  PuttingCircle.c1: 0,
+  PuttingCircle.c1x: 12,
+  PuttingCircle.c2: 34,
+  PuttingCircle.c3: 67,
 };
-const Map<Circles, int> kCircleToUpperBoundFt = {
-  Circles.circle1: 33,
-  Circles.circle1x: 33,
-  Circles.circle2: 66,
+
+const Map<PuttingCircle, int> kCircleToUpperBoundFt = {
+  PuttingCircle.c1: 33,
+  PuttingCircle.c1x: 33,
+  PuttingCircle.c2: 66,
+  PuttingCircle.c3: 100,
 };
 
 const List<WeatherCondition> weatherConditions = [
@@ -64,18 +74,20 @@ const Map<WeatherCondition, String> weatherConditionsEnumMap = {
   WeatherCondition.snowy: 'Snowy',
 };
 
-const List<int> kDistanceOptions = [10, 15, 20, 25, 30, 40, 50, 60];
-
-const Map<int, int> distanceToIndex = {
-  10: 0,
-  15: 1,
-  20: 2,
-  25: 3,
-  30: 4,
-  40: 5,
-  50: 6,
-  60: 7
-};
+const List<int> kDefaultDistanceOptions = [
+  10,
+  15,
+  20,
+  25,
+  30,
+  35,
+  40,
+  45,
+  50,
+  55,
+  60,
+  65
+];
 
 const Map<int, int> indexToTimeRange = {
   0: TimeRange.lastFive,
