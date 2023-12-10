@@ -28,11 +28,10 @@ class HomeScreenV2 extends StatelessWidget {
   Widget _mainBody(BuildContext context) {
     final List<Widget> children = [
       const HomeScreenChartV2Wrapper(),
-      const SizedBox(height: 16),
+      const Divider(height: 32, indent: 24, endIndent: 24),
       const HomeScreenCircleStats()
     ];
     return CustomScrollView(
-      // physics: const ClampingScrollPhysics(),
       slivers: [
         SliverPadding(
           padding: EdgeInsets.only(

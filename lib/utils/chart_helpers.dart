@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 
@@ -40,5 +42,27 @@ class ChartHelpers {
     final double difference = highIndexValue - lowIndexValue;
     final double pointValue = lowIndexValue + (difference * remainder);
     return pointValue;
+  }
+
+  static List<ChartPoint> reduceChartPoints<ChartPoint>(
+    List<ChartPoint> points,
+    int targetLength,
+  ) {
+    final int factor = max(1, points.length ~/ targetLength);
+
+    List<ChartPoint> reducedPoints = [];
+
+    for (int index = 0; index < points.length; index += factor) {
+      if (index == points.length - 1) {
+        continue;
+      }
+      final ChartPoint point = points[index];
+
+      reducedPoints.add(point);
+    }
+
+    reducedPoints.add(points.last);
+
+    return reducedPoints;
   }
 }

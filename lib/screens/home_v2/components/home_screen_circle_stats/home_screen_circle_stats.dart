@@ -34,7 +34,7 @@ class HomeScreenCircleStats extends StatelessWidget {
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: addRunSpacing(
               kHomeScreenStatPuttingCircles

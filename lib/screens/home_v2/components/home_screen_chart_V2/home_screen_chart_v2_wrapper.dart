@@ -29,7 +29,7 @@ class HomeScreenChartV2Wrapper extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _puttsMadeRow(context),
-            const SizedBox(height: 48),
+            const SizedBox(height: 16),
             const HomeScreenChartV2Builder(),
           ],
         ),
@@ -49,30 +49,36 @@ class HomeScreenChartV2Wrapper extends StatelessWidget {
               '${state.chartDistanceInterval!.lowerBound}-${state.chartDistanceInterval!.upperBound} ft';
         }
         return Padding(
-          padding: const EdgeInsets.only(left: 24, right: 16),
-          child: Row(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  'Putts made (%)',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: MyPuttColors.gray[300],
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Putting performance',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    FlutterRemix.arrow_right_s_line,
+                    size: 20,
+                    color: MyPuttColors.gray[400],
+                  ),
+                ],
               ),
+              const SizedBox(height: 2),
               Text(
                 rangeString,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: MyPuttColors.blue,
+                      color: MyPuttColors.gray[300],
                       fontWeight: FontWeight.w600,
                     ),
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                FlutterRemix.arrow_right_s_line,
-                size: 20,
-                color: MyPuttColors.gray[400],
               ),
             ],
           ),

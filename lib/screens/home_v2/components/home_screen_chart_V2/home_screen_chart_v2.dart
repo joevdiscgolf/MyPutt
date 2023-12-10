@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
@@ -30,17 +29,6 @@ class HomeScreenChartV2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: 48,
-          height: height,
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('100%'),
-              Text('0%'),
-            ],
-          ),
-        ),
         Expanded(
           child: SizedBox(
             height: height,
@@ -148,9 +136,29 @@ class HomeScreenChartV2 extends StatelessWidget {
             ),
           ),
         ),
+        // _verticalAxis(context)
       ],
     );
   }
+
+  // Widget _verticalAxis(BuildContext context) {
+  //   final TextStyle style = Theme.of(context)
+  //       .textTheme
+  //       .bodyMedium!
+  //       .copyWith(color: MyPuttColors.gray[300]);
+  //   return SizedBox(
+  //     width: 40,
+  //     height: height,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text('100%', style: style),
+  //         Text('0%', style: style),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   LineChartData _mainData(BuildContext context, List<ChartPoint> points) {
     // multiply by 100 because of percentage conversion
@@ -187,7 +195,7 @@ class HomeScreenChartV2 extends StatelessWidget {
           isCurved: true,
           curveSmoothness: 0.2,
           color: MyPuttColors.darkBlue,
-          barWidth: 4,
+          barWidth: 3,
           isStrokeCapRound: true,
           dotData: const FlDotData(show: false),
         ),

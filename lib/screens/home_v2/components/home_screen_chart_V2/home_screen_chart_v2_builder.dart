@@ -12,7 +12,7 @@ import 'package:myputt/utils/constants/distance_constants.dart';
 import 'package:myputt/utils/helpers.dart';
 
 class HomeScreenChartV2Builder extends StatelessWidget {
-  const HomeScreenChartV2Builder({Key? key, this.height = 200})
+  const HomeScreenChartV2Builder({Key? key, this.height = 120})
       : super(key: key);
 
   final double height;
