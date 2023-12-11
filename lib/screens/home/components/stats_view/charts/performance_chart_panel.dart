@@ -69,7 +69,7 @@ class _PerformanceChartPanelState extends State<PerformanceChartPanel>
   @override
   Widget build(BuildContext context) {
     int? limit =
-        _sessionRangeIndex == 3 ? null : indexToTimeRange[_sessionRangeIndex]!;
+        _sessionRangeIndex == 3 ? null : kIndexToTimeRange[_sessionRangeIndex]!;
     final List<ChartPoint> points = _statsService.getPointsWithDistanceAndLimit(
       _sessionRepository.validCompletedSessions,
       _challengesRepository.completedChallenges,

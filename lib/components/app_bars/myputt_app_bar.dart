@@ -11,6 +11,9 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.icon,
     this.controller,
     required this.topViewPadding,
+    this.backgroundColor,
+    this.titleColor,
+    this.backButtonColor,
   }) : super(key: key);
 
   final String title;
@@ -18,6 +21,9 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? icon;
   final ScrollController? controller;
   final double topViewPadding;
+  final Color? backgroundColor;
+  final Color? titleColor;
+  final Color? backButtonColor;
 
   @override
   Size get preferredSize => const Size.fromHeight(kTopNavBarHeight);
@@ -35,10 +41,10 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
             }
           : null,
       child: Container(
-        color: Colors.transparent,
+        color: backgroundColor ?? Colors.transparent,
         padding: EdgeInsets.only(top: topViewPadding),
         child: Container(
-          color: Colors.white,
+          color: backgroundColor ?? Colors.white,
           height: kTopNavBarHeight,
           child: Row(
             children: [
@@ -47,13 +53,14 @@ class MyPuttAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ? Container(
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(left: 16),
-                        child: const AppBarBackButton(),
+                        child: AppBarBackButton(color: backButtonColor),
                       )
                     : const SizedBox(),
               ),
               Text(
                 title,
-                style: MyPuttStyles.appBarTitleStyle(context),
+                style:
+                    MyPuttStyles.appBarTitleStyle(context, color: titleColor),
               ),
               Expanded(child: icon ?? const SizedBox()),
             ],

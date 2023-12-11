@@ -27,6 +27,8 @@ class _MainWrapperState extends State<MainWrapper> {
   final NavigationService _navigationService = locator.get<NavigationService>();
   int _currentIndex = 0;
 
+  final ScrollController _homeV2ScrollController = ScrollController();
+
   late final bool _eventsV1Beta;
   late final bool _homeScreenV2;
   late final bool _challengesV2Screen;
@@ -61,8 +63,9 @@ class _MainWrapperState extends State<MainWrapper> {
 
     final String homeScreenName =
         _homeScreenV2 ? HomeScreenV2.screenName : HomeScreen.screenName;
-    final Widget homeScreenWidget =
-        _homeScreenV2 ? const HomeScreenV2() : const HomeScreen();
+    final Widget homeScreenWidget = _homeScreenV2
+        ? HomeScreenV2(scrollController: _homeV2ScrollController)
+        : const HomeScreen();
 
     final String challengesScreenName = _homeScreenV2
         ? ChallengesScreenV2.screenName

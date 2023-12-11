@@ -1,10 +1,10 @@
-import 'package:myputt/models/data/chart/chart_enums.dart';
+import 'package:myputt/utils/constants.dart';
 
 abstract class ChartConstants {
-  static Map<ChartRange, int?> kChartRangeToNumPoints = {
-    ChartRange.lastFive: 25,
-    ChartRange.lastTwenty: 50,
-    ChartRange.lastFifty: 100,
-    ChartRange.all: 100,
+  static Map<int, int?> kTimeRangeToNumPoints = {
+    TimeRange.lastFive: 25,
+    TimeRange.lastTwenty: 50,
+    TimeRange.lastFifty: 100,
+    TimeRange.allTime: 100,
   };
 }
