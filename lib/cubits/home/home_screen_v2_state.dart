@@ -14,9 +14,10 @@ class HomeScreenV2Initial extends HomeScreenV2State {
 class HomeScreenV2Loaded extends HomeScreenV2State {
   const HomeScreenV2Loaded({
     required this.sets,
-    required this.circleToIntervalsMap,
+    required this.circleToIntervalPercentages,
     required this.timeRange,
-    required this.chartDistanceInterval,
+    required this.homeScreenDistanceInterval,
+    required this.circleToSelectedDistanceInterval,
     required this.chartDistance,
     required this.homeChartFilters,
     required this.chartDragData,
@@ -25,9 +26,10 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
 
   final List<PuttingSet> sets;
   final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-      circleToIntervalsMap;
+      circleToIntervalPercentages;
   final int timeRange;
-  final DistanceInterval? chartDistanceInterval;
+  final DistanceInterval homeScreenDistanceInterval;
+  final Map<PuttingCircle, DistanceInterval> circleToSelectedDistanceInterval;
   final int? chartDistance;
   final HomeChartFilters homeChartFilters;
   final ChartDragData? chartDragData;
@@ -35,9 +37,12 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
   HomeScreenV2Loaded copyWith(Map<String, dynamic> valuesToUpdate) {
     List<PuttingSet> sets = this.sets;
     Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap = this.circleToIntervalsMap;
+        circleToIntervalPercentages = this.circleToIntervalPercentages;
     int timeRange = this.timeRange;
-    DistanceInterval? chartDistanceInterval = this.chartDistanceInterval;
+    DistanceInterval homeScreenDistanceInterval =
+        this.homeScreenDistanceInterval;
+    Map<PuttingCircle, DistanceInterval> circleToSelectedDistanceInterval =
+        this.circleToSelectedDistanceInterval;
     int? chartDistance = this.chartDistance;
     HomeChartFilters homeChartFilters = this.homeChartFilters;
     ChartDragData? chartDragData = this.chartDragData;
@@ -46,14 +51,19 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     if (valuesToUpdate.containsKey('sets')) {
       sets = valuesToUpdate['sets'];
     }
-    if (valuesToUpdate.containsKey('circleToIntervalsMap')) {
-      circleToIntervalsMap = valuesToUpdate['circleToIntervalsMap'];
+    if (valuesToUpdate.containsKey('circleToIntervalPercentages')) {
+      circleToIntervalPercentages =
+          valuesToUpdate['circleToIntervalPercentages'];
     }
     if (valuesToUpdate.containsKey('timeRange')) {
       timeRange = valuesToUpdate['timeRange'];
     }
-    if (valuesToUpdate.containsKey('chartDistanceInterval')) {
-      chartDistanceInterval = valuesToUpdate['chartDistanceInterval'];
+    if (valuesToUpdate.containsKey('homeScreenDistanceInterval')) {
+      homeScreenDistanceInterval = valuesToUpdate['homeScreenDistanceInterval'];
+    }
+    if (valuesToUpdate.containsKey('circleToSelectedDistanceInterval')) {
+      circleToSelectedDistanceInterval =
+          valuesToUpdate['circleToSelectedDistanceInterval'];
     }
     if (valuesToUpdate.containsKey('chartDistance')) {
       chartDistance = valuesToUpdate['chartDistance'];
@@ -70,9 +80,10 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
 
     return HomeScreenV2Loaded(
       sets: sets,
-      circleToIntervalsMap: circleToIntervalsMap,
+      circleToIntervalPercentages: circleToIntervalPercentages,
       timeRange: timeRange,
-      chartDistanceInterval: chartDistanceInterval,
+      homeScreenDistanceInterval: homeScreenDistanceInterval,
+      circleToSelectedDistanceInterval: circleToSelectedDistanceInterval,
       chartDistance: chartDistance,
       homeChartFilters: homeChartFilters,
       chartDragData: chartDragData,

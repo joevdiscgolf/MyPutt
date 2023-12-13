@@ -33,7 +33,7 @@ class SelectionChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: _getTextColor(),
                 fontWeight: FontWeight.bold,
               ),

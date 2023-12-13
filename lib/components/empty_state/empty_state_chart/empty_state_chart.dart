@@ -8,19 +8,30 @@ import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EmptyStateChart extends StatelessWidget {
-  const EmptyStateChart({Key? key, required this.hasSessions})
-      : super(key: key);
+  const EmptyStateChart({
+    Key? key,
+    this.hasSessions = false,
+    this.height = 250,
+    this.hasContent = true,
+    this.strokeColor,
+  }) : super(key: key);
 
   final bool hasSessions;
+  final double height;
+  final bool hasContent;
+  final Color? strokeColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(5),
-      height: 250,
+      height: height,
       child: Stack(
         alignment: Alignment.center,
-        children: [LineChart(mainData(context)), _getCenter(context)],
+        children: [
+          LineChart(mainData(context)),
+          if (hasContent) _getCenter(context),
+        ],
       ),
     );
   }
@@ -85,6 +96,7 @@ class EmptyStateChart extends StatelessWidget {
       maxY: 25,
       lineBarsData: [
         LineChartBarData(
+          color: strokeColor,
           spots: emptyStateChartPoints
               .asMap()
               .entries

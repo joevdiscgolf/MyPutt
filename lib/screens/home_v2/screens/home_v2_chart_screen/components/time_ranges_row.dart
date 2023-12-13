@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/components/misc/selection_chip.dart';
 import 'package:myputt/components/misc/spaced_row.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
+import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 
 class TimeRangesRow extends StatelessWidget {
@@ -17,8 +18,13 @@ class TimeRangesRow extends StatelessWidget {
         if (state is HomeScreenV2Loaded) {
           selectedTimeRange = state.timeRange;
         }
-        return Padding(
+        return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: MyPuttColors.gray[50]!),
+            ),
+          ),
           child: SpacedRow(
             runSpacing: 16,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

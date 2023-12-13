@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
-import 'package:myputt/components/charts/generic_performance_chart.dart';
+import 'package:myputt/components/charts/generic_performance_chart/generic_performance_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/screens/home_v2/screens/home_v2_chart_screen/home_v2_chart_screen.dart';

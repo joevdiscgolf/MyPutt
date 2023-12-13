@@ -518,11 +518,11 @@ class StatsService {
         SetHelpers.sortSetsByDistance(sets);
 
     final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap = {};
+        circleToIntervalPercentages = {};
 
     for (PuttingCircle circle in kHomeScreenStatPuttingCircles) {
       final Map<DistanceInterval, PuttingSetInterval> currentCircleMap =
-          circleToIntervalsMap[circle] ?? {};
+          circleToIntervalPercentages[circle] ?? {};
       final List<int> distanceIntervals =
           kCircleToDistanceIntervals[circle] ?? [];
 
@@ -552,10 +552,10 @@ class StatsService {
         );
       }
 
-      circleToIntervalsMap[circle] = currentCircleMap;
+      circleToIntervalPercentages[circle] = currentCircleMap;
     }
 
-    return circleToIntervalsMap;
+    return circleToIntervalPercentages;
   }
 
   List<dynamic> getPuttingActivitiesByTimeRange(

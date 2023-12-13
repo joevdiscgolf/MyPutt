@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -139,7 +138,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
           properties: {
             'Recipient Uid': widget.recipientUser.uid,
             'Recipient Username': widget.recipientUser.username,
-            'Preset': describeEnum(widget.preset!),
+            'Preset': widget.preset!.name,
           },
         );
       });

@@ -4,21 +4,27 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
+import 'package:myputt/utils/enums.dart';
 
 class HomeChartV2Heading extends StatelessWidget {
-  const HomeChartV2Heading({super.key});
+  const HomeChartV2Heading({
+    super.key,
+    this.defaultCircle = PuttingCircle.c1,
+  });
+
+  final PuttingCircle defaultCircle;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
       builder: (context, state) {
         String rangeString =
-            '${kPreferredDistanceInterval.lowerBound}-${kPreferredDistanceInterval.upperBound} ft';
+            '${kDefaultDistanceInterval.lowerBound}-${kDefaultDistanceInterval.upperBound} ft';
 
         if (state is HomeScreenV2Loaded &&
-            state.chartDistanceInterval != null) {
+            state.circleToSelectedDistanceInterval[defaultCircle] != null) {
           rangeString =
-              '${state.chartDistanceInterval!.lowerBound}-${state.chartDistanceInterval!.upperBound} ft';
+              '${state.circleToSelectedDistanceInterval[defaultCircle]!.lowerBound}-${state.circleToSelectedDistanceInterval[defaultCircle]!.upperBound} ft';
         }
         return Container(
           height: 50,

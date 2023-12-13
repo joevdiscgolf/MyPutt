@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -76,7 +75,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
                       onTap: (ChallengePreset preset) {
                         _mixpanel.track('Select Preset Dialog Preset Pressed',
                             properties: {
-                              'Preset Name': describeEnum(preset),
+                              'Preset Name': preset.name,
                             });
                         setState(() {
                           if (_selectedPreset == preset) {

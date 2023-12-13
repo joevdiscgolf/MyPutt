@@ -1,8 +1,12 @@
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/charts/components/chart_scrubber.dart';
+import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_axis_labels.dart';
+import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_grid_lines.dart';
+import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_overlay_text.dart';
+import 'package:myputt/components/empty_state/empty_state_chart/empty_state_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/utils/colors.dart';
@@ -21,12 +25,16 @@ class GenericPerformanceChart extends StatelessWidget {
     this.onHorizontalDragUpdate,
     this.onHorizontalDragEnd,
     this.onTap,
+    this.hasGridLines = false,
+    this.hasAxisLabels = false,
   }) : super(key: key);
 
   final List<ChartPoint> points;
   final double height;
   final double screenWidth;
   final bool noData;
+  final bool hasGridLines;
+  final bool hasAxisLabels;
 
   final ChartDragData? chartDragData;
 
@@ -43,7 +51,7 @@ class GenericPerformanceChart extends StatelessWidget {
       height: height,
       child: Stack(
         children: [
-          SizedBox(height: height, child: _mainLayer(context)),
+          _mainLayer(context),
           if (chartDragData != null) _scrubberLayer(),
           _gestureDetectorLayer(),
         ],
@@ -52,22 +60,45 @@ class GenericPerformanceChart extends StatelessWidget {
   }
 
   Widget _mainLayer(BuildContext context) {
-    if (noData) {
-      return Container(
-        alignment: Alignment.center,
-        child: const Text('No data'),
-      );
-    } else if (points.isEmpty) {
-      return Container(
-        alignment: Alignment.center,
-        child: const Text('No sets match those filters'),
-      );
-    } else {
-      return LineChart(
-        _mainData(context, points),
-        duration: const Duration(milliseconds: 0),
-      );
-    }
+    return Stack(
+      children: [
+        Builder(builder: (context) {
+          if (points.isEmpty || noData) {
+            return EmptyStateChart(
+              height: height,
+              hasContent: false,
+              strokeColor: MyPuttColors.gray[100],
+            );
+          }
+          return Row(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    LineChart(
+                      _mainData(context, points),
+                      duration: const Duration(milliseconds: 0),
+                    ),
+                    if (hasGridLines) GenericChartGridLines(height: height),
+                  ],
+                ),
+              ),
+              if (hasAxisLabels) GenericChartAxisLabels(height: height),
+            ],
+          );
+        }),
+        if (noData)
+          GenericChartOverlayText(
+            message: 'No data',
+            height: height,
+          )
+        else if (points.isEmpty)
+          GenericChartOverlayText(
+            message: 'No putts from this range',
+            height: height,
+          ),
+      ],
+    );
   }
 
   Widget _gestureDetectorLayer() {

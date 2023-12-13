@@ -6,16 +6,22 @@ import 'package:myputt/components/charts/home_screen_v2_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
+import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/services/chart_service.dart';
 import 'package:myputt/utils/calculators.dart';
 import 'package:myputt/utils/constants/distance_constants.dart';
+import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/helpers.dart';
 
 class HomeScreenChartV2Builder extends StatelessWidget {
-  const HomeScreenChartV2Builder({Key? key, this.height = 120})
-      : super(key: key);
+  const HomeScreenChartV2Builder({
+    Key? key,
+    this.height = 120,
+    this.defaultCircle = PuttingCircle.c1,
+  }) : super(key: key);
 
   final double height;
+  final PuttingCircle defaultCircle;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +34,10 @@ class HomeScreenChartV2Builder extends StatelessWidget {
         if (previousLoadedState == null || currentLoadedState == null) {
           return true;
         }
-        return previousLoadedState.chartDistanceInterval !=
-                currentLoadedState.chartDistanceInterval ||
-            previousLoadedState.circleToIntervalsMap !=
-                currentLoadedState.circleToIntervalsMap ||
+        return previousLoadedState.circleToSelectedDistanceInterval !=
+                currentLoadedState.circleToSelectedDistanceInterval ||
+            previousLoadedState.circleToIntervalPercentages !=
+                currentLoadedState.circleToIntervalPercentages ||
             previousLoadedState.timeRange != currentLoadedState.timeRange ||
             previousLoadedState.sets != currentLoadedState.sets;
       },
@@ -41,9 +47,14 @@ class HomeScreenChartV2Builder extends StatelessWidget {
         if (state is HomeScreenV2Loaded) {
           noData = state.sets.isEmpty;
 
+          final DistanceInterval distanceInterval =
+              state.circleToSelectedDistanceInterval[defaultCircle] ??
+                  kDefaultCircleToSelectedDistanceInterval[PuttingCircle.c1] ??
+                  kDefaultDistanceInterval;
+
           points = locator.get<ChartService>().generateChartPointsForInterval(
                 state.sets,
-                state.chartDistanceInterval ?? kPreferredDistanceInterval,
+                distanceInterval,
               );
 
           final int smoothPower = max(1, points.length ~/ 50);

@@ -21,15 +21,15 @@ class HomeScreenCircleStats extends StatelessWidget {
     return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
       builder: (context, state) {
         late final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-            circleToIntervalsMap;
+            circleToIntervalPercentages;
 
         if (state is HomeScreenV2Loaded) {
-          circleToIntervalsMap = state.circleToIntervalsMap;
+          circleToIntervalPercentages = state.circleToIntervalPercentages;
         } else {
-          circleToIntervalsMap = {};
+          circleToIntervalPercentages = {};
         }
 
-        if (noSets(state, circleToIntervalsMap)) {
+        if (noSets(state, circleToIntervalPercentages)) {
           return _emptyState(context);
         }
 
@@ -42,7 +42,7 @@ class HomeScreenCircleStats extends StatelessWidget {
                     (circle) => CircleStatsCard(
                       circle: circle,
                       intervalToPuttingSetsData:
-                          circleToIntervalsMap[circle] ?? {},
+                          circleToIntervalPercentages[circle] ?? {},
                     ),
                   )
                   .toList(),
@@ -58,10 +58,10 @@ class HomeScreenCircleStats extends StatelessWidget {
   bool noSets(
     HomeScreenV2State homeScreenV2State,
     Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap,
+        circleToIntervalPercentages,
   ) {
     return homeScreenV2State is HomeScreenV2Loaded &&
-        circleToIntervalsMap.entries
+        circleToIntervalPercentages.entries
                 .firstWhereOrNull((entry) => entry.value.isNotEmpty) ==
             null;
   }

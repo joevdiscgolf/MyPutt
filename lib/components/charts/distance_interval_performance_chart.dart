@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/components/charts/generic_performance_chart.dart';
+import 'package:myputt/components/charts/generic_performance_chart/generic_performance_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
@@ -34,10 +34,10 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
         if (previousLoadedState == null || currentLoadedState == null) {
           return true;
         }
-        return previousLoadedState.chartDistanceInterval !=
-                currentLoadedState.chartDistanceInterval ||
-            previousLoadedState.circleToIntervalsMap !=
-                currentLoadedState.circleToIntervalsMap ||
+        return previousLoadedState.circleToSelectedDistanceInterval !=
+                currentLoadedState.circleToSelectedDistanceInterval ||
+            previousLoadedState.circleToIntervalPercentages !=
+                currentLoadedState.circleToIntervalPercentages ||
             previousLoadedState.timeRange != currentLoadedState.timeRange ||
             previousLoadedState.sets != currentLoadedState.sets;
       },
@@ -64,6 +64,8 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
           screenWidth: MediaQuery.of(context).size.width,
           noData: noData,
           chartDragData: chartDragData,
+          hasGridLines: true,
+          hasAxisLabels: true,
         );
       },
     );
