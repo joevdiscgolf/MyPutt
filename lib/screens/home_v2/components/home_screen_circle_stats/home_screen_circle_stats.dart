@@ -6,7 +6,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_stats_card.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_stats_card_v2.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -39,7 +39,7 @@ class HomeScreenCircleStats extends StatelessWidget {
             children: addRunSpacing(
               kHomeScreenStatPuttingCircles
                   .map(
-                    (circle) => CircleStatsCard(
+                    (circle) => CircleStatsCardV2(
                       circle: circle,
                       intervalToPuttingSetsData:
                           circleToIntervalPercentages[circle] ?? {},

@@ -13,13 +13,13 @@ import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/enums.dart';
 
 class SendChallengeDialog extends StatefulWidget {
-  const SendChallengeDialog(
-      {Key? key,
-      required this.recipientUser,
-      this.session,
-      required this.onComplete,
-      this.preset})
-      : super(key: key);
+  const SendChallengeDialog({
+    Key? key,
+    required this.recipientUser,
+    this.session,
+    required this.onComplete,
+    this.preset,
+  }) : super(key: key);
 
   final MyPuttUser recipientUser;
   final PuttingSession? session;
