@@ -80,28 +80,66 @@ class PathPainter extends CustomPainter {
       path,
       Paint()
         ..color = Colors.black
-        ..strokeWidth = 2
+        ..strokeWidth = 1
         ..style = PaintingStyle.stroke,
     );
   }
 
   Path _getRoundedPath(Size size) {
     final Path path = Path();
-    final Radius radius = Radius.circular(innerCircleRadius / 2);
 
-    final double yInterSection = _getYRingIntersection();
+    // y-intercept is 0 because the line passes through the origin
+    final double slope = _getSlopeFromAngle();
 
-    path.moveTo((size.width / 2) - cartesianXIntersection, yInterSection);
-    path.lineTo((size.width / 2) - cartesianXIntersection, size.height);
-    path.arcToPoint(
-      Offset((size.width / 2) + cartesianXIntersection, size.height),
-      radius: radius,
-      clockwise: false,
+    final List<double> innerCircleCollisions =
+        getCircleCollisions(slope, innerCircleRadius, 0);
+    final List<double> outerCircleCollisions =
+        getCircleCollisions(slope, outerCircleRadius, 0);
+
+    final double? positiveInnerCircleSolutionX =
+        innerCircleCollisions.firstWhereOrNull((collision) => collision > 0);
+    final double? positiveOuterCircleSolutionX =
+        outerCircleCollisions.firstWhereOrNull((collision) => collision > 0);
+
+    if (positiveInnerCircleSolutionX == null ||
+        positiveOuterCircleSolutionX == null) {
+      return Path();
+    }
+
+    final double negativeYInnerInterception =
+        _getYForCircleX(positiveInnerCircleSolutionX, innerCircleRadius);
+    final double negativeYOuterInterception =
+        _getYForCircleX(positiveOuterCircleSolutionX, outerCircleRadius);
+
+    final Offset firstPoint = Offset(
+      _fromCartesianX(-positiveInnerCircleSolutionX),
+      _fromCartesianY(negativeYInnerInterception),
     );
-    path.lineTo((size.width / 2) + cartesianXIntersection, yInterSection);
+    final Offset secondPoint = Offset(
+      _fromCartesianX(-positiveOuterCircleSolutionX),
+      _fromCartesianY(negativeYOuterInterception),
+    );
+    final Offset thirdPoint = Offset(
+      _fromCartesianX(positiveOuterCircleSolutionX),
+      _fromCartesianY(negativeYOuterInterception),
+    );
+    final Offset fourthPoint = Offset(
+      _fromCartesianX(positiveInnerCircleSolutionX),
+      _fromCartesianY(negativeYInnerInterception),
+    );
+
+    path.moveTo(firstPoint.dx, firstPoint.dy);
+    path.lineTo(secondPoint.dx, secondPoint.dy);
     path.arcToPoint(
-      Offset((size.width / 2) - cartesianXIntersection, yInterSection),
-      radius: radius,
+      thirdPoint,
+      radius: Radius.circular(outerCircleRadius),
+      clockwise: true,
+    );
+    path.lineTo(fourthPoint.dx, fourthPoint.dy);
+    path.arcToPoint(
+      firstPoint,
+      radius: Radius.circular(innerCircleRadius),
+      clockwise: false,
     );
     return path;
   }
@@ -144,8 +182,6 @@ class PathPainter extends CustomPainter {
       _fromCartesianX(secondCartesianArcPoint.dx),
       _fromCartesianY(secondCartesianArcPoint.dy),
     );
-
-    print('first arc point: $firstCartesianArcPoint');
 
     final Path path = Path();
     // go to cartesian origin
