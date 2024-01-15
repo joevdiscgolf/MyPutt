@@ -16,12 +16,7 @@ class CircleStatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CircleStatsScreenAppBar(circle: circle),
-<<<<<<< Updated upstream
       body: CirclePercentagesScreenBarChart(
-=======
-      body: // body: CircleDiagram(circle: circle),
-          CirclePercentagesScreenBarChart(
->>>>>>> Stashed changes
         circle: circle,
         setIntervalsMap: intervalToPuttingSetsData,
       ),
