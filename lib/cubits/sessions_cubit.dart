@@ -4,21 +4,30 @@ import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/stats/stats.dart';
+import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/services/stats_service.dart';
 import 'package:myputt/repositories/session_repository.dart';
 import 'package:myputt/locator.dart';
 
 part 'sessions_state.dart';
 
-class SessionsCubit extends Cubit<SessionsState> implements MyPuttCubit {
+class SessionsCubit extends Cubit<SessionsState>
+    implements MyPuttCubit, SingletonConsumer {
   @override
   void initCubit() {
-    // TODO: implement init
+    _sessionRepository.addListener(() {
+      emitUpdatedState();
+    });
   }
 
-  final SessionsRepository _sessionRepository =
-      locator.get<SessionsRepository>();
-  final StatsService _statsService = locator.get<StatsService>();
+  @override
+  void initSingletons() {
+    _sessionRepository = locator.get<SessionsRepository>();
+    _statsService = locator.get<StatsService>();
+  }
+
+  late final SessionsRepository _sessionRepository;
+  late final StatsService _statsService;
 
   SessionsCubit()
       : super(const SessionLoadingState(sessions: <PuttingSession>[]));

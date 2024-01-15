@@ -8,11 +8,21 @@ import 'package:myputt/screens/record/tabs/record_tab/components/quantity_row.da
 import 'package:myputt/screens/record/tabs/record_tab/components/selection_tiles.dart';
 import 'package:myputt/utils/constants.dart';
 
-class RecordTab extends StatelessWidget {
+class RecordTab extends StatefulWidget {
   const RecordTab({Key? key}) : super(key: key);
 
   @override
+  State<RecordTab> createState() => _RecordTabState();
+}
+
+class _RecordTabState extends State<RecordTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<RecordCubit, RecordState>(
       builder: (context, state) {
         return Padding(

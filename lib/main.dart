@@ -61,12 +61,14 @@ void main() async {
   initAllSingletons([
     locator.get<AppPhaseCubit>(),
     locator.get<HomeScreenV2Cubit>(),
+    locator.get<SessionsCubit>(),
     locator.get<ChallengesCubit>(),
     locator.get<ChallengesCubitHelper>(),
     locator.get<ChallengesService>()
   ]);
   initMyPuttCubits([
     locator.get<HomeScreenV2Cubit>(),
+    locator.get<SessionsCubit>(),
     locator.get<ChallengesCubit>(),
   ]);
   await locator.get<AppPhaseCubit>().initCubit();
@@ -85,7 +87,7 @@ void main() async {
             BlocProvider(create: (_) => EventDetailCubit()),
             BlocProvider(create: (_) => EventStandingsCubit()),
             BlocProvider(create: (_) => locator.get<AppPhaseCubit>()),
-            BlocProvider(create: (_) => SessionsCubit()),
+            BlocProvider(create: (_) => locator.get<SessionsCubit>()),
             BlocProvider(create: (_) => RecordCubit()),
           ],
           child: const MyApp(),

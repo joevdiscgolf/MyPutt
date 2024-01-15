@@ -5,6 +5,7 @@ import 'package:myputt/cubits/app_phase_cubit.dart';
 import 'package:myputt/cubits/challenges/challenge_cubit_helper.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
+import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/events_repository.dart';
@@ -40,6 +41,7 @@ Future<void> setUpLocator() async {
   );
   locator.registerSingleton<Mixpanel>(mixpanel);
   locator.registerSingleton<AppPhaseCubit>(AppPhaseCubit());
+  locator.registerSingleton<SessionsCubit>(SessionsCubit());
   locator.registerSingleton<HomeScreenV2Cubit>(HomeScreenV2Cubit());
   locator.registerSingleton<ChallengesCubit>(ChallengesCubit());
   locator.registerSingleton<ChallengesCubitHelper>(ChallengesCubitHelper());
