@@ -7,7 +7,6 @@ import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_scre
 import 'package:myputt/screens/home_v2/screens/home_chart_screen/components/distance_interval_selection_row.dart';
 import 'package:myputt/screens/home_v2/screens/home_chart_screen/components/time_range_chips_row.dart';
 import 'package:myputt/utils/constants.dart';
-import 'package:myputt/utils/enums.dart';
 import 'package:myputt/utils/layout_helpers.dart';
 
 class HomeChartScreen extends StatelessWidget {

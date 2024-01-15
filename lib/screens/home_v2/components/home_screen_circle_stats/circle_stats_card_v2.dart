@@ -3,7 +3,6 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_radial_diagram.dart';
 import 'package:myputt/screens/home_v2/screens/circle_stats_screen/circle_stats_screen.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -90,7 +89,6 @@ class CircleStatsCardV2 extends StatelessWidget {
                     )
                   ],
                 )),
-                CircleRadialDiagram(selectedCircle: circle),
               ],
             ),
           ],

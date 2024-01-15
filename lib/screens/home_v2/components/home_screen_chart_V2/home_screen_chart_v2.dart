@@ -33,7 +33,7 @@ class HomeScreenChartV2 extends StatelessWidget {
         SizedBox(
           width: 48,
           height: height,
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('100%'),
