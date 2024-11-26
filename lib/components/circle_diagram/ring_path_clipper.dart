@@ -43,28 +43,28 @@ class PathPainter extends CustomPainter {
   final double sideAngleDegrees;
   final bool hasTopPoint;
 
-  double _toCartesianY(double y) {
-    return outerCircleRadius - y;
-  }
+  // double _toCartesianY(double y) {
+  //   return outerCircleRadius - y;
+  // }
 
   double _fromCartesianY(double cartesianY) {
     return outerCircleRadius - cartesianY;
   }
 
-  double _toCartesianX(double x) {
-    return x - (outerCircleRadius);
-  }
+  // double _toCartesianX(double x) {
+  //   return x - (outerCircleRadius);
+  // }
 
   double _fromCartesianX(double cartesianX) {
     return outerCircleRadius - cartesianX;
   }
 
-  double _getYRingIntersection() {
-    final double negativeYIntercept =
-        -sqrt(pow(innerCircleRadius, 2) - pow(cartesianXIntersection, 2));
+  // double _getYRingIntersection() {
+  //   final double negativeYIntercept =
+  //       -sqrt(pow(innerCircleRadius, 2) - pow(cartesianXIntersection, 2));
 
-    return _fromCartesianY(negativeYIntercept);
-  }
+  //   return _fromCartesianY(negativeYIntercept);
+  // }
 
   double _getSlopeFromAngle() {
     final double sideAngleRadians = (90 - sideAngleDegrees) * (pi / 180);

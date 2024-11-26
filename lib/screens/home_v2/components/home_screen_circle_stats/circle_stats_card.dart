@@ -35,6 +35,9 @@ class CircleStatsCard extends StatelessWidget {
             builder: (context) => CircleStatsScreen(
               circle: circle,
               intervalToPuttingSetsData: intervalToPuttingSetsData,
+              percentageForCircle:
+                  SetHelpers.percentageFromSets(allSetsInCircle),
+              numSetsInCircle: allSetsInCircle.length,
             ),
           ),
         );

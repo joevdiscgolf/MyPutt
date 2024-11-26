@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/screens/home_v2/screens/home_v2_chart_screen/components/circle_chart_section.dart';
-import 'package:myputt/screens/home_v2/screens/home_v2_chart_screen/components/time_ranges_row.dart';
 import 'package:myputt/utils/enums.dart';
 
 class HomeV2ChartScreen extends StatelessWidget {
@@ -10,7 +9,6 @@ class HomeV2ChartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
-      const TimeRangesRow(),
       ...[PuttingCircle.c1, PuttingCircle.c2, PuttingCircle.c3].map(
         (PuttingCircle circle) => CircleChartSection(
           circle: circle,

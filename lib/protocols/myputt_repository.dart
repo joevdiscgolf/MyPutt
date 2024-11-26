@@ -5,6 +5,6 @@ class MyPuttRepository implements SingletonConsumer {
 
   @override
   void initSingletons() {
-    // TODO: implement initSingletons
+    // Implement initSingletons
   }
 }

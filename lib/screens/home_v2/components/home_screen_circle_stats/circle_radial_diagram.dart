@@ -15,11 +15,16 @@ class CircleRadialDiagram extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [PuttingCircle.c3, PuttingCircle.c2, PuttingCircle.c1]
-          .map((circle) => _circle(circle))
-          .toList(),
+    final double size = _circleToSize[PuttingCircle.c3] ?? 0;
+    return SizedBox(
+      height: size,
+      width: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [PuttingCircle.c3, PuttingCircle.c2, PuttingCircle.c1]
+            .map((circle) => _circle(circle))
+            .toList(),
+      ),
     );
   }
 

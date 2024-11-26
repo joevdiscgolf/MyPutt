@@ -15,7 +15,7 @@ part 'record_state.dart';
 class RecordCubit extends Cubit<RecordState> implements MyPuttCubit {
   @override
   void initCubit() {
-    // TODO: implement init
+    // Implement init
   }
   RecordCubit()
       : super(

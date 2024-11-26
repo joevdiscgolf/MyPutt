@@ -174,7 +174,7 @@ class _SessionSummaryScreenState extends State<SessionSummaryScreen> {
         ),
       ),
     ).then((_) {
-      if (_shouldPopOnDismiss) {
+      if (_shouldPopOnDismiss && context.mounted) {
         Navigator.of(context).pop();
       }
     });

@@ -18,7 +18,7 @@ part 'my_profile_state.dart';
 class MyProfileCubit extends Cubit<MyProfileState> implements MyPuttCubit {
   @override
   void initCubit() {
-    // TODO: implement init
+    // Implement init
   }
 
   final WebScraperService _webScraperService = locator.get<WebScraperService>();

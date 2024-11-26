@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
+import 'package:myputt/screens/home_v2/components/floating_ranges_row.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/home_screen_circle_stats.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar/home_screen_v2_app_bar.dart';
 import 'package:myputt/screens/home_v2/performance_chart/wrapper/home_v2_chart_wrapper.dart';
@@ -20,10 +19,14 @@ class HomeScreenV2 extends StatelessWidget {
       appBar: HomeScreenV2AppBar(
         topViewPadding: MediaQuery.of(context).viewPadding.top,
       ),
-      body: BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
-        builder: (context, state) {
-          return _mainBody(context);
-        },
+      body: Stack(
+        children: [
+          _mainBody(context),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: FloatingRangesRow(),
+          ),
+        ],
       ),
     );
   }
@@ -38,9 +41,7 @@ class HomeScreenV2 extends StatelessWidget {
       physics: const BottomBouncingScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewPadding.bottom,
-          ),
+          padding: const EdgeInsets.only(bottom: 164),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => children[index],

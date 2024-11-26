@@ -27,6 +27,8 @@ class CircleStatsCardV2 extends StatelessWidget {
         kCircleToDistanceIntervals[circle]!;
     final List<PuttingSet> allSetsInCircle =
         SetHelpers.getPuttingSetsFromIntervals(intervalToPuttingSetsData);
+    final double percentageForCircle =
+        SetHelpers.percentageFromSets(allSetsInCircle);
 
     return Bounceable(
       onTap: () {
@@ -36,63 +38,77 @@ class CircleStatsCardV2 extends StatelessWidget {
             builder: (context) => CircleStatsScreen(
               circle: circle,
               intervalToPuttingSetsData: intervalToPuttingSetsData,
+              percentageForCircle: percentageForCircle,
+              numSetsInCircle: allSetsInCircle.length,
             ),
           ),
         );
       },
       child: Container(
-        padding:
-            const EdgeInsets.only(top: 12, bottom: 12, left: 20, right: 20),
+        height: 120,
+        padding: const EdgeInsets.only(
+          top: 12,
+          bottom: 12,
+          left: 20,
+          right: 12,
+        ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: MyPuttColors.gray[100]!, width: 1),
           boxShadow: [
             BoxShadow(
-              color: MyPuttColors.black.withOpacity(0.2),
+              color: MyPuttColors.black.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, 12),
             )
           ],
         ),
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Expanded(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      kCircleToNameMap[circle] ?? '',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: MyPuttColors.gray[400],
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${circleDistanceIntervals.first}-${circleDistanceIntervals.last} ft',
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                              ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      allSetsInCircle.isEmpty
-                          ? '--'
-                          : '${(SetHelpers.percentageFromSets(allSetsInCircle) * 100).toInt()}% made',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: MyPuttColors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    )
-                  ],
-                )),
-                CircleRadialDiagram(selectedCircle: circle),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    kCircleToNameMap[circle] ?? '',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: MyPuttColors.gray[400],
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${circleDistanceIntervals.first}-${circleDistanceIntervals.last} ft',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    allSetsInCircle.isEmpty
+                        ? '--'
+                        : '${(percentageForCircle * 100).toInt()}% made',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: MyPuttColors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  )
+                ],
+              ),
             ),
+            CircleRadialDiagram(selectedCircle: circle),
+            const SizedBox(width: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                Icons.chevron_right,
+                color: MyPuttColors.gray[300],
+                size: 24,
+              ),
+            )
           ],
         ),
       ),

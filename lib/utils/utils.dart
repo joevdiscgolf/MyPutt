@@ -42,7 +42,7 @@ Future<void> fetchRepositoryData() async {
     // current user
     locator.get<UserRepository>().fetchCloudCurrentUser(),
   ]);
-  // TODO: add back deep link challenge functionality in the future
+  // Add back deep link challenge functionality in the future
   // await locator.get<ChallengesRepository>().addDeepLinkChallenges();
 }
 

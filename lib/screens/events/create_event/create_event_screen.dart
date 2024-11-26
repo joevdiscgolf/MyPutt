@@ -215,8 +215,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 setState(() => _buttonState =
                     createSuccess ? ButtonState.success : ButtonState.retry);
                 if (createSuccess) {
-                  await Future.delayed(const Duration(milliseconds: 500),
-                      () => Navigator.of(context).pop());
+                  await Future.delayed(const Duration(milliseconds: 500));
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
                 } else {
                   setState(() =>
                       _errorText = 'Failed to create event. Please try again');

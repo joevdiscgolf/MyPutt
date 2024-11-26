@@ -60,12 +60,15 @@ class ChallengeListRow extends StatelessWidget {
           BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ChallengeRecordScreen(challenge: challenge),
-                ),
-              )
-              .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  ChallengeRecordScreen(challenge: challenge),
+            ),
+          )
+              .then((_) {
+            if (!context.mounted) return;
+            BlocProvider.of<ChallengesCubit>(context).reload();
+          });
         } else if (challenge.status == ChallengeStatus.complete) {
           locator
               .get<Mixpanel>()
