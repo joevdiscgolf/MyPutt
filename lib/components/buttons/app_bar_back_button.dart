@@ -5,9 +5,11 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AppBarBackButton extends StatelessWidget {
-  const AppBarBackButton({Key? key, this.onPressed}) : super(key: key);
+  const AppBarBackButton({Key? key, this.onPressed, this.color})
+      : super(key: key);
 
   final Function? onPressed;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +18,10 @@ class AppBarBackButton extends StatelessWidget {
         height: 32,
         width: 32,
         color: Colors.transparent,
-        child: const Center(
+        child: Center(
           child: Icon(
             FlutterRemix.arrow_left_s_line,
-            color: MyPuttColors.black,
+            color: color ?? MyPuttColors.black,
             size: 20,
           ),
         ),

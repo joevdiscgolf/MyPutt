@@ -71,30 +71,32 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
         SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
+        circleToIntervalPercentages =
+        _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
       emit(
         (state as HomeScreenV2Loaded).copyWith(
           {
-            'circleToIntervalsMap': circleToIntervalsMap,
+            'circleToIntervalPercentages': circleToIntervalPercentages,
             'sets': setsInActivities
           },
         ),
       );
     } else {
       // update later
-      final DistanceInterval? initialDistanceInterval =
-          DistanceHelpers.getPrimaryDistanceInterval(
-        circleToIntervalsMap[PuttingCircle.c1] ?? {},
+      final DistanceInterval homeScreenDistanceInterval =
+          DistanceHelpers.getHomeScreenDistanceInterval(
+        circleToIntervalPercentages[PuttingCircle.c1] ?? {},
       );
 
       emit(
         HomeScreenV2Loaded(
           sets: setsInActivities,
-          circleToIntervalsMap: circleToIntervalsMap,
-          chartDistanceInterval:
-              initialDistanceInterval ?? kPreferredDistanceInterval,
+          circleToIntervalPercentages: circleToIntervalPercentages,
+          homeScreenDistanceInterval: homeScreenDistanceInterval,
+          circleToSelectedDistanceInterval:
+              kDefaultCircleToSelectedDistanceInterval,
           timeRange: TimeRange.allTime,
           chartDistance: null,
           homeChartFilters: HomeChartFilters(
@@ -120,30 +122,32 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
         SetHelpers.puttingSetsFromPuttingActivities(puttingActivities);
 
     final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap = _statsService.getSetIntervals(setsInActivities);
+        circleToIntervalPercentages =
+        _statsService.getSetIntervals(setsInActivities);
 
     if (state is HomeScreenV2Loaded) {
       emit(
         (state as HomeScreenV2Loaded).copyWith(
           {
             'sets': setsInActivities,
-            'circleToIntervalsMap': circleToIntervalsMap,
+            'circleToIntervalPercentages': circleToIntervalPercentages,
             'timeRange': updatedTimeRange,
           },
         ),
       );
     } else {
-      final DistanceInterval? initialDistanceInterval =
-          DistanceHelpers.getPrimaryDistanceInterval(
-        circleToIntervalsMap[PuttingCircle.c1] ?? {},
+      final DistanceInterval homeScreenDistanceInterval =
+          DistanceHelpers.getHomeScreenDistanceInterval(
+        circleToIntervalPercentages[PuttingCircle.c1] ?? {},
       );
 
       emit(
         HomeScreenV2Loaded(
           sets: setsInActivities,
-          circleToIntervalsMap: circleToIntervalsMap,
-          chartDistanceInterval:
-              initialDistanceInterval ?? kPreferredDistanceInterval,
+          circleToIntervalPercentages: circleToIntervalPercentages,
+          homeScreenDistanceInterval: homeScreenDistanceInterval,
+          circleToSelectedDistanceInterval:
+              kDefaultCircleToSelectedDistanceInterval,
           timeRange: updatedTimeRange,
           chartDistance: null,
           homeChartFilters: HomeChartFilters(
@@ -160,7 +164,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     if (state is HomeScreenV2Loaded) {
       emit(
         (state as HomeScreenV2Loaded).copyWith(
-          {'chartDistanceInterval': interval},
+          {'circleToDistanceInterval': interval},
         ),
       );
     }

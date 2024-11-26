@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
@@ -14,13 +13,13 @@ import 'package:myputt/screens/share/share_sheet.dart';
 import 'package:myputt/utils/enums.dart';
 
 class SendChallengeDialog extends StatefulWidget {
-  const SendChallengeDialog(
-      {Key? key,
-      required this.recipientUser,
-      this.session,
-      required this.onComplete,
-      this.preset})
-      : super(key: key);
+  const SendChallengeDialog({
+    Key? key,
+    required this.recipientUser,
+    this.session,
+    required this.onComplete,
+    this.preset,
+  }) : super(key: key);
 
   final MyPuttUser recipientUser;
   final PuttingSession? session;
@@ -139,7 +138,7 @@ class _SendChallengeDialogState extends State<SendChallengeDialog> {
           properties: {
             'Recipient Uid': widget.recipientUser.uid,
             'Recipient Username': widget.recipientUser.username,
-            'Preset': describeEnum(widget.preset!),
+            'Preset': widget.preset!.name,
           },
         );
       });

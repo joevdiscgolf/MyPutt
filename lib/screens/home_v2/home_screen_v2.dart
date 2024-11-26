@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/home_screen_chart_v2_wrapper.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/home_screen_circle_stats.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_v2_app_bar/home_screen_v2_app_bar.dart';
+import 'package:myputt/screens/home_v2/performance_chart/wrapper/home_v2_chart_wrapper.dart';
+import 'package:myputt/utils/physics.dart';
 
 class HomeScreenV2 extends StatelessWidget {
-  const HomeScreenV2({Key? key}) : super(key: key);
+  const HomeScreenV2({super.key, required this.scrollController});
+
+  final ScrollController scrollController;
 
   static const String routeName = 'home_v2';
   static const String screenName = 'Home V2';
@@ -27,12 +30,12 @@ class HomeScreenV2 extends StatelessWidget {
 
   Widget _mainBody(BuildContext context) {
     final List<Widget> children = [
-      const HomeScreenChartV2Wrapper(),
-      const SizedBox(height: 16),
+      const HomeChartV2Wrapper(),
+      const SizedBox(height: 24),
       const HomeScreenCircleStats()
     ];
     return CustomScrollView(
-      // physics: const ClampingScrollPhysics(),
+      physics: const BottomBouncingScrollPhysics(),
       slivers: [
         SliverPadding(
           padding: EdgeInsets.only(

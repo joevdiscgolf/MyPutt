@@ -33,7 +33,7 @@ class HomeScreenCubit extends Cubit<HomeScreenState> implements MyPuttCubit {
 
   void reload() {
     final Stats stats = _statsService.getStatsForRange(
-      indexToTimeRange[timeRangeIndex]!,
+      kIndexToTimeRange[timeRangeIndex]!,
       _sessionRepository.validCompletedSessions,
       _challengesRepository.completedChallenges,
     );

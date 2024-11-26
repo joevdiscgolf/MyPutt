@@ -89,7 +89,7 @@ const List<int> kDefaultDistanceOptions = [
   65
 ];
 
-const Map<int, int> indexToTimeRange = {
+const Map<int, int> kIndexToTimeRange = {
   0: TimeRange.lastFive,
   1: TimeRange.lastTwenty,
   2: TimeRange.lastFifty,

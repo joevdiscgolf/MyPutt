@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myputt/components/charts/components/scrubber_label.dart';
 import 'package:myputt/components/lines/custom_line.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_chart_V2/components/scrubber_label.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ChartScrubber extends StatelessWidget {

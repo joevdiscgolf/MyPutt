@@ -23,7 +23,7 @@ class CircleStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DistanceHelpers.getPrimaryDistanceInterval({});
+    DistanceHelpers.getHomeScreenDistanceInterval({});
     final List<PuttingSet> allSetsInCircle =
         SetHelpers.getPuttingSetsFromIntervals(intervalToPuttingSetsData);
 

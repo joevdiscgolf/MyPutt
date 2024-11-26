@@ -6,7 +6,7 @@ import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
-import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_stats_card.dart';
+import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_stats_card_v2.dart';
 import 'package:myputt/services/navigation_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -21,28 +21,28 @@ class HomeScreenCircleStats extends StatelessWidget {
     return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
       builder: (context, state) {
         late final Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-            circleToIntervalsMap;
+            circleToIntervalPercentages;
 
         if (state is HomeScreenV2Loaded) {
-          circleToIntervalsMap = state.circleToIntervalsMap;
+          circleToIntervalPercentages = state.circleToIntervalPercentages;
         } else {
-          circleToIntervalsMap = {};
+          circleToIntervalPercentages = {};
         }
 
-        if (noSets(state, circleToIntervalsMap)) {
+        if (noSets(state, circleToIntervalPercentages)) {
           return _emptyState(context);
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: addRunSpacing(
               kHomeScreenStatPuttingCircles
                   .map(
-                    (circle) => CircleStatsCard(
+                    (circle) => CircleStatsCardV2(
                       circle: circle,
                       intervalToPuttingSetsData:
-                          circleToIntervalsMap[circle] ?? {},
+                          circleToIntervalPercentages[circle] ?? {},
                     ),
                   )
                   .toList(),
@@ -58,10 +58,10 @@ class HomeScreenCircleStats extends StatelessWidget {
   bool noSets(
     HomeScreenV2State homeScreenV2State,
     Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
-        circleToIntervalsMap,
+        circleToIntervalPercentages,
   ) {
     return homeScreenV2State is HomeScreenV2Loaded &&
-        circleToIntervalsMap.entries
+        circleToIntervalPercentages.entries
                 .firstWhereOrNull((entry) => entry.value.isNotEmpty) ==
             null;
   }
