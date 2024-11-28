@@ -9,10 +9,8 @@ class HomeV2ChartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
-      ...[PuttingCircle.c1, PuttingCircle.c2, PuttingCircle.c3].map(
-        (PuttingCircle circle) => CircleChartSection(
-          circle: circle,
-        ),
+      ...[PuttingCircle.c1].map(
+        (PuttingCircle circle) => CircleChartSection(circle: circle),
       ),
     ];
 

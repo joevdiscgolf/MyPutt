@@ -16,7 +16,7 @@ class HomeScreenV2AppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: MyPuttColors.darkGray,
+      color: MyPuttColors.gray[700],
       padding: EdgeInsets.only(top: topViewPadding),
       child: Container(
         padding: const EdgeInsets.only(left: 16),

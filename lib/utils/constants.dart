@@ -48,6 +48,13 @@ const Map<PuttingCircle, String> kCircleToNameMap = {
   PuttingCircle.c3: 'Circle 3',
 };
 
+const Map<PuttingCircle, String> kCircleToShortNameMap = {
+  PuttingCircle.c1: 'C1',
+  PuttingCircle.c1x: 'C1x',
+  PuttingCircle.c2: 'C2',
+  PuttingCircle.c3: 'C3',
+};
+
 const Map<PuttingCircle, int> kCircleToLowerBoundFt = {
   PuttingCircle.c1: 0,
   PuttingCircle.c1x: 12,

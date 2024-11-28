@@ -17,11 +17,15 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
     required this.distanceInterval,
     required this.chartDragData,
     this.height = 120,
+    this.hasAxisLabels = true,
+    this.hasGridlines = false,
   });
 
   final DistanceInterval distanceInterval;
   final ChartDragData? chartDragData;
   final double height;
+  final bool hasAxisLabels;
+  final bool hasGridlines;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +68,8 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
           screenWidth: MediaQuery.of(context).size.width,
           noData: noData,
           chartDragData: chartDragData,
-          hasGridLines: true,
-          hasAxisLabels: true,
+          hasGridLines: hasGridlines,
+          hasAxisLabels: hasAxisLabels,
         );
       },
     );

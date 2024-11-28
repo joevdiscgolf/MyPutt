@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/charts/components/chart_scrubber.dart';
 import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_axis_labels.dart';
+import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_grid_lines.dart';
 import 'package:myputt/components/charts/generic_performance_chart/components/generic_chart_overlay_text.dart';
 import 'package:myputt/components/empty_state/empty_state_chart/empty_state_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
@@ -78,7 +79,7 @@ class GenericPerformanceChart extends StatelessWidget {
                       _mainData(context, points),
                       duration: const Duration(milliseconds: 0),
                     ),
-                    // if (hasGridLines) GenericChartGridLines(height: height),
+                    if (hasGridLines) GenericChartGridLines(height: height),
                   ],
                 ),
               ),

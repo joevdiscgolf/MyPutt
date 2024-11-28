@@ -8,7 +8,7 @@ class MyPuttRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextStyle? textStyle =
         Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontSize: 20,
+              fontSize: 16,
               color: MyPuttColors.gray[100],
               fontWeight: FontWeight.w800,
             );

@@ -27,8 +27,8 @@ class HomeChartV2Heading extends StatelessWidget {
               '${state.circleToSelectedDistanceInterval[defaultCircle]!.lowerBound}-${state.circleToSelectedDistanceInterval[defaultCircle]!.upperBound} ft';
         }
         return Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 62,
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

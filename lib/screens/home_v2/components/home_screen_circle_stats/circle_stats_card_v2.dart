@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:myputt/cubits/home/home_screen_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_radial_diagram.dart';
@@ -33,6 +35,7 @@ class CircleStatsCardV2 extends StatelessWidget {
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
+        BlocProvider.of<HomeScreenCubit>(context).updateSelectedCircle(circle);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => CircleStatsScreen(
