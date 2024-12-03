@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
-import 'package:myputt/cubits/home/home_screen_cubit.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
 import 'package:myputt/utils/enums.dart';
@@ -17,8 +17,8 @@ class CircleStatsScreenAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeScreenCubit, HomeScreenState>(
-      builder: (context, homeScreenState) {
+    return BlocBuilder<HomeScreenV2Cubit, HomeScreenV2State>(
+      builder: (context, homeScreenV2State) {
         final double topViewPadding = MediaQuery.of(context).viewPadding.top;
         return Container(
           padding: EdgeInsets.only(top: topViewPadding),
@@ -34,7 +34,7 @@ class CircleStatsScreenAppBar extends StatelessWidget
                 ),
               ),
               Text(
-                '${kCircleToNameMap[homeScreenState.selectedCircle]}',
+                '${kCircleToNameMap[homeScreenV2State.selectedCircle]}',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontSize: 20,
                       color: MyPuttColors.blue,
@@ -44,7 +44,8 @@ class CircleStatsScreenAppBar extends StatelessWidget
               Expanded(
                   child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: _circleButtons(context, homeScreenState.selectedCircle),
+                child:
+                    _circleButtons(context, homeScreenV2State.selectedCircle),
               )),
             ],
           ),
@@ -80,7 +81,8 @@ class CircleStatsScreenAppBar extends StatelessWidget
     return Bounceable(
       onTap: () {
         Vibrate.feedback(FeedbackType.light);
-        BlocProvider.of<HomeScreenCubit>(context).updateSelectedCircle(circle);
+        BlocProvider.of<HomeScreenV2Cubit>(context)
+            .updateSelectedCircle(circle);
       },
       child: Container(
         alignment: Alignment.center,

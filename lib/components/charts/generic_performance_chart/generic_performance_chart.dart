@@ -27,6 +27,7 @@ class GenericPerformanceChart extends StatelessWidget {
     this.onTap,
     this.hasGridLines = false,
     this.hasAxisLabels = false,
+    this.isDarkBackground = false,
   }) : super(key: key);
 
   final List<ChartPoint> points;
@@ -44,6 +45,7 @@ class GenericPerformanceChart extends StatelessWidget {
   final Function(DragStartDetails)? onHorizontalDragStart;
   final Function(DragUpdateDetails)? onHorizontalDragUpdate;
   final Function(DragEndDetails)? onHorizontalDragEnd;
+  final bool isDarkBackground;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,7 @@ class GenericPerformanceChart extends StatelessWidget {
             return EmptyStateChart(
               height: height,
               hasContent: false,
-              strokeColor: MyPuttColors.gray[100],
+              strokeColor: MyPuttColors.gray[isDarkBackground ? 700 : 100],
             );
           }
           return Row(
@@ -91,11 +93,13 @@ class GenericPerformanceChart extends StatelessWidget {
           GenericChartOverlayText(
             message: 'No data',
             height: height,
+            isDarkBackground: isDarkBackground,
           )
         else if (points.isEmpty)
           GenericChartOverlayText(
             message: 'No putts from this range',
             height: height,
+            isDarkBackground: isDarkBackground,
           ),
       ],
     );

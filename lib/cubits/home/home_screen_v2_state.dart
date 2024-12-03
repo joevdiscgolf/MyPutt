@@ -2,17 +2,20 @@ part of 'home_screen_v2_cubit.dart';
 
 @immutable
 abstract class HomeScreenV2State {
-  const HomeScreenV2State({this.tappedDownAt});
+  const HomeScreenV2State({this.tappedDownAt, required this.selectedCircle});
+  final PuttingCircle selectedCircle;
   final DateTime? tappedDownAt;
 }
 
 class HomeScreenV2Initial extends HomeScreenV2State {
-  const HomeScreenV2Initial({DateTime? tappedDownAt})
+  const HomeScreenV2Initial(
+      {DateTime? tappedDownAt, required super.selectedCircle})
       : super(tappedDownAt: tappedDownAt);
 }
 
 class HomeScreenV2Loaded extends HomeScreenV2State {
   const HomeScreenV2Loaded({
+    required super.selectedCircle,
     required this.sets,
     required this.circleToIntervalPercentages,
     required this.timeRange,
@@ -21,6 +24,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     required this.chartDistance,
     required this.homeChartFilters,
     required this.chartDragData,
+    required this.distanceRangeValues,
     DateTime? tappedDownAt,
   }) : super(tappedDownAt: tappedDownAt);
 
@@ -33,8 +37,10 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
   final int? chartDistance;
   final HomeChartFilters homeChartFilters;
   final ChartDragData? chartDragData;
+  final RangeValues distanceRangeValues;
 
   HomeScreenV2Loaded copyWith(Map<String, dynamic> valuesToUpdate) {
+    PuttingCircle selectedCircle = this.selectedCircle;
     List<PuttingSet> sets = this.sets;
     Map<PuttingCircle, Map<DistanceInterval, PuttingSetInterval>>
         circleToIntervalPercentages = this.circleToIntervalPercentages;
@@ -47,7 +53,11 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     HomeChartFilters homeChartFilters = this.homeChartFilters;
     ChartDragData? chartDragData = this.chartDragData;
     DateTime? tappedDownAt = this.tappedDownAt;
+    RangeValues distanceRangeValues = this.distanceRangeValues;
 
+    if (valuesToUpdate.containsKey('selectedCircle')) {
+      selectedCircle = valuesToUpdate['selectedCircle'];
+    }
     if (valuesToUpdate.containsKey('sets')) {
       sets = valuesToUpdate['sets'];
     }
@@ -77,8 +87,12 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
     if (valuesToUpdate.containsKey('tappedDownAt')) {
       tappedDownAt = valuesToUpdate['tappedDownAt'];
     }
+    if (valuesToUpdate.containsKey('distanceRangeValues')) {
+      distanceRangeValues = valuesToUpdate['distanceRangeValues'];
+    }
 
     return HomeScreenV2Loaded(
+      selectedCircle: selectedCircle,
       sets: sets,
       circleToIntervalPercentages: circleToIntervalPercentages,
       timeRange: timeRange,
@@ -88,6 +102,7 @@ class HomeScreenV2Loaded extends HomeScreenV2State {
       homeChartFilters: homeChartFilters,
       chartDragData: chartDragData,
       tappedDownAt: tappedDownAt,
+      distanceRangeValues: distanceRangeValues,
     );
   }
 }

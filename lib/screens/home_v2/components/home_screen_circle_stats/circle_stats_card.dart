@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/components/bars/bar_chart.dart';
+import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/screens/circle_stats_screen/circle_stats_screen.dart';
@@ -29,16 +31,18 @@ class CircleStatsCard extends StatelessWidget {
 
     return Bounceable(
       onTap: () {
+        BlocProvider.of<HomeScreenV2Cubit>(context)
+            .updateSelectedCircle(circle);
+
         Vibrate.feedback(FeedbackType.light);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => CircleStatsScreen(
-              circle: circle,
-              intervalToPuttingSetsData: intervalToPuttingSetsData,
-              percentageForCircle:
-                  SetHelpers.percentageFromSets(allSetsInCircle),
-              numSetsInCircle: allSetsInCircle.length,
-            ),
+            builder: (context) => const CircleStatsScreen(
+                // intervalToPuttingSetsData: intervalToPuttingSetsData,
+                // percentageForCircle:
+                //     SetHelpers.percentageFromSets(allSetsInCircle),
+                // numSetsInCircle: allSetsInCircle.length,
+                ),
           ),
         );
       },

@@ -19,6 +19,7 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
     this.height = 120,
     this.hasAxisLabels = true,
     this.hasGridlines = false,
+    this.isDarkBackground = false,
   });
 
   final DistanceInterval distanceInterval;
@@ -26,6 +27,7 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
   final double height;
   final bool hasAxisLabels;
   final bool hasGridlines;
+  final bool isDarkBackground;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +72,7 @@ class DistanceIntervalPerformanceChart extends StatelessWidget {
           chartDragData: chartDragData,
           hasGridLines: hasGridlines,
           hasAxisLabels: hasAxisLabels,
+          isDarkBackground: isDarkBackground,
         );
       },
     );

@@ -6,12 +6,12 @@ import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/cubits/home/data/home_screen_cubit_data.dart';
-import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
 import 'package:myputt/models/data/conditions/conditions.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
+import 'package:myputt/protocols/myputt_cubit.dart';
 import 'package:myputt/protocols/singleton_consumer.dart';
 import 'package:myputt/repositories/challenges_repository.dart';
 import 'package:myputt/repositories/session_repository.dart';
@@ -28,7 +28,8 @@ part 'home_screen_v2_state.dart';
 
 class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     implements MyPuttCubit, SingletonConsumer {
-  HomeScreenV2Cubit() : super(const HomeScreenV2Initial());
+  HomeScreenV2Cubit()
+      : super(const HomeScreenV2Initial(selectedCircle: PuttingCircle.c1));
 
   @override
   void initSingletons() {
@@ -92,6 +93,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
 
       emit(
         HomeScreenV2Loaded(
+          selectedCircle: state.selectedCircle,
           sets: setsInActivities,
           circleToIntervalPercentages: circleToIntervalPercentages,
           homeScreenDistanceInterval: homeScreenDistanceInterval,
@@ -104,6 +106,10 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
             puttingConditions: const PuttingConditions(),
           ),
           chartDragData: null,
+          distanceRangeValues: RangeValues(
+            kCircleToMinDistance[state.selectedCircle]!,
+            kCircleToMaxDistance[state.selectedCircle]!,
+          ),
         ),
       );
     }
@@ -143,6 +149,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
 
       emit(
         HomeScreenV2Loaded(
+          selectedCircle: state.selectedCircle,
           sets: setsInActivities,
           circleToIntervalPercentages: circleToIntervalPercentages,
           homeScreenDistanceInterval: homeScreenDistanceInterval,
@@ -155,6 +162,10 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
             puttingConditions: const PuttingConditions(),
           ),
           chartDragData: null,
+          distanceRangeValues: RangeValues(
+            kCircleToMinDistance[state.selectedCircle]!,
+            kCircleToMaxDistance[state.selectedCircle]!,
+          ),
         ),
       );
     }
@@ -182,7 +193,10 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     if (state is! HomeScreenV2Loaded) {
       if (tappedDown == true) {
         // state is HomeScreenV2Initial if not HomeScreenV2Loaded
-        emit(HomeScreenV2Initial(tappedDownAt: DateTime.now()));
+        emit(HomeScreenV2Initial(
+          tappedDownAt: DateTime.now(),
+          selectedCircle: state.selectedCircle,
+        ));
       }
       return;
     } else if (points.isEmpty) {
@@ -273,6 +287,31 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
   void handleDragEnd(BuildContext context) {
     if (state is HomeScreenV2Loaded) {
       emit((state as HomeScreenV2Loaded).copyWith({'chartDragData': null}));
+    }
+  }
+
+  void updateSelectedCircle(PuttingCircle newCircle) {
+    if (state is HomeScreenV2Loaded) {
+      emit(
+        (state as HomeScreenV2Loaded).copyWith(
+          {
+            'selectedCircle': newCircle,
+            'distanceRangeValues': RangeValues(
+              kCircleToMinDistance[newCircle]!,
+              kCircleToMaxDistance[newCircle]!,
+            )
+          },
+        ),
+      );
+    } else if (state is HomeScreenV2Initial) {
+      emit(HomeScreenV2Initial(selectedCircle: newCircle));
+    }
+  }
+
+  void updateDistanceRangeValues(RangeValues newValues) {
+    if (state is HomeScreenV2Loaded) {
+      final HomeScreenV2Loaded loadedState = state as HomeScreenV2Loaded;
+      emit(loadedState.copyWith({'distanceRangeValues': newValues}));
     }
   }
 }
