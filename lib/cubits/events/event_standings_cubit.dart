@@ -20,12 +20,12 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventStandingsCubit extends Cubit<EventStandingsState> {
   EventStandingsCubit() : super(EventStandingsLoading()) {
-    Connectivity().checkConnectivity().then((connectivityResult) =>
-        _connected = hasConnectivity(connectivityResult));
+    Connectivity().checkConnectivity().then((connectivityResults) =>
+        _connected = hasConnectivityFromList(connectivityResults));
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
-        .listen((ConnectivityResult result) => _connectivityListener(result));
+        .listen((List<ConnectivityResult> results) => _connectivityListener(results));
   }
 
   final DatabaseService _databaseService = locator.get<DatabaseService>();
@@ -34,7 +34,7 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
   bool _connected = true;
 
   bool _firstDocumentSnapshot = true;
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   StreamSubscription<QuerySnapshot<Object?>>? _eventStandingsSubscription;
 
   Future<void> openEvent(MyPuttEvent event) async {
@@ -95,9 +95,9 @@ class EventStandingsCubit extends Cubit<EventStandingsState> {
   }
 
   // Re-initialize subscription when back online.
-  void _connectivityListener(ConnectivityResult result) {
+  void _connectivityListener(List<ConnectivityResult> results) {
     final bool wasConnected = _connected;
-    _connected = hasConnectivity(result);
+    _connected = hasConnectivityFromList(results);
 
     if (!wasConnected && _connected) {
       _eventStandingsSubscription?.cancel();
