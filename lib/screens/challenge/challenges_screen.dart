@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
@@ -169,7 +169,7 @@ class _ChallengesState extends State<ChallengesScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: MyPuttButton(
         onPressed: () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           _mixpanel.track('Challenges Screen New Challenge Button Pressed');
           showDialog(
             context: context,

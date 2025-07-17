@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/app_bars/myputt_app_bar.dart';
 import 'package:myputt/components/delegates/sliver_app_bar_delegate.dart';
@@ -100,7 +100,7 @@ class _SessionsState extends State<SessionsScreen> {
             CupertinoSliverRefreshControl(
               onRefresh: () async {
                 _mixpanel.track('Sessions Screen Pull To Refresh');
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 await BlocProvider.of<SessionsCubit>(context)
                     .reloadCloudSessions();
               },

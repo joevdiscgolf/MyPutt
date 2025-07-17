@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 import 'components/shadow_circular_indicator.dart';
@@ -30,7 +30,7 @@ class PuttingStatRow extends StatelessWidget {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Bounceable(
           onTap: () {
-            Vibrate.feedback(FeedbackType.light);
+            HapticFeedback.lightImpact();
           },
           child: ShadowCircularIndicator(
               size: indicatorSize, decimal: percentage?.toDouble()),

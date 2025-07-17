@@ -8,7 +8,7 @@ List<BoxShadow> standardBoxShadow() {
   return [
     BoxShadow(
       offset: const Offset(0, 2),
-      color: MyPuttColors.black.withOpacity(0.25),
+      color: MyPuttColors.black.withValues(alpha: 0.25),
       blurRadius: 2,
       spreadRadius: 0,
     )

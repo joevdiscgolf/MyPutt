@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
@@ -72,7 +72,7 @@ class _PuttsMadePickerState extends State<PuttsMadePicker> {
       focusedIndex = index;
     });
     widget.onUpdate(index);
-    Vibrate.feedback(FeedbackType.medium);
+    HapticFeedback.mediumImpact();
   }
 
   Widget _buildListItem(BuildContext context, int index) {

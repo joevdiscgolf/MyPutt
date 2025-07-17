@@ -153,7 +153,7 @@ class _EventListItemState extends State<EventListItem> {
         image: DecorationImage(
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.1), BlendMode.srcOver),
+              Colors.black.withValues(alpha: 0.1), BlendMode.srcOver),
           image: const AssetImage(kDefaultEventImgPath),
         ),
       ),

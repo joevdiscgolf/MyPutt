@@ -151,10 +151,10 @@ class GenericPerformanceChart extends StatelessWidget {
             gradient: LinearGradient(
               transform: const GradientRotation(3 * math.pi / 2),
               colors: [
-                MyPuttColors.blue.withOpacity(0.0),
-                MyPuttColors.blue.withOpacity(0.0),
-                MyPuttColors.blue.withOpacity(0.2),
-                MyPuttColors.blue.withOpacity(0.8),
+                MyPuttColors.blue.withValues(alpha: 0.0),
+                MyPuttColors.blue.withValues(alpha: 0.0),
+                MyPuttColors.blue.withValues(alpha: 0.2),
+                MyPuttColors.blue.withValues(alpha: 0.8),
               ],
             ),
           ),

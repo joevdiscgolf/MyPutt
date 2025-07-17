@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ChallengeRecordAppBar extends StatelessWidget
@@ -17,7 +17,7 @@ class ChallengeRecordAppBar extends StatelessWidget
       shadowColor: Colors.transparent,
       leading: IconButton(
         onPressed: () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           Navigator.pop(context);
         },
         icon: const Icon(

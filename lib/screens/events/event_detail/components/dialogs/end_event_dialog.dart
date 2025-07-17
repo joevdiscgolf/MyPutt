@@ -134,7 +134,7 @@ class _EndEventDialogState extends State<EndEventDialog> {
                     }
                     if (success) {
                       await Future.delayed(const Duration(milliseconds: 300));
-                      if (mounted) {
+                      if (context.mounted) {
                         Navigator.of(context).pop();
                       }
                     } else {

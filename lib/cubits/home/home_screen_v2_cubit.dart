@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/cubits/home/data/enums.dart';
 import 'package:myputt/cubits/home/data/home_screen_cubit_data.dart';
@@ -201,7 +201,7 @@ class HomeScreenV2Cubit extends Cubit<HomeScreenV2State>
     final ChartDragData? chartDragData = loadedState.chartDragData;
 
     if (horizontalDragStart && chartDragData?.tappedDown != true) {
-      Vibrate.feedback(FeedbackType.heavy);
+      HapticFeedback.heavyImpact();
     }
 
     late double draggedValue;

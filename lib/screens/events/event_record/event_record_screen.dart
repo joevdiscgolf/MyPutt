@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
@@ -146,7 +146,7 @@ class _EventRecordScreenState extends State<EventRecordScreen> {
                   iconData: setsFilled ? null : FlutterRemix.add_line,
                   onPressed: () {
                     if (state.event.status == EventStatus.complete) {
-                      Vibrate.feedback(FeedbackType.warning);
+                      HapticFeedback.lightImpact();
                       return;
                     }
                     BlocProvider.of<EventDetailCubit>(context).addSet(

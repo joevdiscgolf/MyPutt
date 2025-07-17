@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/buttons/exit_button.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/buttons/primary_button.dart';
@@ -105,7 +105,7 @@ class _CreateChallengeStructurePanelState
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () {
-                    Vibrate.feedback(FeedbackType.light);
+                    HapticFeedback.lightImpact();
                     _undo();
                   },
                   icon: const Icon(FlutterRemix.arrow_go_back_line),

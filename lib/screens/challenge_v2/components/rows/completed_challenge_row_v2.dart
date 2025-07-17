@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
@@ -28,7 +28,7 @@ class CompletedChallengeRowV2 extends StatelessWidget {
       color: MyPuttColors.white,
       child: Bounceable(
         onTap: () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -49,7 +49,7 @@ class CompletedChallengeRowV2 extends StatelessWidget {
                     'assets/images/winthrop_hole_6_putt.JPG',
                   ),
                   colorFilter: ColorFilter.mode(
-                    MyPuttColors.gray[700]!.withOpacity(0.95),
+                    MyPuttColors.gray[700]!.withValues(alpha: 0.95),
                     BlendMode.srcOver,
                   ),
                 ),

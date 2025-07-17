@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -36,7 +36,7 @@ class StructureDescriptionRow extends StatelessWidget {
           if (onDelete != null)
             CloseButton(
               onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 onDelete!();
               },
               color: MyPuttColors.red,

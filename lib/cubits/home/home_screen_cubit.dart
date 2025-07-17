@@ -16,7 +16,7 @@ part 'home_screen_state.dart';
 class HomeScreenCubit extends Cubit<HomeScreenState> implements MyPuttCubit {
   @override
   void initCubit() {
-    // TODO: implement init
+    // todo: implement init
   }
 
   final SessionsRepository _sessionRepository =

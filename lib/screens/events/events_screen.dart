@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
 import 'package:myputt/components/navigation/animated_route.dart';
@@ -261,7 +261,7 @@ class _EventsState extends State<EventsScreen>
   Widget _newEventButton(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       },
       child: MyPuttButton(
         onPressed: () {
@@ -269,8 +269,10 @@ class _EventsState extends State<EventsScreen>
           Navigator.of(context)
               .push(AnimatedRoute(const CreateEventScreen()))
               .then((_) {
-            if (BlocProvider.of<EventDetailCubit>(context).newEventCreated) {
-              setState(() => _tabController.index = 3);
+            if (context.mounted) {
+              if (BlocProvider.of<EventDetailCubit>(context).newEventCreated) {
+                setState(() => _tabController.index = 3);
+              }
             }
           });
         },

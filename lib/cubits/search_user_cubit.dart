@@ -10,7 +10,7 @@ part 'search_user_state.dart';
 class SearchUserCubit extends Cubit<SearchUsersState> implements MyPuttCubit {
   @override
   void initCubit() {
-    // TODO: implement init
+    // todo: implement init
   }
 
   final DatabaseService _databaseService = locator.get<DatabaseService>();

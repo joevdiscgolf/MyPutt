@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -65,7 +65,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: (loading || disabled)
             ? null
             : () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 onPressed();
               },
         label: text,
@@ -76,7 +76,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: (loading || disabled)
             ? null
             : () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 onPressed();
               },
         style: buttonStyle,
@@ -91,7 +91,7 @@ class PrimaryButton extends StatelessWidget {
     }
 
     return Bounceable(
-      onTap: () => Vibrate.feedback(FeedbackType.light),
+      onTap: () => HapticFeedback.lightImpact(),
       child: Container(
         height: height,
         width: width,

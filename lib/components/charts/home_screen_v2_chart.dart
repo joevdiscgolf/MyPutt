@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/charts/generic_performance_chart/generic_performance_chart.dart';
 import 'package:myputt/cubits/home/home_screen_v2_cubit.dart';
 import 'package:myputt/models/data/chart/chart_point.dart';
@@ -42,7 +42,7 @@ class HomeScreenV2Chart extends StatelessWidget {
             );
           },
           onTapDown: (TapDownDetails details) {
-            Vibrate.feedback(FeedbackType.heavy);
+            HapticFeedback.heavyImpact();
             BlocProvider.of<HomeScreenV2Cubit>(context).handleDrag(
               context,
               dragOffset: details.localPosition,

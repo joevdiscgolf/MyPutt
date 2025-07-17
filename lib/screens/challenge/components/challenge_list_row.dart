@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
@@ -52,7 +52,7 @@ class ChallengeListRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         if (challenge.status == ChallengeStatus.active) {
           locator
               .get<Mixpanel>()
@@ -60,12 +60,16 @@ class ChallengeListRow extends StatelessWidget {
           BlocProvider.of<ChallengesCubit>(context).openChallenge(challenge);
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ChallengeRecordScreen(challenge: challenge),
-                ),
-              )
-              .then((_) => BlocProvider.of<ChallengesCubit>(context).reload());
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  ChallengeRecordScreen(challenge: challenge),
+            ),
+          )
+              .then((_) {
+            if (context.mounted) {
+              BlocProvider.of<ChallengesCubit>(context).reload();
+            }
+          });
         } else if (challenge.status == ChallengeStatus.complete) {
           locator
               .get<Mixpanel>()
@@ -184,7 +188,7 @@ class ChallengeListRow extends StatelessWidget {
             const SizedBox(height: 12),
             MyPuttButton(
               onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 if (accept != null) {
                   accept!();
                 }
@@ -198,7 +202,7 @@ class ChallengeListRow extends StatelessWidget {
             const SizedBox(height: 12),
             MyPuttButton(
               onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 if (decline != null) {
                   decline!();
                 }

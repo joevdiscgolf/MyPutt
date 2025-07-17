@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/locator.dart';
@@ -177,7 +177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       properties: {'Email': _email},
     );
     setState(() => _errorText = null);
-    Vibrate.feedback(FeedbackType.light);
+    HapticFeedback.lightImpact();
     final String email = _emailController.text;
     final String password = _passwordController.text;
     if (email.isEmpty || password.isEmpty) {

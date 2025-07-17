@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/utils/colors.dart';
 
@@ -23,7 +23,7 @@ class EventsList extends StatelessWidget {
           if (onRefresh != null)
             CupertinoSliverRefreshControl(
               onRefresh: () async {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 onRefresh!();
               },
             ),

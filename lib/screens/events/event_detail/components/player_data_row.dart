@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/misc/frisbee_circle_icon.dart';
 import 'package:myputt/models/data/challenges/challenge_structure_item.dart';
 import 'package:myputt/models/data/events/event_player_data.dart';
@@ -29,7 +29,7 @@ class PlayerDataRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Bounceable(
-      onTap: () => Vibrate.feedback(FeedbackType.light),
+      onTap: () => HapticFeedback.lightImpact(),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
 import 'package:myputt/locator.dart';
@@ -24,7 +24,7 @@ class ChallengeUndoButton extends StatelessWidget {
             locator.get<Mixpanel>().track(
                   'Challenge Record Screen Undo Button Pressed',
                 );
-            Vibrate.feedback(FeedbackType.light);
+            HapticFeedback.lightImpact();
             if (state.currentChallenge.currentUserSets.isNotEmpty) {
               BlocProvider.of<ChallengesCubit>(context).undo();
             }

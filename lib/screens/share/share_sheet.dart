@@ -113,7 +113,7 @@ class _ShareSheetState extends State<ShareSheet> {
   }
 
   // Future<void> _shareWithLink() async {
-  //   Vibrate.feedback(FeedbackType.light);
+  //   HapticFeedback.lightImpact();
   //   _mixpanel.track('Share Challenge Screen Send Link Button Pressed');
   //   String? shareMessage;
   //   if (widget.preset != null) {

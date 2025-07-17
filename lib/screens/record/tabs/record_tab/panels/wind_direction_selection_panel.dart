@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
@@ -33,7 +33,7 @@ class _WindDirectionSelectionPanelState
               (windDirection) {
                 return ConditionSelectionRow(
                   onPressed: () {
-                    Vibrate.feedback(FeedbackType.light);
+                    HapticFeedback.lightImpact();
                     BlocProvider.of<RecordCubit>(context)
                         .updateWindDirection(windDirection);
                     Navigator.of(context).pop();
@@ -45,7 +45,7 @@ class _WindDirectionSelectionPanelState
             ),
             SelectNoConditionRow(
               onPressed: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 BlocProvider.of<RecordCubit>(context).updateWindDirection(null);
                 Navigator.of(context).pop();
               },

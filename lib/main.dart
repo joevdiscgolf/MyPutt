@@ -120,9 +120,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       builder: (context, child) {
         final mediaQueryData = MediaQuery.of(context);
-        final scale = mediaQueryData.textScaleFactor.clamp(1.0, 1.0);
+        final scale = mediaQueryData.textScaler.clamp(
+          maxScaleFactor: 1.0,
+          minScaleFactor: 1.0,
+        );
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: scale),
+          data: MediaQuery.of(context).copyWith(textScaler: scale),
           child: child ?? const SizedBox(),
         );
       },

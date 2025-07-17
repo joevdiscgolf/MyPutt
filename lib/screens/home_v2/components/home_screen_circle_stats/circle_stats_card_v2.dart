@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/sets_interval.dart';
 import 'package:myputt/screens/home_v2/components/home_screen_circle_stats/circle_radial_diagram.dart';
@@ -30,7 +30,7 @@ class CircleStatsCardV2 extends StatelessWidget {
 
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => CircleStatsScreen(
@@ -44,12 +44,12 @@ class CircleStatsCardV2 extends StatelessWidget {
         padding:
             const EdgeInsets.only(top: 12, bottom: 12, left: 20, right: 20),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: MyPuttColors.gray[100]!, width: 1),
           boxShadow: [
             BoxShadow(
-              color: MyPuttColors.black.withOpacity(0.2),
+              color: MyPuttColors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 12),
             )
