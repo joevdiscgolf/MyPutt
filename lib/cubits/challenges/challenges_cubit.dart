@@ -24,8 +24,7 @@ import 'package:myputt/utils/constants.dart';
 part 'challenges_state.dart';
 
 class ChallengesCubit extends Cubit<ChallengesState>
-    with MyPuttCubit
-    implements SingletonConsumer {
+    implements MyPuttCubit, SingletonConsumer {
   ChallengesCubit()
       : super(
           ChallengesLoading(

@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.7
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically force_upgrade your package dependencies to the latest versions
@@ -34,53 +34,52 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
   horizontal_picker: ^1.2.0
   scroll_snap_list: ^0.9.1
-  flutter_bounceable: ^1.0.2
-  get_it: ^7.2.0
-  intl: ^0.17.0
-  flutter_bloc: ^8.0.1
-  firebase_core: ^2.13.1
-  cloud_firestore: ^4.8.0
-  firebase_auth: ^4.6.2
-  json_serializable: ^6.6.1
-  json_annotation: ^4.1.0
-  build_runner: ^2.1.7
-  equatable: ^2.0.5
+  flutter_bounceable: ^1.2.0
+  get_it: ^7.7.0
+  intl: ^0.19.0
+  flutter_bloc: ^8.1.6
+  firebase_core: ^3.15.1
+  cloud_firestore: ^5.6.11
+  firebase_auth: ^5.6.2
+  json_serializable: ^6.9.0
+  json_annotation: ^4.9.0
+  build_runner: ^2.4.14
+  equatable: ^2.0.7
   google_fonts: ^4.0.4
   web_scraper: ^0.1.4
-  firebase_dynamic_links: ^5.3.2
-  percent_indicator: ^4.0.0
+  firebase_dynamic_links: ^6.1.9
+  percent_indicator: ^4.2.5
   share: ^2.0.4
   flutter_launcher_icons: ^0.13.1
   modal_bottom_sheet: ^2.0.0
   fl_chart: ^0.63.0
-  package_info_plus: ^4.0.2
+  package_info_plus: ^8.3.0
   auto_size_text: ^3.0.0
-  syncfusion_flutter_charts: ^21.2.4
-  fade_shimmer: ^2.0.1
-  introduction_screen: ^3.0.0
-  shared_preferences: ^2.2.2
-  smooth_page_indicator: ^1.0.0+2
-  syncfusion_flutter_calendar: ^21.2.3
+  syncfusion_flutter_charts: ^28.2.12
+  fade_shimmer: ^2.4.0
+  introduction_screen: ^3.1.17
+  shared_preferences: ^2.5.3
+  smooth_page_indicator: ^1.2.1
+  syncfusion_flutter_calendar: ^28.1.37
   expandable: ^5.0.1
-  flutter_native_splash: ^2.1.5
-  rename: ^2.0.1
-  cloud_functions: ^4.3.2
-  image_picker: ^0.8.5+3
-  mixpanel_flutter: ^2.1.1
-  firebase_crashlytics: ^3.3.2
-  connectivity_plus: ^4.0.1
+  flutter_native_splash: ^2.4.6
+  rename: ^3.1.0
+  cloud_functions: ^5.6.1
+  image_picker: ^1.1.2
+  mixpanel_flutter: ^2.4.4
+  firebase_crashlytics: ^4.3.9
+  connectivity_plus: ^6.1.4
   another_flushbar: ^1.12.29
-  device_info_plus: ^9.0.2
+  device_info_plus: ^11.5.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   collection: ^1.18.0
-  win32: ^5.2.1
+  win32: ^5.14.0
 
 dependency_overrides:
-  firebase_core_platform_interface: ^4.8.0
   modal_bottom_sheet:
     git:
       url: https://github.com/danReynolds/modal_bottom_sheet.git
@@ -97,7 +96,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.1
+  flutter_lints: ^6.0.0
 
 flutter_native_splash:
   color: '#2196F3'

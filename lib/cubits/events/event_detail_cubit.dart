@@ -23,12 +23,12 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class EventDetailCubit extends Cubit<EventDetailState> {
   EventDetailCubit() : super(EventDetailInitial()) {
-    Connectivity().checkConnectivity().then((connectivityResult) =>
-        _connected = hasConnectivity(connectivityResult));
+    Connectivity().checkConnectivity().then((connectivityResults) =>
+        _connected = hasConnectivityFromList(connectivityResults));
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
-        .listen((ConnectivityResult result) => _connectivityListener(result));
+        .listen((List<ConnectivityResult> results) => _connectivityListener(results));
   }
 
   final EventsRepository _eventsRepository = locator.get<EventsRepository>();
@@ -37,7 +37,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
 
   bool newEventCreated = false;
 
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   StreamSubscription<DocumentSnapshot<Object?>>? _eventStreamSubscription;
 
   bool _firstDocumentEvent = true;
@@ -226,9 +226,9 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     }
   }
 
-  Future<void> _connectivityListener(ConnectivityResult result) async {
+  Future<void> _connectivityListener(List<ConnectivityResult> results) async {
     final bool wasConnected = _connected;
-    _connected = hasConnectivity(result);
+    _connected = hasConnectivityFromList(results);
 
     // if (state is EventDetailLoaded) {
     //   emit(EventDetailLoaded(

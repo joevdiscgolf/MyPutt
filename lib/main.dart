@@ -107,8 +107,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    Connectivity().onConnectivityChanged.listen((result) {
-      _connectivityListener(result);
+    Connectivity().onConnectivityChanged.listen((results) {
+      _connectivityListener(results);
     });
     _initTimer();
 
@@ -155,20 +155,22 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  ConnectivityResult? _connectivityResult;
+  List<ConnectivityResult>? _connectivityResults;
 
-  void _connectivityListener(ConnectivityResult result) {
-    if (_connectivityResult == null ||
-        (!hasConnectivity(_connectivityResult!) && hasConnectivity(result))) {
+  void _connectivityListener(List<ConnectivityResult> results) {
+    final bool wasConnected = _connectivityResults != null && hasConnectivityFromList(_connectivityResults!);
+    final bool isConnected = hasConnectivityFromList(results);
+    
+    if (_connectivityResults == null || (!wasConnected && isConnected)) {
       _onConnected();
     }
-    _connectivityResult = result;
+    _connectivityResults = results;
   }
 
   void _initTimer() {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
-      if (_connectivityResult != null &&
-          hasConnectivity(_connectivityResult!)) {
+      if (_connectivityResults != null &&
+          hasConnectivityFromList(_connectivityResults!)) {
         await locator.get<SessionsRepository>().syncAllLocalSessionsToCloud();
         await locator.get<ChallengesRepository>().syncLocalChallengesToCloud();
       }

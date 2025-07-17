@@ -1,3 +1,3 @@
-class MyPuttCubit {
+mixin MyPuttCubit {
   void initCubit() {}
 }

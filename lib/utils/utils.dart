@@ -72,6 +72,17 @@ bool hasConnectivity(ConnectivityResult? connectivityResult) {
   ].contains(connectivityResult);
 }
 
+bool hasConnectivityFromList(List<ConnectivityResult> connectivityResults) {
+  if (connectivityResults.isEmpty) {
+    return false;
+  }
+  return connectivityResults.any((result) => [
+    ConnectivityResult.wifi,
+    ConnectivityResult.mobile,
+    ConnectivityResult.vpn
+  ].contains(result));
+}
+
 void initAllSingletons(List<SingletonConsumer> singletonConsumers) {
   for (var consumer in singletonConsumers) {
     consumer.initSingletons();
