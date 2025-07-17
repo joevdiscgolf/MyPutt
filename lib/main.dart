@@ -38,6 +38,8 @@ import 'package:myputt/theme/theme_data.dart';
 import 'package:myputt/utils/hive_helpers.dart';
 import 'package:myputt/utils/utils.dart';
 import 'cubits/my_profile_cubit.dart';
+import 'package:myputt/features/training/cubit/training_cubit.dart';
+import 'package:myputt/services/ai/ai_coach_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,6 +91,7 @@ void main() async {
             BlocProvider(create: (_) => locator.get<AppPhaseCubit>()),
             BlocProvider(create: (_) => locator.get<SessionsCubit>()),
             BlocProvider(create: (_) => RecordCubit()),
+            BlocProvider(create: (_) => TrainingCubit(aiCoachService: locator.get<AICoachService>())),
           ],
           child: const MyApp(),
         ),
@@ -158,9 +161,10 @@ class _MyAppState extends State<MyApp> {
   List<ConnectivityResult>? _connectivityResults;
 
   void _connectivityListener(List<ConnectivityResult> results) {
-    final bool wasConnected = _connectivityResults != null && hasConnectivityFromList(_connectivityResults!);
+    final bool wasConnected = _connectivityResults != null &&
+        hasConnectivityFromList(_connectivityResults!);
     final bool isConnected = hasConnectivityFromList(results);
-    
+
     if (_connectivityResults == null || (!wasConnected && isConnected)) {
       _onConnected();
     }

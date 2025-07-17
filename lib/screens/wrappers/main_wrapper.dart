@@ -9,6 +9,7 @@ import 'package:myputt/screens/home_v2/home_screen_v2.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
 import 'package:myputt/screens/challenge/challenges_screen.dart';
+import 'package:myputt/screens/training/ai_coach_screen.dart';
 import 'package:myputt/screens/wrappers/components/main_wrapper_bottom_nav_bar.dart';
 import 'package:myputt/services/beta_access_service.dart';
 import 'package:myputt/services/navigation_service.dart';
@@ -79,6 +80,7 @@ class _MainWrapperState extends State<MainWrapper> {
         MapEntry(homeScreenName, homeScreenWidget),
         const MapEntry(SessionsScreen.screenName, SessionsScreen()),
         MapEntry(challengesScreenName, challengesScreenWidget),
+        const MapEntry(AICoachScreen.screenName, AICoachScreen()),
         if (_eventsV1Beta)
           const MapEntry(EventsScreen.screenName, EventsScreen()),
         const MapEntry(MyProfileScreen.screenName, MyProfileScreen()),

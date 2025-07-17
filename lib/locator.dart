@@ -29,6 +29,8 @@ import 'package:myputt/services/toast/toast_service.dart';
 import 'package:myputt/services/user_service.dart';
 import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
+import 'package:myputt/services/ai/ai_coach_service.dart';
+import 'package:myputt/services/ai/gemini_ai_coach_service.dart';
 
 import 'utils/constants.dart';
 
@@ -70,6 +72,12 @@ Future<void> setUpLocator() async {
   locator.registerLazySingleton(() => NavigationService());
   locator.registerSingleton<DeviceService>(DeviceService());
   locator.registerLazySingleton(() => ToastService());
+
+  // AI Services
+  locator.registerLazySingleton<AICoachService>(
+    () =>
+        GeminiAICoachService(apiKey: 'AIzaSyDGTZoOaO_U76ysJ5dG8Ohdc7B-soUn3rE'),
+  );
 
   // initialize all services in repositories after
   final List<SingletonConsumer> repositories = [

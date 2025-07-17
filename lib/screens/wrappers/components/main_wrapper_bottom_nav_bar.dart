@@ -8,6 +8,7 @@ import 'package:myputt/screens/home/home_screen.dart';
 import 'package:myputt/screens/home_v2/home_screen_v2.dart';
 import 'package:myputt/screens/my_profile/my_profile_screen.dart';
 import 'package:myputt/screens/sessions/sessions_screen.dart';
+import 'package:myputt/screens/training/ai_coach_screen.dart';
 import 'package:myputt/screens/wrappers/components/main_wrapper_bottom_nav_item.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/layout_helpers.dart';
@@ -30,6 +31,7 @@ class MainWrapperBottomNavBar extends StatelessWidget {
     SessionsScreen.screenName: FlutterRemix.record_circle_fill,
     ChallengesScreen.screenName: FlutterRemix.sword_fill,
     ChallengesScreenV2.screenName: FlutterRemix.sword_fill,
+    AICoachScreen.screenName: FlutterRemix.robot_fill,
     EventsScreen.screenName: FlutterRemix.medal_2_fill,
     MyProfileScreen.screenName: FlutterRemix.user_3_fill,
   };
