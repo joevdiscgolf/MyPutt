@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class MainWrapperBottomNavItem extends StatelessWidget {
@@ -24,7 +24,7 @@ class MainWrapperBottomNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         onPressed();
       },
       child: Container(

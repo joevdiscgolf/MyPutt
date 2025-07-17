@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/app_bar_back_button.dart';
 import 'package:myputt/locator.dart';
@@ -53,7 +53,7 @@ class SessionSummaryAppBar extends StatelessWidget
                     context,
                     FlutterRemix.sword_line,
                     onPressed: () {
-                      Vibrate.feedback(FeedbackType.light);
+                      HapticFeedback.lightImpact();
                       locator
                           .get<Mixpanel>()
                           .track('Session Row Challenge Button Pressed');
@@ -65,7 +65,7 @@ class SessionSummaryAppBar extends StatelessWidget
                     context,
                     FlutterRemix.delete_bin_7_line,
                     onPressed: () {
-                      Vibrate.feedback(FeedbackType.light);
+                      HapticFeedback.lightImpact();
                       showDeleteDialog();
                     },
                   ),

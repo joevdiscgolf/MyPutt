@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/screens/record/tabs/record_tab/tiles/adjust_distance_button.dart';
@@ -23,7 +23,7 @@ class DistanceSelectionTile extends StatelessWidget {
           children: [
             Bounceable(
               onTap: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 displayBottomSheet(
                   context,
                   const DistanceSelectionPanel(),

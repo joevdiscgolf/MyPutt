@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/icons/png_icon.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
 import 'package:myputt/models/data/conditions/condition_enums.dart';
@@ -31,7 +31,7 @@ class StanceSelectionTile extends StatelessWidget {
             const SizedBox(height: 8),
             Bounceable(
               onTap: () {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
                 displayBottomSheet(context, const StanceSelectionPanel());
               },
               child: SelectionTile(

@@ -28,7 +28,7 @@ class CircleDiagram extends StatelessWidget {
           return Transform.translate(
             offset: const Offset(0, 0),
             child: Container(
-              color: Colors.blue.withOpacity(0.3),
+              color: Colors.blue.withValues(alpha: 0.3),
               height: outerRadius * 2,
               width: outerRadius * 2,
               child: CustomPaint(

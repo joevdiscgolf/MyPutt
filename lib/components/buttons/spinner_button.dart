@@ -3,7 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class SpinnerButton extends StatefulWidget {
@@ -80,7 +80,7 @@ class _SpinnerButtonState extends State<SpinnerButton>
     _repeat = widget.repeat;
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         if (!widget.disabled) {
           _animationController.forward(from: 0);
           widget.onPressed();

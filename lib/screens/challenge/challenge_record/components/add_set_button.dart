@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/cubits/challenges/challenges_cubit.dart';
@@ -47,7 +47,7 @@ class AddSetButton extends StatelessWidget {
     switch (currentChallengeState.challengeStage) {
       case ChallengeStage.bothUsersComplete:
         return () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           locator.get<Mixpanel>().track(
                 'Challenge Record Screen Finish Challenge Button Pressed',
               );
@@ -61,11 +61,11 @@ class AddSetButton extends StatelessWidget {
         };
       case ChallengeStage.currentUserComplete:
         return () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
         };
       default:
         return () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           locator.get<Mixpanel>().track(
                 'Challenge Record Screen Add Set Button Pressed',
               );

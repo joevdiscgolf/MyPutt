@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/components/empty_state/empty_state.dart';
@@ -115,7 +115,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         title: 'Log out',
         iconColor: MyPuttColors.darkGray,
         backgroundColor: Colors.transparent,
-        textColor: MyPuttColors.darkBlue.withOpacity(0.8),
+        textColor: MyPuttColors.darkBlue.withValues(alpha: 0.8),
       ),
     );
   }
@@ -173,7 +173,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         ),
                         Bounceable(
                           onTap: () {
-                            Vibrate.feedback(FeedbackType.light);
+                            HapticFeedback.lightImpact();
                             _mixpanel.track(
                               'My Profile Screen Edit Icon Button Pressed',
                             );

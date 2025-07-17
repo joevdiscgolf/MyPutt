@@ -75,7 +75,7 @@ class _PdgaNumberDialogState extends State<PdgaNumberDialog> {
                 _loading = true;
               });
               final bool submitSuccess = await widget.onSubmit(_pdgaNum);
-              if (submitSuccess && mounted) {
+              if (submitSuccess && context.mounted) {
                 Navigator.pop(context);
               }
               setState(() {

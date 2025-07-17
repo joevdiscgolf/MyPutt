@@ -13,7 +13,7 @@ class SessionSummaryCubit extends Cubit<SessionSummaryState>
     implements MyPuttCubit {
   @override
   void initCubit() {
-    // TODO: implement init
+    // todo: implement init
   }
 
   final SessionsRepository _sessionRepository =

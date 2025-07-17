@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/icons/png_icon.dart';
 import 'package:myputt/components/panels/bottom_sheet_panel.dart';
 import 'package:myputt/cubits/record/record_cubit.dart';
@@ -25,7 +25,7 @@ class _StanceSelectionPanelState extends State<StanceSelectionPanel> {
       ...PuttingStance.values.map((puttingStance) {
         return ConditionSelectionRow(
           onPressed: () {
-            Vibrate.feedback(FeedbackType.light);
+            HapticFeedback.lightImpact();
             BlocProvider.of<RecordCubit>(context)
                 .updatePuttingStance(puttingStance);
             Navigator.of(context).pop();
@@ -43,7 +43,7 @@ class _StanceSelectionPanelState extends State<StanceSelectionPanel> {
       }),
       SelectNoConditionRow(
         onPressed: () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           BlocProvider.of<RecordCubit>(context).updatePuttingStance(null);
           Navigator.of(context).pop();
         },

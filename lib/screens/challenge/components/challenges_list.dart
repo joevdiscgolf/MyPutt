@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
@@ -32,7 +32,7 @@ class ChallengesList extends StatelessWidget {
         slivers: [
           CupertinoSliverRefreshControl(
             onRefresh: () async {
-              Vibrate.feedback(FeedbackType.light);
+              HapticFeedback.lightImpact();
               locator
                   .get<Mixpanel>()
                   .track('Challenges Screen Pull To Refresh');

@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/models/data/challenges/putting_challenge.dart';
 import 'package:myputt/locator.dart';
@@ -211,7 +211,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
   Widget _centerMessage(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         setState(() {
           _selectedIndices = _allIndices;
           _challengeResult = null;
@@ -355,7 +355,7 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
     final int index = args.pointIndex;
     _mixpanel.track('My Profile Screen Challenge Result Chart Pressed');
     if (_spacerChartData[index].challengeResult != null) {
-      Vibrate.feedback(FeedbackType.light);
+      HapticFeedback.lightImpact();
       setState(() {
         _challengeResult = _spacerChartData[index].challengeResult;
         _selectedIndices = [index];

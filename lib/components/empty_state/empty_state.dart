@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class EmptyState extends StatelessWidget {
@@ -60,7 +60,7 @@ class EmptyState extends StatelessWidget {
             if (onRetry != null)
               Bounceable(
                 onTap: () {
-                  Vibrate.feedback(FeedbackType.light);
+                  HapticFeedback.lightImpact();
                   onRetry!();
                 },
                 child: ElevatedButton(

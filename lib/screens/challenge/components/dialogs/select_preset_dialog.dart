@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/components/buttons/my_putt_button.dart';
 import 'package:myputt/repositories/presets_repository.dart';
@@ -104,7 +104,7 @@ class _SelectPresetDialogState extends State<SelectPresetDialog> {
             backgroundColor: MyPuttColors.white,
             borderColor: MyPuttColors.blue,
             onPressed: () {
-              Vibrate.feedback(FeedbackType.light);
+              HapticFeedback.lightImpact();
               _mixpanel.track('Select Preset Dialog Share Button Pressed');
               if (_selectedPreset != ChallengePreset.none) {
                 displayBottomSheet(

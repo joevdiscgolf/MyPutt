@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/screens/challenge_v2/components/tab_bar/challenge_category_v2_tab.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:myputt/utils/constants.dart';
@@ -36,7 +36,7 @@ class ChallengesV2TabBar extends StatelessWidget
         unselectedLabelColor: Colors.black,
         labelPadding: const EdgeInsets.only(top: 16, bottom: 8),
         onTap: (int index) {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
         },
         tabs: const [
           ChallengeCategoryV2Tab(challengeCategory: ChallengeCategory.active),

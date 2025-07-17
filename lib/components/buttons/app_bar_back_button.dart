@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:myputt/utils/colors.dart';
 
 class AppBarBackButton extends StatelessWidget {
@@ -27,7 +27,7 @@ class AppBarBackButton extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         if (onPressed != null) {
           onPressed!();
         } else {

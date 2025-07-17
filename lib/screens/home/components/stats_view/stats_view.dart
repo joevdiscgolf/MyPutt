@@ -99,7 +99,7 @@ class _StatsViewState extends State<StatsView> with TickerProviderStateMixin {
                       end: const Alignment(0.9, 0),
                       transform: const GradientRotation(3 * math.pi / 2),
                       colors: [
-                        MyPuttColors.blue.withOpacity(0.8),
+                        MyPuttColors.blue.withValues(alpha: 0.8),
                         MyPuttColors.white,
                       ],
                     ),

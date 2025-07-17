@@ -2,7 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/components/misc/circular_icon_container.dart';
 import 'package:myputt/models/data/challenges/generated_challenge_item.dart';
 import 'package:myputt/screens/challenge/components/dialogs/components/structure_description_row.dart';
@@ -68,7 +68,7 @@ class PresetListItem extends StatelessWidget {
   Widget _mainRow(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         onTap(presetType);
       },
       child: Container(

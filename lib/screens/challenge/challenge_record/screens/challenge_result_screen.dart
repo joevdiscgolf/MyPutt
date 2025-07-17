@@ -262,7 +262,7 @@ class _AnimatedIconState extends State<AnimatedIcon>
           child: Icon(
             widget.iconData,
             size: _scaleAnimation.value,
-            color: MyPuttColors.gray.withOpacity(_opacityAnimation.value),
+            color: MyPuttColors.gray.withValues(alpha: _opacityAnimation.value),
           ),
         ),
       ),

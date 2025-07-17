@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class ShadowCircularIndicator extends StatelessWidget {
@@ -20,7 +20,7 @@ class ShadowCircularIndicator extends StatelessWidget {
     return Column(children: [
       Bounceable(
         onTap: () {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
         },
         child: Container(
           decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [

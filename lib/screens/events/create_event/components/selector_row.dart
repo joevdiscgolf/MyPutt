@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/utils/colors.dart';
 
 class SelectorRow extends StatelessWidget {
@@ -23,7 +23,7 @@ class SelectorRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Bounceable(
       onTap: () {
-        Vibrate.feedback((FeedbackType.light));
+        HapticFeedback.lightImpact();
         onPressed();
       },
       child: Container(

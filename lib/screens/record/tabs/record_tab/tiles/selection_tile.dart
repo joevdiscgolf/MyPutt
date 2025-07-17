@@ -15,7 +15,7 @@ class SelectionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: MyPuttColors.black.withOpacity(0.25),
+            color: MyPuttColors.black.withValues(alpha: 0.25),
             offset: const Offset(0, 2),
             blurRadius: 2,
             spreadRadius: 0,

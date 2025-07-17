@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/sessions/putting_session.dart';
@@ -31,7 +31,7 @@ class UserListView extends StatelessWidget {
                       locator
                           .get<Mixpanel>()
                           .track('Share Challenge Sheet User Pressed');
-                      Vibrate.feedback(FeedbackType.light);
+                      HapticFeedback.lightImpact();
                       showDialog(
                         context: context,
                         builder: (context) => SendChallengeDialog(

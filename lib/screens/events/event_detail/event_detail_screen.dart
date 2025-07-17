@@ -211,12 +211,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 ? DecorationImage(
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.5), BlendMode.srcOver),
+                      Colors.black.withValues(alpha: 0.5),
+                      BlendMode.srcOver,
+                    ),
                     image: NetworkImage(widget.event.bannerImgUrl!))
                 : DecorationImage(
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.3), BlendMode.srcOver),
+                      Colors.black.withValues(alpha: 0.3),
+                      BlendMode.srcOver,
+                    ),
                     image: const AssetImage(kDefaultEventImgPath)),
           ),
           child: Column(

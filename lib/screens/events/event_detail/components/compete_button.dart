@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_remix/flutter_remix.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/cubits/events/event_detail_cubit.dart';
 import 'package:myputt/models/data/events/myputt_event.dart';
 import 'package:myputt/screens/events/event_record/event_record_screen.dart';
@@ -67,8 +67,8 @@ class CompeteButton extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       gradient: LinearGradient(colors: [
-                        Colors.blue.withOpacity(0.5),
-                        MyPuttColors.blue.withOpacity(0.8),
+                        Colors.blue.withValues(alpha: 0.5),
+                        MyPuttColors.blue.withValues(alpha: 0.8),
                       ]),
                     ),
                   ),
@@ -100,7 +100,7 @@ class CompeteButton extends StatelessWidget {
               ),
               Bounceable(
                 onTap: () {
-                  Vibrate.feedback(FeedbackType.light);
+                  HapticFeedback.lightImpact();
                   displayBottomSheet(
                     context,
                     EventRecordScreen(event: event),

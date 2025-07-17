@@ -71,8 +71,8 @@ class ChallengeProgressPanel extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                MyPuttColors.blue.withOpacity(0.2),
-                MyPuttColors.red.withOpacity(0.2)
+                MyPuttColors.blue.withValues(alpha: 0.2),
+                MyPuttColors.red.withValues(alpha: 0.2)
               ],
             ),
           ),

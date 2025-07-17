@@ -16,7 +16,7 @@ void displayBottomSheet(
   modal_bottom_sheet
       .showBarModalBottomSheet(
           barrierColor: backgroundBarrierColor
-              ? MyPuttColors.darkGray.withOpacity(0.8)
+              ? MyPuttColors.darkGray.withValues(alpha: 0.8)
               : Colors.transparent,
           context: context,
           duration: duration,

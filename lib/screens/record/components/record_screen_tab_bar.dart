@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:flutter/services.dart';
 import 'package:myputt/cubits/sessions_cubit.dart';
 import 'package:myputt/screens/record/components/record_screen_app_bar.dart';
 import 'package:myputt/utils/colors.dart';
@@ -54,7 +54,7 @@ class _RecordScreenTabBarState extends State<RecordScreenTabBar> {
               indicatorWeight: 2,
               indicatorColor: MyPuttColors.gray[800]!,
               onTap: (_) {
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.lightImpact();
               },
               tabs: [
                 Text(
@@ -101,7 +101,7 @@ class _RecordScreenTabBarState extends State<RecordScreenTabBar> {
           TextSpan(
             text: '$numSets ',
             style: style?.copyWith(
-              color: MyPuttColors.blue.withOpacity(isSelected ? 1 : 0.5),
+              color: MyPuttColors.blue.withValues(alpha: isSelected ? 1 : 0.5),
             ),
           ),
           TextSpan(
