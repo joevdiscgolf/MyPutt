@@ -4,24 +4,39 @@ import 'package:myputt/models/data/sessions/putting_session.dart';
 import 'package:myputt/models/data/sessions/putting_set.dart';
 import 'package:myputt/models/data/stats/stats.dart';
 import 'package:myputt/models/data/training/training_session_instructions.dart';
+import 'package:myputt/models/data/ai/gemini_model.dart';
 import 'package:myputt/services/ai/ai_coach_service.dart';
 
 class GeminiAICoachService extends AICoachService {
-  late final GenerativeModel _model;
+  late GenerativeModel _model;
   final String apiKey;
+  GeminiModel _currentModel = GeminiModel.flash;
 
-  GeminiAICoachService({required this.apiKey}) {
+  GeminiAICoachService({required this.apiKey, GeminiModel? initialModel}) {
+    _currentModel = initialModel ?? GeminiModel.flash;
+    _initializeModel();
+  }
+  
+  void _initializeModel() {
+    final config = _currentModel.generationConfig;
     _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: _currentModel.modelName,
       apiKey: apiKey,
       generationConfig: GenerationConfig(
-        temperature: 0.3,  // Lower temperature for faster, more consistent responses
-        topK: 20,          // Reduced for faster generation
-        topP: 0.8,         // More focused responses
-        maxOutputTokens: 1024,  // Reduced token limit for faster response
+        temperature: config['temperature'] as double,
+        topK: config['topK'] as int,
+        topP: config['topP'] as double,
+        maxOutputTokens: config['maxOutputTokens'] as int,
       ),
     );
   }
+  
+  void switchModel(GeminiModel newModel) {
+    _currentModel = newModel;
+    _initializeModel();
+  }
+  
+  GeminiModel get currentModel => _currentModel;
 
   @override
   Future<TrainingSessionInstructions> generateTrainingSession({
@@ -97,7 +112,7 @@ Return ONLY valid JSON:
       
       // Add metadata
       json['createdAt'] = DateTime.now().toIso8601String();
-      json['aiModel'] = 'gemini-1.5-flash';
+      json['aiModel'] = _currentModel.modelName;
       
       return TrainingSessionInstructions.fromJson(json);
     } catch (e) {

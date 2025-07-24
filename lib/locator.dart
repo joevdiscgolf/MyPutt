@@ -31,6 +31,7 @@ import 'package:myputt/services/web_scraper.dart';
 import 'package:myputt/services/dynamic_link_service.dart';
 import 'package:myputt/services/ai/ai_coach_service.dart';
 import 'package:myputt/services/ai/gemini_ai_coach_service.dart';
+import 'package:myputt/models/data/ai/gemini_model.dart';
 
 import 'utils/constants.dart';
 
@@ -75,8 +76,14 @@ Future<void> setUpLocator() async {
 
   // AI Services
   locator.registerLazySingleton<AICoachService>(
-    () =>
-        GeminiAICoachService(apiKey: 'AIzaSyDGTZoOaO_U76ysJ5dG8Ohdc7B-soUn3rE'),
+    () {
+      final prefs = locator.get<SharedPreferencesService>();
+      // We'll load the preference synchronously in the AI Coach screen
+      return GeminiAICoachService(
+        apiKey: 'AIzaSyDGTZoOaO_U76ysJ5dG8Ohdc7B-soUn3rE',
+        initialModel: GeminiModel.flash8b, // Default to fastest model
+      );
+    },
   );
 
   // initialize all services in repositories after

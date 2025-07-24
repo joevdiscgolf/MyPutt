@@ -22,16 +22,75 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> with Tick
   final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
   late TabController _tabController;
   bool _hasShownGoalsDialog = false;
+  late AnimationController _loadingAnimationController;
+  late Animation<double> _loadingAnimation;
+  int _currentLoadingMessageIndex = 0;
+  int _currentFunFactIndex = 0;
   
+  final List<String> _loadingMessages = [
+    'Calibrating your putting prowess...',
+    'Analyzing green topography...',
+    'Consulting the golf gods...',
+    'Optimizing ball trajectory algorithms...',
+    'Channeling your inner Tiger Woods...',
+    'Calculating optimal putting angles...',
+    'Summoning the spirit of putting...',
+    'Preparing your personalized experience...',
+    'Adjusting for gravitational fluctuations...',
+    'Fine-tuning your training regimen...',
+    'Reading the digital greens...',
+    'Activating putting enhancement protocols...',
+  ];
+
+  static const List<String> _golfFunFacts = [
+    'Tour pros make 99% of putts from 3 feet',
+    'The average golfer makes 50% of putts from 8 feet',
+    'PGA Tour players make 88% of putts from 5 feet',
+    'From 10 feet, tour pros only make 40% of putts',
+    'The average 3-putt happens from 33 feet away',
+    'Tour pros average 1.75 putts per hole',
+    'Weekend golfers average 2.2 putts per hole',
+    '43% of all strokes in golf are putts',
+    'The longest recorded putt made is 375 feet',
+    'Tiger Woods has made 99.4% of putts inside 3 feet',
+    'From 20 feet, tour pros make only 15% of putts',
+    'Putting accounts for 40% of your total score',
+  ];
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadingAnimationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _loadingAnimation = CurvedAnimation(
+      parent: _loadingAnimationController,
+      curve: Curves.easeInOut,
+    );
+    _loadingAnimationController.repeat();
+    
+    // Set initial random fun fact
+    _currentFunFactIndex = DateTime.now().millisecondsSinceEpoch % _golfFunFacts.length;
+    
+    // Rotate loading messages
+    Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          _currentLoadingMessageIndex = (_currentLoadingMessageIndex + 1) % _loadingMessages.length;
+        });
+        return true;
+      }
+      return false;
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _loadingAnimationController.dispose();
     super.dispose();
   }
 
@@ -48,7 +107,10 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> with Tick
       builder: (context, state) {
         if (state is TrainingSessionInProgress) {
           return _buildSessionInProgress(context, state);
-        } else if (state is TrainingSessionLoading) {
+        } else if (state is TrainingSessionLoading || state is TrainingLoading) {
+          return _buildLoadingScreen();
+        } else if (state is TrainingInstructionsGenerated) {
+          // Show loading while waiting for session to start
           return _buildLoadingScreen();
         } else {
           return _buildEmptyState();
@@ -140,6 +202,8 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> with Tick
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            _buildUpcomingDistances(state.session.instructions.trainingSets, currentSetIndex),
+                            const SizedBox(height: 12),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -388,6 +452,70 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> with Tick
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildUpcomingDistances(List<TrainingSet> allSets, int currentIndex) {
+    return Container(
+      height: 40,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: allSets.length,
+        itemBuilder: (context, index) {
+          final set = allSets[index];
+          final isCompleted = index < currentIndex;
+          final isCurrent = index == currentIndex;
+          
+          return Container(
+            margin: EdgeInsets.only(right: 6),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: isCurrent 
+                  ? MyPuttColors.blue 
+                  : isCompleted 
+                      ? MyPuttColors.blue.withValues(alpha: 0.15)
+                      : MyPuttColors.gray.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isCurrent 
+                    ? MyPuttColors.blue 
+                    : isCompleted
+                        ? MyPuttColors.blue.withValues(alpha: 0.3)
+                        : MyPuttColors.gray.shade200,
+                width: isCurrent ? 1.5 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${set.distance}ft',
+                  style: TextStyle(
+                    color: isCurrent 
+                        ? Colors.white 
+                        : isCompleted
+                            ? MyPuttColors.blue
+                            : MyPuttColors.darkGray,
+                    fontSize: 13,
+                    fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '${set.puttsRequired}p',
+                  style: TextStyle(
+                    color: isCurrent 
+                        ? Colors.white.withValues(alpha: 0.9)
+                        : isCompleted
+                            ? MyPuttColors.blue.withValues(alpha: 0.7)
+                            : MyPuttColors.darkGray.withValues(alpha: 0.6),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -654,22 +782,122 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> with Tick
   Widget _buildLoadingScreen() {
     return Scaffold(
       backgroundColor: MyPuttColors.white,
+      appBar: AppBar(
+        backgroundColor: MyPuttColors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: MyPuttColors.darkGray),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              color: MyPuttColors.blue,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'AI Coach is analyzing...',
-              style: TextStyle(
-                color: MyPuttColors.darkGray,
-                fontSize: 16,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Animated golf ball
+              RotationTransition(
+                turns: _loadingAnimation,
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Golf ball dimples pattern
+                      Icon(
+                        Icons.sports_golf,
+                        size: 60,
+                        color: MyPuttColors.gray.shade300,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 40),
+              // Loading progress bar
+              SizedBox(
+                width: 200,
+                child: LinearProgressIndicator(
+                  backgroundColor: MyPuttColors.gray.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(MyPuttColors.blue),
+                  minHeight: 4,
+                ),
+              ),
+              const SizedBox(height: 32),
+              // Animated loading message
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: Text(
+                  _loadingMessages[_currentLoadingMessageIndex],
+                  key: ValueKey(_currentLoadingMessageIndex),
+                  style: TextStyle(
+                    color: MyPuttColors.darkGray,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please wait while we craft your perfect practice session',
+                style: TextStyle(
+                  color: MyPuttColors.darkGray.withValues(alpha: 0.6),
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
+              // Fun fact section
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: MyPuttColors.blue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: MyPuttColors.blue,
+                      size: 24,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Did you know?',
+                      style: TextStyle(
+                        color: MyPuttColors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _golfFunFacts[_currentFunFactIndex],
+                      style: TextStyle(
+                        color: MyPuttColors.darkGray.withValues(alpha: 0.8),
+                        fontSize: 13,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,9 @@ import 'package:myputt/locator.dart';
 import 'package:myputt/models/data/training/training_session_instructions.dart';
 import 'package:myputt/screens/training/training_session_screen.dart';
 import 'package:myputt/services/ai/ai_coach_service.dart';
+import 'package:myputt/services/ai/gemini_ai_coach_service.dart';
+import 'package:myputt/models/data/ai/gemini_model.dart';
+import 'package:myputt/services/shared_preferences_service.dart';
 import 'package:myputt/utils/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:myputt/models/data/stats/stats.dart';
@@ -24,11 +27,30 @@ class AICoachScreen extends StatefulWidget {
 class _AICoachScreenState extends State<AICoachScreen> {
   List<TrainingSession> trainingHistory = [];
   PerformanceAnalysis? performanceAnalysis;
+  GeminiModel? _selectedModel;
 
   @override
   void initState() {
     super.initState();
     _loadPerformanceAnalysis();
+    _loadSelectedModel();
+  }
+  
+  Future<void> _loadSelectedModel() async {
+    final prefs = locator.get<SharedPreferencesService>();
+    final savedModel = await prefs.getGeminiModel();
+    final aiService = locator.get<AICoachService>();
+    
+    if (aiService is GeminiAICoachService) {
+      setState(() {
+        _selectedModel = GeminiModel.fromString(savedModel);
+      });
+      
+      // Update the service with the saved model
+      if (savedModel != null) {
+        aiService.switchModel(_selectedModel!);
+      }
+    }
   }
 
   Future<Stats?> _getStats() async {
@@ -77,6 +99,12 @@ class _AICoachScreenState extends State<AICoachScreen> {
               .copyWith(color: MyPuttColors.darkGray),
         ),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings, color: MyPuttColors.darkGray),
+            onPressed: _showModelSelectionDialog,
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _loadPerformanceAnalysis,
@@ -87,6 +115,8 @@ class _AICoachScreenState extends State<AICoachScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildQuickActions(context),
+              const SizedBox(height: 16),
+              _buildModelIndicator(),
               const SizedBox(height: 24),
               _buildPerformanceOverview(),
               const SizedBox(height: 24),
@@ -142,6 +172,40 @@ class _AICoachScreenState extends State<AICoachScreen> {
     );
   }
 
+  Widget _buildModelIndicator() {
+    if (_selectedModel == null) return const SizedBox.shrink();
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: MyPuttColors.blue.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: MyPuttColors.blue.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.speed,
+            size: 16,
+            color: MyPuttColors.blue,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'AI Model: ${_selectedModel!.displayName}',
+            style: TextStyle(
+              color: MyPuttColors.blue,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
   Widget _buildActionCard({
     required String title,
     required String subtitle,
@@ -563,6 +627,11 @@ class _AICoachScreenState extends State<AICoachScreen> {
         puttingHistory: sessionsState.sessions,
         difficulty: difficulty,
         targetDurationMinutes: 30,
+      ).timeout(
+        const Duration(seconds: 10), // 10 second timeout
+        onTimeout: () {
+          print('Training generation timed out, using fallback');
+        },
       ).then((_) {
         final trainingState = trainingCubit.state;
         if (trainingState is TrainingInstructionsGenerated) {
@@ -571,6 +640,16 @@ class _AICoachScreenState extends State<AICoachScreen> {
       }).catchError((e, trace) {
         print('Error generating training session: $e');
         print(trace);
+        // If there's an error, navigate back
+        if (context.mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to generate training session. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       });
     } catch (e, trace) {
       print(e);
@@ -633,5 +712,84 @@ class _AICoachScreenState extends State<AICoachScreen> {
     if (percentage >= 60) return MyPuttColors.blue;
     if (percentage >= 40) return Colors.orange;
     return Colors.red;
+  }
+  
+  void _showModelSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MyPuttColors.gray.shade50,
+        title: Text(
+          'Select AI Model',
+          style: TextStyle(color: MyPuttColors.darkGray),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Choose the AI model for generating training sessions:',
+              style: TextStyle(
+                color: MyPuttColors.darkGray.withValues(alpha: 0.7),
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...GeminiModel.values.map((model) => RadioListTile<GeminiModel>(
+              title: Text(
+                model.displayName,
+                style: TextStyle(color: MyPuttColors.darkGray),
+              ),
+              subtitle: Text(
+                model.description,
+                style: TextStyle(
+                  color: MyPuttColors.darkGray.withValues(alpha: 0.6),
+                  fontSize: 12,
+                ),
+              ),
+              value: model,
+              groupValue: _selectedModel,
+              onChanged: (value) async {
+                if (value != null) {
+                  await _updateSelectedModel(value);
+                  Navigator.pop(context);
+                }
+              },
+            )),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: MyPuttColors.darkGray),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> _updateSelectedModel(GeminiModel model) async {
+    final prefs = locator.get<SharedPreferencesService>();
+    final aiService = locator.get<AICoachService>();
+    
+    await prefs.setGeminiModel(model.modelName);
+    
+    if (aiService is GeminiAICoachService) {
+      aiService.switchModel(model);
+      setState(() {
+        _selectedModel = model;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Switched to ${model.displayName}'),
+          backgroundColor: MyPuttColors.blue,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }
