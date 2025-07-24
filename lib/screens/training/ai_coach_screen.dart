@@ -12,8 +12,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:myputt/models/data/stats/stats.dart';
 
 class AICoachScreen extends StatefulWidget {
-  const AICoachScreen({Key? key}) : super(key: key);
-  
+  const AICoachScreen({super.key});
+
   static const String routeName = '/ai-coach';
   static const String screenName = 'AI Coach';
 
@@ -24,15 +24,15 @@ class AICoachScreen extends StatefulWidget {
 class _AICoachScreenState extends State<AICoachScreen> {
   List<TrainingSession> trainingHistory = [];
   PerformanceAnalysis? performanceAnalysis;
-  
+
   @override
   void initState() {
     super.initState();
     _loadPerformanceAnalysis();
   }
-  
+
   Future<Stats?> _getStats() async {
-    final sessionsState = locator.get<SessionsCubit>().state;
+    final sessionsState = BlocProvider.of<SessionsCubit>(context).state;
     if (sessionsState is SessionActive) {
       final statsService = locator.get<StatsService>();
       return statsService.getStatsForRange(10, sessionsState.sessions, []);
@@ -41,18 +41,19 @@ class _AICoachScreenState extends State<AICoachScreen> {
   }
 
   Future<void> _loadPerformanceAnalysis() async {
-    final sessionsState = locator.get<SessionsCubit>().state;
+    final sessionsState = BlocProvider.of<SessionsCubit>(context).state;
     final statsService = locator.get<StatsService>();
     final aiService = locator.get<AICoachService>();
-    
+
     if (sessionsState is SessionActive) {
       try {
-        final stats = statsService.getStatsForRange(10, sessionsState.sessions, []);
+        final stats =
+            statsService.getStatsForRange(10, sessionsState.sessions, []);
         final analysis = await aiService.analyzePerformance(
           recentSessions: sessionsState.sessions.take(10).toList(),
           userStats: stats,
         );
-        
+
         setState(() {
           performanceAnalysis = analysis;
         });
@@ -70,7 +71,10 @@ class _AICoachScreenState extends State<AICoachScreen> {
         backgroundColor: MyPuttColors.gray.shade50,
         title: Text(
           'AI Coach',
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: MyPuttColors.darkGray),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: MyPuttColors.darkGray),
         ),
         elevation: 0,
       ),
@@ -122,7 +126,9 @@ class _AICoachScreenState extends State<AICoachScreen> {
           subtitle: 'Practice your previous training',
           icon: Icons.replay,
           color: Colors.orange,
-          onTap: trainingHistory.isNotEmpty ? () => _repeatSession(context, trainingHistory.first) : null,
+          onTap: trainingHistory.isNotEmpty
+              ? () => _repeatSession(context, trainingHistory.first)
+              : null,
         ),
         const SizedBox(height: 8),
         _buildActionCard(
@@ -144,63 +150,77 @@ class _AICoachScreenState extends State<AICoachScreen> {
     VoidCallback? onTap,
   }) {
     final isEnabled = onTap != null;
-    
-    return InkWell(
-      onTap: onTap,
+
+    return Material(
+      color: MyPuttColors.gray.shade50,
       borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: MyPuttColors.gray.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isEnabled ? color.withValues(alpha: 0.3) : MyPuttColors.darkGray.withValues(alpha: 0.1),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isEnabled
+                  ? color.withValues(alpha: 0.3)
+                  : MyPuttColors.darkGray.withValues(alpha: 0.1),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isEnabled ? color.withValues(alpha: 0.1) : MyPuttColors.darkGray.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isEnabled
+                      ? color.withValues(alpha: 0.1)
+                      : MyPuttColors.darkGray.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: isEnabled
+                      ? color
+                      : MyPuttColors.darkGray.withValues(alpha: 0.3),
+                  size: 24,
+                ),
               ),
-              child: Icon(
-                icon,
-                color: isEnabled ? color : MyPuttColors.darkGray.withValues(alpha: 0.3),
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: isEnabled ? MyPuttColors.darkGray : MyPuttColors.darkGray.withValues(alpha: 0.5),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: isEnabled
+                            ? MyPuttColors.darkGray
+                            : MyPuttColors.darkGray.withValues(alpha: 0.5),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: MyPuttColors.darkGray.withValues(alpha: isEnabled ? 0.7 : 0.3),
-                      fontSize: 14,
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: MyPuttColors.darkGray
+                            .withValues(alpha: isEnabled ? 0.7 : 0.3),
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: isEnabled ? MyPuttColors.darkGray.withValues(alpha: 0.3) : MyPuttColors.darkGray.withValues(alpha: 0.1),
-              size: 16,
-            ),
-          ],
+              Icon(
+                Icons.arrow_forward_ios,
+                color: isEnabled
+                    ? MyPuttColors.darkGray.withValues(alpha: 0.3)
+                    : MyPuttColors.darkGray.withValues(alpha: 0.1),
+                size: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -213,12 +233,13 @@ class _AICoachScreenState extends State<AICoachScreen> {
         if (!snapshot.hasData) {
           return const SizedBox.shrink();
         }
-        
+
         final stats = snapshot.data!;
         final totalMade = stats.generalStats?.totalMade ?? 0;
         final totalAttempts = stats.generalStats?.totalAttempts ?? 0;
-        final overallPercentage = totalAttempts > 0 ? (totalMade / totalAttempts * 100) : 0.0;
-        
+        final overallPercentage =
+            totalAttempts > 0 ? (totalMade / totalAttempts * 100) : 0.0;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -252,7 +273,8 @@ class _AICoachScreenState extends State<AICoachScreen> {
                       ),
                     ),
                     progressColor: _getPercentageColor(overallPercentage),
-                    backgroundColor: MyPuttColors.darkGray.withValues(alpha: 0.1),
+                    backgroundColor:
+                        MyPuttColors.darkGray.withValues(alpha: 0.1),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
@@ -268,8 +290,10 @@ class _AICoachScreenState extends State<AICoachScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _buildStatRow('Total Made', stats.generalStats?.totalMade ?? 0),
-                        _buildStatRow('Total Attempts', stats.generalStats?.totalAttempts ?? 0),
+                        _buildStatRow(
+                            'Total Made', stats.generalStats?.totalMade ?? 0),
+                        _buildStatRow('Total Attempts',
+                            stats.generalStats?.totalAttempts ?? 0),
                       ],
                     ),
                   ),
@@ -312,7 +336,7 @@ class _AICoachScreenState extends State<AICoachScreen> {
     if (performanceAnalysis == null) {
       return const SizedBox.shrink();
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -378,28 +402,28 @@ class _AICoachScreenState extends State<AICoachScreen> {
         ),
         const SizedBox(height: 8),
         ...items.map((item) => Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '• ',
-                style: TextStyle(
-                  color: MyPuttColors.darkGray.withValues(alpha: 0.7),
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    color: MyPuttColors.darkGray.withValues(alpha: 0.8),
-                    fontSize: 14,
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '• ',
+                    style: TextStyle(
+                      color: MyPuttColors.darkGray.withValues(alpha: 0.7),
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: MyPuttColors.darkGray.withValues(alpha: 0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
       ],
     );
   }
@@ -408,7 +432,7 @@ class _AICoachScreenState extends State<AICoachScreen> {
     if (trainingHistory.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,9 +451,10 @@ class _AICoachScreenState extends State<AICoachScreen> {
   }
 
   Widget _buildHistoryCard(TrainingSession session) {
-    final completedGoals = session.goalCompletions.values.where((v) => v).length;
+    final completedGoals =
+        session.goalCompletions.values.where((v) => v).length;
     final totalGoals = session.instructions.goals.length;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: InkWell(
@@ -508,9 +533,8 @@ class _AICoachScreenState extends State<AICoachScreen> {
                 fontSize: 12,
               ),
             ),
-            onTap: () async {
-              Navigator.pop(context);
-              await _generateAndStartSession(context, difficulty);
+            onTap: () {
+              _generateAndStartSession(context, difficulty);
             },
           );
         }).toList(),
@@ -518,42 +542,48 @@ class _AICoachScreenState extends State<AICoachScreen> {
     );
   }
 
-  Future<void> _generateAndStartSession(BuildContext context, DifficultyLevel difficulty) async {
-    final sessionsState = locator.get<SessionsCubit>().state;
-    
-    if (sessionsState is SessionActive) {
+  Future<void> _generateAndStartSession(
+    BuildContext context,
+    DifficultyLevel difficulty,
+  ) async {
+    try {
+      final sessionsState = BlocProvider.of<SessionsCubit>(context).state;
       final trainingCubit = context.read<TrainingCubit>();
-      
-      await trainingCubit.generateTrainingSession(
+
+      // Navigate immediately to show loading screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TrainingSessionScreen(),
+        ),
+      );
+
+      // Generate training session in background (non-blocking)
+      trainingCubit.generateTrainingSession(
         puttingHistory: sessionsState.sessions,
         difficulty: difficulty,
         targetDurationMinutes: 30,
-      );
-      
-      if (!mounted) return;
-      
-      final trainingState = trainingCubit.state;
-      if (trainingState is TrainingInstructionsGenerated) {
-        await trainingCubit.startTrainingSession(trainingState.instructions);
-        
-        if (!mounted) return;
-        
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TrainingSessionScreen(),
-          ),
-        );
-      }
+      ).then((_) {
+        final trainingState = trainingCubit.state;
+        if (trainingState is TrainingInstructionsGenerated) {
+          trainingCubit.startTrainingSession(trainingState.instructions);
+        }
+      }).catchError((e, trace) {
+        print('Error generating training session: $e');
+        print(trace);
+      });
+    } catch (e, trace) {
+      print(e);
+      print(trace);
     }
   }
 
   void _repeatSession(BuildContext context, TrainingSession session) async {
     final trainingCubit = context.read<TrainingCubit>();
     await trainingCubit.startTrainingSession(session.instructions);
-    
+
     if (!mounted) return;
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(

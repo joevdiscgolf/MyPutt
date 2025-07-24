@@ -356,16 +356,24 @@ class _ChallengePerformancePanelState extends State<ChallengePerformancePanel> {
     _mixpanel.track('My Profile Screen Challenge Result Chart Pressed');
     if (_spacerChartData[index].challengeResult != null) {
       HapticFeedback.lightImpact();
-      setState(() {
-        _challengeResult = _spacerChartData[index].challengeResult;
-        _selectedIndices = [index];
-        _selectedIndices.addAll(_spacerIndices);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _challengeResult = _spacerChartData[index].challengeResult;
+            _selectedIndices = [index];
+            _selectedIndices.addAll(_spacerIndices);
+          });
+        }
       });
     } else {
       List<int> selected = [index];
       selected.addAll(_selectedIndices);
-      setState(() {
-        _selectedIndices = selected;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _selectedIndices = selected;
+          });
+        }
       });
     }
   }

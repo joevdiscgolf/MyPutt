@@ -15,10 +15,10 @@ class GeminiAICoachService extends AICoachService {
       model: 'gemini-1.5-flash',
       apiKey: apiKey,
       generationConfig: GenerationConfig(
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 2048,
+        temperature: 0.3,  // Lower temperature for faster, more consistent responses
+        topK: 20,          // Reduced for faster generation
+        topP: 0.8,         // More focused responses
+        maxOutputTokens: 1024,  // Reduced token limit for faster response
       ),
     );
   }
@@ -31,25 +31,26 @@ class GeminiAICoachService extends AICoachService {
     int? targetDurationMinutes,
   }) async {
     try {
-      final historyData = _preparePuttingHistoryData(puttingHistory);
+      // Limit history to last 3 sessions for faster processing
+      final recentHistory = puttingHistory.take(3).toList();
+      final historyData = _preparePuttingHistoryData(recentHistory);
       final statsData = _prepareStatsData(userStats);
       
       final prompt = '''
-You are an expert putting coach AI. Analyze the user's putting history and create a personalized training session.
+Create a putting training session.
 
-PUTTING HISTORY (last 10 sessions):
+RECENT PERFORMANCE (last 3 sessions):
 $historyData
 
-USER STATS:
-$statsData
+DIFFICULTY: ${preferredDifficulty?.toString().split('.').last ?? 'intermediate'}
+DURATION: ${targetDurationMinutes ?? 30} minutes
 
-Create a training session with these requirements:
-- Difficulty: ${preferredDifficulty?.toString().split('.').last ?? 'intermediate'}
-- Target duration: ${targetDurationMinutes ?? 30} minutes
-- Focus on improving weak distances while maintaining strengths
-- Include 3 specific, measurable goals
+Requirements:
+- All distances >= 10 feet
+- Include 3 measurable goals
+- Focus on weak areas
 
-Return ONLY a valid JSON object with this exact structure:
+Return ONLY valid JSON:
 {
   "id": "unique_id",
   "title": "Session Title",
@@ -113,13 +114,18 @@ Return ONLY a valid JSON object with this exact structure:
     required int currentSetIndex,
   }) async {
     try {
+      // Don't mention performance percentages if no putts have been attempted
+      final hasAttempts = currentSession.results.isNotEmpty;
+      
       final prompt = '''
 You are an encouraging putting coach. Provide feedback based on the current training session progress.
 
 Current Session: ${currentSession.instructions.title}
 Set ${currentSetIndex + 1} of ${currentSession.instructions.trainingSets.length}
-${lastSetResult != null ? 'Last set: ${lastSetResult.puttsMade}/${lastSetResult.puttsAttempted} from ${lastSetResult.distance} feet' : 'First set'}
-Overall performance: ${currentSession.overallPercentage.toStringAsFixed(1)}%
+${lastSetResult != null ? 'Last set: ${lastSetResult.puttsMade}/${lastSetResult.puttsAttempted} from ${lastSetResult.distance} feet' : 'First set - no putts attempted yet'}
+${hasAttempts ? 'Overall performance: ${currentSession.overallPercentage.toStringAsFixed(1)}%' : 'Starting fresh - focus on good fundamentals'}
+
+IMPORTANT: If this is the first set or no putts have been attempted yet, DO NOT mention any performance percentages or say that 0% is normal. Instead, focus on preparation, setup, and encouragement for starting the session.
 
 Provide coaching feedback in JSON format:
 {
@@ -278,7 +284,7 @@ Return only the motivational message, no JSON or formatting.
         final remainingSets = session.instructions.trainingSets
             .skip(completedSets.length)
             .map((set) => TrainingSet(
-                  distance: (set.distance * 0.8).round(),
+                  distance: ((set.distance * 0.8).round()).clamp(10, 50),
                   puttsRequired: set.puttsRequired,
                   focusArea: set.focusArea,
                   techniqueTip: 'Focus on solid contact and alignment',
@@ -301,26 +307,26 @@ Return only the motivational message, no JSON or formatting.
 
   // Helper methods
   String _preparePuttingHistoryData(List<PuttingSession> sessions) {
-    if (sessions.isEmpty) return 'No putting history available';
+    if (sessions.isEmpty) return 'No history';
     
-    final recentSessions = sessions.take(10);
-    final data = recentSessions.map((session) {
-      final setsByDistance = <int, List<PuttingSet>>{};
+    // Aggregate all distances across sessions for a more concise view
+    final distanceAggregates = <int, List<int>>{};
+    
+    for (final session in sessions) {
       for (final set in session.sets) {
-        setsByDistance.putIfAbsent(set.distance, () => []).add(set);
+        distanceAggregates.putIfAbsent(set.distance, () => [0, 0]);
+        distanceAggregates[set.distance]![0] += set.puttsMade;
+        distanceAggregates[set.distance]![1] += set.puttsAttempted;
       }
-      
-      final distanceStats = setsByDistance.entries.map((entry) {
-        final totalMade = entry.value.fold(0, (sum, set) => sum + set.puttsMade);
-        final totalAttempted = entry.value.fold(0, (sum, set) => sum + set.puttsAttempted);
-        final percentage = totalAttempted > 0 ? (totalMade / totalAttempted * 100).toStringAsFixed(1) : '0.0';
-        return '${entry.key}ft: $totalMade/$totalAttempted ($percentage%)';
-      }).join(', ');
-      
-      return 'Session: $distanceStats';
-    }).join('\n');
+    }
     
-    return data;
+    // Create concise summary
+    final summary = distanceAggregates.entries
+        .where((e) => e.value[1] > 0)
+        .map((e) => '${e.key}ft:${(e.value[0] / e.value[1] * 100).toStringAsFixed(0)}%')
+        .join(', ');
+    
+    return summary.isEmpty ? 'No history' : summary;
   }
 
   String _prepareStatsData(Stats? stats) {
@@ -418,7 +424,7 @@ Overall: $overallPercentage%
     switch (difficulty ?? DifficultyLevel.intermediate) {
       case DifficultyLevel.beginner:
         sets.addAll([
-          TrainingSet(distance: 5, puttsRequired: 10, focusArea: 'Setup and alignment'),
+          TrainingSet(distance: 10, puttsRequired: 10, focusArea: 'Setup and alignment'),
           TrainingSet(distance: 10, puttsRequired: 10, focusArea: 'Distance control'),
           TrainingSet(distance: 15, puttsRequired: 10, focusArea: 'Smooth stroke'),
         ]);

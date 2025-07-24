@@ -47,7 +47,22 @@ class TrainingCubit extends Cubit<TrainingState> {
     
     _consecutiveMakesTracker.clear();
     
-    await _updateSessionState();
+    // Emit initial state without AI calls for instant navigation
+    emit(TrainingSessionInProgress(
+      session: _currentSession!,
+      currentFeedback: CoachingFeedback(
+        message: 'Welcome! Let\'s start with your first set.',
+        tone: FeedbackTone.encouraging,
+        encouragement: 'Take a deep breath and focus on your fundamentals.',
+        focusPoints: ['Set up with good alignment', 'Keep a steady tempo'],
+      ),
+      goalProgress: GoalEvaluationResult(
+        goalProgress: {},
+        completedGoalIds: [],
+        summary: 'Ready to begin your training session!',
+        overallProgress: 0,
+      ),
+    ));
   }
 
   Future<void> addSetResult({
@@ -115,6 +130,26 @@ class TrainingCubit extends Cubit<TrainingState> {
       final lastResult = _currentSession!.results.isNotEmpty 
           ? _currentSession!.results.last 
           : null;
+      
+      // Skip AI calls if this is the initial state with no results
+      if (_currentSession!.results.isEmpty) {
+        emit(TrainingSessionInProgress(
+          session: _currentSession!,
+          currentFeedback: CoachingFeedback(
+            message: 'Ready for your first set! Take your time and focus on your setup.',
+            tone: FeedbackTone.encouraging,
+            encouragement: 'You\'ve got this!',
+            focusPoints: ['Maintain good posture', 'Keep your eyes on the ball'],
+          ),
+          goalProgress: GoalEvaluationResult(
+            goalProgress: {},
+            completedGoalIds: [],
+            summary: 'Complete your sets to start tracking goals!',
+            overallProgress: 0,
+          ),
+        ));
+        return;
+      }
       
       final feedback = await aiCoachService.provideCoachingFeedback(
         currentSession: _currentSession!,
@@ -186,6 +221,72 @@ class TrainingCubit extends Cubit<TrainingState> {
     _currentSession = null;
     _consecutiveMakesTracker.clear();
     emit(TrainingInitial());
+  }
+
+  void updateRealtimeFeedback({
+    required int puttsMade,
+    required int puttsToAttempt,
+  }) {
+    if (_currentSession == null || state is! TrainingSessionInProgress) return;
+    
+    final currentState = state as TrainingSessionInProgress;
+    final percentage = puttsToAttempt > 0 ? (puttsMade / puttsToAttempt * 100) : 0.0;
+    
+    // Determine feedback based on current selection
+    String message;
+    String? encouragement;
+    FeedbackTone tone;
+    
+    if (puttsMade == puttsToAttempt && puttsToAttempt > 0) {
+      // Perfect score
+      if (puttsToAttempt >= 20) {
+        message = "Incredible! $puttsToAttempt for $puttsToAttempt - you're on fire!";
+        encouragement = "Your focus and consistency are paying off. Keep this momentum going!";
+        tone = FeedbackTone.celebratory;
+      } else if (puttsToAttempt >= 10) {
+        message = "Perfect set! You made all $puttsToAttempt putts!";
+        encouragement = "Excellent work - your stroke is dialed in.";
+        tone = FeedbackTone.celebratory;
+      } else {
+        message = "Great job! All $puttsToAttempt putts made!";
+        encouragement = "Keep up the solid putting.";
+        tone = FeedbackTone.positive;
+      }
+    } else if (percentage >= 80) {
+      message = "Excellent putting! $puttsMade out of $puttsToAttempt is strong performance.";
+      encouragement = "You're showing great consistency.";
+      tone = FeedbackTone.positive;
+    } else if (percentage >= 60) {
+      message = "Good work making $puttsMade out of $puttsToAttempt putts.";
+      encouragement = "Focus on your setup and alignment for the next set.";
+      tone = FeedbackTone.encouraging;
+    } else if (percentage >= 40) {
+      message = "Keep working on it. $puttsMade out of $puttsToAttempt is progress.";
+      encouragement = "Take a deep breath and focus on your fundamentals.";
+      tone = FeedbackTone.constructive;
+    } else if (puttsMade == 0 && puttsToAttempt > 0) {
+      message = "Tough set, but don't get discouraged.";
+      encouragement = "Reset, refocus, and trust your practice. Every putt is a new opportunity.";
+      tone = FeedbackTone.encouraging;
+    } else {
+      message = "Keep your head steady and follow through to your target.";
+      encouragement = "Focus on making solid contact with each putt.";
+      tone = FeedbackTone.neutral;
+    }
+    
+    final updatedFeedback = CoachingFeedback(
+      message: message,
+      tone: tone,
+      encouragement: encouragement,
+      focusPoints: currentState.currentFeedback.focusPoints,
+      technicalAdvice: currentState.currentFeedback.technicalAdvice,
+    );
+    
+    emit(TrainingSessionInProgress(
+      session: currentState.session,
+      currentFeedback: updatedFeedback,
+      goalProgress: currentState.goalProgress,
+    ));
   }
 
   Future<void> loadPreviousSession(TrainingSession session) async {

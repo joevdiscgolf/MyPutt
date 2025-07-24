@@ -16,9 +16,25 @@ class TrainingSessionScreen extends StatefulWidget {
   State<TrainingSessionScreen> createState() => _TrainingSessionScreenState();
 }
 
-class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
+class _TrainingSessionScreenState extends State<TrainingSessionScreen> with TickerProviderStateMixin {
   int selectedPutts = 0;
+  int puttsToAttempt = 10;
+  final GlobalKey<ScrollSnapListState> puttsMadePickerKey = GlobalKey();
+  late TabController _tabController;
+  bool _hasShownGoalsDialog = false;
   
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TrainingCubit, TrainingState>(
@@ -51,63 +67,152 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
     
     final currentSet = state.session.instructions.trainingSets[currentSetIndex];
     
+    // Initialize puttsToAttempt with recommended value if it hasn't been set for this set
+    if (puttsToAttempt != currentSet.puttsRequired && currentSet.puttsRequired <= 20) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          puttsToAttempt = currentSet.puttsRequired;
+          if (selectedPutts > puttsToAttempt) {
+            selectedPutts = puttsToAttempt;
+          }
+        });
+      });
+    }
+    
+    // Show goals dialog 100ms after screen loads
+    if (!_hasShownGoalsDialog) {
+      _hasShownGoalsDialog = true;
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          _showGoalsDialog(context, state.session.instructions.goals);
+        }
+      });
+    }
+    
+    // Calculate completed goals count
+    final completedGoals = state.goalProgress.goalProgress.values
+        .where((progress) => progress?.isCompleted ?? false)
+        .length;
+    final totalGoals = state.session.instructions.goals.length;
+    
     return Scaffold(
       backgroundColor: MyPuttColors.white,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              backgroundColor: MyPuttColors.gray.shade50,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _buildProgressPanel(state),
-              ),
-              title: Text(
-                state.session.instructions.title,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: MyPuttColors.darkGray),
-              ),
-            ),
-          ];
-        },
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCoachingFeedback(state.currentFeedback),
-              const SizedBox(height: 20),
-              _buildCurrentSetInfo(currentSet, currentSetIndex, state.session.instructions.trainingSets.length),
-              const SizedBox(height: 20),
-              _buildPuttsMadePicker(currentSet.puttsRequired),
-              const SizedBox(height: 20),
-              _buildActionButtons(context, state),
-              const SizedBox(height: 30),
-              _buildGoalProgress(state.goalProgress, state.session.instructions.goals),
-              const SizedBox(height: 20),
-              _buildSetHistory(state.session),
-            ],
+      appBar: AppBar(
+        backgroundColor: MyPuttColors.white,
+        elevation: 0,
+        toolbarHeight: 56,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: MyPuttColors.darkGray),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          state.session.instructions.title,
+          style: TextStyle(
+            color: MyPuttColors.darkGray,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
         ),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: MyPuttColors.blue,
+          unselectedLabelColor: MyPuttColors.darkGray.withValues(alpha: 0.6),
+          indicatorColor: MyPuttColors.blue,
+          tabs: [
+            Tab(text: 'Training'),
+            Tab(text: 'Goals ($completedGoals/$totalGoals)'),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Main training tab
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: _buildCurrentSetInfo(currentSet, currentSetIndex, state.session.instructions.trainingSets.length),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  flex: 1,
+                                  child: _buildProgressCard(state),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            _buildCoachingFeedback(state.currentFeedback),
+                            const SizedBox(height: 16),
+                            _TrainingQuantityRow(
+                              quantity: puttsToAttempt,
+                              onIncrement: (increment) {
+                                setState(() {
+                                  if (increment && puttsToAttempt < 20) {
+                                    puttsToAttempt++;
+                                    if (selectedPutts > puttsToAttempt) {
+                                      selectedPutts = puttsToAttempt;
+                                    }
+                                  } else if (!increment && puttsToAttempt > 1) {
+                                    puttsToAttempt--;
+                                    if (selectedPutts > puttsToAttempt) {
+                                      selectedPutts = puttsToAttempt;
+                                    }
+                                  }
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
+                      // PuttsMadePicker without horizontal padding
+                      _buildPuttsMadePicker(puttsToAttempt),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildSetHistory(state.session),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+                // Goals tab
+                SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildGoalProgress(state.goalProgress, state.session.instructions.goals),
+                ),
+              ],
+            ),
+          ),
+          _buildActionButtons(context, state),
+        ],
       ),
     );
   }
 
-  Widget _buildProgressPanel(TrainingSessionInProgress state) {
+  Widget _buildProgressCard(TrainingSessionInProgress state) {
     final progress = state.session.currentSetIndex / state.session.instructions.trainingSets.length;
     
     return Container(
+      constraints: BoxConstraints(minHeight: 120),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MyPuttColors.blue.withValues(alpha: 0.8),
-            MyPuttColors.blue,
-          ],
-        ),
+        color: MyPuttColors.blue,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -116,25 +221,34 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
             'Set ${state.session.currentSetIndex + 1} / ${state.session.instructions.trainingSets.length}',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           LinearPercentIndicator(
             percent: progress,
-            lineHeight: 8,
+            lineHeight: 4,
             backgroundColor: Colors.white.withValues(alpha: 0.3),
             progressColor: Colors.white,
-            barRadius: const Radius.circular(4),
+            barRadius: const Radius.circular(2),
             padding: EdgeInsets.zero,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Text(
-            'Overall: ${state.session.overallPercentage.toStringAsFixed(1)}%',
+            'Overall',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 18,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            '${state.session.overallPercentage.toStringAsFixed(1)}%',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -146,28 +260,36 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
     final color = _getFeedbackColor(feedback.tone);
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: MyPuttColors.gray.shade50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: MyPuttColors.gray.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                _getFeedbackIcon(feedback.tone),
-                color: color,
-                size: 20,
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  _getFeedbackIcon(feedback.tone),
+                  color: color,
+                  size: 16,
+                ),
               ),
               const SizedBox(width: 8),
               Text(
                 'AI Coach',
                 style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
+                  color: MyPuttColors.darkGray,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -177,18 +299,23 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
             feedback.message,
             style: TextStyle(
               color: MyPuttColors.darkGray,
-              fontSize: 16,
+              fontSize: 14,
+              height: 1.4,
             ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
-          if (feedback.encouragement != null) ...[
-            const SizedBox(height: 8),
+          if (feedback.encouragement != null && feedback.encouragement!.isNotEmpty) ...[
+            const SizedBox(height: 6),
             Text(
               feedback.encouragement!,
               style: TextStyle(
-                color: MyPuttColors.darkGray.withValues(alpha: 0.8),
-                fontSize: 14,
+                color: MyPuttColors.darkGray.withValues(alpha: 0.7),
+                fontSize: 13,
                 fontStyle: FontStyle.italic,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
@@ -198,12 +325,15 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
 
   Widget _buildCurrentSetInfo(TrainingSet currentSet, int setIndex, int totalSets) {
     return Container(
+      constraints: BoxConstraints(minHeight: 120),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: MyPuttColors.gray.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -212,45 +342,49 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
                 '${currentSet.distance} ft',
                 style: TextStyle(
                   color: MyPuttColors.blue,
-                  fontSize: 36,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               Icon(
                 Icons.arrow_forward,
                 color: MyPuttColors.darkGray.withValues(alpha: 0.5),
+                size: 18,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               Text(
-                '${currentSet.puttsRequired} putts',
+                '$puttsToAttempt putts',
                 style: TextStyle(
                   color: MyPuttColors.darkGray,
-                  fontSize: 24,
+                  fontSize: 18,
                 ),
               ),
             ],
           ),
           if (currentSet.focusArea != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               'Focus: ${currentSet.focusArea}',
               style: TextStyle(
                 color: MyPuttColors.darkGray.withValues(alpha: 0.8),
-                fontSize: 16,
+                fontSize: 13,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
           if (currentSet.techniqueTip != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               currentSet.techniqueTip!,
               style: TextStyle(
                 color: MyPuttColors.darkGray.withValues(alpha: 0.7),
-                fontSize: 14,
+                fontSize: 12,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
@@ -262,44 +396,73 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'How many putts did you make?',
-          style: TextStyle(
-            color: MyPuttColors.darkGray,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'How many putts did you make?',
+            style: TextStyle(
+              color: MyPuttColors.darkGray,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         const SizedBox(height: 12),
-        PuttsMadePicker(
-          length: maxPutts,
-          sslKey: GlobalKey<ScrollSnapListState>(),
-          challengeMode: false,
-          onUpdate: (index) {
-            setState(() {
-              selectedPutts = index;
-            });
-            HapticFeedback.lightImpact();
-          },
+        SizedBox(
+          height: 100,
+          child: PuttsMadePicker(
+            length: maxPutts,
+            sslKey: puttsMadePickerKey,
+            challengeMode: false,
+            onUpdate: (index) {
+              HapticFeedback.lightImpact();
+              if (mounted) {
+                setState(() {
+                  selectedPutts = index;
+                });
+                // Update real-time feedback
+                context.read<TrainingCubit>().updateRealtimeFeedback(
+                  puttsMade: index,
+                  puttsToAttempt: puttsToAttempt,
+                );
+              }
+            },
+          ),
         ),
       ],
     );
   }
 
   Widget _buildActionButtons(BuildContext context, TrainingSessionInProgress state) {
-    return Row(
-      children: [
-        if (state.session.results.isNotEmpty)
-          Expanded(
-            flex: 1,
-            child: _buildUndoButton(context),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: MyPuttColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: Offset(0, -2),
           ),
-        if (state.session.results.isNotEmpty) const SizedBox(width: 12),
-        Expanded(
-          flex: 2,
-          child: _buildAddSetButton(context, state),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            if (state.session.results.isNotEmpty)
+              Expanded(
+                flex: 1,
+                child: _buildUndoButton(context),
+              ),
+            if (state.session.results.isNotEmpty) const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: _buildAddSetButton(context, state),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -308,14 +471,18 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
     
     return ElevatedButton(
       onPressed: () {
+        HapticFeedback.mediumImpact();
         context.read<TrainingCubit>().addSetResult(
           puttsMade: selectedPutts,
-          puttsAttempted: currentSet.puttsRequired,
+          puttsAttempted: puttsToAttempt,
         );
-        setState(() {
-          selectedPutts = 0;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              selectedPutts = 0;
+            });
+          }
         });
-        HapticFeedback.mediumImpact();
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: MyPuttColors.blue,
@@ -620,5 +787,223 @@ class _TrainingSessionScreenState extends State<TrainingSessionScreen> {
     if (percentage >= 60) return MyPuttColors.blue;
     if (percentage >= 40) return Colors.orange;
     return Colors.red;
+  }
+
+  void _showGoalsDialog(BuildContext context, List<TrainingGoal> goals) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => AlertDialog(
+        backgroundColor: MyPuttColors.white,
+        title: Row(
+          children: [
+            Icon(
+              Icons.flag,
+              color: MyPuttColors.blue,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Session Goals',
+              style: TextStyle(
+                color: MyPuttColors.darkGray,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Complete these goals during your training session:',
+              style: TextStyle(
+                color: MyPuttColors.darkGray.withValues(alpha: 0.8),
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...goals.map((goal) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.circle_outlined,
+                    color: MyPuttColors.darkGray.withValues(alpha: 0.5),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      goal.description,
+                      style: TextStyle(
+                        color: MyPuttColors.darkGray,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Got it!',
+              style: TextStyle(color: MyPuttColors.blue),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrainingQuantityRow extends StatelessWidget {
+  final int quantity;
+  final Function(bool) onIncrement;
+
+  const _TrainingQuantityRow({
+    Key? key,
+    required this.quantity,
+    required this.onIncrement,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Quantity',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: MyPuttColors.gray[400],
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ),
+          Container(
+            height: 32,
+            decoration: BoxDecoration(
+              color: MyPuttColors.gray[50]!,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: MyPuttColors.black.withValues(alpha: 0.1),
+                  offset: const Offset(0, 2),
+                  blurRadius: 2,
+                  spreadRadius: 0,
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _TrainingQuantityButton(
+                  increment: false,
+                  onTap: () => onIncrement(false),
+                ),
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: MyPuttColors.gray[100]!,
+                ),
+                SizedBox(
+                  width: 32,
+                  child: Text(
+                    '$quantity',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: MyPuttColors.darkGray,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: MyPuttColors.gray[200]!,
+                ),
+                _TrainingQuantityButton(
+                  increment: true,
+                  onTap: () => onIncrement(true),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrainingQuantityButton extends StatefulWidget {
+  final bool increment;
+  final VoidCallback onTap;
+
+  const _TrainingQuantityButton({
+    Key? key,
+    required this.increment,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  State<_TrainingQuantityButton> createState() => _TrainingQuantityButtonState();
+}
+
+class _TrainingQuantityButtonState extends State<_TrainingQuantityButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
+      onTapDown: (_) {
+        setState(() {
+          _isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _isPressed = false;
+        });
+      },
+      child: Container(
+        height: 32,
+        width: 32,
+        decoration: BoxDecoration(
+          color: _isPressed ? MyPuttColors.blue : Colors.transparent,
+          borderRadius: widget.increment
+              ? const BorderRadius.only(
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                )
+              : const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+        ),
+        child: Icon(
+          widget.increment ? Icons.add : Icons.remove,
+          color: MyPuttColors.darkGray,
+          size: 20,
+        ),
+      ),
+    );
   }
 }
